@@ -1,5 +1,6 @@
 package com.songoda.update;
 
+import com.songoda.update.listeners.LoginListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SongodaUpdate {
-    
+
     private static int version = 1;
 
     private static List<Plugin> registeredPlugins = new ArrayList<>();
@@ -23,7 +24,9 @@ public class SongodaUpdate {
     private static SongodaUpdate INSTANCE;
 
     public SongodaUpdate() {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(registeredPlugins.get(0).getJavaPlugin(), this::update, 20L);
+        JavaPlugin hijackedPlugin = registeredPlugins.get(0).getJavaPlugin();
+        Bukkit.getPluginManager().registerEvents(new LoginListener(this), hijackedPlugin);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(hijackedPlugin, this::update, 20L);
     }
 
     private void update() {
@@ -64,10 +67,15 @@ public class SongodaUpdate {
         }
     }
 
-    public static void load(Plugin plugin) {
+    public static Plugin load(Plugin plugin) {
         registeredPlugins.add(plugin);
         System.out.println("Hooked " + plugin.getJavaPlugin().getName() + ".");
         if (INSTANCE == null) INSTANCE = new SongodaUpdate();
+        return plugin;
+    }
+
+    public List<Plugin> getPlugins() {
+        return new ArrayList<>(registeredPlugins);
     }
 
     public static int getVersion() {
