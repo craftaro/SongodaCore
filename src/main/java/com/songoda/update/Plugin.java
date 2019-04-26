@@ -13,6 +13,8 @@ public class Plugin {
     private List<Module> modules = new ArrayList<>();
     private String latestVersion;
     private String notification;
+    private String changeLog;
+    private String marketplaceLink;
     private JSONObject json;
 
     public Plugin(JavaPlugin javaPlugin, int songodaId) {
@@ -34,6 +36,22 @@ public class Plugin {
 
     public void setNotification(String notification) {
         this.notification = notification;
+    }
+
+    public String getChangeLog() {
+        return changeLog;
+    }
+
+    public void setChangeLog(String changeLog) {
+        this.changeLog = changeLog;
+    }
+
+    public String getMarketplaceLink() {
+        return marketplaceLink;
+    }
+
+    public void setMarketplaceLink(String marketplaceLink) {
+        this.marketplaceLink = marketplaceLink;
     }
 
     public JSONObject getJson() {

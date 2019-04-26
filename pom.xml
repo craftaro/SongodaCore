@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.14-pre5-2</version>
+            <version>1.14</version>
         </dependency>
     </dependencies>
 </project>
