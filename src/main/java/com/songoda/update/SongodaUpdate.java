@@ -42,8 +42,9 @@ public class SongodaUpdate {
 
     private void update(Plugin plugin) {
         try {
-            URL url = new URL("http://update.songoda.com/index.php?plugin=" + plugin.getSongodaId() +
-                    "&version=" + plugin.getJavaPlugin().getDescription().getVersion());
+            URL url = new URL("http://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
+                    + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
+                    + "&updaterVersion=" + version);
             URLConnection urlConnection = url.openConnection();
             InputStream is = urlConnection.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
