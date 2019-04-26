@@ -69,10 +69,8 @@ public class SongodaUpdate {
             }
         } catch (IOException e) {
             System.out.println("Connection with Songoda servers failed...");
-            e.printStackTrace(); //ToDo: This cannot be here in final.
         } catch (ParseException e) {
             System.out.println("Failed to parse json.");
-            e.printStackTrace(); //ToDo: This cannot be here in final.
         }
     }
 
