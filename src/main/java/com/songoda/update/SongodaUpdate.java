@@ -13,6 +13,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class SongodaUpdate {
             URL url = new URL("http://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
                     + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
                     + "&updaterVersion=" + version);
-            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(5000);
             InputStream is = urlConnection.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
 
