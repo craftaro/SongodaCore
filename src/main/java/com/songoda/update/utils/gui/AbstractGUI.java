@@ -149,6 +149,7 @@ public abstract class AbstractGUI implements Listener {
         if (lore != null && lore.length != 0) {
             List<String> newLore = new ArrayList<>();
             for (String line : lore) {
+                if (line == null) continue;
                 for (String string : line.split("\\s*\\r?\\n\\s*")) {
                     int lastIndex = 0;
                     for (int n = 0; n < string.length(); n++) {
