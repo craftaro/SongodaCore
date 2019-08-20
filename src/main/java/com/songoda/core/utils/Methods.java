@@ -1,4 +1,4 @@
-package com.songoda.update.utils;
+package com.songoda.core.utils;
 
 import org.bukkit.ChatColor;
 

@@ -1,8 +1,8 @@
-package com.songoda.update;
+package com.songoda.core;
 
-import com.songoda.update.command.CommandManager;
-import com.songoda.update.listeners.LoginListener;
-import com.songoda.update.utils.ServerVersion;
+import com.songoda.core.command.CommandManager;
+import com.songoda.core.listeners.LoginListener;
+import com.songoda.core.utils.ServerVersion;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,13 +15,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongodaUpdate {
+public class SongodaCore {
 
-    private static String prefix = "[SongodaUpdate] ";
+    private static String prefix = "[SongodaCore] ";
 
     private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
 
@@ -30,11 +29,11 @@ public class SongodaUpdate {
 
     private static List<Plugin> registeredPlugins = new ArrayList<>();
 
-    private static SongodaUpdate INSTANCE;
+    private static SongodaCore INSTANCE;
 
     private static JavaPlugin hijackedPlugin;
 
-    public SongodaUpdate() {
+    public SongodaCore() {
         hijackedPlugin = registeredPlugins.get(0).getJavaPlugin();
         Bukkit.getPluginManager().registerEvents(new LoginListener(this), hijackedPlugin);
 
@@ -80,7 +79,7 @@ public class SongodaUpdate {
     public static Plugin load(Plugin plugin) {
         registeredPlugins.add(plugin);
         System.out.println(prefix + "Hooked " + plugin.getJavaPlugin().getName() + ".");
-        if (INSTANCE == null) INSTANCE = new SongodaUpdate();
+        if (INSTANCE == null) INSTANCE = new SongodaCore();
         getInstance().update(plugin);
         return plugin;
     }
@@ -116,7 +115,7 @@ public class SongodaUpdate {
         return hijackedPlugin;
     }
 
-    public static SongodaUpdate getInstance() {
+    public static SongodaCore getInstance() {
         return INSTANCE;
     }
 }

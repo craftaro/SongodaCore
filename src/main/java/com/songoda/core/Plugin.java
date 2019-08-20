@@ -1,4 +1,4 @@
-package com.songoda.update;
+package com.songoda.core;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;

@@ -1,6 +1,6 @@
-package com.songoda.update.utils;
+package com.songoda.core.utils;
 
-import com.songoda.update.SongodaUpdate;
+import com.songoda.core.SongodaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +27,7 @@ public class AbstractChatConfirm implements Listener {
         this.player = player;
         this.handler = hander;
         player.closeInventory();
-        initializeListeners(SongodaUpdate.getHijackedPlugin());
+        initializeListeners(SongodaCore.getHijackedPlugin());
         registered.add(player.getUniqueId());
     }
 
@@ -62,7 +62,7 @@ public class AbstractChatConfirm implements Listener {
         };
 
 
-        Bukkit.getPluginManager().registerEvents(listener, SongodaUpdate.getHijackedPlugin());
+        Bukkit.getPluginManager().registerEvents(listener, SongodaCore.getHijackedPlugin());
     }
 
     public void setOnClose(OnClose onClose) {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot:1.14" level="project" />
+    <orderEntry type="library" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.tnemc:Reserve:0.1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.black_ixx:playerpoints:2.1.4" level="project" />
+    <orderEntry type="library" name="Maven: net.milkbowl:vault:1.7.1" level="project" />
+  </component>
+</module>

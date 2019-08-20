@@ -1,4 +1,4 @@
-package com.songoda.update;
+package com.songoda.core;
 
 public interface Module {
 
