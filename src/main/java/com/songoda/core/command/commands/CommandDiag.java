@@ -1,8 +1,8 @@
-package com.songoda.update.command.commands;
+package com.songoda.core.command.commands;
 
-import com.songoda.update.Plugin;
-import com.songoda.update.SongodaUpdate;
-import com.songoda.update.command.AbstractCommand;
+import com.songoda.core.Plugin;
+import com.songoda.core.SongodaCore;
+import com.songoda.core.command.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -36,7 +36,7 @@ public class CommandDiag extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(SongodaUpdate instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(SongodaCore instance, CommandSender sender, String... args) {
 
         sender.sendMessage("");
         sender.sendMessage("Songoda Diagnostics Information");
@@ -64,7 +64,7 @@ public class CommandDiag extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(SongodaUpdate instance, CommandSender sender, String... args) {
+    protected List<String> onTab(SongodaCore instance, CommandSender sender, String... args) {
         return null;
     }
 

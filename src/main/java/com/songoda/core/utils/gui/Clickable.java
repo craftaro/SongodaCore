@@ -1,4 +1,4 @@
-package com.songoda.update.utils.gui;
+package com.songoda.core.utils.gui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

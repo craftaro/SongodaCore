@@ -1,10 +1,7 @@
-package com.songoda.update.utils.gui;
+package com.songoda.core.utils.gui;
 
-import com.songoda.update.SongodaUpdate;
-import com.songoda.update.utils.Methods;
-import com.songoda.update.utils.gui.Clickable;
-import com.songoda.update.utils.gui.OnClose;
-import com.songoda.update.utils.gui.Range;
+import com.songoda.core.SongodaCore;
+import com.songoda.core.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -125,7 +122,7 @@ public abstract class AbstractGUI implements Listener {
                 registerOnCloses();
         }
         constructGUI();
-        initializeListeners(SongodaUpdate.getHijackedPlugin());
+        initializeListeners(SongodaCore.getHijackedPlugin());
         player.openInventory(inventory);
     }
 

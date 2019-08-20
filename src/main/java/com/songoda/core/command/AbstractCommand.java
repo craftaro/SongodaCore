@@ -1,6 +1,6 @@
-package com.songoda.update.command;
+package com.songoda.core.command;
 
-import com.songoda.update.SongodaUpdate;
+import com.songoda.core.SongodaCore;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -49,9 +49,9 @@ public abstract class AbstractCommand {
         subCommand.add(command);
     }
 
-    protected abstract ReturnType runCommand(SongodaUpdate instance, CommandSender sender, String... args);
+    protected abstract ReturnType runCommand(SongodaCore instance, CommandSender sender, String... args);
 
-    protected abstract List<String> onTab(SongodaUpdate instance, CommandSender sender, String... args);
+    protected abstract List<String> onTab(SongodaCore instance, CommandSender sender, String... args);
 
     public abstract String getPermissionNode();
 

@@ -1,4 +1,4 @@
-package com.songoda.ultimateclaims.economy;
+package com.songoda.core.library.economy.economies;
 
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
@@ -14,6 +14,11 @@ public class PlayerPointsEconomy implements Economy {
 
     private int convertAmount(double amount) {
         return (int) Math.ceil(amount);
+    }
+
+    @Override
+    public String getName() {
+        return "PlayerPoints";
     }
 
     @Override

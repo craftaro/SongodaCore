@@ -1,14 +1,20 @@
-package com.songoda.ultimateclaims.economy;
+package com.songoda.core.library.economy.economies;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class VaultEconomy implements Economy {
+
     private final net.milkbowl.vault.economy.Economy vault;
 
     public VaultEconomy() {
         this.vault = Bukkit.getServicesManager().
                 getRegistration(net.milkbowl.vault.economy.Economy.class).getProvider();
+    }
+
+    @Override
+    public String getName() {
+        return "Vault";
     }
 
     @Override

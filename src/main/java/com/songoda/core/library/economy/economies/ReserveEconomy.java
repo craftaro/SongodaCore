@@ -1,4 +1,4 @@
-package com.songoda.ultimateclaims.economy;
+package com.songoda.core.library.economy.economies;
 
 import net.tnemc.core.Reserve;
 import net.tnemc.core.economy.EconomyAPI;
@@ -13,6 +13,11 @@ public class ReserveEconomy implements Economy {
     public ReserveEconomy() {
         if (Reserve.instance().economyProvided())
             economyAPI = Reserve.instance().economy();
+    }
+
+    @Override
+    public String getName() {
+        return "Reserve";
     }
 
     @Override

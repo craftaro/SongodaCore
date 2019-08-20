@@ -1,6 +1,6 @@
-package com.songoda.update.command;
+package com.songoda.core.command;
 
-import com.songoda.update.SongodaUpdate;
+import com.songoda.core.SongodaCore;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -50,7 +50,7 @@ public class TabManager implements TabCompleter {
 
 
     private List<String> onCommand(AbstractCommand abstractCommand, String[] strings, CommandSender sender) {
-        List<String> list = abstractCommand.onTab(SongodaUpdate.getInstance(), sender, strings);
+        List<String> list = abstractCommand.onTab(SongodaCore.getInstance(), sender, strings);
         String str = strings[strings.length - 1];
         if (list != null && str != null && str.length() >= 1) {
             try {

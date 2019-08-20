@@ -1,9 +1,8 @@
-package com.songoda.update.command.commands;
+package com.songoda.core.command.commands;
 
-import com.songoda.update.SongodaUpdate;
-import com.songoda.update.command.AbstractCommand;
-import com.songoda.update.gui.GUIOverview;
-import org.bukkit.Bukkit;
+import com.songoda.core.SongodaCore;
+import com.songoda.core.command.AbstractCommand;
+import com.songoda.core.gui.GUIOverview;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,13 +15,13 @@ public class CommandSongoda extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(SongodaUpdate instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(SongodaCore instance, CommandSender sender, String... args) {
         new GUIOverview(instance, (Player) sender);
         return ReturnType.SUCCESS;
     }
 
     @Override
-    protected List<String> onTab(SongodaUpdate instance, CommandSender sender, String... args) {
+    protected List<String> onTab(SongodaCore instance, CommandSender sender, String... args) {
         return null;
     }
 

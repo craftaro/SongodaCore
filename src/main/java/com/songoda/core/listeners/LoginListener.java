@@ -1,7 +1,7 @@
-package com.songoda.update.listeners;
+package com.songoda.core.listeners;
 
-import com.songoda.update.Plugin;
-import com.songoda.update.SongodaUpdate;
+import com.songoda.core.Plugin;
+import com.songoda.core.SongodaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 public class LoginListener implements Listener {
 
-    private SongodaUpdate instance;
+    private SongodaCore instance;
 
-    public LoginListener(SongodaUpdate instance) {
+    public LoginListener(SongodaCore instance) {
         this.instance = instance;
     }
 

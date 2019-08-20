@@ -1,9 +1,9 @@
-package com.songoda.update.command;
+package com.songoda.core.command;
 
-import com.songoda.update.SongodaUpdate;
-import com.songoda.update.command.commands.CommandDiag;
-import com.songoda.update.command.commands.CommandSongoda;
-import com.songoda.update.utils.Methods;
+import com.songoda.core.SongodaCore;
+import com.songoda.core.command.commands.CommandDiag;
+import com.songoda.core.command.commands.CommandSongoda;
+import com.songoda.core.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -18,12 +18,12 @@ import java.util.Map;
 
 public class CommandManager implements CommandExecutor {
 
-    private SongodaUpdate instance;
+    private SongodaCore instance;
     private TabManager tabManager;
 
     private List<AbstractCommand> commands = new ArrayList<>();
 
-    public CommandManager(SongodaUpdate instance) {
+    public CommandManager(SongodaCore instance) {
         this.instance = instance;
         this.tabManager = new TabManager(this);
 
@@ -97,7 +97,7 @@ public class CommandManager implements CommandExecutor {
             // Construct a new Command object
             Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             constructorPluginCommand.setAccessible(true);
-            PluginCommand commandObject = constructorPluginCommand.newInstance(command, SongodaUpdate.getHijackedPlugin());
+            PluginCommand commandObject = constructorPluginCommand.newInstance(command, SongodaCore.getHijackedPlugin());
             commandObject.setExecutor(executor);
 
             // Set tab complete

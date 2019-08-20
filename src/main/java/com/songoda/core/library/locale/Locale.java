@@ -1,4 +1,4 @@
-package com.songoda.ultimateclaims.utils.locale;
+package com.songoda.core.library.locale;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

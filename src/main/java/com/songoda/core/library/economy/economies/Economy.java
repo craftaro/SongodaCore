@@ -1,8 +1,10 @@
-package com.songoda.ultimateclaims.economy;
+package com.songoda.core.library.economy.economies;
 
 import org.bukkit.OfflinePlayer;
 
 public interface Economy {
+
+    String getName();
 
     boolean hasBalance(OfflinePlayer player, double cost);
 
