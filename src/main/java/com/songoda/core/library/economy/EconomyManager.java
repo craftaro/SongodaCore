@@ -33,6 +33,14 @@ public class EconomyManager {
                 .findFirst().orElse(null);
     }
 
+    public static boolean isEnabled(String name) {
+        return getEconomy(name) != null;
+    }
+
+    public static boolean isEnabled() {
+        return !registeredEconomies.isEmpty();
+    }
+
     public static Set<Economy> getRegisteredEconomies() {
         return Collections.unmodifiableSet(registeredEconomies);
     }
