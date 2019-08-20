@@ -1,5 +1,6 @@
 package com.songoda.core;
 
+import com.songoda.core.modules.Module;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 

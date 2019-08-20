@@ -2,8 +2,7 @@ package com.songoda.core;
 
 import com.songoda.core.command.CommandManager;
 import com.songoda.core.listeners.LoginListener;
-import com.songoda.core.utils.ServerVersion;
-import org.apache.commons.lang.ArrayUtils;
+import com.songoda.core.modules.Module;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -20,10 +19,7 @@ import java.util.List;
 
 public class SongodaCore {
 
-    private static String prefix = "[SongodaCore] ";
-
-    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
-
+    private static String prefix = "[SongodaCore]";
 
     private static int version = 1;
 
@@ -52,7 +48,7 @@ public class SongodaCore {
 
             int numCharsRead;
             char[] charArray = new char[1024];
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while ((numCharsRead = isr.read(charArray)) > 0) {
                 sb.append(charArray, 0, numCharsRead);
             }
@@ -84,21 +80,6 @@ public class SongodaCore {
         return plugin;
     }
 
-    public ServerVersion getServerVersion() {
-        return serverVersion;
-    }
-
-    public boolean isServerVersion(ServerVersion version) {
-        return serverVersion == version;
-    }
-    public boolean isServerVersion(ServerVersion... versions) {
-        return ArrayUtils.contains(versions, serverVersion);
-    }
-
-    public boolean isServerVersionAtLeast(ServerVersion version) {
-        return serverVersion.ordinal() >= version.ordinal();
-    }
-
     public List<Plugin> getPlugins() {
         return new ArrayList<>(registeredPlugins);
     }
@@ -108,7 +89,7 @@ public class SongodaCore {
     }
 
     public String getPrefix() {
-        return prefix;
+        return prefix + " ";
     }
 
     public static JavaPlugin getHijackedPlugin() {

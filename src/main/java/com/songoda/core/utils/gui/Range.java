@@ -1,7 +1,7 @@
 package com.songoda.core.utils.gui;
 
 import com.songoda.core.SongodaCore;
-import com.songoda.core.utils.ServerVersion;
+import com.songoda.core.library.ServerVersion;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
@@ -18,7 +18,7 @@ public class Range {
         this.max = max;
         this.clickType = clickType;
         this.bottom = bottom;
-        if (SongodaCore.getInstance().isServerVersionAtLeast(ServerVersion.V1_9)) onClickSound = Sound.UI_BUTTON_CLICK;
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) onClickSound = Sound.UI_BUTTON_CLICK;
     }
 
     public Range(int min, int max, Sound onClickSound, ClickType clickType, boolean bottom) {

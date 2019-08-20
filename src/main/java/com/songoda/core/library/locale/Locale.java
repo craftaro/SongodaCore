@@ -1,5 +1,7 @@
 package com.songoda.core.library.locale;
 
+import com.songoda.core.SongodaCore;
+import com.songoda.core.modules.common.LocaleModule;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -92,7 +94,6 @@ public class Locale {
     public static boolean saveLocale(String fileName) {
         return saveLocale(plugin.getResource(defaultLocale + FILE_EXTENSION), fileName);
     }
-
 
     /**
      * Save a locale file from the InputStream, to the locale folder
