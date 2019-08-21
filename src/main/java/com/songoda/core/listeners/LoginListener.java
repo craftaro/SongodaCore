@@ -17,12 +17,11 @@ public class LoginListener implements Listener {
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
-        if (event.getPlayer().isOp()) {
-            for (Plugin plugin : instance.getPlugins()) {
-                if (plugin.getNotification() != null)
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getJavaPlugin(), () ->
-                            event.getPlayer().sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
-            }
+        if (!event.getPlayer().isOp()) return;
+        for (Plugin plugin : instance.getPlugins()) {
+            if (plugin.getNotification() != null)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getJavaPlugin(), () ->
+                        event.getPlayer().sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
         }
     }
 }

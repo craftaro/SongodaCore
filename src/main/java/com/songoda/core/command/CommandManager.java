@@ -31,11 +31,6 @@ public class CommandManager implements CommandExecutor {
 
         AbstractCommand commandSongoda = addCommand(new CommandSongoda());
         addCommand(new CommandDiag(commandSongoda));
-
-        for (AbstractCommand abstractCommand : commands) {
-            if (abstractCommand.getParent() != null) continue;
-            //instance.getCommand(abstractCommand.getCommand()).setTabCompleter(tabManager);
-        }
     }
 
     private AbstractCommand addCommand(AbstractCommand abstractCommand) {

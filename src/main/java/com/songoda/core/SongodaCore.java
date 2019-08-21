@@ -4,6 +4,7 @@ import com.songoda.core.command.CommandManager;
 import com.songoda.core.listeners.LoginListener;
 import com.songoda.core.modules.Module;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,10 +13,13 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SongodaCore {
 
@@ -23,14 +27,14 @@ public class SongodaCore {
 
     private static int version = 1;
 
-    private static List<Plugin> registeredPlugins = new ArrayList<>();
+    private static Set<Plugin> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE;
 
     private static JavaPlugin hijackedPlugin;
 
-    public SongodaCore() {
-        hijackedPlugin = registeredPlugins.get(0).getJavaPlugin();
+    public SongodaCore(JavaPlugin javaPlugin) {
+        hijackedPlugin = javaPlugin;
         Bukkit.getPluginManager().registerEvents(new LoginListener(this), hijackedPlugin);
 
         new CommandManager(this);
@@ -73,11 +77,27 @@ public class SongodaCore {
     }
 
     public static Plugin load(Plugin plugin) {
-        registeredPlugins.add(plugin);
-        System.out.println(prefix + "Hooked " + plugin.getJavaPlugin().getName() + ".");
-        if (INSTANCE == null) INSTANCE = new SongodaCore();
-        getInstance().update(plugin);
+        boolean found = false;
+        for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
+            try {
+                clazz.getMethod("hook", Plugin.class).invoke(null, plugin);
+                found = true;
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+
+            }
+        }
+        if (!found) {
+            if (INSTANCE == null) INSTANCE = new SongodaCore(plugin.getJavaPlugin());
+            Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, hijackedPlugin, ServicePriority.Normal);
+            hook(plugin);
+        }
         return plugin;
+    }
+
+    public static void hook(Plugin plugin) {
+        System.out.println(getPrefix() + "Hooked " + plugin.getJavaPlugin().getName() + ".");
+        getInstance().update(plugin);
+        registeredPlugins.add(plugin);
     }
 
     public List<Plugin> getPlugins() {
@@ -88,7 +108,7 @@ public class SongodaCore {
         return version;
     }
 
-    public String getPrefix() {
+    public static String getPrefix() {
         return prefix + " ";
     }
 
