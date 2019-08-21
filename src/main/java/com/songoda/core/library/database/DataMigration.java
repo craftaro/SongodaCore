@@ -1,4 +1,4 @@
-package com.songoda.ultimateclaims.database;
+package com.songoda.core.library.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;

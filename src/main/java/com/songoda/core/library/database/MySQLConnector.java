@@ -1,13 +1,11 @@
-package com.songoda.ultimateclaims.database;
+package com.songoda.core.library.database;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.function.Consumer;
-
-import com.songoda.ultimateclaims.database.DatabaseConnector;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.Plugin;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MySQLConnector implements DatabaseConnector {
 

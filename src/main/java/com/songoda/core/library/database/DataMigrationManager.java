@@ -1,8 +1,4 @@
-package com.songoda.ultimateclaims.database;
-
-import com.songoda.ultimateclaims.database.migrations._1_InitialMigration;
-import com.songoda.ultimateclaims.database.migrations._2_NewPermissions;
-import com.songoda.ultimateclaims.database.migrations._3_MemberNames;
+package com.songoda.core.library.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,17 +11,13 @@ public class DataMigrationManager {
 
     private List<DataMigration> migrations;
     private DatabaseConnector databaseConnector;
-    private DataManager dataManager;
+    private DataManagerAbstract dataManagerAbstract;
 
-    public DataMigrationManager(DatabaseConnector databaseConnector, DataManager dataManager) {
+    public DataMigrationManager(DatabaseConnector databaseConnector, DataManagerAbstract dataManagerAbstract, DataMigration... migrations) {
         this.databaseConnector = databaseConnector;
-        this.dataManager = dataManager;
+        this.dataManagerAbstract = dataManagerAbstract;
 
-        this.migrations = Arrays.asList(
-                new _1_InitialMigration(),
-                new _2_NewPermissions(),
-                new _3_MemberNames()
-        );
+        this.migrations = Arrays.asList(migrations);
     }
 
     /**
@@ -85,7 +77,7 @@ public class DataMigrationManager {
 
             // Migrate the data
             for (DataMigration dataMigration : requiredMigrations)
-                dataMigration.migrate(connection, this.dataManager.getTablePrefix());
+                dataMigration.migrate(connection, this.dataManagerAbstract.getTablePrefix());
 
             // Set the new current migration to be the highest migrated to
             currentMigration = requiredMigrations
@@ -106,7 +98,7 @@ public class DataMigrationManager {
      * @return the name of the migrations table
      */
     private String getMigrationsTableName() {
-        return this.dataManager.getTablePrefix() + "migrations";
+        return this.dataManagerAbstract.getTablePrefix() + "migrations";
     }
 
 }
