@@ -3,7 +3,8 @@ package com.songoda.core.library.hologram.holograms;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class Hologram {
 
@@ -26,11 +27,19 @@ public abstract class Hologram {
 
     public abstract String getName();
 
-    public abstract void add(Location location, ArrayList<String> lines);
+    public void add(Location location, String line) {
+        add(location, Collections.singletonList(line));
+    }
+
+    public abstract void add(Location location, List<String> lines);
 
     public abstract void remove(Location location);
 
-    public abstract void update(Location location, ArrayList<String> lines);
+    public void update(Location location, String line) {
+        update(location, Collections.singletonList(line));
+    }
+
+    public abstract void update(Location location, List<String> lines);
 
     void fixLocation(Location location) {
         location.add(x, y, z);

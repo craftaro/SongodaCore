@@ -4,7 +4,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HolographicDisplaysHologram extends Hologram {
 
@@ -18,7 +18,7 @@ public class HolographicDisplaysHologram extends Hologram {
     }
 
     @Override
-    public void add(Location location, ArrayList<String> lines) {
+    public void add(Location location, List<String> lines) {
         fixLocation(location);
 
         com.gmail.filoghost.holographicdisplays.api.Hologram hologram = HologramsAPI.createHologram(plugin, location);
@@ -39,7 +39,7 @@ public class HolographicDisplaysHologram extends Hologram {
     }
 
     @Override
-    public void update(Location location, ArrayList<String> lines) {
+    public void update(Location location, List<String> lines) {
         for (com.gmail.filoghost.holographicdisplays.api.Hologram hologram : HologramsAPI.getHolograms(plugin)) {
             if (hologram.getX() != location.getX()
                     || hologram.getY() != location.getY()

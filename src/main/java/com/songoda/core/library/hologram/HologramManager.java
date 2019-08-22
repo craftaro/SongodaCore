@@ -87,7 +87,12 @@ public class HologramManager {
         return Collections.unmodifiableCollection(registeredHolograms.values());
     }
 
-    public static void add(Location location, ArrayList<String> lines) {
+    public static void add(Location location, String line) {
+        if (defaultHolo != null)
+            defaultHolo.add(location, line);
+    }
+
+    public static void add(Location location, List<String> lines) {
         if (defaultHolo != null)
             defaultHolo.add(location, lines);
     }
@@ -97,7 +102,12 @@ public class HologramManager {
             defaultHolo.remove(location);
     }
 
-    public static void update(Location location, ArrayList<String> lines) {
+    public static void update(Location location, String line) {
+        if (defaultHolo != null)
+            defaultHolo.update(location, line);
+    }
+
+    public static void update(Location location, List<String> lines) {
         if (defaultHolo != null)
             defaultHolo.update(location, lines);
     }
