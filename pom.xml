@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>1</version>
+    <version>1.0</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>SongodaCore-${project.version}</finalName>
