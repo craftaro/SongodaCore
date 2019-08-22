@@ -24,47 +24,50 @@ public class EconomyManager {
 
         PluginManager pluginManager = Bukkit.getPluginManager();
 
-        for(EconomyType type : EconomyType.values()) {
+        for (EconomyType type : EconomyType.values()) {
             if (pluginManager.isPluginEnabled(type.plugin)) {
                 Economy econ = type.getInstance();
                 registeredEconomies.put(type, econ);
-                if(defaultEcon == null)
+                if (defaultEcon == null)
                     defaultEcon = econ;
             }
         }
     }
 
     /**
-     * Set the default economy to a different plugin, if that plugin exists. 
+     * Set the default economy to a different plugin, if that plugin exists.
      * If the plugin is not loaded or supported, the previously defined default will be used. <br />
      * NOTE: using a default economy assumes that this library is shaded
+     *
      * @param name name of the plugin to use
      */
     public static void setPreferredEconomy(String name) {
         Economy econ = getEconomy(name);
-        if(econ != null)
+        if (econ != null)
             defaultEcon = econ;
     }
 
     /**
-     * Set the default economy to a different plugin, if that plugin exists. 
+     * Set the default economy to a different plugin, if that plugin exists.
      * If the plugin is not loaded or supported, the previously defined default will be used. <br />
      * NOTE: using a default economy assumes that this library is shaded
+     *
      * @param economy plugin to use
      */
     public static void setPreferredEconomy(EconomyType economy) {
         Economy econ = getEconomy(economy);
-        if(econ != null)
+        if (econ != null)
             defaultEcon = econ;
     }
 
     /**
      * Try to grab the handler for this specific economy plugin.
+     *
      * @param name plugin to use
      * @return returns null if plugin is not enabled
      */
     public static Economy getEconomy(String name) {
-        if(name == null) return null;
+        if (name == null) return null;
         final String plugin = name.trim();
         return registeredEconomies.get(registeredEconomies.keySet().stream()
                 .filter(type -> type.plugin.equalsIgnoreCase(plugin))
@@ -73,6 +76,7 @@ public class EconomyManager {
 
     /**
      * Try to grab the handler for this specific economy plugin.
+     *
      * @param economy plugin to use
      * @return returns null if plugin is not enabled
      */
@@ -83,6 +87,7 @@ public class EconomyManager {
     /**
      * Grab the default economy plugin. <br />
      * NOTE: using a default economy assumes that this library is shaded
+     *
      * @return returns null if no plugin enabled
      */
     public static Economy getEconomy() {
@@ -91,6 +96,7 @@ public class EconomyManager {
 
     /**
      * Grab a list of all supported economy plugins.
+     *
      * @return an immutable collection of the loaded economy handler instances
      */
     public static Collection<Economy> getRegisteredEconomies() {
@@ -99,6 +105,7 @@ public class EconomyManager {
 
     /**
      * Check to see if a specific economy plugin is enabled.
+     *
      * @param name plugin to check
      * @return true if this economy plugin is supported and loaded
      */
@@ -108,6 +115,7 @@ public class EconomyManager {
 
     /**
      * Check to see if a specific economy plugin is enabled.
+     *
      * @param economy plugin to check
      * @return true if this economy plugin is supported and loaded
      */
@@ -118,6 +126,7 @@ public class EconomyManager {
     /**
      * Check to see if there is a default economy loaded. <br />
      * NOTE: using a default economy assumes that this library is shaded
+     *
      * @return returns false if there are no supported economy plugins
      */
     public static boolean isEnabled() {
@@ -139,11 +148,11 @@ public class EconomyManager {
      * NOTE: using a default economy assumes that this library is shaded
      *
      * @param player player to check
-     * @param cost minimum amount this player should have
+     * @param cost   minimum amount this player should have
      * @return true if this player can have this amount withdrawn
      */
     public static boolean hasBalance(OfflinePlayer player, double cost) {
-        return defaultEcon != null ? defaultEcon.hasBalance(player, cost) : false;
+        return defaultEcon != null && defaultEcon.hasBalance(player, cost);
     }
 
     /**
@@ -151,11 +160,11 @@ public class EconomyManager {
      * NOTE: using a default economy assumes that this library is shaded
      *
      * @param player player to check
-     * @param cost amount to remove from this player
+     * @param cost   amount to remove from this player
      * @return true if the total amount was withdrawn successfully
      */
     public static boolean withdrawBalance(OfflinePlayer player, double cost) {
-        return defaultEcon != null ? defaultEcon.withdrawBalance(player, cost) : false;
+        return defaultEcon != null && defaultEcon.withdrawBalance(player, cost);
     }
 
     /**
@@ -167,6 +176,6 @@ public class EconomyManager {
      * @return true if the total amount was added successfully
      */
     public static boolean deposit(OfflinePlayer player, double amount) {
-        return defaultEcon != null ? defaultEcon.deposit(player, amount) : false;
+        return defaultEcon != null && defaultEcon.deposit(player, amount);
     }
 }
