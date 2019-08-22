@@ -55,6 +55,27 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return all;
     }
 
+    public CommandManager registerCommandDynamically(String command) {
+        CommandManager.registerCommandDynamically(plugin, command, this, this);
+        return this;
+    }
+
+    public SimpleNestedCommand registerCommandDynamically(AbstractCommand abstractCommand) {
+        SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
+        abstractCommand.getCommands().stream().forEach(cmd -> {
+            CommandManager.registerCommandDynamically(plugin, cmd, this, this);
+            commands.put(cmd.toLowerCase(), nested);
+            PluginCommand pcmd = plugin.getCommand(cmd);
+            if(pcmd != null) {
+                pcmd.setExecutor(this);
+                pcmd.setTabCompleter(this);
+            } else {
+                plugin.getLogger().warning("Failed to register command: /" + cmd);
+            }
+        });
+        return nested;
+    }
+
     public SimpleNestedCommand addCommand(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
         abstractCommand.getCommands().stream().forEach(cmd -> {

@@ -63,9 +63,8 @@ public class SongodaCore {
 
     public SongodaCore(JavaPlugin javaPlugin) {
         piggybackedPlugin = javaPlugin;
-        commandManager = new CommandManager(javaPlugin);
-        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-        commandManager.addCommand(new SongodaCoreCommand(this))
+        commandManager = new CommandManager(piggybackedPlugin);
+        commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
                 .addSubCommand(new SongodaCoreDiagCommand(this));
         Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
     }
