@@ -27,7 +27,7 @@ public class CommandManager implements CommandExecutor {
         this.instance = instance;
         this.tabManager = new TabManager(this);
 
-        registerCommandDynamically("songoda", this);
+        registerCommandDynamically("songoda", this, tabManager);
 
         AbstractCommand commandSongoda = addCommand(new CommandSongoda());
         addCommand(new CommandDiag(commandSongoda));
@@ -81,7 +81,7 @@ public class CommandManager implements CommandExecutor {
         return Collections.unmodifiableList(commands);
     }
 
-    private void registerCommandDynamically(String command, CommandExecutor executor) {
+    public static void registerCommandDynamically(String command, CommandExecutor executor, TabManager tabManager) {
         try {
             // Retrieve the SimpleCommandMap from the server
             Class<?> classCraftServer = Bukkit.getServer().getClass();

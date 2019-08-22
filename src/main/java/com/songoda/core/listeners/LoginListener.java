@@ -1,6 +1,6 @@
 package com.songoda.core.listeners;
 
-import com.songoda.core.Plugin;
+import com.songoda.core.PluginInfo;
 import com.songoda.core.SongodaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -18,7 +18,7 @@ public class LoginListener implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         if (!event.getPlayer().isOp()) return;
-        for (Plugin plugin : instance.getPlugins()) {
+        for (PluginInfo plugin : instance.getPlugins()) {
             if (plugin.getNotification() != null)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getJavaPlugin(), () ->
                         event.getPlayer().sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);

@@ -2,7 +2,7 @@ package com.songoda.core.modules.common;
 
 import com.songoda.core.library.locale.Locale;
 import com.songoda.core.modules.Module;
-import com.songoda.core.Plugin;
+import com.songoda.core.PluginInfo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -13,7 +13,7 @@ import java.net.URL;
 public class LocaleModule implements Module {
 
     @Override
-    public void run(Plugin plugin) {
+    public void run(PluginInfo plugin) {
         JSONObject json = plugin.getJson();
         try {
             JSONArray files = (JSONArray) json.get("neededFiles");

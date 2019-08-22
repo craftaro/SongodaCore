@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.Plugin;
+import com.songoda.core.PluginInfo;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.utils.gui.AbstractGUI;
 import org.bukkit.Material;
@@ -21,9 +21,9 @@ public class GUIOverview extends AbstractGUI {
 
     @Override
     protected void constructGUI() {
-        List<Plugin> plugins = update.getPlugins();
+        List<PluginInfo> plugins = update.getPlugins();
         for (int i = 0; i < plugins.size(); i++) {
-            Plugin plugin = plugins.get(i);
+            PluginInfo plugin = plugins.get(i);
 
             createButton(i + 9, Material.STONE, "&6" + plugin.getJavaPlugin().getName(),
                     "&7Latest Version: " + plugin.getLatestVersion(),

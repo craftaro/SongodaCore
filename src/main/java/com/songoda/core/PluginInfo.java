@@ -7,7 +7,7 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plugin {
+public class PluginInfo {
 
     private JavaPlugin javaPlugin;
     private int songodaId;
@@ -18,7 +18,7 @@ public class Plugin {
     private String marketplaceLink;
     private JSONObject json;
 
-    public Plugin(JavaPlugin javaPlugin, int songodaId) {
+    public PluginInfo(JavaPlugin javaPlugin, int songodaId) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
     }

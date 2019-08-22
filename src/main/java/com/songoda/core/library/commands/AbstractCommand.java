@@ -1,51 +1,36 @@
 package com.songoda.core.library.commands;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractCommand {
 
     private final boolean noConsole;
-    private AbstractCommand parent = null;
     private boolean hasArgs = false;
-    private String command;
 
-    private List<String> subCommand = new ArrayList<>();
+    private final List<String> subCommand = new ArrayList<>();
 
-    protected AbstractCommand(AbstractCommand parent, boolean noConsole, String... command) {
-        if (parent != null) {
-            this.subCommand = Arrays.asList(command);
-        } else {
-            this.command = Arrays.asList(command).get(0);
-        }
-        this.parent = parent;
+    protected AbstractCommand(boolean noConsole, String... command) {
+        this.subCommand.addAll(Arrays.asList(command));
         this.noConsole = noConsole;
     }
 
     protected AbstractCommand(boolean noConsole, boolean hasArgs, String... command) {
-        this.command = Arrays.asList(command).get(0);
+        this.subCommand.addAll(Arrays.asList(command));
 
         this.hasArgs = hasArgs;
         this.noConsole = noConsole;
     }
 
-    public AbstractCommand getParent() {
-        return parent;
+    public final List<String> getCommands() {
+        return Collections.unmodifiableList(subCommand);
     }
 
-    public String getCommand() {
-        return command;
-    }
-
-    public List<String> getSubCommand() {
-        return subCommand;
-    }
-
-    public void addSubCommand(String command) {
+    public final void addSubCommand(String command) {
         subCommand.add(command);
     }
 
@@ -67,6 +52,6 @@ public abstract class AbstractCommand {
         return noConsole;
     }
 
-    public enum ReturnType {SUCCESS, FAILURE, SYNTAX_ERROR}
+    public static enum ReturnType {SUCCESS, FAILURE, SYNTAX_ERROR}
 }
 

@@ -1,6 +1,6 @@
 package com.songoda.core.command.commands;
 
-import com.songoda.core.Plugin;
+import com.songoda.core.PluginInfo;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.command.AbstractCommand;
 import org.bukkit.Bukkit;
@@ -42,7 +42,7 @@ public class CommandDiag extends AbstractCommand {
         sender.sendMessage("Songoda Diagnostics Information");
         sender.sendMessage("");
         sender.sendMessage("Plugins:");
-        for (Plugin plugin : instance.getPlugins()) {
+        for (PluginInfo plugin : instance.getPlugins()) {
             sender.sendMessage(plugin.getJavaPlugin().getName()
                     + " (" + plugin.getJavaPlugin().getDescription().getVersion() + ")");
         }

@@ -25,14 +25,19 @@ public class SongodaCore {
 
     private static String prefix = "[SongodaCore]";
 
-    private static int version = 1;
+    private static int updaterVersion = 1;
 
-    private static Set<Plugin> registeredPlugins = new HashSet<>();
+    private static Set<PluginInfo> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE;
 
     private static JavaPlugin hijackedPlugin;
 
+    public static void registerPlugin(JavaPlugin plugin, int pluginID) {
+        
+    }
+    
+    
     public SongodaCore(JavaPlugin javaPlugin) {
         hijackedPlugin = javaPlugin;
         Bukkit.getPluginManager().registerEvents(new LoginListener(this), hijackedPlugin);
@@ -40,11 +45,11 @@ public class SongodaCore {
         new CommandManager(this);
     }
 
-    private void update(Plugin plugin) {
+    private void update(PluginInfo plugin) {
         try {
             URL url = new URL("http://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
                     + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
-                    + "&updaterVersion=" + version);
+                    + "&updaterVersion=" + updaterVersion);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(5000);
             InputStream is = urlConnection.getInputStream();
@@ -76,11 +81,11 @@ public class SongodaCore {
         }
     }
 
-    public static Plugin load(Plugin plugin) {
+    public static PluginInfo load(PluginInfo plugin) {
         boolean found = false;
         for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
             try {
-                clazz.getMethod("hook", Plugin.class).invoke(null, plugin);
+                clazz.getMethod("hook", PluginInfo.class).invoke(null, plugin);
                 found = true;
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
 
@@ -94,18 +99,18 @@ public class SongodaCore {
         return plugin;
     }
 
-    public static void hook(Plugin plugin) {
+    public static void hook(PluginInfo plugin) {
         System.out.println(getPrefix() + "Hooked " + plugin.getJavaPlugin().getName() + ".");
         getInstance().update(plugin);
         registeredPlugins.add(plugin);
     }
 
-    public List<Plugin> getPlugins() {
+    public List<PluginInfo> getPlugins() {
         return new ArrayList<>(registeredPlugins);
     }
 
     public static int getVersion() {
-        return version;
+        return updaterVersion;
     }
 
     public static String getPrefix() {

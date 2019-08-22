@@ -1,9 +1,9 @@
 package com.songoda.core.modules;
 
-import com.songoda.core.Plugin;
+import com.songoda.core.PluginInfo;
 
 public interface Module {
 
-    void run(Plugin plugin);
+    void run(PluginInfo plugin);
 
 }
