@@ -1,14 +1,15 @@
 package com.songoda.core.library.hologram.holograms;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
-public class HolographicDisplaysHologram extends Hologram {
+public class HolographicDisplaysHolograms extends Holograms {
 
-    public HolographicDisplaysHologram(JavaPlugin plugin) {
+    public HolographicDisplaysHolograms(JavaPlugin plugin) {
         super(plugin);
     }
 
@@ -18,19 +19,14 @@ public class HolographicDisplaysHologram extends Hologram {
     }
 
     @Override
-    public void add(Location location, List<String> lines) {
-        fixLocation(location);
-
-        com.gmail.filoghost.holographicdisplays.api.Hologram hologram = HologramsAPI.createHologram(plugin, location);
-        for (String line : lines) {
-            hologram.appendTextLine(line);
-        }
+    public void createHologram(Location location, List<String> lines) {
+        createAt(fixLocation(location), lines);
     }
 
     @Override
-    public void remove(Location location) {
-        fixLocation(location);
-        for (com.gmail.filoghost.holographicdisplays.api.Hologram hologram : HologramsAPI.getHolograms(plugin)) {
+    public void removeHologram(Location location) {
+        location = fixLocation(location);
+        for (Hologram hologram : HologramsAPI.getHolograms(plugin)) {
             if (hologram.getX() != location.getX()
                     || hologram.getY() != location.getY()
                     || hologram.getZ() != location.getZ()) continue;
@@ -39,18 +35,26 @@ public class HolographicDisplaysHologram extends Hologram {
     }
 
     @Override
-    public void update(Location location, List<String> lines) {
-        for (com.gmail.filoghost.holographicdisplays.api.Hologram hologram : HologramsAPI.getHolograms(plugin)) {
+    public void updateHologram(Location location, List<String> lines) {
+        location = fixLocation(location);
+        for (Hologram hologram : HologramsAPI.getHolograms(plugin)) {
             if (hologram.getX() != location.getX()
                     || hologram.getY() != location.getY()
                     || hologram.getZ() != location.getZ()) continue;
-            fixLocation(location);
             hologram.clearLines();
             for (String line : lines) {
                 hologram.appendTextLine(line);
             }
             return;
         }
-        add(location, lines);
+        createAt(location, lines);
     }
+
+    private void createAt(Location location, List<String> lines) {
+                Hologram hologram = HologramsAPI.createHologram(plugin, location);
+        for (String line : lines) {
+            hologram.appendTextLine(line);
+        }
+    }
+
 }

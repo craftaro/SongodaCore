@@ -1,17 +1,21 @@
 package com.songoda.core.library.hologram;
 
-import com.songoda.core.library.hologram.holograms.Hologram;
+import com.songoda.core.library.hologram.holograms.Holograms;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HologramManager {
 
-    private final static Map<HologramType, Hologram> registeredHolograms = new HashMap<>();
-    private static Hologram defaultHolo = null;
+    private final static Map<HologramType, Holograms> registeredHolograms = new HashMap<>();
+    private static Holograms defaultHolo = null;
 
     /**
      * Load all supported hologram plugins. <br />
@@ -26,7 +30,7 @@ public class HologramManager {
 
         for (HologramType type : HologramType.values()) {
             if (pluginManager.isPluginEnabled(type.plugin)) {
-                Hologram holo = type.getInstance(javaPlugin);
+                Holograms holo = type.getInstance(javaPlugin);
                 registeredHolograms.put(type, holo);
                 if (defaultHolo == null)
                     defaultHolo = holo;
@@ -39,10 +43,23 @@ public class HologramManager {
      * If the plugin is not loaded or supported, the previously defined default will be used. <br />
      * NOTE: using a default hologram assumes that this library is shaded
      *
+     * @param type hologram plugin to use
+     */
+    public static void setPreferredHologramPlugin(HologramType type) {
+        Holograms holo = getHolograms(type);
+        if (holo != null)
+            defaultHolo = holo;
+    }
+
+    /**
+     * Set the default hologram to a different plugin, if that plugin exists.
+     * If the plugin is not loaded or supported, the previously defined default will be used. <br />
+     * NOTE: using a default hologram assumes that this library is shaded
+     *
      * @param name name of the plugin to use
      */
-    public static void setPreferredHologram(String name) {
-        Hologram holo = getHologram(name);
+    public static void setPreferredHologramPlugin(String name) {
+        Holograms holo = getHolograms(name);
         if (holo != null)
             defaultHolo = holo;
     }
@@ -53,7 +70,7 @@ public class HologramManager {
      * @param name plugin to useH
      * @return returns null if plugin is not enabled
      */
-    public static Hologram getHologram(String name) {
+    public static Holograms getHolograms(String name) {
         if (name == null) return null;
         final String plugin = name.trim();
         return registeredHolograms.get(registeredHolograms.keySet().stream()
@@ -67,7 +84,7 @@ public class HologramManager {
      * @param hologram plugin to use
      * @return returns null if plugin is not enabled
      */
-    public static Hologram getHologram(HologramType hologram) {
+    public static Holograms getHolograms(HologramType hologram) {
         return registeredHolograms.get(hologram);
     }
 
@@ -77,42 +94,42 @@ public class HologramManager {
      *
      * @return returns null if no plugin enabled
      */
-    public static Hologram getHologram() {
+    public static Holograms getHolograms() {
         return defaultHolo;
     }
 
     /**
-     * Grab a list of all supported hologram plugins.
+     * Grab a list of all supported hologram plugins that are loaded.
      *
      * @return an immutable collection of the loaded hologram, handler instances
      */
-    public static Collection<Hologram> getRegisteredHolograms() {
+    public static Collection<Holograms> getRegisteredHolograms() {
         return Collections.unmodifiableCollection(registeredHolograms.values());
     }
 
-    public static void add(Location location, String line) {
+    public static void createHologram(Location location, String line) {
         if (defaultHolo != null)
-            defaultHolo.add(location, line);
+            defaultHolo.createHologram(location, line);
     }
 
-    public static void add(Location location, List<String> lines) {
+    public static void createHologram(Location location, List<String> lines) {
         if (defaultHolo != null)
-            defaultHolo.add(location, lines);
+            defaultHolo.createHologram(location, lines);
     }
 
-    public static void remove(Location location) {
+    public static void removeHologram(Location location) {
         if (defaultHolo != null)
-            defaultHolo.remove(location);
+            defaultHolo.removeHologram(location);
     }
 
-    public static void update(Location location, String line) {
+    public static void updateHologram(Location location, String line) {
         if (defaultHolo != null)
-            defaultHolo.update(location, line);
+            defaultHolo.updateHologram(location, line);
     }
 
-    public static void update(Location location, List<String> lines) {
+    public static void updateHologram(Location location, List<String> lines) {
         if (defaultHolo != null)
-            defaultHolo.update(location, lines);
+            defaultHolo.updateHologram(location, lines);
     }
 
 }

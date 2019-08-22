@@ -1,7 +1,7 @@
 package com.songoda.core.library.hologram;
 
-import com.songoda.core.library.hologram.holograms.Hologram;
-import com.songoda.core.library.hologram.holograms.HolographicDisplaysHologram;
+import com.songoda.core.library.hologram.holograms.Holograms;
+import com.songoda.core.library.hologram.holograms.HolographicDisplaysHolograms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 public enum HologramType {
 
-    HOLOGRAPHIC_DISPLAYS("HolographicDisplays", HolographicDisplaysHologram.class);
+    HOLOGRAPHIC_DISPLAYS("HolographicDisplays", HolographicDisplaysHolograms.class);
 
     public final String plugin;
     protected final Class managerClass;
@@ -20,9 +20,9 @@ public enum HologramType {
         this.managerClass = managerClass;
     }
 
-    protected Hologram getInstance(JavaPlugin javaPlugin) {
+    protected Holograms getInstance(JavaPlugin javaPlugin) {
         try {
-            return (Hologram) managerClass.getDeclaredConstructor(JavaPlugin.class).newInstance(javaPlugin);
+            return (Holograms) managerClass.getDeclaredConstructor(JavaPlugin.class).newInstance(javaPlugin);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Unexpected Error while creating a new Hologram Manager for " + name(), ex);
         }
