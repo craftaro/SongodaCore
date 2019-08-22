@@ -4,6 +4,7 @@ import com.songoda.core.library.hologram.holograms.Hologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -15,15 +16,17 @@ public class HologramManager {
     /**
      * Load all supported hologram plugins. <br />
      * Note: This method should be called in your plugin's onEnable() section
+     *
+     * @param javaPlugin the plugin owning the holograms
      */
-    public static void load() {
+    public static void load(JavaPlugin javaPlugin) {
         if (!registeredHolograms.isEmpty()) return;
 
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         for (HologramType type : HologramType.values()) {
             if (pluginManager.isPluginEnabled(type.plugin)) {
-                Hologram holo = type.getInstance();
+                Hologram holo = type.getInstance(javaPlugin);
                 registeredHolograms.put(type, holo);
                 if (defaultHolo == null)
                     defaultHolo = holo;

@@ -1,18 +1,16 @@
 package com.songoda.core.library.hologram;
 
-import com.songoda.core.library.economy.economies.Economy;
-import com.songoda.core.library.economy.economies.PlayerPointsEconomy;
-import com.songoda.core.library.economy.economies.ReserveEconomy;
-import com.songoda.core.library.economy.economies.VaultEconomy;
 import com.songoda.core.library.hologram.holograms.Hologram;
 import com.songoda.core.library.hologram.holograms.HolographicDisplaysHologram;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public enum HologramType {
 
-    VAULT("HolographicDisplays", HolographicDisplaysHologram.class);
+    HOLOGRAPHIC_DISPLAYS("HolographicDisplays", HolographicDisplaysHologram.class);
 
     public final String plugin;
     protected final Class managerClass;
@@ -22,10 +20,10 @@ public enum HologramType {
         this.managerClass = managerClass;
     }
 
-    protected Hologram getInstance() {
+    protected Hologram getInstance(JavaPlugin javaPlugin) {
         try {
-            return (Hologram) managerClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
+            return (Hologram) managerClass.getDeclaredConstructor(JavaPlugin.class).newInstance(javaPlugin);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Unexpected Error while creating a new Hologram Manager for " + name(), ex);
         }
         return null;
