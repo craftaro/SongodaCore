@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class PlayerUtils {
@@ -15,12 +16,13 @@ public class PlayerUtils {
     /**
      * Get a list of all of the players that this player can "see"
      *
-     * @param player player to check against, or null for all players
+     * @param sender user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
      * start with this
      * @return list of player names that are "visible" to the player
      */
-    public static List<String> getVisiblePlayerNames(Player player, String startingWith) {
+    public static List<String> getVisiblePlayerNames(CommandSender sender, String startingWith) {
+        Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p != player)
@@ -33,12 +35,13 @@ public class PlayerUtils {
     /**
      * Get a list of all of the players that this player can "see"
      *
-     * @param player player to check against, or null for all players
+     * @param sender user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
      * start with this
      * @return list of players that are "visible" to the player
      */
-    public static List<Player> getVisiblePlayers(Player player, String startingWith) {
+    public static List<Player> getVisiblePlayers(CommandSender sender, String startingWith) {
+        Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p != player)

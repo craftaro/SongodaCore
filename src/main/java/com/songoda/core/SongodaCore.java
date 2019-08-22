@@ -97,12 +97,10 @@ public class SongodaCore {
                 registeredPlugins.remove(pi);
             }
             if(event.getPlugin() == piggybackedPlugin) {
-                System.out.println(prefix + " Is being disabled!!!");
                 // uh-oh! Abandon ship!!
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
                 // can we move somewhere else?
                 if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
-                    System.out.println(prefix + " Moving to " + pi.getJavaPlugin().getName());
                     // move ourselves to this plugin
                     piggybackedPlugin = pi.getJavaPlugin();
                     Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
