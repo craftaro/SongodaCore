@@ -24,10 +24,16 @@ public abstract class Hologram {
         return this;
     }
 
-    protected abstract void add(Location location, ArrayList<String> lines);
+    public abstract String getName();
 
-    protected abstract void remove(Location location);
+    public abstract void add(Location location, ArrayList<String> lines);
 
-    protected abstract void update(Location location, ArrayList<String> lines);
+    public abstract void remove(Location location);
+
+    public abstract void update(Location location, ArrayList<String> lines);
+
+    void fixLocation(Location location) {
+        location.add(x, y, z);
+    }
 
 }

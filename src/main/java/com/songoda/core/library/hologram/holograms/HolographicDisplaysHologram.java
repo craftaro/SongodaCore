@@ -13,6 +13,11 @@ public class HolographicDisplaysHologram extends Hologram {
     }
 
     @Override
+    public String getName() {
+        return "HolographicDisplays";
+    }
+
+    @Override
     public void add(Location location, ArrayList<String> lines) {
         fixLocation(location);
 
@@ -47,9 +52,5 @@ public class HolographicDisplaysHologram extends Hologram {
             return;
         }
         add(location, lines);
-    }
-
-    private void fixLocation(Location location) {
-        location.add(x, y, z);
     }
 }
