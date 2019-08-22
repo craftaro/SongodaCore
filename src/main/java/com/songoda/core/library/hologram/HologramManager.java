@@ -122,6 +122,11 @@ public class HologramManager {
             defaultHolo.removeHologram(location);
     }
 
+    public static void removeAllHolograms() {
+        if (defaultHolo != null)
+            defaultHolo.removeAllHolograms();
+    }
+
     public static void updateHologram(Location location, String line) {
         if (defaultHolo != null)
             defaultHolo.updateHologram(location, line);

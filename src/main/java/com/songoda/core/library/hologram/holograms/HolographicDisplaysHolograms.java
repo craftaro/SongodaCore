@@ -19,6 +19,11 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     @Override
+    protected double defaultHeightOffset() {
+        return 1;
+    }
+
+    @Override
     public void createHologram(Location location, List<String> lines) {
         createAt(fixLocation(location), lines);
     }
@@ -55,6 +60,11 @@ public class HolographicDisplaysHolograms extends Holograms {
         for (String line : lines) {
             hologram.appendTextLine(line);
         }
+    }
+
+    @Override
+    public void removeAllHolograms() {
+        HologramsAPI.getHolograms(plugin).stream().forEach(x -> x.delete());
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class Holograms {
 
     protected double xOffset = 0.5;
-    protected double yOffset = 1.5;
+    protected double yOffset = 0.5;
     protected double zOffset = 0.5;
 
     protected final JavaPlugin plugin;
@@ -35,8 +35,10 @@ public abstract class Holograms {
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
-        return location.clone().add((x - (int) x) + xOffset, (y - (int) y) + yOffset, (z - (int) z) + zOffset);
+        return location.clone().add((x - (int) x) + xOffset, (y - (int) y) + yOffset + defaultHeightOffset(), (z - (int) z) + zOffset);
     }
+
+    protected abstract double defaultHeightOffset();
 
     public abstract String getName();
 
@@ -54,4 +56,5 @@ public abstract class Holograms {
 
     public abstract void updateHologram(Location location, List<String> lines);
 
+    public abstract void removeAllHolograms();
 }

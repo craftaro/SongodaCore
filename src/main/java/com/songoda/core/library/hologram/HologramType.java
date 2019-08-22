@@ -1,6 +1,7 @@
 package com.songoda.core.library.hologram;
 
 import com.songoda.core.library.hologram.holograms.Holograms;
+import com.songoda.core.library.hologram.holograms.HologramsHolograms;
 import com.songoda.core.library.hologram.holograms.HolographicDisplaysHolograms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,7 +11,9 @@ import java.util.logging.Level;
 
 public enum HologramType {
 
-    HOLOGRAPHIC_DISPLAYS("HolographicDisplays", HolographicDisplaysHolograms.class);
+    HOLOGRAPHIC_DISPLAYS("HolographicDisplays", HolographicDisplaysHolograms.class),
+    HOLOGRAMS("Holograms", HologramsHolograms.class)
+    ;
 
     public final String plugin;
     protected final Class managerClass;
