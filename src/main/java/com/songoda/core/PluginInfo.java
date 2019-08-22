@@ -18,7 +18,7 @@ public class PluginInfo {
     private String marketplaceLink;
     private JSONObject json;
 
-    public PluginInfo(JavaPlugin javaPlugin, int songodaId) {
+    protected PluginInfo(JavaPlugin javaPlugin, int songodaId) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
     }

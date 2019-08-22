@@ -1,6 +1,8 @@
 package com.songoda.core.library.commands;
 
 import com.songoda.core.utils.Methods;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,8 +15,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.Plugin;
 
 public class CommandManager implements CommandExecutor, TabCompleter {
 
@@ -204,5 +210,32 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
         return list;
+    }
+
+    public static void registerCommandDynamically(Plugin plugin, String command, CommandExecutor executor, TabCompleter tabManager) {
+        try {
+            // Retrieve the SimpleCommandMap from the server
+            Class<?> classCraftServer = Bukkit.getServer().getClass();
+            Field fieldCommandMap = classCraftServer.getDeclaredField("commandMap");
+            fieldCommandMap.setAccessible(true);
+            SimpleCommandMap commandMap = (SimpleCommandMap) fieldCommandMap.get(Bukkit.getServer());
+
+            // Construct a new Command object
+            Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+            constructorPluginCommand.setAccessible(true);
+            PluginCommand commandObject = constructorPluginCommand.newInstance(command, plugin);
+            commandObject.setExecutor(executor);
+
+            // Set tab complete
+            commandObject.setTabCompleter(tabManager);
+
+            // Register the command
+            Field fieldKnownCommands = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            fieldKnownCommands.setAccessible(true);
+            Map<String, Command> knownCommands = (Map<String, Command>) fieldKnownCommands.get(commandMap);
+            knownCommands.put(command, commandObject);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 }

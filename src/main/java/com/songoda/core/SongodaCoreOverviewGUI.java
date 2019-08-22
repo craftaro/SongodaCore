@@ -1,18 +1,16 @@
-package com.songoda.core.gui;
+package com.songoda.core;
 
-import com.songoda.core.PluginInfo;
-import com.songoda.core.SongodaCore;
 import com.songoda.core.utils.gui.AbstractGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GUIOverview extends AbstractGUI {
+class SongodaCoreOverviewGUI extends AbstractGUI {
 
     private final SongodaCore update;
 
-    public GUIOverview(SongodaCore update, Player player) {
+    protected SongodaCoreOverviewGUI(SongodaCore update, Player player) {
         super(player);
         this.update = update;
 

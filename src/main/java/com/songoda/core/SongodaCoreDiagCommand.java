@@ -1,8 +1,6 @@
-package com.songoda.core.command.commands;
+package com.songoda.core;
 
-import com.songoda.core.PluginInfo;
-import com.songoda.core.SongodaCore;
-import com.songoda.core.command.AbstractCommand;
+import com.songoda.core.library.commands.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -11,8 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class CommandDiag extends AbstractCommand {
+public class SongodaCoreDiagCommand extends AbstractCommand {
 
+    final SongodaCore instance;
     private final String name = Bukkit.getServer().getClass().getPackage().getName();
     private final String version = name.substring(name.lastIndexOf('.') + 1);
 
@@ -22,8 +21,9 @@ public class CommandDiag extends AbstractCommand {
     private Field tpsField;
 
 
-    public CommandDiag(AbstractCommand parent) {
-        super(parent, false, "diag");
+    protected SongodaCoreDiagCommand(SongodaCore instance) {
+        super(false, "diag");
+        this.instance = instance;
 
         try {
             serverInstance = getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
@@ -36,7 +36,7 @@ public class CommandDiag extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(SongodaCore instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
 
         sender.sendMessage("");
         sender.sendMessage("Songoda Diagnostics Information");
@@ -64,7 +64,7 @@ public class CommandDiag extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(SongodaCore instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return null;
     }
 
