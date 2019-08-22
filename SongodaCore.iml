@@ -11,6 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot:1.14.4" level="project" />
     <orderEntry type="library" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.sainttx.holograms:holograms:2.9.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.tnemc:Reserve:0.1.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.black_ixx:playerpoints:2.1.4" level="project" />
     <orderEntry type="library" name="Maven: net.milkbowl:vault:1.7.1" level="project" />
@@ -36,5 +37,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.papermc:paperlib:1.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:commandbook:2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.bstats:bstats-bukkit:1.5" level="project" />
+    <orderEntry type="library" name="Maven: com.songoda:UltimateStacker:1.2.8" level="project" />
+    <orderEntry type="library" name="Maven: com.bgsoftware:WildStacker:2-9-0" level="project" />
+    <orderEntry type="library" name="Maven: uk.antiperson:stackmob:4-0-2" level="project" />
   </component>
 </module>
