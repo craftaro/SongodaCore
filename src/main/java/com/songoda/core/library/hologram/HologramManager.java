@@ -1,15 +1,11 @@
 package com.songoda.core.library.hologram;
 
-import com.songoda.core.library.economy.EconomyType;
-import com.songoda.core.library.economy.economies.Economy;
 import com.songoda.core.library.hologram.holograms.Hologram;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class HologramManager {
 
@@ -51,7 +47,7 @@ public class HologramManager {
     /**
      * Try to grab the handler for this specific hologram plugin.
      *
-     * @param name plugin to use
+     * @param name plugin to useH
      * @return returns null if plugin is not enabled
      */
     public static Hologram getHologram(String name) {
@@ -91,5 +87,19 @@ public class HologramManager {
         return Collections.unmodifiableCollection(registeredHolograms.values());
     }
 
+    public void add(Location location, ArrayList<String> lines) {
+        if (defaultHolo != null)
+            defaultHolo.add(location, lines);
+    }
+
+    public void remove(Location location) {
+        if (defaultHolo != null)
+            defaultHolo.remove(location);
+    }
+
+    public void update(Location location, ArrayList<String> lines) {
+        if (defaultHolo != null)
+            defaultHolo.update(location, lines);
+    }
 
 }

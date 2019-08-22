@@ -152,7 +152,7 @@ public class EconomyManager {
      * @return true if this player can have this amount withdrawn
      */
     public static boolean hasBalance(OfflinePlayer player, double cost) {
-        return defaultEcon != null ? defaultEcon.hasBalance(player, cost) : false;
+        return defaultEcon != null && defaultEcon.hasBalance(player, cost);
     }
 
     /**
@@ -164,7 +164,7 @@ public class EconomyManager {
      * @return true if the total amount was withdrawn successfully
      */
     public static boolean withdrawBalance(OfflinePlayer player, double cost) {
-        return defaultEcon != null ? defaultEcon.withdrawBalance(player, cost) : false;
+        return defaultEcon != null && defaultEcon.withdrawBalance(player, cost);
     }
 
     /**
@@ -176,6 +176,6 @@ public class EconomyManager {
      * @return true if the total amount was added successfully
      */
     public static boolean deposit(OfflinePlayer player, double amount) {
-        return defaultEcon != null ? defaultEcon.deposit(player, amount) : false;
+        return defaultEcon != null && defaultEcon.deposit(player, amount);
     }
 }
