@@ -1,14 +1,13 @@
 package com.songoda.core.library.settings;
 
 import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
 public class Setting {
 
     private final Category category;
-    private final JavaPlugin plugin;
 
     private final String key;
     private final Object defaultValue;
@@ -16,7 +15,6 @@ public class Setting {
 
     public Setting(Category category, String key, Object defaultValue, String... comments) {
         this.category = category;
-        this.plugin = category.getPlugin();
         this.key = key;
         this.defaultValue = defaultValue;
         this.comments = comments;
@@ -25,7 +23,7 @@ public class Setting {
     public String getKey() {
         return key;
     }
-    
+
     public String getCompleteKey() {
         return category.getKey() + "." + key;
     }
@@ -37,40 +35,41 @@ public class Setting {
     public String[] getComments() {
         return comments;
     }
+
     public List<Integer> getIntegerList() {
-        return plugin.getConfig().getIntegerList(getCompleteKey());
+        return getConfig().getIntegerList(getCompleteKey());
     }
 
     public List<String> getStringList() {
-        return plugin.getConfig().getStringList(getCompleteKey());
+        return getConfig().getStringList(getCompleteKey());
     }
 
     public boolean getBoolean() {
-        return plugin.getConfig().getBoolean(getCompleteKey());
+        return getConfig().getBoolean(getCompleteKey());
     }
 
     public int getInt() {
-        return plugin.getConfig().getInt(getCompleteKey());
+        return getConfig().getInt(getCompleteKey());
     }
 
     public long getLong() {
-        return plugin.getConfig().getLong(getCompleteKey());
+        return getConfig().getLong(getCompleteKey());
     }
 
     public String getString() {
-        return plugin.getConfig().getString(getCompleteKey());
+        return getConfig().getString(getCompleteKey());
     }
 
     public char getChar() {
-        return plugin.getConfig().getString(getCompleteKey()).charAt(0);
+        return getConfig().getString(getCompleteKey()).charAt(0);
     }
 
     public double getDouble() {
-        return plugin.getConfig().getDouble(getCompleteKey());
+        return getConfig().getDouble(getCompleteKey());
     }
 
     public Material getMaterial() {
-        String materialStr = plugin.getConfig().getString(getCompleteKey());
+        String materialStr = getConfig().getString(getCompleteKey());
         Material material = Material.getMaterial(materialStr);
 
         if (material == null) {
@@ -78,5 +77,9 @@ public class Setting {
         }
 
         return material;
+    }
+
+    public FileConfiguration getConfig() {
+        return category.getConfig().getFileConfiguration();
     }
 }

@@ -1,26 +1,27 @@
 package com.songoda.core.library.settings;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Category {
 
-    private final JavaPlugin plugin;
+    private final Config config;
 
     private final String key;
     private final String[] comments;
 
     private final Map<String, Setting> settings = new HashMap<>();
 
-    public Category(JavaPlugin plugin, String key, String... comments) {
-        this.plugin = plugin;
+    public Category(Config config, String key, String... comments) {
+        this.config = config;
         this.key = key;
         this.comments = comments;
     }
 
-    public Category(JavaPlugin plugin, String key) {
-        this(plugin, key, null);
+    public Category(Config config, String key) {
+        this(config, key, null);
     }
 
     public Category addSetting(String key, Object defaultValue, String... comments) {
@@ -45,7 +46,7 @@ public class Category {
         return comments;
     }
 
-    public JavaPlugin getPlugin() {
-        return plugin;
+    public Config getConfig() {
+        return config;
     }
 }

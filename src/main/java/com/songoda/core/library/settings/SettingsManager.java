@@ -5,7 +5,6 @@ import com.songoda.core.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,20 +17,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
 import java.util.*;
 
 /**
  * Created by songoda on 6/4/2017.
  */
-public abstract class SettingsManager implements Listener {
+public class SettingsManager implements Listener {
 
     private final JavaPlugin plugin;
+    private final Config config;
+
     private Map<Player, String> cat = new HashMap<>();
     private Map<Player, String> current = new HashMap<>();
 
-    public SettingsManager(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public SettingsManager(Config config) {
+        this.plugin = config.getPlugin();
+        this.config = config;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -61,8 +62,8 @@ public abstract class SettingsManager implements Listener {
 
             String key = cat.get(player) + "." + ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
 
-            if (plugin.getConfig().get(key).getClass().getName().equals("java.lang.Boolean")) {
-                this.plugin.getConfig().set(key, !plugin.getConfig().getBoolean(key));
+            if (config.getFileConfiguration().get(key).getClass().getName().equals("java.lang.Boolean")) {
+                this.config.getFileConfiguration().set(key, !config.getFileConfiguration().getBoolean(key));
                 this.finishEditing(player);
             } else {
                 this.editObject(player, key);
@@ -76,7 +77,7 @@ public abstract class SettingsManager implements Listener {
         if (!current.containsKey(player)) return;
 
         String value = current.get(player);
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = this.config.getFileConfiguration();
         if (config.isLong(value)) {
             config.set(value, Long.parseLong(event.getMessage()));
         } else if (config.isInt(value)) {
@@ -95,7 +96,7 @@ public abstract class SettingsManager implements Listener {
 
     private void finishEditing(Player player) {
         this.current.remove(player);
-        this.saveConfig();
+        this.config.save();
         this.openEditor(player);
     }
 
@@ -105,7 +106,7 @@ public abstract class SettingsManager implements Listener {
         player.closeInventory();
         player.sendMessage("");
         player.sendMessage(Methods.formatText("&7Please enter a value for &6" + current + "&7."));
-        if (plugin.getConfig().isInt(current) || plugin.getConfig().isDouble(current)) {
+        if (config.getFileConfiguration().isInt(current) || config.getFileConfiguration().isDouble(current)) {
             player.sendMessage(Methods.formatText("&cUse only numbers."));
         }
         player.sendMessage("");
@@ -115,7 +116,7 @@ public abstract class SettingsManager implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 27, plugin.getName() + " Settings Manager");
 
         int slot = 10;
-        for (String key : plugin.getConfig().getDefaultSection().getKeys(false)) {
+        for (String key : config.getFileConfiguration().getDefaultSection().getKeys(false)) {
             ItemStack item = new ItemStack(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.LEGACY_WOOL : Material.valueOf("WOOL"), 1, (byte) (slot - 9));
             ItemMeta meta = item.getItemMeta();
             meta.setLore(Collections.singletonList(Methods.formatText("&6Click To Edit This Category.")));
@@ -130,7 +131,7 @@ public abstract class SettingsManager implements Listener {
 
     private void openEditor(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 54, plugin.getName() + " Settings Editor");
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = this.config.getFileConfiguration();
 
         int slot = 0;
         for (String key : config.getConfigurationSection(cat.get(player)).getKeys(true)) {
@@ -157,7 +158,7 @@ public abstract class SettingsManager implements Listener {
                 lore.add(Methods.formatText("&7" + config.getDouble(fKey)));
             }
 
-            Setting setting = Config.getSetting(fKey);
+            Setting setting = this.config.getSetting(fKey);
 
             if (setting != null && setting.getComments() != null) {
                 lore.add("");
@@ -188,130 +189,5 @@ public abstract class SettingsManager implements Listener {
         }
 
         player.openInventory(inventory);
-    }
-
-    public void reloadConfig() {
-        plugin.reloadConfig();
-        this.setupConfig();
-    }
-
-    public void setupConfig() {
-        FileConfiguration config = plugin.getConfig();
-
-        for (Setting setting : Config.getSettings()) {
-            config.addDefault(setting.getCompleteKey(), setting.getDefaultValue());
-        }
-        plugin.getConfig().options().copyDefaults(true);
-        saveConfig();
-    }
-
-    private void saveConfig() {
-
-        // Delete old config values.
-        FileConfiguration configuration = plugin.getConfig();
-        for (String line : configuration.getConfigurationSection("").getKeys(true)) {
-            if (line.contains(".") && Config.getSetting(line) == null)
-                configuration.set(line, null);
-            else if (!line.contains(".")) {
-                if (((MemorySection) configuration.get(line)).getKeys(true).size() == 0)
-                    configuration.set(line, null);
-            }
-        }
-
-        // Add comments.
-        String dump = plugin.getConfig().saveToString();
-        StringBuilder config = new StringBuilder();
-        BufferedReader bufReader = new BufferedReader(new StringReader(dump));
-
-        try {
-            boolean first = true;
-
-            String line;
-            int currentTab = 0;
-            String category = "";
-
-            while ((line = bufReader.readLine()) != null) {
-                if (line.trim().startsWith("#")) continue;
-
-                int tabChange = line.length() - line.trim().length();
-                if (currentTab != tabChange) {
-                    category = category.contains(".") && tabChange != 0 ? category.substring(0, category.indexOf(".")) : "";
-                    currentTab = tabChange;
-                }
-
-                if (line.endsWith(":")) {
-                    bufReader.mark(1000);
-                    String found = bufReader.readLine();
-                    bufReader.reset();
-
-                    if (!found.trim().startsWith("-")) {
-
-                        String newCategory = line.substring(0, line.length() - 1).trim();
-
-                        if (category.equals(""))
-                            category = newCategory;
-                        else
-                            category += "." + newCategory;
-
-                        currentTab = tabChange + 2;
-
-                        if (!first) {
-                            config.append("\n\n");
-                        } else {
-                            first = false;
-                        }
-
-                        if (!category.contains("."))
-                            config.append("#").append("\n");
-                        try {
-                            Category categoryObj = Config.getCategory(category);
-
-                            config.append(new String(new char[tabChange]).replace('\0', ' '));
-                            for (String l : categoryObj.getComments())
-                                config.append("# ").append(l).append("\n");
-                        } catch (IllegalArgumentException e) {
-                            config.append("# ").append(category).append("\n");
-                        }
-                        if (!category.contains("."))
-                            config.append("#").append("\n");
-
-                        config.append(line).append("\n");
-
-                        continue;
-                    }
-                }
-
-                if (line.trim().startsWith("-")) {
-                    config.append(line).append("\n");
-                    continue;
-                }
-
-                String key = category + "." + (line.split(":")[0].trim());
-                for (Setting setting : Config.getSettings()) {
-                    if (!setting.getCompleteKey().equals(key) || setting.getComments() == null) continue;
-                    config.append("  ").append("\n");
-                    for (String l : setting.getComments()) {
-                        config.append(new String(new char[currentTab]).replace('\0', ' '));
-                        config.append("# ").append(l).append("\n");
-                    }
-                }
-                config.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (!plugin.getDataFolder().exists())
-                plugin.getDataFolder().mkdir();
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(new File(plugin.getDataFolder() + File.separator + "config.yml")));
-            writer.write(config.toString());
-            writer.flush();
-            writer.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
