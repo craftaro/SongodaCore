@@ -1138,6 +1138,16 @@ public enum LegacyMaterials {
     }
 
     /**
+     * Lookup a Legacy Material by bukkit material. 
+     * 
+     * @param mat item to lookup
+     * @return LegacyMaterial or null if none found
+     */
+    public static LegacyMaterials getMaterial(Material mat) {
+        return mat == null ? null : lookupMap.get(mat.name());
+    }
+
+    /**
      * Lookup a Legacy Material by its modern id name and return its associated Item. <br />
      * This also can grab materials by their legacy, but only if there is no modern material by that name.
      * 
