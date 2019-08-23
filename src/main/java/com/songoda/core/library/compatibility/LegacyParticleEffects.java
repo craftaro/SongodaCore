@@ -69,7 +69,7 @@ public class LegacyParticleEffects {
 
         private Type(String name) {
             this.name = name;
-            this.minVersion = ServerVersion.V1_7;
+            this.minVersion = ServerVersion.UNKNOWN;
             this.maxVersion = null;
         }
 
