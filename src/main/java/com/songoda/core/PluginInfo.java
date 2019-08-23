@@ -1,17 +1,17 @@
 package com.songoda.core;
 
-import com.songoda.core.modules.Module;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PluginInfo {
 
-    private JavaPlugin javaPlugin;
-    private int songodaId;
-    private List<Module> modules = new ArrayList<>();
+    private final JavaPlugin javaPlugin;
+    private final int songodaId;
+    private final List<PluginInfoModule> modules = new ArrayList<>();
     private String latestVersion;
     private String notification;
     private String changeLog;
@@ -63,13 +63,13 @@ public class PluginInfo {
         this.json = json;
     }
 
-    public Module addModule(Module module) {
+    public PluginInfoModule addModule(PluginInfoModule module) {
         modules.add(module);
         return module;
     }
 
-    public List<Module> getModules() {
-        return new ArrayList<>(modules);
+    public List<PluginInfoModule> getModules() {
+        return Collections.unmodifiableList(modules);
     }
 
     public JavaPlugin getJavaPlugin() {

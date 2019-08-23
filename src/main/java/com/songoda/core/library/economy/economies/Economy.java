@@ -12,6 +12,12 @@ public interface Economy {
     String getName();
 
     /**
+     * Check to see if the economy plugin being used is active
+     * @return true if the plugin is loaded and active
+     */
+    boolean isEnabled();
+
+    /**
      * Check to see if a player has at least some balance available
      *
      * @param player player to check

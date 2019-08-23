@@ -1,10 +1,17 @@
 package com.songoda.core.library.locale;
 
-import com.songoda.core.SongodaCore;
-import com.songoda.core.modules.common.LocaleModule;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,11 +227,11 @@ public class Locale {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             for (int lineNumber = 0; (line = reader.readLine()) != null; lineNumber++) {
-                if (line.trim().isEmpty() || line.startsWith("#") /* Comment */) continue;
+                if ((line = line.trim()).isEmpty() || line.startsWith("#") /* Comment */) continue;
 
                 Matcher matcher = NODE_PATTERN.matcher(line);
                 if (!matcher.find()) {
-                    System.err.println("Invalid locale syntax at (line=" + lineNumber + ")");
+                    System.err.println("Invalid locale syntax at (line=" + lineNumber + "): " + line);
                     continue;
                 }
 
@@ -244,7 +251,7 @@ public class Locale {
      * @return applied message
      */
     private Message supplyPrefix(Message message) {
-        return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[Plugin]"));
+        return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[" + plugin.getName() + "]"));
     }
 
     /**

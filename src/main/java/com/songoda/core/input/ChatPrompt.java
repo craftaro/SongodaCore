@@ -1,34 +1,44 @@
-package com.songoda.core.utils;
+package com.songoda.core.input;
 
-import com.songoda.core.SongodaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.plugin.Plugin;
 
-public class AbstractChatConfirm implements Listener {
+public class ChatPrompt implements Listener {
 
     private static final List<UUID> registered = new ArrayList<>();
 
-    private final Player player;
     private final ChatConfirmHandler handler;
-
     private OnClose onClose = null;
     private Listener listener;
 
-    public AbstractChatConfirm(Player player, ChatConfirmHandler hander) {
-        this.player = player;
+    private ChatPrompt(Player player, ChatConfirmHandler hander) {
         this.handler = hander;
-        player.closeInventory();
-        initializeListeners(SongodaCore.getHijackedPlugin());
         registered.add(player.getUniqueId());
+    }
+
+    public static ChatPrompt showPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
+        ChatPrompt prompt = new ChatPrompt(player, hander);
+        prompt.startListener(plugin);
+        player.closeInventory();
+        return prompt;
+    }
+
+    public static ChatPrompt showPrompt(Plugin plugin, Player player, String message, ChatConfirmHandler hander) {
+        ChatPrompt prompt = new ChatPrompt(player, hander);
+        prompt.startListener(plugin);
+        player.closeInventory();
+        if (message != null)
+            player.sendMessage(message);
+        return prompt;
     }
 
     public static boolean isRegistered(Player player) {
@@ -39,15 +49,19 @@ public class AbstractChatConfirm implements Listener {
         return registered.remove(player.getUniqueId());
     }
 
-    public void initializeListeners(JavaPlugin plugin) {
+    public ChatPrompt setOnClose(OnClose onClose) {
+        this.onClose = onClose;
+        return this;
+    }
 
+    private void startListener(Plugin plugin) {
         this.listener = new Listener() {
             @EventHandler
             public void onChat(AsyncPlayerChatEvent event) {
                 Player player = event.getPlayer();
-                if (!AbstractChatConfirm.isRegistered(player)) return;
+                if (!ChatPrompt.isRegistered(player)) return;
 
-                AbstractChatConfirm.unregister(player);
+                ChatPrompt.unregister(player);
                 event.setCancelled(true);
 
                 ChatConfirmEvent chatConfirmEvent = new ChatConfirmEvent(player, event.getMessage());
@@ -61,23 +75,18 @@ public class AbstractChatConfirm implements Listener {
             }
         };
 
-
-        Bukkit.getPluginManager().registerEvents(listener, SongodaCore.getHijackedPlugin());
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public void setOnClose(OnClose onClose) {
-        this.onClose = onClose;
-    }
-
-    public interface ChatConfirmHandler {
+    public static interface ChatConfirmHandler {
         void onChat(ChatConfirmEvent event);
     }
 
-    public interface OnClose {
+    public static interface OnClose {
         void onClose();
     }
 
-    public class ChatConfirmEvent {
+    public static class ChatConfirmEvent {
 
         private final Player player;
         private final String message;

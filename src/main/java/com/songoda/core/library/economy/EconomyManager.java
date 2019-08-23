@@ -27,9 +27,11 @@ public class EconomyManager {
         for (EconomyType type : EconomyType.values()) {
             if (pluginManager.isPluginEnabled(type.plugin)) {
                 Economy econ = type.getInstance();
-                registeredEconomies.put(type, econ);
-                if (defaultEcon == null)
-                    defaultEcon = econ;
+                if(econ.isEnabled()) {
+                    registeredEconomies.put(type, econ);
+                    if (defaultEcon == null)
+                        defaultEcon = econ;
+                }
             }
         }
     }

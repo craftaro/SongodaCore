@@ -16,6 +16,11 @@ public class ReserveEconomy implements Economy {
     }
 
     @Override
+    public boolean isEnabled() {
+        return Reserve.instance().isEnabled();
+    }
+
+    @Override
     public String getName() {
         return "Reserve";
     }

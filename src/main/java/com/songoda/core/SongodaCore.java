@@ -1,7 +1,6 @@
 package com.songoda.core;
 
 import com.songoda.core.library.commands.CommandManager;
-import com.songoda.core.modules.Module;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -142,7 +141,7 @@ public class SongodaCore {
 
             plugin.setJson(json);
 
-            for (Module module : plugin.getModules()) {
+            for (PluginInfoModule module : plugin.getModules()) {
                 module.run(plugin);
             }
         } catch (IOException e) {

@@ -17,6 +17,11 @@ public class PlayerPointsEconomy implements Economy {
     }
 
     @Override
+    public boolean isEnabled() {
+        return playerPoints.isEnabled();
+    }
+
+    @Override
     public String getName() {
         return "PlayerPoints";
     }

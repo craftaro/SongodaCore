@@ -1,5 +1,6 @@
 package com.songoda.core.library.locale;
 
+import java.util.regex.Matcher;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -104,15 +105,16 @@ public class Message {
     }
 
     /**
-     *  Replace the provided placeholder with the
-     *  provided object
+     * Replace the provided placeholder with the provided object. <br />
+     * Interchangeably Supports {@code %value%} and {@code {value}}
      *
      * @param placeholder the placeholder to replace
      * @param replacement the replacement object
      * @return the modified Message
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
-        this.message = message.replace("%" + placeholder + "%", replacement.toString());
+        final String place = Matcher.quoteReplacement(placeholder);
+        this.message = message.replaceAll("%" + place + "%|\\{" + place +"\\}", Matcher.quoteReplacement(replacement.toString()));
         return this;
     }
 

@@ -1,7 +1,7 @@
 package com.songoda.core.modules.common;
 
 import com.songoda.core.library.locale.Locale;
-import com.songoda.core.modules.Module;
+import com.songoda.core.PluginInfoModule;
 import com.songoda.core.PluginInfo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class LocaleModule implements Module {
+public class LocaleModule implements PluginInfoModule {
 
     @Override
     public void run(PluginInfo plugin) {
