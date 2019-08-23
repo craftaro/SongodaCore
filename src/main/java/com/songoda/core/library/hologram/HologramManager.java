@@ -136,5 +136,4 @@ public class HologramManager {
         if (defaultHolo != null)
             defaultHolo.updateHologram(location, lines);
     }
-
 }
