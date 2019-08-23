@@ -32,12 +32,15 @@ public class Config {
     }
 
     public Category getCategory(String key) {
-        return categories.get(key);
+        for (String string : categories.keySet())
+            if (string.equalsIgnoreCase(key))
+                return categories.get(string);
+        return null;
     }
 
     public Setting getSetting(String key) {
         String[] split = key.split(".", 2);
-        Category category = categories.get(split[0]);
+        Category category = getCategory(split[0]);
         return category.getSetting(split[1]);
     }
 

@@ -34,7 +34,10 @@ public class Category {
     }
 
     public Setting getSetting(String setting) {
-        return settings.get(setting);
+        for (String string : settings.keySet())
+            if (string.equalsIgnoreCase(setting))
+                return settings.get(string);
+        return null;
     }
 
     public String getKey() {
