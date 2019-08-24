@@ -104,6 +104,10 @@ public class Config {
         return null;
     }
 
+    public List<Category> getCategories() {
+        return new ArrayList<>(categories.values());
+    }
+
     public boolean hasCategory(String key) {
         return getCategory(key) != null;
     }

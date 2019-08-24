@@ -116,11 +116,11 @@ public class SettingsManager implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 27, plugin.getName() + " Settings Manager");
 
         int slot = 10;
-        for (String key : config.getFileConfiguration().getDefaultSection().getKeys(false)) {
+        for (Category category : config.getCategories()) {
             ItemStack item = new ItemStack(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.LEGACY_WOOL : Material.valueOf("WOOL"), 1, (byte) (slot - 9));
             ItemMeta meta = item.getItemMeta();
             meta.setLore(Collections.singletonList(Methods.formatText("&6Click To Edit This Category.")));
-            meta.setDisplayName(Methods.formatText("&f&l" + key));
+            meta.setDisplayName(Methods.formatText("&f&l" + category.getKey()));
             item.setItemMeta(meta);
             inventory.setItem(slot, item);
             slot++;
