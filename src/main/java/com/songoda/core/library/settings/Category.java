@@ -10,13 +10,13 @@ public class Category extends Narrow {
 
     protected final Map<String, FoundSetting> defaultSettings = new LinkedHashMap<>();
 
-    private final List<String> comments = new ArrayList<>();
+    private final Map<String, List<String>> comments = new HashMap<>();
 
     public Category(Config config, String key, String... comments) {
         this.config = config;
         this.key = key;
         if (comments != null)
-            this.comments.addAll(Arrays.asList(comments));
+            this.comments.put(null, Arrays.asList(comments));
     }
 
     public Category(Config config, String key) {
@@ -26,7 +26,7 @@ public class Category extends Narrow {
     public Category addAll(Category category) {
         addSettings(category);
         if (comments.size() == 0)
-            addComments(category.getComments());
+            comments.putAll(category.getAllComments());
         return this;
     }
 
@@ -73,12 +73,17 @@ public class Category extends Narrow {
         return key;
     }
 
-    public void addComments(List<String> commments) {
-        this.comments.addAll(commments);
+    public Category addComment(String key, String... comments) {
+        this.comments.put(key, Arrays.asList(comments));
+        return this;
     }
 
-    public List<String> getComments() {
-        return Collections.unmodifiableList(comments);
+    public List<String> getComments(String key) {
+        return Collections.unmodifiableList(comments.get(key));
+    }
+
+    public Map<String, List<String>> getAllComments() {
+        return Collections.unmodifiableMap(comments);
     }
 
     public Config getConfig() {

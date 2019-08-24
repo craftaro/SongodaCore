@@ -6,7 +6,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Config {
 
@@ -16,7 +19,8 @@ public class Config {
     private FileConfiguration fileConfiguration;
     private File configFile;
 
-    private boolean allowUserExpansion, categorySpacing, commentSpacing = true;
+    private boolean allowUserExpansion = true, categorySpacing = true,
+            commentSpacing = true, showNullCategoryComments = true;
 
     private final Map<String, Category> categories = new LinkedHashMap<>();
 
@@ -34,7 +38,7 @@ public class Config {
     /**
      * This allows users to expand the config and create new lines as well as
      * remove older lines. If this is disabled the config will regenerate
-     * removed lines as well as add new lines that are added in the future.
+     * removed lines as well as add new lines that are added in the future
      *
      * @param allowUserExpansion allow users to expand config, otherwise don't
      * @return this class
@@ -45,7 +49,7 @@ public class Config {
     }
 
     /**
-     * This will add two spaces above each category.
+     * This will add two spaces above each category
      *
      * @param categorySpacing add two spaces above each category, otherwise don't
      * @return this class
@@ -57,13 +61,26 @@ public class Config {
 
     /**
      * This will add a single space above each commented setting. Useful when
-     * you don't want your comments to stand out.
+     * you don't want your comments to stand out
      *
-     * @param commentSpacing add a space above each comment, otherwise don't.
+     * @param commentSpacing add a space above each comment, otherwise don't
      * @return this class
      */
     public Config commentSpacing(boolean commentSpacing) {
         this.commentSpacing = commentSpacing;
+        return this;
+    }
+
+    /**
+     * This will add a single space above each commented setting. Useful when
+     * you don't want your comments to stand out
+     *
+     * @param showNullCategoryComments shows a placeholder comment when null,
+     *                                 otherwise doesn't
+     * @return this class
+     */
+    public Config showNullCategoryComments(boolean showNullCategoryComments) {
+        this.showNullCategoryComments = showNullCategoryComments;
         return this;
     }
 
@@ -217,14 +234,26 @@ public class Config {
                         if (!category.contains("."))
                             config.append("#").append("\n");
                         try {
-                            Category categoryObj = getCategory(category);
-                            if (categoryObj != null) {
-                                config.append(new String(new char[tabChange]).replace('\0', ' '));
-                                for (String l : categoryObj.getComments())
-                                    config.append("# ").append(l).append("\n");
+                            String categoryStr = category;
+                            String commentKey = null;
+                            if (category.contains(".")) {
+                                String[] split = category.split("\\.", 2);
+                                commentKey = split[1];
+                                categoryStr = split[0];
                             }
-                        } catch (IllegalArgumentException e) {
-                            config.append("# ").append(category).append("\n");
+
+                            Category categoryObj = getCategory(categoryStr);
+                            if (categoryObj.getComments(commentKey).size() == 0)
+                                throw new NullPointerException();
+                            for (String l : categoryObj.getComments(commentKey)) {
+                                config.append(new String(new char[tabChange]).replace('\0', ' '));
+                                config.append("# ").append(l).append("\n");
+                            }
+                        } catch (IllegalArgumentException | NullPointerException e) {
+                            if (showNullCategoryComments) {
+                                config.append(new String(new char[tabChange]).replace('\0', ' '));
+                                config.append("# ").append(category).append("\n");
+                            }
                         }
                         if (!category.contains("."))
                             config.append("#").append("\n");
