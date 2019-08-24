@@ -6,10 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Config {
 
@@ -19,16 +16,68 @@ public class Config {
     private FileConfiguration fileConfiguration;
     private File configFile;
 
-    private final Map<String, Category> categories = new HashMap<>();
+    private boolean allowUserExpansion, categorySpacing, commentSpacing = true;
+
+    private final Map<String, Category> categories = new LinkedHashMap<>();
 
     public Config(JavaPlugin plugin, String folderName, String fileName) {
         this.plugin = plugin;
         this.folderName = folderName;
         this.fileName = fileName;
+        this.reload();
+    }
+
+    public Config(JavaPlugin plugin, String fileName) {
+        this(plugin, "", fileName);
+    }
+
+    /**
+     * This allows users to expand the config and create new lines as well as
+     * remove older lines. If this is disabled the config will regenerate
+     * removed lines as well as add new lines that are added in the future.
+     *
+     * @param allowUserExpansion allow users to expand config, otherwise don't
+     * @return this class
+     */
+    public Config allowUserExpansion(boolean allowUserExpansion) {
+        this.allowUserExpansion = allowUserExpansion;
+        return this;
+    }
+
+    /**
+     * This will add two spaces above each category.
+     *
+     * @param categorySpacing add two spaces above each category, otherwise don't
+     * @return this class
+     */
+    public Config categorySpacing(boolean categorySpacing) {
+        this.categorySpacing = categorySpacing;
+        return this;
+    }
+
+    /**
+     * This will add a single space above each commented setting. Useful when
+     * you don't want your comments to stand out.
+     *
+     * @param commentSpacing add a space above each comment, otherwise don't.
+     * @return this class
+     */
+    public Config commentSpacing(boolean commentSpacing) {
+        this.commentSpacing = commentSpacing;
+        return this;
     }
 
     public Category addCategory(String key, String... comments) {
-        return categories.put(key, new Category(this, key, comments));
+        return addCategory(new Category(this, key, comments));
+    }
+
+    public Category addCategory(Category category) {
+        if (categories.containsKey(category.getKey()))
+            return categories.get(category.getKey()).addAll(category);
+        else {
+            categories.put(category.getKey(), category);
+            return category;
+        }
     }
 
     public Category getCategory(String key) {
@@ -38,46 +87,86 @@ public class Config {
         return null;
     }
 
+    public boolean hasCategory(String key) {
+        return getCategory(key) != null;
+    }
+
     public Setting getSetting(String key) {
-        String[] split = key.split(".", 2);
+        String[] split = key.split("\\.", 2);
+        if (split.length != 2) return null;
         Category category = getCategory(split[0]);
+        if (category == null) return null;
         return category.getSetting(split[1]);
     }
 
-    public Set<Setting> getSettings() {
-        Set<Setting> settings = new HashSet<>();
+    public Setting getDefaultSetting(String key) {
+        String[] split = key.split("\\.", 2);
+        if (split.length != 2) return null;
+        Category category = getCategory(split[0]);
+        if (category == null) return null;
+        return category.getDefaultSetting(split[1]);
+    }
+
+    public List<FoundSetting> getSettings() {
+        List<FoundSetting> settings = new ArrayList<>();
         for (Category category : categories.values()) {
             settings.addAll(category.getSettings());
         }
         return settings;
     }
 
-    public void reload() {
-        if (configFile == null) {
-            configFile = new File(plugin.getDataFolder() + folderName, fileName);
+    public List<FoundSetting> getDefaultSettings() {
+        List<FoundSetting> settings = new ArrayList<>();
+        for (Category category : categories.values()) {
+            settings.addAll(category.getDefaultSettings());
         }
-        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
-        this.setup();
+        return settings;
+    }
+
+    private void loadExisting() {
+        this.categories.clear();
+        for (String categoryStr : fileConfiguration.getKeys(false)) {
+            Category category = new Category(this, categoryStr);
+            for (String settingStr : fileConfiguration.getConfigurationSection(categoryStr).getKeys(true)) {
+                category.addSetting(settingStr, fileConfiguration.get(categoryStr + "." + settingStr));
+            }
+            addCategory(category);
+        }
+    }
+
+    public void reload() {
+        if (this.configFile == null)
+            this.configFile = new File(plugin.getDataFolder() + folderName, fileName);
+
+        this.fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
+
+        if (allowUserExpansion)
+            this.loadExisting();
     }
 
     public void setup() {
-        FileConfiguration config = plugin.getConfig();
-
-        for (Setting setting : getSettings()) {
-            config.addDefault(setting.getCompleteKey(), setting.getDefaultValue());
+        if (fileConfiguration.getKeys(false).size() == 0 || !allowUserExpansion) {
+            for (FoundSetting setting : getDefaultSettings()) {
+                fileConfiguration.addDefault(setting.getCompleteKey(), setting.getDefaultValue());
+                setting.getCategory().addSetting(setting);
+            }
         }
-        plugin.getConfig().options().copyDefaults(true);
+
+        fileConfiguration.options().copyDefaults(true);
         save();
     }
 
-    void save() {
+    public void save() {
+
         // Delete old config values.
-        for (String line : fileConfiguration.getConfigurationSection("").getKeys(true)) {
-            if (line.contains(".") && getSetting(line) == null)
-                fileConfiguration.set(line, null);
-            else if (!line.contains(".")) {
-                if (((MemorySection) fileConfiguration.get(line)).getKeys(true).size() == 0)
+        if (!allowUserExpansion) {
+            for (String line : fileConfiguration.getKeys(true)) {
+                if (line.contains(".") && getDefaultSetting(line) == null)
                     fileConfiguration.set(line, null);
+                else if (!line.contains(".")) {
+                    if (((MemorySection) fileConfiguration.get(line)).getKeys(true).size() == 0)
+                        fileConfiguration.set(line, null);
+                }
             }
         }
 
@@ -119,7 +208,8 @@ public class Config {
                         currentTab = tabChange + 2;
 
                         if (!first) {
-                            config.append("\n\n");
+                            if (categorySpacing)
+                                config.append("\n\n");
                         } else {
                             first = false;
                         }
@@ -128,10 +218,11 @@ public class Config {
                             config.append("#").append("\n");
                         try {
                             Category categoryObj = getCategory(category);
-
-                            config.append(new String(new char[tabChange]).replace('\0', ' '));
-                            for (String l : categoryObj.getComments())
-                                config.append("# ").append(l).append("\n");
+                            if (categoryObj != null) {
+                                config.append(new String(new char[tabChange]).replace('\0', ' '));
+                                for (String l : categoryObj.getComments())
+                                    config.append("# ").append(l).append("\n");
+                            }
                         } catch (IllegalArgumentException e) {
                             config.append("# ").append(category).append("\n");
                         }
@@ -150,9 +241,10 @@ public class Config {
                 }
 
                 String key = category + "." + (line.split(":")[0].trim());
-                for (Setting setting : getSettings()) {
-                    if (!setting.getCompleteKey().equals(key) || setting.getComments() == null) continue;
-                    config.append("  ").append("\n");
+                for (FoundSetting setting : getSettings()) {
+                    if (!setting.getCompleteKey().equals(key) || setting.getComments().length == 0) continue;
+                    if (commentSpacing)
+                        config.append("  ").append("\n");
                     for (String l : setting.getComments()) {
                         config.append(new String(new char[currentTab]).replace('\0', ' '));
                         config.append("# ").append(l).append("\n");
@@ -167,8 +259,7 @@ public class Config {
         try {
             if (!plugin.getDataFolder().exists())
                 plugin.getDataFolder().mkdir();
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(new File(plugin.getDataFolder() + File.separator + "config.yml")));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
             writer.write(config.toString());
             writer.flush();
             writer.close();

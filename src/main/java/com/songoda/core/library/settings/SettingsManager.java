@@ -160,10 +160,10 @@ public class SettingsManager implements Listener {
 
             Setting setting = this.config.getSetting(fKey);
 
-            if (setting != null && setting.getComments() != null) {
+            if (setting instanceof FoundSetting && ((FoundSetting)setting).getComments() != null) {
                 lore.add("");
 
-                String comment = String.join(" ", setting.getComments());
+                String comment = String.join(" ", ((FoundSetting)setting).getComments());
 
                 int lastIndex = 0;
                 for (int n = 0; n < comment.length(); n++) {
