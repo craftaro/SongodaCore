@@ -155,7 +155,9 @@ public class Config {
         for (String categoryStr : fileConfiguration.getKeys(false)) {
             Category category = new Category(this, categoryStr);
             for (String settingStr : fileConfiguration.getConfigurationSection(categoryStr).getKeys(true)) {
-                category.addSetting(settingStr, fileConfiguration.get(categoryStr + "." + settingStr));
+                Object object = fileConfiguration.get(categoryStr + "." + settingStr);
+                if (!(object instanceof MemorySection))
+                category.addSetting(settingStr, object);
             }
             addCategory(category);
         }

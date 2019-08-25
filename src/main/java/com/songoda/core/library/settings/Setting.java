@@ -71,6 +71,14 @@ public class Setting {
         return getConfig().getString(getCompleteKey());
     }
 
+    public Object getObject() {
+        return getString(null);
+    }
+
+    public Object getObject(Object def) {
+        return getConfig().get(getCompleteKey());
+    }
+
     public char getChar() {
         return getChar('0');
     }

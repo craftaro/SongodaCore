@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * Created by songoda on 6/4/2017.
  */
-public class SettingsManager implements Listener {
+public class SettingsManagerOld implements Listener {
 
     private final JavaPlugin plugin;
     private final Config config;
@@ -30,7 +30,7 @@ public class SettingsManager implements Listener {
     private Map<Player, String> cat = new HashMap<>();
     private Map<Player, String> current = new HashMap<>();
 
-    public SettingsManager(Config config) {
+    public SettingsManagerOld(Config config) {
         this.plugin = config.getPlugin();
         this.config = config;
         Bukkit.getPluginManager().registerEvents(this, plugin);

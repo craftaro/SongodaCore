@@ -21,7 +21,7 @@
     <repositories>
         <repository>
             <id>private</id>
-            <url>http://repo.songoda.com/artifactory/private/</url>
+            <url>https://repo.songoda.com/artifactory/private/</url>
         </repository>
         <!-- sk89q-repo and spigot-repo are required for worldguard -->
         <repository>
@@ -46,8 +46,8 @@
         </dependency>
         <dependency>
             <groupId>com.sainttx.holograms</groupId>
-            <artifactId>holograms</artifactId>
-            <version>2.9.1-SNAPSHOT</version>
+            <artifactId>Holograms</artifactId>
+            <version>2.9.1</version>
         </dependency>
         <dependency>
             <groupId>net.tnemc</groupId>
