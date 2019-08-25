@@ -21,7 +21,7 @@
     <repositories>
         <repository>
             <id>private</id>
-            <url>http://repo.songoda.com/artifactory/private/</url>
+            <url>https://repo.songoda.com/artifactory/private/</url>
         </repository>
         <!-- sk89q-repo and spigot-repo are required for worldguard -->
         <repository>
