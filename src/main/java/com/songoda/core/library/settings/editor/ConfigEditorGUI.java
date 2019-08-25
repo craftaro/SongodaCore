@@ -28,7 +28,7 @@ public class ConfigEditorGUI extends AbstractGUI {
         this.narrow = narrow;
         this.narrowed = narrowed;
         this.categories = categories;
-        init("test", 54);
+        init("Settings Editor", 54);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ConfigEditorGUI extends AbstractGUI {
 
         createButton(0, LegacyMaterials.getMaterial("OAK_FENCE_GATE").getMaterial(), "Back");
         registerClickable(0, ((player1, inventory1, cursor, slot, type) ->
-                categories.init("test", categories.getInventory().getSize())));
+                categories.init("Settings Editor", categories.getInventory().getSize())));
 
         List<String> ran = new ArrayList<>();
         int j = 9;
@@ -48,7 +48,7 @@ public class ConfigEditorGUI extends AbstractGUI {
 
             if (!ran.contains(key)) {
                 if (canNarrow) {
-                    createButton(j, Material.STONE, key);
+                    createButton(j, LegacyMaterials.BOOK.getMaterial(), "&9&l" + key);
                     registerClickable(j, ((player1, inventory1, cursor, slot, type) ->
                             new ConfigEditorGUI(plugin, player1, narrow.narrow(key), key, categories)));
                 } else {
@@ -59,14 +59,14 @@ public class ConfigEditorGUI extends AbstractGUI {
                     StringBuilder value = new StringBuilder("&a");
                     if (config.isString(setting.getCompleteKey())) {
                         value.append(setting.getString());
-                        material = LegacyMaterials.getMaterial("PAPER").getMaterial();
+                        material = LegacyMaterials.PAPER.getMaterial();
                         registerClickable(j, ((player1, inventory1, cursor, slot, type) -> {
                             ChatPrompt prompt = ChatPrompt.showPrompt(plugin, player, "Enter your new value.", event ->
                                     config.set(setting.getCompleteKey(), event.getMessage().trim()));
-                            prompt.setOnClose(() -> init("test", inventory.getSize()));
+                            prompt.setOnClose(() -> init("Settings Editor", inventory.getSize()));
                         }));
                     } else if (isNumber(setting)) {
-                        material = LegacyMaterials.getMaterial("CLOCK").getMaterial();
+                        material = LegacyMaterials.CLOCK.getMaterial();
                         registerClickable(j, ((player1, inventory1, cursor, slot, type) -> {
                             ChatPrompt prompt = ChatPrompt.showPrompt(plugin, player, "Enter your new value.", event -> {
                                 if (config.isInt(setting.getCompleteKey())) {
@@ -77,7 +77,7 @@ public class ConfigEditorGUI extends AbstractGUI {
                                     config.set(setting.getCompleteKey(), Long.parseLong(event.getMessage().trim()));
                                 }
                             });
-                            prompt.setOnClose(() -> init("test", inventory.getSize()));
+                            prompt.setOnClose(() -> init("Settings Editor", inventory.getSize()));
                         }));
                         if (config.isInt(setting.getCompleteKey())) {
                             value.append(setting.getInt());
@@ -88,10 +88,16 @@ public class ConfigEditorGUI extends AbstractGUI {
                         }
                     } else if (config.isBoolean(setting.getCompleteKey())) {
                         value.append(setting.getBoolean());
-                        material = LegacyMaterials.getMaterial("LEVER").getMaterial();
+                        material = LegacyMaterials.LEVER.getMaterial();
                         registerClickable(j, ((player1, inventory1, cursor, slot, type) -> {
                             config.set(setting.getCompleteKey(), !setting.getBoolean());
                             constructGUI();
+                        }));
+                    } else if (config.isList(setting.getCompleteKey())) {
+                        value.append(setting.getStringList());
+                        material = LegacyMaterials.WRITABLE_BOOK.getMaterial();
+                        registerClickable(j, ((player1, inventory1, cursor, slot, type) -> {
+                            new ConfigListEditorGUI(plugin, player, setting, this);
                         }));
                     } else {
                         value.append("&cPreview Failed");
@@ -99,7 +105,7 @@ public class ConfigEditorGUI extends AbstractGUI {
                     list.add(value.toString());
 
                     list.addAll(Arrays.asList(setting.getComments()));
-                    createButton(j, material, key, list);
+                    createButton(j, material, "&c&l" + key, list);
                 }
                 ran.add(key);
                 j++;

@@ -23,16 +23,21 @@
             <id>private</id>
             <url>https://repo.songoda.com/artifactory/private/</url>
         </repository>
+        <!-- sk89q-repo and spigot-repo are required for worldguard -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <artifactId>spigot</artifactId>
+            <version>1.14.4</version>
         </dependency>
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
@@ -57,14 +62,8 @@
         </dependency>
         <dependency>
             <groupId>net.milkbowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1</version>
+            <artifactId>vault</artifactId>
+            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

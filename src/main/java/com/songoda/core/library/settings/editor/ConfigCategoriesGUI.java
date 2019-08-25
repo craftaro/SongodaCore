@@ -23,21 +23,20 @@ public class ConfigCategoriesGUI extends AbstractGUI {
         this.plugin = plugin;
         this.config = config;
         this.selection = selection;
-        init("test", 54);
+        init("Settings Editor", 54);
     }
 
     @Override
     protected void constructGUI() {
         createButton(0, LegacyMaterials.getMaterial("OAK_FENCE_GATE").getMaterial(), "Back");
         registerClickable(0, ((player1, inventory1, cursor, slot, type) ->
-                selection.init("test", selection.getInventory().getSize())));
+                selection.init("Settings Editor", selection.getInventory().getSize())));
 
         for (int i = 9; i - 9 < config.getCategories().size(); i++) {
             Category category = config.getCategories().get(i - 9);
-            createButton(i, Material.STONE, category.getKey());
-            registerClickable(i, ((player1, inventory1, cursor, slot, type) -> {
-                new ConfigEditorGUI(plugin, player, category, null, this);
-            }));
+            createButton(i, LegacyMaterials.WRITABLE_BOOK.getMaterial(), "&9&l" + category.getKey());
+            registerClickable(i, ((player1, inventory1, cursor, slot, type) ->
+                    new ConfigEditorGUI(plugin, player, category, null, this)));
         }
     }
 

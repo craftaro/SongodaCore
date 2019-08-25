@@ -1,5 +1,6 @@
 package com.songoda.core.library.settings.editor;
 
+import com.songoda.core.library.compatibility.LegacyMaterials;
 import com.songoda.core.library.settings.Config;
 import com.songoda.core.utils.gui.AbstractGUI;
 import org.bukkit.Material;
@@ -20,14 +21,14 @@ public class ConfigSelectionGUI extends AbstractGUI {
         super(player);
         this.plugin = plugin;
         this.configs.addAll(Arrays.asList(configs));
-        init("test", 54);
+        init("Settings Editor", 9);
     }
 
     @Override
     protected void constructGUI() {
         for (int i = 0; i < configs.size(); i++) {
             Config config = configs.get(i);
-            createButton(i, Material.STONE, config.getConfigName());
+            createButton(i, LegacyMaterials.WRITABLE_BOOK.getMaterial(), "&9&l" + config.getConfigName());
             registerClickable(i, ((player1, inventory1, cursor, slot, type) ->
                     new ConfigCategoriesGUI(plugin, player, config, this)));
         }
