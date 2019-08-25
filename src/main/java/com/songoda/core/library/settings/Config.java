@@ -157,7 +157,7 @@ public class Config {
             for (String settingStr : fileConfiguration.getConfigurationSection(categoryStr).getKeys(true)) {
                 Object object = fileConfiguration.get(categoryStr + "." + settingStr);
                 if (!(object instanceof MemorySection))
-                category.addSetting(settingStr, object);
+                    category.addSetting(settingStr, object);
             }
             addCategory(category);
         }
@@ -308,6 +308,8 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        reload();
     }
 
     public FileConfiguration getFileConfiguration() {

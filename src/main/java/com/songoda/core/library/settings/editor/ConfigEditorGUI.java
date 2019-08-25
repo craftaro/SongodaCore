@@ -105,6 +105,7 @@ public class ConfigEditorGUI extends AbstractGUI {
                 j++;
             }
         }
+        categories.getConfig().save();
     }
 
     @Override

@@ -117,7 +117,7 @@ public class SongodaCore {
 
     private void update(PluginInfo plugin) {
         try {
-            URL url = new URL("http://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
+            URL url = new URL("https://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
                     + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
                     + "&updaterVersion=" + updaterVersion);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
