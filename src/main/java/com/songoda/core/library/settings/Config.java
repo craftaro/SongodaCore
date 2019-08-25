@@ -113,33 +113,39 @@ public class Config {
     }
 
     public Setting getSetting(String key) {
-        String[] split = key.split("\\.", 2);
-        if (split.length != 2) return null;
-        Category category = getCategory(split[0]);
-        if (category == null) return null;
-        return category.getSetting(split[1]);
+        return getSetting(key, false);
     }
 
     public Setting getDefaultSetting(String key) {
+        return getSetting(key, true);
+    }
+
+    private Setting getSetting(String key, boolean isDefault) {
         String[] split = key.split("\\.", 2);
         if (split.length != 2) return null;
         Category category = getCategory(split[0]);
         if (category == null) return null;
-        return category.getDefaultSetting(split[1]);
+        if (isDefault)
+            return category.getDefaultSetting(split[1]);
+        else
+            return category.getSetting(split[1]);
     }
 
     public List<FoundSetting> getSettings() {
-        List<FoundSetting> settings = new ArrayList<>();
-        for (Category category : categories.values()) {
-            settings.addAll(category.getSettings());
-        }
-        return settings;
+        return getSettings(false);
     }
 
     public List<FoundSetting> getDefaultSettings() {
+        return getSettings(true);
+    }
+
+    private List<FoundSetting> getSettings(boolean isDefault) {
         List<FoundSetting> settings = new ArrayList<>();
         for (Category category : categories.values()) {
-            settings.addAll(category.getDefaultSettings());
+            if (isDefault)
+                settings.addAll(category.getDefaultSettings());
+            else
+                settings.addAll(category.getSettings());
         }
         return settings;
     }
@@ -304,6 +310,10 @@ public class Config {
 
     public FileConfiguration getFileConfiguration() {
         return fileConfiguration;
+    }
+
+    public String getConfigName() {
+        return fileName;
     }
 
     public JavaPlugin getPlugin() {
