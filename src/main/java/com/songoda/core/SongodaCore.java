@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -83,6 +84,8 @@ public class SongodaCore {
                     + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
                     + "&updaterVersion=" + updaterVersion);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            urlConnection.setRequestProperty("Accept", "*/*");
             urlConnection.setConnectTimeout(5000);
             InputStream is = urlConnection.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
@@ -93,6 +96,8 @@ public class SongodaCore {
             while ((numCharsRead = isr.read(charArray)) > 0) {
                 sb.append(charArray, 0, numCharsRead);
             }
+            urlConnection.disconnect();
+
             String jsonString = sb.toString();
             JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
 
@@ -107,7 +112,8 @@ public class SongodaCore {
                 module.run(plugin);
             }
         } catch (IOException e) {
-            System.out.println("Connection with Songoda servers failed...");
+            final String er = e.getMessage();
+            System.out.println("Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
         } catch (ParseException e) {
             System.out.println("Failed to parse json.");
         }
