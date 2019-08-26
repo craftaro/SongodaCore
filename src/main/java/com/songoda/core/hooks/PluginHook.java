@@ -43,7 +43,7 @@ public final class PluginHook <T extends Class> {
     protected Constructor pluginConstructor;
 
     private PluginHook(T type, String pluginName, Class handler) {
-        if (!handler.isAssignableFrom(Hook.class)) {
+        if (!Hook.class.isAssignableFrom(handler)) {
             throw new RuntimeException("Tried to register a non-Hook plugin hook! " + pluginName + " -> " + handler.getName());
         }
         this.hookGeneric = type;
