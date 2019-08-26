@@ -1,4 +1,4 @@
-package com.songoda.core.library.database;
+package com.songoda.core.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

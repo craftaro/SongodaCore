@@ -1,6 +1,6 @@
 package com.songoda.core;
 
-import com.songoda.core.library.commands.AbstractCommand;
+import com.songoda.core.commands.AbstractCommand;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

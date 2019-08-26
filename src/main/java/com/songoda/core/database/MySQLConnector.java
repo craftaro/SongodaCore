@@ -1,4 +1,4 @@
-package com.songoda.core.library.database;
+package com.songoda.core.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

@@ -1,4 +1,4 @@
-package com.songoda.core.library.compatibility;
+package com.songoda.core.compatibility;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;

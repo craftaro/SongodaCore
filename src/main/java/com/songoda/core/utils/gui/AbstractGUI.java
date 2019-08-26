@@ -1,7 +1,7 @@
 package com.songoda.core.utils.gui;
 
 import com.songoda.core.SongodaCore;
-import com.songoda.core.utils.Methods;
+import com.songoda.core.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -114,8 +114,8 @@ public abstract class AbstractGUI implements Listener {
         if (inventory == null
                 || inventory.getSize() != slots
                 || ChatColor.translateAlternateColorCodes('&', title) != player.getOpenInventory().getTitle()) {
-            this.inventory = Bukkit.getServer().createInventory(new GUIHolder(), slots, Methods.formatText(title));
-            this.setTitle = Methods.formatText(title);
+            this.inventory = Bukkit.getServer().createInventory(new GUIHolder(), slots, TextUtils.formatText(title));
+            this.setTitle = TextUtils.formatText(title);
             if (this.clickables.size() == 0)
                 registerClickables();
             if (this.onCloses.size() == 0)
@@ -142,7 +142,7 @@ public abstract class AbstractGUI implements Listener {
 
     protected ItemStack createButton(int slot, Inventory inventory, ItemStack item, String name, String... lore) {
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatText(name));
+        meta.setDisplayName(TextUtils.formatText(name));
         if (lore != null && lore.length != 0) {
             List<String> newLore = new ArrayList<>();
             for (String line : lore) {
@@ -154,13 +154,13 @@ public abstract class AbstractGUI implements Listener {
                             continue;
 
                         if (string.charAt(n) == ' ') {
-                            newLore.add(Methods.formatText("&7" + string.substring(lastIndex, n).trim()));
+                            newLore.add(TextUtils.formatText("&7" + string.substring(lastIndex, n).trim()));
                             lastIndex = n;
                         }
                     }
 
                     if (lastIndex - string.length() < 35)
-                        newLore.add(Methods.formatText("&7" + string.substring(lastIndex, string.length()).trim()));
+                        newLore.add(TextUtils.formatText("&7" + string.substring(lastIndex, string.length()).trim()));
                 }
             }
             meta.setLore(newLore);

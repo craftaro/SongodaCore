@@ -1,4 +1,4 @@
-package com.songoda.core.library.compatibility;
+package com.songoda.core.compatibility;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

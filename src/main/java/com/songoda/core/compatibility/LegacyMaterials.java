@@ -1,4 +1,4 @@
-package com.songoda.core.library.compatibility;
+package com.songoda.core.compatibility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -1187,6 +1187,16 @@ public enum LegacyMaterials {
 	}
 
 	/**
+	 * Check to see if an item matches this specific material type
+	 * 
+	 * @param item Item to check
+	 * @return true if material of the ItemStack matches this item, corrected for legacy data
+	 */
+	public boolean matches(ItemStack item) {
+		return item != null && item.getType() == material && (data == null || item.getDurability() == data); // eons ago, ItemStack.getData() would return a byte. 1.7 doesn't, though.
+	}
+
+	/**
 	 * Some blocks change to other materials when placed down. This checks to
 	 * see if this one is one of those.
 	 *
@@ -1813,9 +1823,4 @@ public enum LegacyMaterials {
 		}
 		return false;
 	}
-
-	boolean matches(ItemStack head) {
-		return head != null && head.getType() == material && (data == null || head.getDurability() == data); // eons ago, ItemStack.getData() would return a byte. 1.7 doesn't, though.
-	}
-
 }

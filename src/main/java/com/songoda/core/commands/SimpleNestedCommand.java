@@ -1,4 +1,4 @@
-package com.songoda.core.library.commands;
+package com.songoda.core.commands;
 
 import java.util.HashMap;
 import java.util.stream.Stream;

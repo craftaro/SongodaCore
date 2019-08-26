@@ -1,4 +1,4 @@
-package com.songoda.core.library.database;
+package com.songoda.core.database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

@@ -1,4 +1,4 @@
-package com.songoda.core.library.compatibility;
+package com.songoda.core.compatibility;
 
 import java.util.HashMap;
 import java.util.Map;

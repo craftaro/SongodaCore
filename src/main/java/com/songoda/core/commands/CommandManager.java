@@ -1,6 +1,6 @@
-package com.songoda.core.library.commands;
+package com.songoda.core.commands;
 
-import com.songoda.core.utils.Methods;
+import com.songoda.core.utils.TextUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import org.bukkit.command.Command;
@@ -133,7 +133,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
-        commandSender.sendMessage(Methods.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        commandSender.sendMessage(TextUtils.formatText("&7The command you entered does not exist or is spelt incorrectly."));
         return true;
     }
 
@@ -174,12 +174,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(sender, args);
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(Methods.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(Methods.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+                sender.sendMessage(TextUtils.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(TextUtils.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
             }
             return;
         }
-        sender.sendMessage(Methods.formatText("&cYou do not have permission to do that."));
+        sender.sendMessage(TextUtils.formatText("&cYou do not have permission to do that."));
     }
 
     @Override

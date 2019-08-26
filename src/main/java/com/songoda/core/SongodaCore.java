@@ -1,6 +1,6 @@
 package com.songoda.core;
 
-import com.songoda.core.library.commands.CommandManager;
+import com.songoda.core.commands.CommandManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

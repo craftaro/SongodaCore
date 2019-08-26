@@ -1,6 +1,6 @@
 package com.songoda.core.modules.common;
 
-import com.songoda.core.library.locale.Locale;
+import com.songoda.core.locale.Locale;
 import com.songoda.core.PluginInfoModule;
 import com.songoda.core.PluginInfo;
 import org.json.simple.JSONArray;
