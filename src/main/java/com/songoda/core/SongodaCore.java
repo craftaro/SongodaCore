@@ -57,7 +57,7 @@ public class SongodaCore {
             INSTANCE = new SongodaCore(plugin);
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        INSTANCE.hook(new PluginInfo(plugin, pluginID));
+        INSTANCE.register(plugin, pluginID);
     }
 
     public SongodaCore(JavaPlugin javaPlugin) {
@@ -68,51 +68,13 @@ public class SongodaCore {
         Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
     }
 
-    private class EventListener implements Listener {
-        @EventHandler
-        void onLogin(PlayerLoginEvent event) {
-            // don't spam players with update checks
-            final Player player = event.getPlayer();
-            long now = System.currentTimeMillis();
-            Long last = lastCheck.get(player.getUniqueId());
-            if(last != null && now - 10000 < last) return;
-            lastCheck.put(player.getUniqueId(), now);
-            // is this player good to revieve update notices?
-            if (!event.getPlayer().isOp() && !player.hasPermission("songoda.updatecheck")) return;
-            // check for updates! ;)
-            for (PluginInfo plugin : getPlugins()) {
-                if (plugin.getNotification() != null && plugin.getJavaPlugin().isEnabled())
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin.getJavaPlugin(), () ->
-                            player.sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
-            }
-        }
-
-        @EventHandler
-        void onDisable(PluginDisableEvent event) {
-            // don't track disabled plugins
-            PluginInfo pi = registeredPlugins.stream().filter(p -> event.getPlugin() == p.getJavaPlugin()).findFirst().orElse(null);
-            if(pi != null) {
-                registeredPlugins.remove(pi);
-            }
-            if(event.getPlugin() == piggybackedPlugin) {
-                // uh-oh! Abandon ship!!
-                Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
-                // can we move somewhere else?
-                if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
-                    // move ourselves to this plugin
-                    piggybackedPlugin = pi.getJavaPlugin();
-                    Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
-                    Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
-                    CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-                }
-            }
-        }
-    }
-
-    private void hook(PluginInfo plugin) {
-        System.out.println(getPrefix() + "Hooked " + plugin.getJavaPlugin().getName() + ".");
-        registeredPlugins.add(plugin);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin.getJavaPlugin(), () -> update(plugin), 20L);
+    private void register(JavaPlugin plugin, int pluginID) {
+        System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
+        PluginInfo info = new PluginInfo(plugin, pluginID);
+        // don't forget to check for language pack updates ;)
+        info.addModule(new LocaleModule());
+        registeredPlugins.add(info);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 20L);
     }
 
     private void update(PluginInfo plugin) {
@@ -169,5 +131,46 @@ public class SongodaCore {
 
     public static SongodaCore getInstance() {
         return INSTANCE;
+    }
+
+    private class EventListener implements Listener {
+        @EventHandler
+        void onLogin(PlayerLoginEvent event) {
+            // don't spam players with update checks
+            final Player player = event.getPlayer();
+            long now = System.currentTimeMillis();
+            Long last = lastCheck.get(player.getUniqueId());
+            if(last != null && now - 10000 < last) return;
+            lastCheck.put(player.getUniqueId(), now);
+            // is this player good to revieve update notices?
+            if (!event.getPlayer().isOp() && !player.hasPermission("songoda.updatecheck")) return;
+            // check for updates! ;)
+            for (PluginInfo plugin : getPlugins()) {
+                if (plugin.getNotification() != null && plugin.getJavaPlugin().isEnabled())
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin.getJavaPlugin(), () ->
+                            player.sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
+            }
+        }
+
+        @EventHandler
+        void onDisable(PluginDisableEvent event) {
+            // don't track disabled plugins
+            PluginInfo pi = registeredPlugins.stream().filter(p -> event.getPlugin() == p.getJavaPlugin()).findFirst().orElse(null);
+            if(pi != null) {
+                registeredPlugins.remove(pi);
+            }
+            if(event.getPlugin() == piggybackedPlugin) {
+                // uh-oh! Abandon ship!!
+                Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
+                // can we move somewhere else?
+                if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
+                    // move ourselves to this plugin
+                    piggybackedPlugin = pi.getJavaPlugin();
+                    Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
+                    Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
+                    CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+                }
+            }
+        }
     }
 }
