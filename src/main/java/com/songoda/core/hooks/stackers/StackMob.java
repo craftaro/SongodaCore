@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.stackers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import uk.antiperson.stackmob.api.EntityManager;
 import uk.antiperson.stackmob.api.StackedEntity;
@@ -10,8 +11,44 @@ public class StackMob extends Stacker {
     private final EntityManager plugin;
 
     public StackMob() {
-        this.plugin = new EntityManager((uk.antiperson.stackmob.StackMob)
-                Bukkit.getPluginManager().getPlugin("StackMob"));
+        this.plugin = new EntityManager((uk.antiperson.stackmob.StackMob) Bukkit.getPluginManager().getPlugin("StackMob"));
+    }
+
+    @Override
+    public String getName() {
+        return "StackMob";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsItemStacking() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsEntityStacking() {
+        return true;
+    }
+
+    /**
+     * Don't do it.
+     */
+    @Override
+    public void setItemAmount(Item item, int amount) {
+        // idk, if you ignored the warnings and still use this method, we can at least try to help out
+        item.getItemStack().setAmount(amount);
+    }
+
+    /**
+     * If you use this method, you're pretty lazy. Didn't you see supportsItemStacking()?
+     */
+    @Override
+    public int getItemAmount(Item item) {
+        return item.getItemStack().getAmount();
     }
 
     @Override

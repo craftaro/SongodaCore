@@ -1,8 +1,18 @@
 package com.songoda.core.hooks.stackers;
 
+import com.songoda.core.hooks.Hook;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
-public abstract class Stacker {
+public abstract class Stacker implements Hook {
+
+    public abstract boolean supportsItemStacking();
+
+    public abstract boolean supportsEntityStacking();
+
+    public abstract void setItemAmount(Item item, int amount);
+
+    public abstract int getItemAmount(Item item);
 
     public abstract boolean isStacked(LivingEntity entity);
 

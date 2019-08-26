@@ -1,21 +1,9 @@
 package com.songoda.core.hooks.economies;
 
+import com.songoda.core.hooks.Hook;
 import org.bukkit.OfflinePlayer;
 
-public interface Economy {
-
-    /**
-     * Get the name of the economy plugin being used
-     *
-     * @return
-     */
-    String getName();
-
-    /**
-     * Check to see if the economy plugin being used is active
-     * @return true if the plugin is loaded and active
-     */
-    boolean isEnabled();
+public interface Economy extends Hook {
 
     /**
      * Check to see if a player has at least some balance available

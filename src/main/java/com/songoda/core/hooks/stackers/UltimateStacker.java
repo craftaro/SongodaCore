@@ -1,14 +1,62 @@
 package com.songoda.core.hooks.stackers;
 
 import com.songoda.ultimatestacker.entity.EntityStack;
+import com.songoda.ultimatestacker.utils.Methods;
+import java.lang.reflect.Method;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
 public class UltimateStacker extends Stacker {
 
     private final com.songoda.ultimatestacker.UltimateStacker plugin;
+    private boolean itemStackMethods = true;
+    private Method oldUltimateStacker_updateItemAmount;
 
     public UltimateStacker() {
         this.plugin = com.songoda.ultimatestacker.UltimateStacker.getInstance();
+        try {
+            oldUltimateStacker_updateItemAmount = com.songoda.ultimatestacker.utils.Methods.class.getDeclaredMethod("updateItemAmount", Item.class, int.class);
+            itemStackMethods = true;
+        } catch (NoSuchMethodException | SecurityException ex) {
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "UltimateStacker";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return plugin.isEnabled();
+    }
+
+    @Override
+    public boolean supportsItemStacking() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsEntityStacking() {
+        return true;
+    }
+
+    @Override
+    public void setItemAmount(Item item, int amount) {
+        if (itemStackMethods) {
+            try {
+                oldUltimateStacker_updateItemAmount.invoke(null, item, amount);
+            } catch (Exception ex) {
+                item.remove(); // not the best solution, but prevents duping
+            }
+        } else {
+            Methods.updateItemAmount(item, item.getItemStack(), amount);
+        }
+    }
+
+    @Override
+    public int getItemAmount(Item item) {
+        return Methods.getActualItemAmount(item);
     }
 
     @Override

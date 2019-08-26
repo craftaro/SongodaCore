@@ -2,9 +2,40 @@ package com.songoda.core.hooks.stackers;
 
 import com.bgsoftware.wildstacker.api.WildStackerAPI;
 import com.bgsoftware.wildstacker.api.objects.StackedEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
 public class WildStacker extends Stacker {
+
+    @Override
+    public String getName() {
+        return "WildStacker";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsItemStacking() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsEntityStacking() {
+        return true;
+    }
+
+    @Override
+    public void setItemAmount(Item item, int amount) {
+        WildStackerAPI.getStackedItem(item).setStackAmount(amount, true);
+    }
+
+    @Override
+    public int getItemAmount(Item item) {
+        return WildStackerAPI.getItemAmount(item);
+    }
 
     @Override
     public boolean isStacked(LivingEntity entity) {

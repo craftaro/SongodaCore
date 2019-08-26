@@ -27,6 +27,11 @@ public class HologramsHolograms extends Holograms {
     }
 
     @Override
+    public boolean isEnabled() {
+        return hologramPlugin.isEnabled();
+    }
+
+    @Override
     protected double defaultHeightOffset() {
         return 0.5;
     }

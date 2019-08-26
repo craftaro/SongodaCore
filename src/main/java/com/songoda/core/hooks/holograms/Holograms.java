@@ -1,12 +1,13 @@
 package com.songoda.core.hooks.holograms;
 
+import com.songoda.core.hooks.Hook;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Holograms {
+public abstract class Holograms implements Hook {
 
     protected double xOffset = 0.5;
     protected double yOffset = 0.5;
@@ -39,8 +40,6 @@ public abstract class Holograms {
     }
 
     protected abstract double defaultHeightOffset();
-
-    public abstract String getName();
 
     public void createHologram(Location location, String line) {
         createHologram(location, Collections.singletonList(line));

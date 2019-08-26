@@ -19,6 +19,11 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
     protected double defaultHeightOffset() {
         return 1;
     }
