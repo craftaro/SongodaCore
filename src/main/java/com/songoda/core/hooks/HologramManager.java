@@ -3,6 +3,7 @@ package com.songoda.core.hooks;
 import com.songoda.core.hooks.holograms.Holograms;
 import org.bukkit.Location;
 import java.util.List;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A convenience class for static access to a Holograms HookManager
@@ -12,11 +13,13 @@ public class HologramManager {
     private static final HookManager<Holograms> manager = new HookManager(Holograms.class);
 
     /**
-     * Load all supported economy plugins. <br />
-     * Note: This method should be called in your plugin's onEnable() section
+     * Load all supported economy plugins.<br/>
+	 * Note: This method should be called in your plugin's onEnable() section
+	 * 
+	 * @param plugin plugin that will be using the holograms
      */
-    public static void load() {
-        manager.load();
+    public static void load(Plugin plugin) {
+        manager.load(plugin);
     }
 
     public static HookManager getManager() {

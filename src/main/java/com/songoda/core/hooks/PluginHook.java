@@ -61,13 +61,13 @@ public final class PluginHook <T extends Class> {
         }
     }
 
-    protected static Map<PluginHook, Hook> loadHooks(Class type) {
+    protected static Map<PluginHook, Hook> loadHooks(Class type, Plugin plugin) {
         Map<PluginHook, Hook> loaded = new LinkedHashMap<>();
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         for (PluginHook hook : getHooks(type)) {
             if (pluginManager.isPluginEnabled(hook.plugin)) {
-                Hook handler = (Hook) hook.load();
+                Hook handler = (Hook) (plugin != null ? hook.load(plugin) : hook.load());
                 if (handler != null && handler.isEnabled()) {
                     loaded.put(hook, handler);
                 }

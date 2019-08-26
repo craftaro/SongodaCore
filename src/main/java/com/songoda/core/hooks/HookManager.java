@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.bukkit.plugin.Plugin;
 
 public class HookManager<T extends Hook> {
 
@@ -23,7 +24,22 @@ public class HookManager<T extends Hook> {
      */
     public void load() {
         if (!loaded) {
-            registeredHooks.putAll(PluginHook.loadHooks(typeClass).entrySet().stream()
+            registeredHooks.putAll(PluginHook.loadHooks(typeClass, null).entrySet().stream()
+                    .collect(Collectors.toMap(e -> e.getKey(), e -> (T) e.getValue())));
+            if (!registeredHooks.isEmpty()) {
+                defaultHook = (T) registeredHooks.values().iterator().next();
+            }
+            loaded = true;
+        }
+    }
+
+    /**
+     * Load all supported plugins.
+	 * @param hookingPlugin plugin to pass to the hook handler
+     */
+    public void load(Plugin hookingPlugin) {
+        if (!loaded) {
+            registeredHooks.putAll(PluginHook.loadHooks(typeClass, hookingPlugin).entrySet().stream()
                     .collect(Collectors.toMap(e -> e.getKey(), e -> (T) e.getValue())));
             if (!registeredHooks.isEmpty()) {
                 defaultHook = (T) registeredHooks.values().iterator().next();
@@ -127,8 +143,8 @@ public class HookManager<T extends Hook> {
      * @return an immutable collection of plugin names that can be used.
      */
     public List<String> getPossiblePlugins() {
-        return PluginHook.loadHooks(typeClass).values().stream()
-                .map(v -> v.getName())
+        return PluginHook.getHooks(typeClass).stream()
+                .map(v -> v.plugin)
                 .collect(Collectors.toList());
     }
 
