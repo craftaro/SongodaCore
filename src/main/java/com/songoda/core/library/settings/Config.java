@@ -1,5 +1,6 @@
 package com.songoda.core.library.settings;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -155,7 +156,9 @@ public class Config {
         for (String categoryStr : fileConfiguration.getKeys(false)) {
             Category category = new Category(this, categoryStr);
             for (String settingStr : fileConfiguration.getConfigurationSection(categoryStr).getKeys(true)) {
-                category.addSetting(settingStr, fileConfiguration.get(categoryStr + "." + settingStr));
+                Object object = fileConfiguration.get(categoryStr + "." + settingStr);
+                if (!(object instanceof MemorySection))
+                    category.addSetting(settingStr, object);
             }
             addCategory(category);
         }
@@ -177,10 +180,9 @@ public class Config {
                 fileConfiguration.addDefault(setting.getCompleteKey(), setting.getDefaultValue());
                 setting.getCategory().addSetting(setting);
             }
+            fileConfiguration.options().copyDefaults(true);
         }
-
-        fileConfiguration.options().copyDefaults(true);
-        save();
+        this.save();
     }
 
     public void save() {
@@ -303,7 +305,8 @@ public class Config {
             writer.flush();
             writer.close();
 
-        } catch (IOException e) {
+            fileConfiguration.load(configFile);
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }

@@ -69,7 +69,8 @@ public class ChatPrompt implements Listener {
                 handler.onChat(chatConfirmEvent);
 
                 if (onClose != null) {
-                    onClose.onClose();
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                            onClose.onClose(), 0L);
                 }
                 HandlerList.unregisterAll(listener);
             }
