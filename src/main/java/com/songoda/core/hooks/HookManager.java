@@ -111,6 +111,17 @@ public class HookManager<T extends Hook> {
     }
 
     /**
+     * Grab a list of all supported and loaded plugin hooks.
+     *
+     * @return an immutable collection of plugin names that are loaded.
+     */
+    public List<String> getRegisteredPlugins() {
+        return registeredHooks.keySet().stream()
+                .map(v -> v.plugin)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Get a list of all supported plugins that we can hook into.
      *
      * @return an immutable collection of plugin names that can be used.
