@@ -53,6 +53,15 @@ public class EconomyManager {
     }
 
     /**
+     * Format the given amount to a human-readable string in this currency
+     * @param amt amount to display
+     * @return a currency string as formatted by the economy plugin
+     */
+    public static String formatEconomy(double amt) {
+        return manager.isEnabled() ? manager.getCurrentHook().formatEconomy(amt) : String.valueOf(amt);
+    }
+
+    /**
      * Check to see if a player has at least some balance available. <br />
      * NOTE: using a default economy assumes that this library is shaded
      *

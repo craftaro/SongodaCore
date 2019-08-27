@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 
-public class ReserveEconomy implements Economy {
+public class ReserveEconomy extends Economy {
 
     EconomyAPI economyAPI;
 
@@ -23,6 +23,11 @@ public class ReserveEconomy implements Economy {
     @Override
     public String getName() {
         return "Reserve";
+    }
+
+    @Override
+    public String formatEconomy(double amt) {
+        return economyAPI.format(BigDecimal.valueOf(amt));
     }
 
     @Override

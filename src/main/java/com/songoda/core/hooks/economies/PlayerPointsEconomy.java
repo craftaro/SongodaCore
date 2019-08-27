@@ -4,7 +4,7 @@ import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-public class PlayerPointsEconomy implements Economy {
+public class PlayerPointsEconomy extends Economy {
 
     private final PlayerPoints playerPoints;
 

@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class VaultEconomy implements Economy {
+public class VaultEconomy extends Economy {
 
     private final net.milkbowl.vault.economy.Economy vault;
 
@@ -27,6 +27,11 @@ public class VaultEconomy implements Economy {
     @Override
     public String getName() {
         return "Vault";
+    }
+
+    @Override 
+    public String formatEconomy(double amt) {
+        return vault != null ? vault.format(amt) : super.formatEconomy(amt);
     }
 
     @Override

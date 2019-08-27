@@ -1,9 +1,10 @@
 package com.songoda.core.hooks.economies;
 
 import com.songoda.core.hooks.Hook;
+import java.text.DecimalFormat;
 import org.bukkit.OfflinePlayer;
 
-public interface Economy extends Hook {
+public abstract class Economy implements Hook {
 
     /**
      * Check to see if a player has at least some balance available
@@ -12,7 +13,7 @@ public interface Economy extends Hook {
      * @param cost minimum amount this player should have
      * @return true if this player can have this amount withdrawn
      */
-    boolean hasBalance(OfflinePlayer player, double cost);
+    public abstract boolean hasBalance(OfflinePlayer player, double cost);
 
     /**
      * Try to withdraw an amount from a player's balance
@@ -21,7 +22,7 @@ public interface Economy extends Hook {
      * @param cost amount to remove from this player
      * @return true if the total amount was withdrawn successfully
      */
-    boolean withdrawBalance(OfflinePlayer player, double cost);
+    public abstract boolean withdrawBalance(OfflinePlayer player, double cost);
 
     /**
      * Try to add an amount to a player's balance
@@ -30,5 +31,15 @@ public interface Economy extends Hook {
      * @param amount amount to add to this player
      * @return true if the total amount was added successfully
      */
-    boolean deposit(OfflinePlayer player, double amount);
+    public abstract boolean deposit(OfflinePlayer player, double amount);
+
+    /**
+     * Format the given amount to a human-readable string in this currency
+     * @param amt amount to display
+     * @return a currency string as formatted by the economy plugin
+     */
+    public String formatEconomy(double amt) {
+        DecimalFormat formatter = new DecimalFormat(amt == Math.ceil(amt) ? "#,###" : "#,###.00");
+        return "$" + formatter.format(amt);
+    }
 }
