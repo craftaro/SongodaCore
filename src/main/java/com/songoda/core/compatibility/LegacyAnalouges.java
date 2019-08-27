@@ -6,7 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Near-Materials for older servers
+ * Near-Materials for older servers 1.7+
+ * @since 2019-08-23
+ * @author jascotty2
  */
 public enum LegacyAnalouges {
 

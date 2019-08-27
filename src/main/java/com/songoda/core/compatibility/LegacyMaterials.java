@@ -5,6 +5,11 @@ import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Items that are compatible with server versions 1.7+
+ * @since 2019-08-23
+ * @author jascotty2
+ */
 public enum LegacyMaterials {
 	/*
      TODO: add another handler for getBlockItem() for materials and fallback materials

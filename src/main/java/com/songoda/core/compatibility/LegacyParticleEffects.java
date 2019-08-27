@@ -12,6 +12,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+/**
+ * Particle effects for servers 1.8 and below
+ * @since 2019-08-23
+ * @author jascotty2
+ */
 public class LegacyParticleEffects {
 
     public static enum Type {

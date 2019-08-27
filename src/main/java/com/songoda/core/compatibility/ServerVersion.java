@@ -16,9 +16,17 @@ public enum ServerVersion {
                 serverVersion = version;
     }
 
-    public static String getServerVersionString() {
-        return serverPackageVersion;
-    }
+	public boolean isLessThan(ServerVersion other) {
+		return this.ordinal() < other.ordinal();
+	}
+
+	public boolean isGreaterThan(ServerVersion other) {
+		return this.ordinal() > other.ordinal();
+	}
+
+	public static String getServerVersionString() {
+		return serverPackageVersion;
+	}
 
     public static ServerVersion getServerVersion() {
         return serverVersion;
