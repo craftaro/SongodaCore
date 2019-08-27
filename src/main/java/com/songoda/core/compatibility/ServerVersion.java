@@ -10,23 +10,32 @@ public enum ServerVersion {
     private final static String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
     private final static String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1).toUpperCase();
     private static ServerVersion serverVersion = UNKNOWN;
+    private static String serverReleaseVersion;
+
     static {
-        for (ServerVersion version : values())
-            if (serverPackageVersion.startsWith(version.name()))
+        for (ServerVersion version : values()) {
+            if (serverPackageVersion.startsWith(version.name())) {
                 serverVersion = version;
+                serverReleaseVersion = serverPackageVersion.substring(version.name().length() + 2);
+            }
+        }
     }
 
-	public boolean isLessThan(ServerVersion other) {
-		return this.ordinal() < other.ordinal();
-	}
+    public boolean isLessThan(ServerVersion other) {
+        return this.ordinal() < other.ordinal();
+    }
 
-	public boolean isGreaterThan(ServerVersion other) {
-		return this.ordinal() > other.ordinal();
-	}
+    public boolean isGreaterThan(ServerVersion other) {
+        return this.ordinal() > other.ordinal();
+    }
 
-	public static String getServerVersionString() {
-		return serverPackageVersion;
-	}
+    public static String getServerVersionString() {
+        return serverPackageVersion;
+    }
+
+    public static String getVersionReleaseNumber() {
+        return serverReleaseVersion;
+    }
 
     public static ServerVersion getServerVersion() {
         return serverVersion;
