@@ -9,14 +9,14 @@ import org.bukkit.entity.LivingEntity;
 public class UltimateStacker extends Stacker {
 
     private final com.songoda.ultimatestacker.UltimateStacker plugin;
-    private boolean itemStackMethods = true;
+    private boolean oldItemMethods = false;
     private Method oldUltimateStacker_updateItemAmount;
 
     public UltimateStacker() {
         this.plugin = com.songoda.ultimatestacker.UltimateStacker.getInstance();
         try {
             oldUltimateStacker_updateItemAmount = com.songoda.ultimatestacker.utils.Methods.class.getDeclaredMethod("updateItemAmount", Item.class, int.class);
-            itemStackMethods = true;
+            oldItemMethods = true;
         } catch (NoSuchMethodException | SecurityException ex) {
         }
     }
@@ -43,7 +43,8 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void setItemAmount(Item item, int amount) {
-        if (itemStackMethods) {
+        if (oldItemMethods) {
+            // TODO: direct reference when this is re-added to the API
             try {
                 oldUltimateStacker_updateItemAmount.invoke(null, item, amount);
             } catch (Exception ex) {

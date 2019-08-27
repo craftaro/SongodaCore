@@ -16,4 +16,12 @@ public class TextUtils {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
+    public static String convertToInvisibleString(String s) {
+        if (s == null || s.equals(""))
+            return "";
+        StringBuilder hidden = new StringBuilder();
+        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR + "").append(c);
+        return hidden.toString();
+    }
+
 }

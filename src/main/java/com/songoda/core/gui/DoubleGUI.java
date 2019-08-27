@@ -1,5 +1,6 @@
 package com.songoda.core.gui;
 
+import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.gui.methods.Closable;
 import com.songoda.core.gui.methods.Droppable;
@@ -7,6 +8,7 @@ import com.songoda.core.gui.methods.Openable;
 import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.SimpleClickable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -398,6 +400,61 @@ public class DoubleGUI extends GUI {
     @Override
     public DoubleGUI setItem(int row, int col, ItemStack item) {
         return (DoubleGUI) super.setItem(row, col, item);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, String name, String... lore) {
+        return (DoubleGUI) super.updateItem(cell, name, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int row, int col, String name, List<String> lore) {
+        return (DoubleGUI) super.updateItem(col + row * 9, name, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, String name, List<String> lore) {
+        return (DoubleGUI) super.updateItem(cell, name, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int row, int col, ItemStack itemTo, String title, String... lore) {
+        return (DoubleGUI) super.updateItem(col + row * 9, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, ItemStack itemTo, String title, String... lore) {
+        return (DoubleGUI) super.updateItem(cell, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int row, int col, LegacyMaterials itemTo, String title, String... lore) {
+        return (DoubleGUI) super.updateItem(col + row * 9, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, LegacyMaterials itemTo, String title, String... lore) {
+        return (DoubleGUI) super.updateItem(cell, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int row, int col, ItemStack itemTo, String title, List<String> lore) {
+        return (DoubleGUI) super.updateItem(col + row * 9, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, ItemStack itemTo, String title, List<String> lore) {
+        return (DoubleGUI) super.updateItem(cell, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int row, int col, LegacyMaterials itemTo, String title, List<String> lore) {
+        return (DoubleGUI) super.updateItem(col + row * 9, itemTo, title, lore);
+    }
+
+    @Override
+    public DoubleGUI updateItem(int cell, LegacyMaterials itemTo, String title, List<String> lore) {
+        return (DoubleGUI) super.updateItem(cell, itemTo, title, lore);
     }
 
     @Override

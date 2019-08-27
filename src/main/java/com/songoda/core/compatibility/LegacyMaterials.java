@@ -1828,4 +1828,42 @@ public enum LegacyMaterials {
 		}
 		return false;
 	}
+    
+    /**
+     * Checks if this material is a food that can be cooked and is in its cooked state
+     */
+    public boolean isCooked() {
+        switch(this) { 
+            case BAKED_POTATO: 
+            case COOKED_BEEF: 
+            case COOKED_CHICKEN: 
+            case COOKED_COD: 
+            case COOKED_MUTTON: 
+            case COOKED_PORKCHOP: 
+            case COOKED_RABBIT: 
+            case COOKED_SALMON:  
+            case DRIED_KELP: 
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if this material is a food that can be cooked and is in its raw state
+     */
+    public boolean isRaw() {
+        switch(this) {
+            case BEEF: 
+            case CHICKEN: 
+            case COD: 
+            case KELP: // not edible, but is the raw state of DRIED_KELP
+            case MUTTON: 
+            case PORKCHOP: 
+            case POTATO: 
+            case RABBIT: 
+            case SALMON: 
+                return true;
+        }
+        return false;
+    }
 }
