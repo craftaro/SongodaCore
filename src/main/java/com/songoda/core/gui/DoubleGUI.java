@@ -3,6 +3,7 @@ package com.songoda.core.gui;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.gui.methods.Closable;
 import com.songoda.core.gui.methods.Droppable;
+import com.songoda.core.gui.methods.Openable;
 import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.SimpleClickable;
 import java.util.HashMap;
@@ -527,6 +528,11 @@ public class DoubleGUI extends GUI {
     @Override
     public DoubleGUI setButton(int row, int col, ItemStack item, ClickType type, SimpleClickable action) {
         return (DoubleGUI) super.setButton(row, col, item, type, action);
+    }
+
+    @Override
+    public DoubleGUI setOnOpen(Openable action) {
+        return (DoubleGUI) super.setOnOpen(action);
     }
 
     @Override

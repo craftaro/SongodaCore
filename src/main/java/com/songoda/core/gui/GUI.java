@@ -4,6 +4,7 @@ import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.gui.methods.Droppable;
 import com.songoda.core.gui.methods.Closable;
+import com.songoda.core.gui.methods.Openable;
 import com.songoda.core.gui.methods.SimpleClickable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,9 +47,14 @@ public class GUI {
     protected static ItemStack AIR = new ItemStack(Material.AIR);
 
     protected boolean open = false;
+    protected Openable opener = null;
     protected Closable closer = null;
     protected Droppable dropper = null;
     protected Pagable pager = null;
+
+    public GUI() {
+        this.rows = 3;
+    }
 
     public GUI(GUIType type) {
         this.type = type;
@@ -402,6 +408,11 @@ public class GUI {
         }
     }
 
+    public GUI setOnOpen(Openable action) {
+        opener = action;
+        return this;
+    }
+
     public GUI setOnClose(Closable action) {
         closer = action;
         return this;
@@ -559,6 +570,9 @@ public class GUI {
 
     public void onOpen(Player player) {
         open = true;
+        if (opener != null) {
+            opener.onOpen(player, this);
+        }
     }
 
     public void onClose(GUIManager manager, Player player) {
