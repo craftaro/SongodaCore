@@ -60,6 +60,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return this;
     }
 
+    /**
+     * TODO: Test compatibility. Seems to fail in 1.8
+     */
     public SimpleNestedCommand registerCommandDynamically(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
         abstractCommand.getCommands().stream().forEach(cmd -> {

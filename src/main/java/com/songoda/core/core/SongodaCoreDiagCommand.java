@@ -2,6 +2,8 @@ package com.songoda.core.core;
 
 import com.songoda.core.SongodaCore;
 import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.compatibility.ServerProject;
+import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -49,6 +51,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         }
         sender.sendMessage("");
         sender.sendMessage("Server Version: " + Bukkit.getVersion());
+        sender.sendMessage("NMS: " + ServerProject.getServerVersion() + " " + ServerVersion.getServerVersionString());
         sender.sendMessage("Operating System: " + System.getProperty("os.name"));
         sender.sendMessage("Allocated Memory: " + format.format(Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "Mb");
         sender.sendMessage("Online Players: " +  Bukkit.getOnlinePlayers().size());

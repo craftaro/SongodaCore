@@ -8,7 +8,6 @@ import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.gui.GuiManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
