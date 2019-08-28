@@ -2,7 +2,7 @@ package com.songoda.core;
 
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.gui.GUIManager;
+import com.songoda.core.gui.GuiManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,7 +37,7 @@ public class SongodaCore {
 
     private static SongodaCore INSTANCE = null;
     private JavaPlugin piggybackedPlugin;
-    protected GUIManager guiManager;
+    protected GuiManager guiManager;
     private final CommandManager commandManager;
     private final EventListener loginListener = new EventListener();
     private final HashMap<UUID, Long> lastCheck = new HashMap();

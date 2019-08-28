@@ -3,11 +3,17 @@ package com.songoda.core.gui;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-class GUIHolder implements InventoryHolder {
+/**
+ * Internal class for marking an inventory as a GUI inventory
+ * 
+ * @since 2019-08-25
+ * @author jascotty2
+ */
+class GuiHolder implements InventoryHolder {
 
-    final GUI gui;
+    final Gui gui;
 
-    GUIHolder(GUI gui) {
+    GuiHolder(Gui gui) {
         this.gui = gui;
     }
 
@@ -16,7 +22,7 @@ class GUIHolder implements InventoryHolder {
         return gui.inventory;
     }
 
-    public GUI getGUI() {
+    public Gui getGUI() {
         return gui;
     }
 }

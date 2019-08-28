@@ -27,13 +27,25 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     public abstract void onPluginDisable();
 
+    public abstract void onConfigReload();
+
     @Override
     public final void onLoad() {
-        onPluginLoad();
+        try {
+            onPluginLoad();
+        } catch (Throwable t) {
+            getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
+            emergencyStop = true;
+        }
     }
 
     @Override
     public final void onEnable() {
+        if(emergencyStop) {
+            setEnabled(false);
+            return;
+        }
+
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
@@ -46,8 +58,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             Metrics.start(this);
             onPluginEnable();
         } catch (Throwable t) {
-            getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName(), t);
-            console.sendMessage(ChatColor.RED + "Disabling plugin!");
+            getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
             emergencyStop = true;
             setEnabled(false);
         }

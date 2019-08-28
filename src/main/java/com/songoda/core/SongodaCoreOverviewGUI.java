@@ -1,13 +1,13 @@
 package com.songoda.core;
 
 import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.gui.GUI;
+import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
-final class SongodaCoreOverviewGUI extends GUI {
+final class SongodaCoreOverviewGUI extends Gui {
 
     private final SongodaCore update;
 
@@ -34,7 +34,7 @@ final class SongodaCoreOverviewGUI extends GUI {
                         "",
                         ChatColor.GOLD + "Click for the marketplace page link."
                 ),
-                        ClickType.LEFT, (player, inv, gui, cursor, slot, type) -> player.sendMessage(plugin.getMarketplaceLink()));
+                        ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
                 highlightItem(i);
             } else {
                 setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : LegacyMaterials.STONE,
@@ -43,7 +43,7 @@ final class SongodaCoreOverviewGUI extends GUI {
                         "",
                         ChatColor.GOLD + "Click for the marketplace page link."
                 ),
-                        ClickType.LEFT, (player, inv, gui, cursor, slot, type) -> player.sendMessage(plugin.getMarketplaceLink()));
+                        ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
             }
         }
     }

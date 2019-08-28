@@ -1,0 +1,146 @@
+package com.songoda.core.gui;
+
+import com.songoda.core.compatibility.CompatibleSounds;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
+
+/**
+ * Manages events for GUI screens
+ *
+ * @since 2019-08-25
+ * @author jascotty2
+ */
+public class GuiManager {
+
+    final Plugin plugin;
+    final GuiListener listener = new GuiListener(this);
+    final Map<Player, Inventory> openInventories = new HashMap();
+    private boolean initialized = false;
+    private boolean shutdown = false;
+
+    public GuiManager(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
+    /**
+     * Initialize the GUI handlers
+     */
+    public void init() {
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
+        initialized = true;
+        shutdown = false;
+    }
+
+    /**
+     * Create and display a GUI interface for a player
+     *
+     * @param player player to open the interface for
+     * @param gui GUI to use
+     */
+    public void showGUI(Player player, Gui gui) {
+        if (shutdown) {
+            return;
+        } else if (!initialized) {
+            init();
+        }
+        Inventory inv = gui.generateInventory();
+        player.openInventory(inv);
+        gui.onOpen(this, player);
+        openInventories.put(player, inv);
+    }
+
+    /**
+     * Close all active GUIs
+     */
+    public void closeAll() {
+        openInventories.entrySet().stream()
+                .filter(e -> e.getKey().getOpenInventory().getTopInventory().getHolder() instanceof GuiHolder)
+                .collect(Collectors.toList()) // to prevent concurrency exceptions
+                .forEach(e -> e.getKey().closeInventory());
+        openInventories.clear();
+    }
+
+    protected static class GuiListener implements Listener {
+
+        final GuiManager manager;
+
+        public GuiListener(GuiManager manager) {
+            this.manager = manager;
+        }
+
+        @EventHandler(priority = EventPriority.LOW)
+        void onClickGUI(InventoryClickEvent event) {
+            if (!(event.getWhoClicked() instanceof Player)) {
+                return;
+            }
+            Inventory openInv = event.getInventory();
+            final Player player = (Player) event.getWhoClicked();
+            Gui gui;
+            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder) {
+                gui = ((GuiHolder) openInv.getHolder()).getGUI();
+
+                if (event.getSlotType() == SlotType.OUTSIDE) {
+                    if (!gui.onClickOutside(manager, player, event)) {
+                        event.setCancelled(true);
+                    }
+                } // did we click the gui or in the user's inventory?
+                else if (event.getRawSlot() < gui.inventory.getSize()) {// or could use event.getClickedInventory() == gui.inventory
+                    // allow event if this is not a GUI element
+                    event.setCancelled(!gui.unlockedCells.entrySet().stream().anyMatch(e -> event.getSlot() == e.getKey() && e.getValue()));
+                    // process button press
+                    if (gui.onClick(manager, player, openInv, event)) {
+                        player.playSound(player.getLocation(), CompatibleSounds.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                    }
+                } else {
+                    // Player clicked in the bottom inventory while GUI is open
+                    if (gui.onClickPlayerInventory(manager, player, openInv, event)) {
+                        player.playSound(player.getLocation(), CompatibleSounds.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                    } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
+        @EventHandler(priority = EventPriority.LOW)
+        void onCloseGUI(InventoryCloseEvent event) {
+            Inventory openInv = event.getInventory();
+            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder) {
+                final Player player = (Player) event.getPlayer();
+                Gui gui = ((GuiHolder) openInv.getHolder()).getGUI();
+                if (!gui.allowDropItems) {
+                    player.setItemOnCursor(null);
+                }
+                if (manager.shutdown) {
+                    gui.onClose(manager, player);
+                } else {
+                    Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                }
+                manager.openInventories.remove(player);
+            }
+        }
+
+        @EventHandler
+        void onDisable(PluginDisableEvent event) {
+            if (event.getPlugin() == manager.plugin) {
+                // uh-oh! Abandon ship!!
+                manager.shutdown = true;
+                manager.closeAll();
+                manager.initialized = false;
+            }
+        }
+    }
+}
