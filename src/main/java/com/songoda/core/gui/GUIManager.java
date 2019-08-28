@@ -27,6 +27,7 @@ public class GUIManager {
 	final GuiListener listener = new GuiListener(this);
 	final Map<Player, Inventory> openInventories = new HashMap();
 	private boolean initialized = false;
+    private boolean shutdown = false;
 
 	public GUIManager(Plugin plugin) {
 		this.plugin = plugin;
@@ -38,6 +39,7 @@ public class GUIManager {
 	public void init() {
 		Bukkit.getPluginManager().registerEvents(listener, plugin);
 		initialized = true;
+        shutdown = false;
 	}
 
 	/**
@@ -118,7 +120,11 @@ public class GUIManager {
 				if (!gui.allowDropItems) {
 					player.setItemOnCursor(null);
 				}
-				Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                if(manager.shutdown) {
+                    gui.onClose(manager, player);
+                } else {
+                    Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                }
 				manager.openInventories.remove(player);
 			}
 		}
@@ -127,6 +133,7 @@ public class GUIManager {
 		void onDisable(PluginDisableEvent event) {
 			if (event.getPlugin() == manager.plugin) {
 				// uh-oh! Abandon ship!!
+                manager.shutdown = true;
 				manager.closeAll();
 				manager.initialized = false;
 			}

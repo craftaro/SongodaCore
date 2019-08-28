@@ -4,8 +4,9 @@ import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-public class NMSUtil {
+public class NMSUtils {
 
     public static Class<?> getNMSClass(String className) {
         try {
@@ -27,6 +28,12 @@ public class NMSUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Method getPrivateMethod(Class<?> c, String methodName, Class<?> ... parameters) throws Exception {
+        Method m = c.getDeclaredMethod(methodName, parameters);
+        m.setAccessible(true);
+        return m;
     }
 
     public static Field getField(Class<?> clazz, String name, boolean declared) {

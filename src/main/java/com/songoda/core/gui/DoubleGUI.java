@@ -7,6 +7,7 @@ import com.songoda.core.gui.methods.Droppable;
 import com.songoda.core.gui.methods.Openable;
 import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.SimpleClickable;
+import com.songoda.core.utils.ItemUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * DO NOT USE YET! 
- * TODO: does not restore inventory if server is shut down while player inventory is open (1.8) 
+ * TODO: does not restore inventory if server crashes while player inventory is open
  * Method to fix: save inv + ender slot to file, store paper in ender inv with name of cache file, check for paper item in slot when loading
+ * Or just manually manage all inventories in a file and remove when restored
  *
  * @since 2019-08-25
  * @author jascotty2
@@ -102,6 +103,25 @@ public class DoubleGUI extends GUI {
             for (HumanEntity e : inventory.getViewers()) {
                 e.getInventory().setItem(cell, item);
             }
+        }
+        return this;
+    }
+
+    public DoubleGUI highlightPlayerItem(int cell) {
+        final int invCell = invOffset(cell);
+        ItemStack item = cellItems.get(invCell);
+        if (item != null) {
+            setPlayerItem(cell, ItemUtils.addGlow(item));
+        }
+        return this;
+    }
+
+    public DoubleGUI highlightPlayerItem(int row, int col) {
+        final int cell = col + row * 9;
+        final int invCell = invOffset(cell);
+        ItemStack item = cellItems.get(invCell);
+        if (item != null) {
+            setPlayerItem(cell, ItemUtils.addGlow(item));
         }
         return this;
     }
@@ -307,7 +327,7 @@ public class DoubleGUI extends GUI {
         ItemStack[] oldInv = player.getInventory().getContents();
         ItemStack[] newInv = new ItemStack[oldInv.length];
 
-        for (int i = 0; i < newInv.length; ++i) {
+        for (int i = 0; i < 36; ++i) {
             final ItemStack item = cellItems.get(invOffset(i < 9 ? i + 27 : i - 9));
             newInv[i] = item != null ? item : blankItem;
         }
@@ -400,6 +420,16 @@ public class DoubleGUI extends GUI {
     @Override
     public DoubleGUI setItem(int row, int col, ItemStack item) {
         return (DoubleGUI) super.setItem(row, col, item);
+    }
+
+    @Override
+    public DoubleGUI highlightItem(int cell) {
+        return (DoubleGUI) super.highlightItem(cell);
+    }
+
+    @Override
+    public DoubleGUI highlightItem(int row, int col) {
+        return (DoubleGUI) super.highlightItem(row, col);
     }
 
     @Override

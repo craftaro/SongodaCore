@@ -15,16 +15,16 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Created by songoda on 6/4/2017.
  */
 public class SettingsManagerOld implements Listener {
 
-    private final JavaPlugin plugin;
+    private final Plugin plugin;
     private final Config config;
 
     private Map<Player, String> cat = new HashMap<>();

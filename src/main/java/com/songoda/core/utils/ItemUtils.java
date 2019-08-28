@@ -8,14 +8,21 @@ import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.compatibility.ServerVersion;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -40,6 +47,119 @@ public class ItemUtils {
 		clone.setAmount(qty);
 		return clone;
 	}
+
+    static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
+    static Class mc_ItemStack = NMSUtils.getNMSClass("ItemStack");
+    static Class mc_NBTTagCompound = NMSUtils.getNMSClass("NBTTagCompound");
+    static Class mc_NBTTagList = NMSUtils.getNMSClass("NBTTagList");
+    static Class mc_NBTBase = NMSUtils.getNMSClass("NBTBase");
+    static Method mc_ItemStack_getTag;
+    static Method mc_ItemStack_setTag;
+    static Method mc_NBTTagCompound_set;
+    static Method mc_NBTTagCompound_remove;
+    static Method mc_NBTTagCompound_setShort;
+    static Method mc_NBTTagCompound_setString;
+    static Method mc_NBTTagList_add;
+    static Method cb_CraftItemStack_asNMSCopy;
+    static Method cb_CraftItemStack_asCraftMirror;
+    static {
+        if(cb_ItemStack != null) {
+            try {
+                mc_ItemStack_getTag = mc_ItemStack.getDeclaredMethod("getTag");
+                mc_ItemStack_setTag = mc_ItemStack.getDeclaredMethod("setTag", mc_NBTTagCompound);
+                mc_NBTTagCompound_set = mc_NBTTagCompound.getDeclaredMethod("set", String.class, mc_NBTBase);
+                mc_NBTTagCompound_remove = mc_NBTTagCompound.getDeclaredMethod("remove", String.class);
+                mc_NBTTagCompound_setShort = mc_NBTTagCompound.getDeclaredMethod("setShort", String.class, short.class);
+                mc_NBTTagCompound_setString = mc_NBTTagCompound.getDeclaredMethod("setString", String.class, String.class);
+                cb_CraftItemStack_asNMSCopy = cb_ItemStack.getDeclaredMethod("asNMSCopy", ItemStack.class);
+                cb_CraftItemStack_asCraftMirror = cb_ItemStack.getDeclaredMethod("asCraftMirror", mc_ItemStack);
+                mc_NBTTagList_add = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_14)
+                        ? NMSUtils.getPrivateMethod(mc_NBTTagList, "a", mc_NBTBase)
+                        : mc_NBTTagList.getDeclaredMethod("add", mc_NBTBase);
+            } catch (Exception ex) {
+                Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Make an item glow as if it contained an enchantment. <br>
+     * Tested working 1.8-1.14
+     *
+     * @param item itemstack to create a glowing copy of
+     * @return copy of item with a blank enchantment nbt tag
+     */
+    public static ItemStack addGlow(ItemStack item) {
+        // from 1.11 up, fake enchantments don't work without more steps
+        // creating a new Enchantment involves some very involved reflection, 
+        // as the namespace is the same but until 1.12 requires an int, but versions after require a String
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+            item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            // you can at least hide the enchantment, though
+            ItemMeta m = item.getItemMeta();
+            m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            item.setItemMeta(m);
+            return item;
+        } else {
+            // hack a fake enchant onto the item
+            // Confirmed works on 1.8, 1.9, 1.10
+            // Does not work 1.11+ (minecraft ignores the glitched enchantment)
+            if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
+                try {
+                    Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
+                    Object tag = mc_ItemStack_getTag.invoke(nmsStack);
+                    if (tag == null) {
+                        tag = mc_NBTTagCompound.newInstance();
+                    }
+                    // set to have a fake enchantment
+                    Object enchantmentList = mc_NBTTagList.newInstance();
+                    /*
+                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+                        // Servers from 1.13 and up change the id to a string
+                        Object fakeEnchantment = mc_NBTTagCompound.newInstance();
+                        mc_NBTTagCompound_setString.invoke(fakeEnchantment, "id", "glow:glow");
+                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 0);
+                        mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
+                    } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+                        // Servers from 1.11 and up require *something* in the enchantment field
+                        Object fakeEnchantment = mc_NBTTagCompound.newInstance();
+                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "id", (short) 245);
+                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 1);
+                        mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
+                    }//*/
+                    mc_NBTTagCompound_set.invoke(tag, "ench", enchantmentList);
+                    mc_ItemStack_setTag.invoke(nmsStack, tag);
+                    item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
+                } catch (Exception ex) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
+                }
+            }
+        }
+        return item;
+    }
+
+    /**
+     * Remove all enchantments, including hidden enchantments
+     * @param item item to clear enchants from
+     * @return copy of the item without any enchantment tag
+     */
+    public static ItemStack removeGlow(ItemStack item) {
+        if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
+            try {
+                Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
+                Object tag = mc_ItemStack_getTag.invoke(nmsStack);
+                if (tag != null) {
+                    // remove enchantment list
+                    mc_NBTTagCompound_remove.invoke(tag, "ench");
+                    mc_ItemStack_setTag.invoke(nmsStack, tag);
+                    item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
+                }
+            } catch (Exception ex) {
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
+            }
+        }
+        return item;
+    }
 
 	public static String getItemName(ItemStack it) {
 		if (!check_compatibility) {

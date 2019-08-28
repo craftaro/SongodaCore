@@ -1,5 +1,6 @@
 package com.songoda.core;
 
+import com.songoda.core.compatibility.LegacyMaterials;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
@@ -7,20 +8,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PluginInfo {
+public final class PluginInfo {
 
-    private final JavaPlugin javaPlugin;
-    private final int songodaId;
+    protected final JavaPlugin javaPlugin;
+    protected final int songodaId;
+    protected final String coreIcon;
+    protected final LegacyMaterials icon;
     private final List<PluginInfoModule> modules = new ArrayList<>();
+    private boolean hasUpdate = false;
     private String latestVersion;
     private String notification;
     private String changeLog;
     private String marketplaceLink;
     private JSONObject json;
 
-    protected PluginInfo(JavaPlugin javaPlugin, int songodaId) {
+    protected PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
+        this.coreIcon = icon;
+        this.icon = LegacyMaterials.getMaterial(icon);
     }
 
     public String getLatestVersion() {
@@ -29,6 +35,7 @@ public class PluginInfo {
 
     public void setLatestVersion(String latestVersion) {
         this.latestVersion = latestVersion;
+        hasUpdate = !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
     }
 
     public String getNotification() {
@@ -37,6 +44,14 @@ public class PluginInfo {
 
     public void setNotification(String notification) {
         this.notification = notification;
+    }
+
+    public boolean hasUpdate() {
+        return hasUpdate;
+    }
+
+    public void setHasUpdate(boolean hasUpdate) {
+        this.hasUpdate = hasUpdate;
     }
 
     public String getChangeLog() {

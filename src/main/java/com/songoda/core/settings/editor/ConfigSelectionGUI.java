@@ -3,7 +3,6 @@ package com.songoda.core.settings.editor;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.settings.Config;
 import com.songoda.core.utils.gui.AbstractGUI;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,6 +1,8 @@
 package com.songoda.core;
 
 import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.gui.GUIManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,18 +37,23 @@ public class SongodaCore {
 
     private static SongodaCore INSTANCE = null;
     private JavaPlugin piggybackedPlugin;
+    protected GUIManager guiManager;
     private final CommandManager commandManager;
     private final EventListener loginListener = new EventListener();
     private final HashMap<UUID, Long> lastCheck = new HashMap();
 
-    public static void registerPlugin(JavaPlugin plugin, int pluginID) {
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, LegacyMaterials icon) {
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name());
+    }
+
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
         if(INSTANCE == null) {
             // First: are there any other instances of SongodaCore active?
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
                 if(clazz.getSimpleName().equals("SongodaCore")) {
                     try {
                         // use the active service
-                        clazz.getMethod("registerPlugin", JavaPlugin.class, int.class).invoke(null, plugin, pluginID);
+                        clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
                         return;
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
 
@@ -57,7 +64,7 @@ public class SongodaCore {
             INSTANCE = new SongodaCore(plugin);
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        INSTANCE.register(plugin, pluginID);
+        INSTANCE.register(plugin, pluginID, icon);
     }
 
     public SongodaCore(JavaPlugin javaPlugin) {
@@ -66,11 +73,15 @@ public class SongodaCore {
         commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
                 .addSubCommand(new SongodaCoreDiagCommand(this));
         Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
+        // we aggressevely want to own this command
+        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
     }
 
-    private void register(JavaPlugin plugin, int pluginID) {
+    private void register(JavaPlugin plugin, int pluginID, String icon) {
         System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
-        PluginInfo info = new PluginInfo(plugin, pluginID);
+        PluginInfo info = new PluginInfo(plugin, pluginID, icon);
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
@@ -166,6 +177,9 @@ public class SongodaCore {
             }
             if(event.getPlugin() == piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
+                if(guiManager != null) {
+                    guiManager.closeAll();
+                }
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
                 // can we move somewhere else?
                 if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
@@ -174,6 +188,7 @@ public class SongodaCore {
                     Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
                     Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
                     CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+                    guiManager = null;
                 }
             }
         }

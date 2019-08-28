@@ -1,6 +1,7 @@
 package com.songoda.core;
 
 import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.gui.GUIManager;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +17,10 @@ class SongodaCoreCommand extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if(sender instanceof Player) {
-            new SongodaCoreOverviewGUI(instance, (Player) sender);
+            if(instance.guiManager == null) {
+                instance.guiManager = new GUIManager(SongodaCore.getHijackedPlugin());
+            }
+            instance.guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI(instance));
         } else {
             sender.sendMessage("/songoda diag");
         }

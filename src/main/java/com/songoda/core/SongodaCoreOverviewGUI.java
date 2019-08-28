@@ -1,50 +1,50 @@
 package com.songoda.core;
 
-import com.songoda.core.utils.gui.AbstractGUI;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
+import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.gui.GUI;
+import com.songoda.core.gui.GuiUtils;
 import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.event.inventory.ClickType;
 
-class SongodaCoreOverviewGUI extends AbstractGUI {
+final class SongodaCoreOverviewGUI extends GUI {
 
     private final SongodaCore update;
 
-    protected SongodaCoreOverviewGUI(SongodaCore update, Player player) {
-        super(player);
+    protected SongodaCoreOverviewGUI(SongodaCore update) {
         this.update = update;
-
-        init("Songoda Update", 36);
-    }
-
-    @Override
-    protected void constructGUI() {
         List<PluginInfo> plugins = update.getPlugins();
+        // could do pages, too, but don't think we'll have that many at a time for a while
+        int max = (int) Math.ceil(plugins.size() / 9.);
+        setRows(max);
+        setTitle("Songoda Plugins");
+
+        // TODO: this could use some decorating
+
         for (int i = 0; i < plugins.size(); i++) {
             PluginInfo plugin = plugins.get(i);
-
-            createButton(i + 9, Material.STONE, "&6" + plugin.getJavaPlugin().getName(),
-                    "&7Latest Version: " + plugin.getLatestVersion(),
-                    "&7Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
-                    "",
-                    "Change log:",
-                    plugin.getChangeLog(),
-                    "",
-                    "&6Click for the marketplace page link.");
-
-            registerClickable(i + 9, ((player1, inventory1, cursor, slot, type) ->
-                    player.sendMessage(plugin.getMarketplaceLink())));
-
+            if (plugin.hasUpdate()) {
+                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : LegacyMaterials.STONE,
+                        ChatColor.GOLD + plugin.getJavaPlugin().getName(),
+                        ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
+                        ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
+                        "",
+                        "Change log:",
+                        plugin.getChangeLog(),
+                        "",
+                        ChatColor.GOLD + "Click for the marketplace page link."
+                ),
+                        ClickType.LEFT, (player, inv, gui, cursor, slot, type) -> player.sendMessage(plugin.getMarketplaceLink()));
+                highlightItem(i);
+            } else {
+                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : LegacyMaterials.STONE,
+                        ChatColor.GOLD + plugin.getJavaPlugin().getName(),
+                        ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
+                        "",
+                        ChatColor.GOLD + "Click for the marketplace page link."
+                ),
+                        ClickType.LEFT, (player, inv, gui, cursor, slot, type) -> player.sendMessage(plugin.getMarketplaceLink()));
+            }
         }
-    }
-
-    @Override
-    protected void registerClickables() {
-
-    }
-
-    @Override
-    protected void registerOnCloses() {
-
     }
 }

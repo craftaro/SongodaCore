@@ -7,6 +7,7 @@ import com.songoda.core.gui.methods.Droppable;
 import com.songoda.core.gui.methods.Closable;
 import com.songoda.core.gui.methods.Openable;
 import com.songoda.core.gui.methods.SimpleClickable;
+import com.songoda.core.utils.ItemUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,7 +34,7 @@ public class GUI {
 
     protected Inventory inventory;
     protected String title;
-    protected GUIType type = GUIType.STANDARD;
+    protected GUIType inventoryType = GUIType.STANDARD;
     protected int rows, page, pages;
     protected boolean acceptsItems = false;
     protected boolean allowDropItems = true;
@@ -58,7 +60,7 @@ public class GUI {
     }
 
     public GUI(GUIType type) {
-        this.type = type;
+        this.inventoryType = type;
         switch (type) {
             case HOPPER:
             case DISPENSER:
@@ -140,7 +142,7 @@ public class GUI {
     }
 
     public GUIType getType() {
-        return type;
+        return inventoryType;
     }
 
     public GUI setUnlocked(int cell) {
@@ -190,7 +192,7 @@ public class GUI {
     }
 
     public GUI setRows(int rows) {
-        switch (type) {
+        switch (inventoryType) {
             case HOPPER:
             case DISPENSER:
                 break;
@@ -218,6 +220,40 @@ public class GUI {
         cellItems.put(cell, item);
         if (open && cell >= 0 && cell < inventory.getSize()) {
             inventory.setItem(cell, item);
+        }
+        return this;
+    }
+
+    public GUI highlightItem(int cell) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, ItemUtils.addGlow(item));
+        }
+        return this;
+    }
+
+    public GUI highlightItem(int row, int col) {
+        final int cell = col + row * 9;
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, ItemUtils.addGlow(item));
+        }
+        return this;
+    }
+
+    public GUI removeHighlight(int cell) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, ItemUtils.removeGlow(item));
+        }
+        return this;
+    }
+
+    public GUI removeHighlight(int row, int col) {
+        final int cell = col + row * 9;
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, ItemUtils.removeGlow(item));
         }
         return this;
     }
@@ -571,7 +607,7 @@ public class GUI {
 
     protected Inventory generateInventory() {
         final int cells = rows * 9;
-        InventoryType t = type == null ? InventoryType.CHEST : type.type;
+        InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
         switch (t) {
             case DISPENSER:
             case HOPPER:

@@ -5,7 +5,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import org.bukkit.plugin.Plugin;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class Config {
 
-    private final JavaPlugin plugin;
-
+    private final Plugin plugin;
     private final String folderName, fileName;
+
     private FileConfiguration fileConfiguration;
     private File configFile;
 
@@ -319,7 +319,7 @@ public class Config {
         return fileName;
     }
 
-    public JavaPlugin getPlugin() {
+    public Plugin getPlugin() {
         return plugin;
     }
 }
