@@ -1134,6 +1134,15 @@ public enum LegacyMaterials {
 	}
 
 	/**
+	 * Check if current material requires a data value.
+	 *
+	 * @return true if server is legacy and this item requires data to be defined.
+	 */
+	public boolean usesData() {
+		return data != null;
+	}
+
+	/**
 	 * Lookup a Legacy Material by its modern id name. <br />
 	 * This also can grab materials by their legacy, but only if there is no
 	 * modern material by that name.

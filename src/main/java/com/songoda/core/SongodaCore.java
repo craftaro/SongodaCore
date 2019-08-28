@@ -6,6 +6,7 @@ import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.gui.GuiManager;
 import java.io.IOException;
@@ -25,7 +26,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -44,7 +47,12 @@ public class SongodaCore {
     private JavaPlugin piggybackedPlugin;
     private final CommandManager commandManager;
     private final EventListener loginListener = new EventListener();
-    private final HashMap<UUID, Long> lastCheck = new HashMap();
+    private final ShadedEventListener shadingListener = new ShadedEventListener();
+
+    public static boolean hasShading() {
+        // sneaky hack to check the package name since maven tries to re-shade all references to the package string
+        return !SongodaCore.class.getPackage().getName().equals(new String(new char[]{'c','o','m','.','s','o','n','g','o','d','a','.','c','o','r','e'}));
+    }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, LegacyMaterials icon) {
         registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name());
@@ -58,9 +66,12 @@ public class SongodaCore {
                     try {
                         // use the active service
                         clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
+
+                        if(hasShading()) {
+                            Bukkit.getPluginManager().registerEvents(new ShadedEventListener(), plugin);
+                        }
                         return;
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-
                     }
                 }
             }
@@ -77,6 +88,7 @@ public class SongodaCore {
         commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
                 .addSubCommand(new SongodaCoreDiagCommand(this));
         Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
+        Bukkit.getPluginManager().registerEvents(shadingListener, javaPlugin);
         // we aggressevely want to own this command
         Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
         Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
@@ -153,11 +165,52 @@ public class SongodaCore {
         return INSTANCE;
     }
 
-    private class EventListener implements Listener {
+    private static class ShadedEventListener implements Listener {
+        boolean via = false;
+        boolean proto = false;
+
+        ShadedEventListener() {
+            if ((via = Bukkit.getPluginManager().isPluginEnabled("ViaVersion"))) {
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p));
+            } else if ((proto = Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport"))) {
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p));
+            }
+        }
+
         @EventHandler
         void onLogin(PlayerLoginEvent event) {
-            // don't spam players with update checks
+            if (via) {
+                ClientVersion.onLoginVia(event.getPlayer());
+            } else if (proto) {
+                ClientVersion.onLoginProtocol(event.getPlayer());
+            }
+        }
+
+        @EventHandler
+        void onLogout(PlayerQuitEvent event) {
+            if (via) {
+                ClientVersion.onLogout(event.getPlayer());
+            }
+        }
+
+        @EventHandler
+        void onEnable(PluginEnableEvent event) {
+            // technically shouldn't have online players here, but idk
+            if (!via && (via = event.getPlugin().getName().equals("ViaVersion"))) {
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p)); 
+            } else if (!proto && (proto = event.getPlugin().getName().equals("ProtocolSupport"))) {
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p));
+            }
+        }
+    }
+
+    private class EventListener implements Listener {
+        final HashMap<UUID, Long> lastCheck = new HashMap();
+
+        @EventHandler
+        void onLogin(PlayerLoginEvent event) {
             final Player player = event.getPlayer();
+            // don't spam players with update checks
             long now = System.currentTimeMillis();
             Long last = lastCheck.get(player.getUniqueId());
             if(last != null && now - 10000 < last) return;
@@ -176,18 +229,19 @@ public class SongodaCore {
         void onDisable(PluginDisableEvent event) {
             // don't track disabled plugins
             PluginInfo pi = registeredPlugins.stream().filter(p -> event.getPlugin() == p.getJavaPlugin()).findFirst().orElse(null);
-            if(pi != null) {
+            if (pi != null) {
                 registeredPlugins.remove(pi);
             }
-            if(event.getPlugin() == piggybackedPlugin) {
+            if (event.getPlugin() == piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
                 // can we move somewhere else?
-                if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
+                if ((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
                     // move ourselves to this plugin
                     piggybackedPlugin = pi.getJavaPlugin();
                     Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
                     Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
+                    Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
                     CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
                 }
             }

@@ -1,6 +1,9 @@
 package com.songoda.core.gui;
 
+import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.CompatibleSounds;
+import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.ServerVersion;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -71,6 +74,30 @@ public class GuiManager {
         player.openInventory(inv);
         gui.onOpen(this, player);
         openInventories.put(player, inv);
+    }
+
+    public void showPopup(Player player, String message) {
+        showPopup(player, message, LegacyMaterials.NETHER_STAR, BackgroundType.ADVENTURE);
+    }
+
+    public void showPopup(Player player, String message, LegacyMaterials icon) {
+        showPopup(player, message, icon, BackgroundType.ADVENTURE);
+    }
+
+    public void showPopup(Player player, String message, LegacyMaterials icon, BackgroundType background) {
+        if (ClientVersion.getClientVersion(player).isServerVersionAtLeast(ServerVersion.V1_12)) {
+            PopupMessage popup = new PopupMessage(plugin, icon, message, background);
+            popup.add();
+            popup.grant(player);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                popup.revoke(player);
+                popup.remove();
+            }, 70);
+        } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+            player.sendTitle("", message, 10, 70, 10);
+        } else {
+            player.sendTitle("", message);
+        }
     }
 
     /**
