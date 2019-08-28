@@ -3,6 +3,7 @@ package com.songoda.core.gui;
 import com.songoda.core.compatibility.CompatibleSounds;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ import org.bukkit.plugin.Plugin;
 public class GuiManager {
 
     final Plugin plugin;
+    final UUID uuid = UUID.randomUUID(); // manager tracking to fix weird bugs from lazy programming
     final GuiListener listener = new GuiListener(this);
     final Map<Player, Inventory> openInventories = new HashMap();
     private boolean initialized = false;
@@ -45,6 +47,15 @@ public class GuiManager {
     }
 
     /**
+     * Check to see if this manager cannot open any more GUI screens
+     *
+     * @return true if the owning plugin has shutdown
+     */
+    public boolean isClosed() {
+        return shutdown;
+    }
+
+    /**
      * Create and display a GUI interface for a player
      *
      * @param player player to open the interface for
@@ -56,7 +67,7 @@ public class GuiManager {
         } else if (!initialized) {
             init();
         }
-        Inventory inv = gui.generateInventory();
+        Inventory inv = gui.generateInventory(this);
         player.openInventory(inv);
         gui.onOpen(this, player);
         openInventories.put(player, inv);
@@ -89,7 +100,8 @@ public class GuiManager {
             Inventory openInv = event.getInventory();
             final Player player = (Player) event.getWhoClicked();
             Gui gui;
-            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder) {
+            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
+                    && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
                 if (event.getSlotType() == SlotType.OUTSIDE) {
@@ -118,9 +130,10 @@ public class GuiManager {
         @EventHandler(priority = EventPriority.LOW)
         void onCloseGUI(InventoryCloseEvent event) {
             Inventory openInv = event.getInventory();
-            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder) {
-                final Player player = (Player) event.getPlayer();
+            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
+                    && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 Gui gui = ((GuiHolder) openInv.getHolder()).getGUI();
+                final Player player = (Player) event.getPlayer();
                 if (!gui.allowDropItems) {
                     player.setItemOnCursor(null);
                 }

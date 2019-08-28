@@ -513,21 +513,21 @@ public class Gui {
         }
     }
 
-    protected Inventory getOrCreateInventory() {
-        return inventory != null ? inventory : generateInventory();
+    protected Inventory getOrCreateInventory(GuiManager manager) {
+        return inventory != null ? inventory : generateInventory(manager);
     }
 
-    protected Inventory generateInventory() {
+    protected Inventory generateInventory(GuiManager manager) {
         final int cells = rows * 9;
         InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
         switch (t) {
             case DISPENSER:
             case HOPPER:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(this), t,
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), t,
                         title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
                 break;
             default:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(this), cells,
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), cells,
                         title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
         }
 

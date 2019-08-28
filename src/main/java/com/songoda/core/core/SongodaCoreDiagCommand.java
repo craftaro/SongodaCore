@@ -1,5 +1,6 @@
-package com.songoda.core;
+package com.songoda.core.core;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.commands.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
     private Field tpsField;
 
 
-    protected SongodaCoreDiagCommand(SongodaCore instance) {
+    public SongodaCoreDiagCommand(SongodaCore instance) {
         super(false, "diag");
         this.instance = instance;
 

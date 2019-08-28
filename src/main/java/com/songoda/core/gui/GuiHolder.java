@@ -1,5 +1,6 @@
 package com.songoda.core.gui;
 
+import com.sun.istack.internal.NotNull;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -12,9 +13,11 @@ import org.bukkit.inventory.InventoryHolder;
 class GuiHolder implements InventoryHolder {
 
     final Gui gui;
+    final GuiManager manager;
 
-    GuiHolder(Gui gui) {
+    public GuiHolder(@NotNull GuiManager manager, @NotNull Gui gui) {
         this.gui = gui;
+        this.manager = manager;
     }
 
     @Override

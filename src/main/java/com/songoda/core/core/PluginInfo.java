@@ -1,5 +1,6 @@
-package com.songoda.core;
+package com.songoda.core.core;
 
+import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.compatibility.LegacyMaterials;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -22,7 +23,7 @@ public final class PluginInfo {
     private String marketplaceLink;
     private JSONObject json;
 
-    protected PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon) {
+    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;

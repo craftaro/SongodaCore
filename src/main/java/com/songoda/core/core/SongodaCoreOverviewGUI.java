@@ -1,5 +1,6 @@
-package com.songoda.core;
+package com.songoda.core.core;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;

@@ -1,5 +1,10 @@
 package com.songoda.core;
 
+import com.songoda.core.core.PluginInfo;
+import com.songoda.core.core.LocaleModule;
+import com.songoda.core.core.PluginInfoModule;
+import com.songoda.core.core.SongodaCoreCommand;
+import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.gui.GuiManager;
@@ -37,7 +42,6 @@ public class SongodaCore {
 
     private static SongodaCore INSTANCE = null;
     private JavaPlugin piggybackedPlugin;
-    protected GuiManager guiManager;
     private final CommandManager commandManager;
     private final EventListener loginListener = new EventListener();
     private final HashMap<UUID, Long> lastCheck = new HashMap();
@@ -177,9 +181,6 @@ public class SongodaCore {
             }
             if(event.getPlugin() == piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
-                if(guiManager != null) {
-                    guiManager.closeAll();
-                }
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
                 // can we move somewhere else?
                 if((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
@@ -188,7 +189,6 @@ public class SongodaCore {
                     Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
                     Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
                     CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-                    guiManager = null;
                 }
             }
         }

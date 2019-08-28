@@ -1,4 +1,4 @@
-package com.songoda.core;
+package com.songoda.core.core;
 
 public interface PluginInfoModule {
 
