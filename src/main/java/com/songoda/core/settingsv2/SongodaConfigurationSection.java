@@ -1,6 +1,7 @@
-package com.songoda.core.settingsv2.adapters;
+package com.songoda.core.settingsv2;
 
-import com.songoda.core.settingsv2.Config;
+import com.songoda.core.settingsv2.adapters.ConfigAdapter;
+import com.songoda.core.settingsv2.adapters.ConfigOptionsAdapter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,27 +9,42 @@ import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationOptions;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ConfigAdapter implements Configuration {
+/**
+ * Configuration for a specific node
+ *
+ * @since 2019-08-28
+ * @author jascotty2
+ */
+public class SongodaConfigurationSection extends MemoryConfiguration {
 
     final Config root;
-    final HashMap<String, Object> map;
-    final String path;
+    final String fullPath;
+    final SongodaConfigurationSection parent;
+    final HashMap<String, Comment> configComments = new HashMap();
+    final HashMap<String, Class> strictKeys = new HashMap();
+    final HashMap<String, Object> defaults = new HashMap();
+    final HashMap<String, Object> values = new HashMap();
 
-    public ConfigAdapter(Config config, HashMap<String, Object> map, String path) {
-        this.root = config;
-        this.map = map;
-        this.path = path;
+    public SongodaConfigurationSection(Config root, SongodaConfigurationSection parent) {
+        this.root = root;
+        this.parent = parent;
+        fullPath = "";
     }
 
+
+
     @Override
-    public void addDefault(String string, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addDefault(@NotNull String path, @Nullable Object value) {
+        defaults.put(path, value);
+        // TODO path iteration
     }
 
     @Override
@@ -47,12 +63,12 @@ public class ConfigAdapter implements Configuration {
     }
 
     @Override
-    public Configuration getDefaults() {
+    public ConfigAdapter getDefaults() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ConfigurationOptions options() {
+    public ConfigOptionsAdapter options() {
         return new ConfigOptionsAdapter(root);
     }
 
@@ -77,8 +93,8 @@ public class ConfigAdapter implements Configuration {
     }
 
     @Override
-    public boolean isSet(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isSet(String path) {
+        return get(path, null) != null;
     }
 
     @Override
@@ -360,5 +376,4 @@ public class ConfigAdapter implements Configuration {
     public ConfigurationSection getDefaultSection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }
