@@ -172,4 +172,17 @@ public class GuiUtils {
         item.setItemMeta(meta);
         return item;
     }
+
+    public static void mirrorFill(Gui gui, int row, int col, boolean mirrorRow, boolean mirrorCol, ItemStack item) {
+        gui.setItem(row, col, item);
+        if (mirrorRow) {
+            gui.setItem(gui.rows - row - 1, col, item);
+        }
+        if (mirrorCol) {
+            gui.setItem(row, 8 - col, item);
+        }
+        if (mirrorRow && mirrorCol) {
+            gui.setItem(gui.rows - row - 1, 8 - col, item);
+        }
+    }
 }

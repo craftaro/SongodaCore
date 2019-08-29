@@ -1,10 +1,10 @@
 package com.songoda.core.utils.gui;
 
-import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
+@Deprecated
 public class Range {
 
     private int min;

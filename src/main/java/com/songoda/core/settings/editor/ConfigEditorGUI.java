@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import us.myles.viaversion.libs.bungeecordchat.api.ChatColor;
 
 public class ConfigEditorGUI extends AbstractGUI {
 
@@ -69,12 +70,16 @@ public class ConfigEditorGUI extends AbstractGUI {
                         material = LegacyMaterials.CLOCK.getMaterial();
                         registerClickable(j, ((player1, inventory1, cursor, slot, type) -> {
                             ChatPrompt prompt = ChatPrompt.showPrompt(plugin, player, "Enter your new value.", event -> {
-                                if (config.isInt(setting.getCompleteKey())) {
-                                    config.set(setting.getCompleteKey(), Integer.parseInt(event.getMessage().trim()));
-                                } else if (config.isDouble(setting.getCompleteKey())) {
-                                    config.set(setting.getCompleteKey(), Double.parseDouble(event.getMessage().trim()));
-                                } else if (config.isLong(setting.getCompleteKey())) {
-                                    config.set(setting.getCompleteKey(), Long.parseLong(event.getMessage().trim()));
+                                try {
+                                    if (config.isInt(setting.getCompleteKey())) {
+                                        config.set(setting.getCompleteKey(), Integer.parseInt(event.getMessage().trim()));
+                                    } else if (config.isDouble(setting.getCompleteKey())) {
+                                        config.set(setting.getCompleteKey(), Double.parseDouble(event.getMessage().trim()));
+                                    } else if (config.isLong(setting.getCompleteKey())) {
+                                        config.set(setting.getCompleteKey(), Long.parseLong(event.getMessage().trim()));
+                                    }
+                                } catch (NumberFormatException e) {
+                                    player1.sendMessage(ChatColor.RED + "Error: \"" + event.getMessage().trim() + "\" is not a number!");
                                 }
                             });
                             prompt.setOnClose(() -> init("Settings Editor", inventory.getSize()));

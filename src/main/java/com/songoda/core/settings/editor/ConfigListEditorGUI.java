@@ -4,7 +4,6 @@ import com.songoda.core.input.ChatPrompt;
 import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.settings.Setting;
 import com.songoda.core.utils.gui.AbstractGUI;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -20,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
+@Deprecated
 public abstract class AbstractGUI implements Listener {
 
     private static boolean listenersInitialized = false;

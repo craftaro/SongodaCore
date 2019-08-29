@@ -301,6 +301,7 @@ public class Config {
             if (!plugin.getDataFolder().exists())
                 plugin.getDataFolder().mkdir();
             BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
+            
             writer.write(config.toString());
             writer.flush();
             writer.close();
