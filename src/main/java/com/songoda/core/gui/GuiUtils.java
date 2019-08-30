@@ -1,6 +1,7 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.LegacyMaterials;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,12 +38,62 @@ public class GuiUtils {
         return item;
     }
 
+    public static List<String> getSafeLore(String ... lines) {
+        return getSafeLore(Arrays.asList(lines));
+    }
+
+    /**
+     * Get a lore value that will display fine on clients using auto gui scaling
+     *
+     * @param lines lines to format
+     * @return newline and length-corrected item lore
+     */
+    public static List<String> getSafeLore(List<String> lines) {
+        // fix newlines
+        ArrayList<String> newLore = new ArrayList();
+        for (String l : lines) {
+            for (String l2 : l.split("\n")) {
+                if (l2.length() < 58) {
+                    newLore.add(l2);
+                } else {
+                    // try to shorten the string
+                    String shorterString = l2;
+                    ChatColor lastColor = null; // todo? probably should also track formatting codes..
+                    int line = 0;
+                    while (shorterString.length() > 50) {
+                        int breakingSpace = -1;
+                        for (int i = 0; i < 55; ++i) {
+                            if (shorterString.charAt(i) == ChatColor.COLOR_CHAR) {
+                                lastColor = ChatColor.getByChar(shorterString.charAt(++i));
+                            } else if (shorterString.charAt(i) == ' ' || shorterString.charAt(i) == '-') {
+                                breakingSpace = i;
+                            }
+                        }
+                        if (breakingSpace == -1) {
+                            breakingSpace = Math.max(55, shorterString.length());
+                            newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace) + "-");
+                            shorterString = breakingSpace == shorterString.length() ? "" : shorterString.substring(breakingSpace + 1);
+                        } else {
+                            newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace));
+                            shorterString = breakingSpace == shorterString.length() ? "" : shorterString.substring(breakingSpace + 1);
+                        }
+                        ++line;
+                    }
+                    if (!shorterString.isEmpty()) {
+                        newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + "   " + shorterString);
+                    }
+                }
+            }
+        }
+        return newLore;
+    }
+
     public static ItemStack createButtonItem(LegacyMaterials mat, String title, String... lore) {
         ItemStack item = mat.getItem();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(Arrays.asList(lore.length == 1 ? lore[0].split("\n") : lore));
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -55,7 +106,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(Arrays.asList(lore.length == 1 ? lore[0].split("\n") : lore));
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -68,7 +119,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(lore.size() == 1 ? Arrays.asList(lore.get(0).split("\n")) : lore);
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -81,7 +132,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(lore.size() == 1 ? Arrays.asList(lore.get(0).split("\n")) : lore);
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -93,7 +144,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(Arrays.asList(lore.length == 1 ? lore[0].split("\n") : lore));
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -108,7 +159,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(Arrays.asList(lore.length == 1 ? lore[0].split("\n") : lore));
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -123,7 +174,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(Arrays.asList(lore.length == 1 ? lore[0].split("\n") : lore));
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -135,7 +186,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(lore.size() == 1 ? Arrays.asList(lore.get(0).split("\n")) : lore);
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -150,7 +201,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(lore.size() == 1 ? Arrays.asList(lore.get(0).split("\n")) : lore);
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }
@@ -165,7 +216,7 @@ public class GuiUtils {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         if (lore != null) {
-            meta.setLore(lore.size() == 1 ? Arrays.asList(lore.get(0).split("\n")) : lore);
+            meta.setLore(getSafeLore(lore));
         } else {
             meta.setLore(Collections.EMPTY_LIST);
         }

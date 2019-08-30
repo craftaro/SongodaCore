@@ -1,8 +1,6 @@
 package com.songoda.core.settingsv2;
 
 import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.settingsv2.adapters.ConfigDefaultsAdapter;
-import com.songoda.core.settingsv2.adapters.ConfigOptionsAdapter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,7 +54,7 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     SongodaConfigurationSection(SongodaConfigurationSection root, SongodaConfigurationSection parent, String path, boolean isDefault) {
         this.root = root;
         this.parent = parent;
-        this.fullPath = parent.fullPath + path + root.pathChar;
+        this.fullPath = path != null ? parent.fullPath + path + root.pathChar : parent.fullPath;
         this.isDefault = isDefault;
         configComments = defaultComments = null;
         defaults = null;
@@ -186,13 +184,13 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @Override
-    public ConfigDefaultsAdapter getDefaults() {
-        return new ConfigDefaultsAdapter(root, this);
+    public SongodaConfigurationSection getDefaults() {
+        return new SongodaConfigurationSection(root, this, null, true);
     }
 
     @Override
-    public ConfigDefaultsAdapter getDefaultSection() {
-        return new ConfigDefaultsAdapter(root, this);
+    public SongodaConfigurationSection getDefaultSection() {
+        return new SongodaConfigurationSection(root, this, null, true);
     }
 
     @Override

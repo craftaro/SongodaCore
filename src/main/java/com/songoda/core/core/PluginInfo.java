@@ -1,6 +1,5 @@
 package com.songoda.core.core;
 
-import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.compatibility.LegacyMaterials;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -36,7 +35,7 @@ public final class PluginInfo {
 
     public void setLatestVersion(String latestVersion) {
         this.latestVersion = latestVersion;
-        hasUpdate = !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
+        hasUpdate = latestVersion != null && !latestVersion.isEmpty() && !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
     }
 
     public String getNotification() {

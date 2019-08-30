@@ -1,7 +1,5 @@
-package com.songoda.core.settingsv2.adapters;
+package com.songoda.core.settingsv2;
 
-import com.songoda.core.settingsv2.Config;
-import com.songoda.core.settingsv2.SongodaConfigurationSection;
 import java.util.List;
 import org.bukkit.configuration.MemoryConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ConfigOptionsAdapter extends MemoryConfigurationOptions {
 
-    public ConfigOptionsAdapter(SongodaConfigurationSection root) {
+    ConfigOptionsAdapter(SongodaConfigurationSection root) {
         super(root);
     }
 

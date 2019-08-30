@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -89,9 +90,75 @@ public class SongodaCore {
         Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, javaPlugin);
         // we aggressevely want to own this command
+        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1);
         Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
         Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->registerAllPlugins(), 20 * 60 * 2);
+    }
+
+    /**
+     * Register plugins that may not have been updated yet
+     */
+    private void registerAllPlugins() {
+        PluginManager pm = Bukkit.getPluginManager();
+        String p;
+        if (!isRegistered(p = "EpicAnchors") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 31, LegacyMaterials.END_PORTAL_FRAME.name());
+        }
+        if (!isRegistered(p = "EpicBosses") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 19, LegacyMaterials.ZOMBIE_SPAWN_EGG.name());
+        }
+        if (!isRegistered(p = "EpicEnchants") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 67, LegacyMaterials.DIAMOND_SWORD.name());
+        }
+        if (!isRegistered(p = "EpicFarming") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 21, LegacyMaterials.WHEAT.name());
+        }
+        if (!isRegistered(p = "EpicFurnaces") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 22, LegacyMaterials.FURNACE.name());
+        }
+        if (!isRegistered(p = "EpicHeads") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 26, LegacyMaterials.PLAYER_HEAD.name());
+        }
+        if (!isRegistered(p = "EpicHoppers") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 15, LegacyMaterials.HOPPER.name());
+        }
+        if (!isRegistered(p = "EpicLevels") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 44, LegacyMaterials.NETHER_STAR.name());
+        }
+        if (!isRegistered(p = "EpicSpawners") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 13, LegacyMaterials.SPAWNER.name());
+        }
+        if (!isRegistered(p = "EpicVouchers") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 25, LegacyMaterials.EMERALD.name());
+        }
+        if (!isRegistered(p = "FabledSkyBlock") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 17, LegacyMaterials.GRASS_BLOCK.name());
+        }
+        if (!isRegistered(p = "UltimateCatcher") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 51, LegacyMaterials.EGG.name());
+        }
+        if (!isRegistered(p = "UltimateClaims") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 65, LegacyMaterials.CHEST.name());
+        }
+        if (!isRegistered(p = "UltimateFishing") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 59, LegacyMaterials.COD.name());
+        }
+        if (!isRegistered(p = "UltimateKits") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 14, LegacyMaterials.BEACON.name());
+        }
+        if (!isRegistered(p = "UltimateModeration") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 29, LegacyMaterials.DIAMOND_CHESTPLATE.name());
+        }
+        if (!isRegistered(p = "UltimateRepairing") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 20, LegacyMaterials.ANVIL.name());
+        }
+        if (!isRegistered(p = "UltimateStacker") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 16, LegacyMaterials.IRON_INGOT.name());
+        }
+        if (!isRegistered(p = "UltimateTimber") && pm.isPluginEnabled(p)) {
+            register((JavaPlugin) pm.getPlugin(p), 18, LegacyMaterials.IRON_AXE.name());
+        }
     }
 
     private void register(JavaPlugin plugin, int pluginID, String icon) {
@@ -154,6 +221,10 @@ public class SongodaCore {
 
     public static String getPrefix() {
         return prefix + " ";
+    }
+
+    public static boolean isRegistered(String plugin) {
+        return registeredPlugins.stream().anyMatch(p -> p.getJavaPlugin().getName().equalsIgnoreCase(plugin));
     }
 
     public static JavaPlugin getHijackedPlugin() {
