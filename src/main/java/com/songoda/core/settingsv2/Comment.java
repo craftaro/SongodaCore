@@ -29,6 +29,16 @@ public class Comment {
         this.lines.addAll(lines);
     }
 
+    public Comment(CommentStyle commentStyle, String... lines) {
+        this.commentStyle = commentStyle;
+        this.lines.addAll(Arrays.asList(lines));
+    }
+
+    public Comment(CommentStyle commentStyle, List<String> lines) {
+        this.commentStyle = commentStyle;
+        this.lines.addAll(lines);
+    }
+
     public CommentStyle getCommentStyle() {
         return commentStyle;
     }

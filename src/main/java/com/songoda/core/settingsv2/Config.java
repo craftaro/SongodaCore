@@ -12,15 +12,21 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConstructor;
@@ -61,6 +67,7 @@ public class Config extends SongodaConfigurationSection {
     final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
     SaveTask saveTask;
     Timer autosaveTimer;
+    ////////////// Config settings ////////////////
     /**
      * save file whenever a change is made
      */
@@ -73,6 +80,28 @@ public class Config extends SongodaConfigurationSection {
      * remove nodes not defined in defaults
      */
     boolean autoremove = false;
+    /**
+     * load comments when loading the file
+     * TODO
+     */
+    boolean loadComments = false;
+    /**
+     * Default comment applied to config nodes
+     */
+    ConfigFormattingRules.CommentStyle defaultNodeCommentFormat = ConfigFormattingRules.CommentStyle.SIMPLE;
+    /**
+     * Default comment applied to section nodes
+     */
+    ConfigFormattingRules.CommentStyle defaultSectionCommentFormat = ConfigFormattingRules.CommentStyle.SPACED;
+    /**
+     * Extra lines to put between root nodes
+     */
+    int rootNodeSpacing = 1;
+    /**
+     * Extra lines to put in front of comments. <br>
+     * This is separate from rootNodeSpacing, if applicable.
+     */
+    int commentSpacing = 1;
 
     public Config(@NotNull File file) {
         this.plugin = null;
@@ -109,6 +138,7 @@ public class Config extends SongodaConfigurationSection {
      * @param autosave set to true if autosaving is enabled.
      * @return this class
      */
+    @NotNull
     public Config setAutosave(boolean autosave) {
         this.autosave = autosave;
         return this;
@@ -135,15 +165,74 @@ public class Config extends SongodaConfigurationSection {
     /**
      * This setting is used to prevent users to from adding extraneous settings
      * to the config and to remove deprecated settings. <br>
-     * If this is enabled, the config will delete any nodes that are not
-     * defined as a default setting.
+     * If this is enabled, the config will delete any nodes that are not defined
+     * as a default setting.
      *
      * @param autoremove Remove settings that don't exist as defaults
      * @return this class
      */
+    @NotNull
     public Config setAutoremove(boolean autoremove) {
         this.autoremove = autoremove;
         return this;
+    }
+
+    /**
+     * Default comment applied to config nodes
+     */
+    public ConfigFormattingRules.CommentStyle getDefaultNodeCommentFormat() {
+        return defaultNodeCommentFormat;
+    }
+
+    /**
+     * Default comment applied to config nodes
+     */
+    public void setDefaultNodeCommentFormat(ConfigFormattingRules.CommentStyle defaultNodeCommentFormat) {
+        this.defaultNodeCommentFormat = defaultNodeCommentFormat;
+    }
+
+    /**
+     * Default comment applied to section nodes
+     */
+    public ConfigFormattingRules.CommentStyle getDefaultSectionCommentFormat() {
+        return defaultSectionCommentFormat;
+    }
+
+    /**
+     * Default comment applied to section nodes
+     */
+    public void setDefaultSectionCommentFormat(ConfigFormattingRules.CommentStyle defaultSectionCommentFormat) {
+        this.defaultSectionCommentFormat = defaultSectionCommentFormat;
+    }
+
+    /**
+     * Extra lines to put between root nodes
+     */
+    public int getRootNodeSpacing() {
+        return rootNodeSpacing;
+    }
+
+    /**
+     * Extra lines to put between root nodes
+     */
+    public void setRootNodeSpacing(int rootNodeSpacing) {
+        this.rootNodeSpacing = rootNodeSpacing;
+    }
+
+    /**
+     * Extra lines to put in front of comments. <br>
+     * This is separate from rootNodeSpacing, if applicable.
+     */
+    public int getCommentSpacing() {
+        return commentSpacing;
+    }
+
+    /**
+     * Extra lines to put in front of comments. <br>
+     * This is separate from rootNodeSpacing, if applicable.
+     */
+    public void setCommentSpacing(int commentSpacing) {
+        this.commentSpacing = commentSpacing;
     }
 
     @NotNull
@@ -157,11 +246,31 @@ public class Config extends SongodaConfigurationSection {
     }
 
     @NotNull
+    public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @NotNull String... description) {
+        if (description.length == 0) {
+            configComments.remove(null);
+        } else {
+            configComments.put(null, new Comment(commentStyle, description));
+        }
+        return this;
+    }
+
+    @NotNull
     public Config setHeader(@Nullable List<String> description) {
         if (description == null || description.isEmpty()) {
             configComments.remove(null);
         } else {
             configComments.put(null, new Comment(description));
+        }
+        return this;
+    }
+
+    @NotNull
+    public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> description) {
+        if (description == null || description.isEmpty()) {
+            configComments.remove(null);
+        } else {
+            configComments.put(null, new Comment(commentStyle, description));
         }
         return this;
     }
@@ -208,7 +317,9 @@ public class Config extends SongodaConfigurationSection {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
         if (input != null) {
-            this.parseComments(contents, input);
+            if(loadComments) {
+                this.parseComments(contents, input);
+            }
             this.convertMapsToSections(input, this);
         }
     }
@@ -226,9 +337,10 @@ public class Config extends SongodaConfigurationSection {
     }
 
     protected void parseComments(@NotNull String contents, @NotNull Map<?, ?> input) {
-        // TODO
+        // TODO?
         // if starts with a comment, load all nonbreaking comments as a header
         // then load all comments and assign to the next valid node loaded
+        // (Only load comments that are on their own line)
     }
 
     public void deleteNonDefaultSettings() {
@@ -272,6 +384,13 @@ public class Config extends SongodaConfigurationSection {
     }
 
     public boolean save() {
+        if(saveTask != null) {
+            //Close Threads
+            saveTask.cancel();
+            autosaveTimer.cancel();
+            saveTask = null;
+            autosaveTimer = null;
+        }
         return save(file);
     }
 
@@ -307,19 +426,108 @@ public class Config extends SongodaConfigurationSection {
             Comment header = configComments.get(null);
             if (header != null) {
                 header.writeComment(str, 0, ConfigFormattingRules.CommentStyle.SPACED);
+                str.write("\n"); // add one space after the header
             }
             String dump = yaml.dump(this.getValues(false));
-            if (dump.equals(BLANK_CONFIG)) {
-                dump = "";
-            } else {
-                // line-by-line apply line spacing formatting and comments per-node
+            if (!dump.equals(BLANK_CONFIG)) {
+                writeComments(dump, str);
             }
-            return str.toString() + dump;
+            return str.toString();
         } catch (Throwable ex) {
             Logger.getLogger(Config.class.getName()).log(Level.SEVERE, "Error saving config", ex);
             delaySave();
         }
         return "";
+    }
+
+    protected final Pattern yamlNode = Pattern.compile("^( *)([^:\\{\\}\\[\\],&\\*#\\?\\|\\-<>=!%@`]+):(.*)$");
+
+    protected void writeComments(String data, Writer out) throws IOException {
+        // line-by-line apply line spacing formatting and comments per-node
+        BufferedReader in = new BufferedReader(new StringReader(data));
+        String line;
+        boolean insideScalar = false;
+        boolean firstNode = true;
+        int index = 0;
+        LinkedList<String> currentPath = new LinkedList();
+        while ((line = in.readLine()) != null) {
+            // ignore comments and empty lines (there shouldn't be any, but just in case)
+            if (line.trim().startsWith("#") || line.isEmpty()) {
+                continue;
+            }
+
+            // check to see if this is a line that we can process
+            int lineOffset = getOffset(line);
+            insideScalar &= lineOffset <= index;
+            Matcher m;
+            if (!insideScalar && (m = yamlNode.matcher(line)).find()) {
+                // we found a config node! ^.^
+                // check to see what the full path is
+                int depth = (m.group(1).length() / indentation);
+                while (depth < currentPath.size()) {
+                    currentPath.removeLast();
+                }
+                currentPath.add(m.group(2));
+                String path = currentPath.stream().collect(Collectors.joining(String.valueOf(pathChar)));
+
+                // if this is a root-level node, apply extra spacing if we aren't the first node
+                if (!firstNode && depth == 0 && rootNodeSpacing > 0) {
+                    out.write((new String(new char[rootNodeSpacing])).replace("\0", "\n")); // yes it's silly, but it works :>
+                }
+                firstNode = false; // we're no longer on the first node
+
+                // insert the relavant comment
+                Comment comment = getComment(path);
+                if (comment != null) {
+                    // add spacing between previous nodes and comments
+                    if (depth != 0) {
+                        out.write((new String(new char[commentSpacing])).replace("\0", "\n"));
+                    }
+
+                    // formatting style for this node
+                    ConfigFormattingRules.CommentStyle style = comment.getCommentStyle();
+                    if (style == null) {
+                        // check to see what type of node this is
+                        if (!m.group(3).trim().isEmpty()) {
+                            // setting node
+                            style = defaultNodeCommentFormat;
+                        } else {
+                            // probably a section? (need to peek ahead to check if this is a list)
+                            in.mark(1000);
+                            String nextLine = in.readLine().trim();
+                            in.reset();
+                            if (nextLine.startsWith("-")) {
+                                // not a section :P
+                                style = defaultNodeCommentFormat;
+                            } else {
+                                style = defaultSectionCommentFormat;
+                            }
+                        }
+                    }
+
+                    // write it down!
+                    comment.writeComment(out, lineOffset, style);
+                }
+                // ignore scalars
+                index = lineOffset;
+                if (m.group(3).trim().equals("|") || m.group(3).trim().equals(">")) {
+                    insideScalar = true;
+                }
+            }
+
+            out.write(line);
+            out.write("\n");
+        }
+    }
+
+    protected static int getOffset(String s) {
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; ++i) {
+            if (chars[i] != ' ') {
+                return i;
+            }
+        }
+        return -1;
     }
 
     class SaveTask extends TimerTask {

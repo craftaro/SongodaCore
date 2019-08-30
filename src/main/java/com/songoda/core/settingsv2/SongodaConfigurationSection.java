@@ -2,6 +2,7 @@ package com.songoda.core.settingsv2;
 
 import com.songoda.core.settingsv2.adapters.ConfigDefaultsAdapter;
 import com.songoda.core.settingsv2.adapters.ConfigOptionsAdapter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,31 +30,33 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     protected int indentation = 2; // between 2 and 9 (inclusive)
     protected char pathChar = '.';
     final HashMap<String, Comment> configComments;
-    final HashMap<String, Class> strictKeys;
+    final HashMap<String, Comment> defaultComments;
     final LinkedHashMap<String, Object> defaults;
     final LinkedHashMap<String, Object> values;
     /**
      * Internal root state: if any configuration value has changed from file state
      */
     boolean changed = false;
+    final boolean isDefault;
     final Object lock = new Object();
 
     SongodaConfigurationSection() {
         this.root = this;
         this.parent = null;
+        isDefault = false;
         fullPath = "";
         configComments = new HashMap();
-        strictKeys = new HashMap();
+        defaultComments = new HashMap();
         defaults = new LinkedHashMap();
         values = new LinkedHashMap();
     }
 
-    SongodaConfigurationSection(SongodaConfigurationSection root, SongodaConfigurationSection parent, String path) {
+    SongodaConfigurationSection(SongodaConfigurationSection root, SongodaConfigurationSection parent, String path, boolean isDefault) {
         this.root = root;
         this.parent = parent;
-        fullPath = parent.fullPath + path + root.pathChar;
-        configComments = null;
-        strictKeys = null;
+        this.fullPath = parent.fullPath + path + root.pathChar;
+        this.isDefault = isDefault;
+        configComments = defaultComments = null;
         defaults = null;
         values = null;
     }
@@ -66,12 +69,8 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
         root.indentation = indentation;
     }
 
-    public char getPathSeparator() {
-        return root.pathChar;
-    }
-    
     protected void onChange() {
-        if(parent != null) {
+        if (parent != null) {
             root.onChange();
         }
     }
@@ -83,18 +82,75 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
      * @param pathChar character to use
      */
     public void setPathSeparator(char pathChar) {
-        if(!root.values.isEmpty() || !root.defaults.isEmpty())
+        if (!root.values.isEmpty() || !root.defaults.isEmpty())
             throw new RuntimeException("Path change after config initialization");
         root.pathChar = pathChar;
+    }
+
+    public char getPathSeparator() {
+        return root.pathChar;
+    }
+    
+    @NotNull
+    public SongodaConfigurationSection createDefaultSection(@NotNull String path) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, true);
+        synchronized (root.lock) {
+            root.defaults.put(fullPath + path, section);
+        }
+        return section;
+    }
+    
+    @NotNull
+    public SongodaConfigurationSection createDefaultSection(@NotNull String path, String... comment) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, true);
+        synchronized (root.lock) {
+            root.defaults.put(fullPath + path, section);
+        }
+        return section;
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+        return setComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+        synchronized (root.lock) {
+            if (isDefault) {
+                root.defaultComments.put(fullPath + path, lines != null ? new Comment(commentStyle, lines) : null);
+            } else {
+                root.configComments.put(fullPath + path, lines != null ? new Comment(commentStyle, lines) : null);
+            }
+        }
+        return this;
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefaultComment(@NotNull String path, String... lines) {
+        return setDefaultComment(path, lines.length == 0 ? (List) null : Arrays.asList(lines));
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
+        synchronized (root.lock) {
+            root.defaultComments.put(fullPath + path, new Comment(lines));
+        }
+        return this;
+    }
+
+    @Nullable
+    public Comment getComment(@NotNull String path) {
+        Comment result = root.configComments.get(fullPath + path);
+        if (result == null) {
+            result = root.defaultComments.get(fullPath + path);
+        }
+        return result;
     }
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
         root.defaults.put(fullPath + path, value);
-        if(!root.changed) {
-            root.changed = root.values.get(fullPath + path) == null;
-        }
-        onChange();
     }
 
     @Override
@@ -104,7 +160,7 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
 
     @Override
     public void setDefaults(Configuration c) {
-        if(fullPath.isEmpty()) {
+        if (fullPath.isEmpty()) {
             root.defaults.clear();
         } else {
             root.defaults.keySet().stream()
@@ -135,21 +191,21 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
         LinkedHashSet<String> result = new LinkedHashSet();
         int pathIndex = fullPath.lastIndexOf(root.pathChar);
         if (deep) {
-            result.addAll(root.values.keySet().stream()
+            result.addAll(root.defaults.keySet().stream()
                     .filter(k -> k.startsWith(fullPath))
                     .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
-            result.addAll(root.defaults.keySet().stream()
+            result.addAll(root.values.keySet().stream()
                     .filter(k -> k.startsWith(fullPath))
                     .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         } else {
-            result.addAll(root.values.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
-                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
-                    .collect(Collectors.toCollection(LinkedHashSet::new)));
             result.addAll(root.defaults.keySet().stream()
                     .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex + 1)
+                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+            result.addAll(root.values.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
                     .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
@@ -177,14 +233,14 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
                             (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
                             LinkedHashMap::new)));
         } else {
-            result.putAll((Map<String, Object>) root.values.entrySet().stream()
+           result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
                             e -> e.getValue(),
                             (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
                             LinkedHashMap::new)));
-           result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
+            result.putAll((Map<String, Object>) root.values.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
@@ -217,7 +273,7 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
 
     @Override
     public String getName() {
-        if(fullPath.isEmpty())
+        if (fullPath.isEmpty())
             return "";
         String[] parts = fullPath.split(Pattern.quote(String.valueOf(root.pathChar)));
         return parts[parts.length - 1];
@@ -252,20 +308,66 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        synchronized(root.lock) {
-            if (value != null) {
-                root.changed |= root.values.put(fullPath + path, value) != value;
-            } else {
-                root.changed |= root.values.remove(fullPath + path) != null;
+        if (isDefault) {
+            root.defaults.put(fullPath + path, value);
+        } else {
+            synchronized (root.lock) {
+                if (value != null) {
+                    root.changed |= root.values.put(fullPath + path, value) != value;
+                } else {
+                    root.changed |= root.values.remove(fullPath + path) != null;
+                }
             }
+            onChange();
         }
-        onChange();
+    }
+
+    @NotNull
+    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, String ... comment) {
+        set(path, value);
+        return setComment(path, null, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, List<String> comment) {
+        set(path, value);
+        return setComment(path, null, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+        set(path, value);
+        return setComment(path, commentStyle, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+        set(path, value);
+        return setComment(path, commentStyle, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value) {
+        addDefault(path, value);
+        return this;
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, String ... comment) {
+        addDefault(path, value);
+        return setDefaultComment(path, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, List<String> comment) {
+        addDefault(path, value);
+        return setDefaultComment(path, comment);
     }
 
     @NotNull
     @Override
     public SongodaConfigurationSection createSection(@NotNull String path) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path);
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
         synchronized(root.lock) {
             root.values.put(fullPath + path, section);
         }
@@ -275,10 +377,37 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
+    public SongodaConfigurationSection createSection(@NotNull String path, String... comment) {
+        return createSection(path, null, comment.length == 0 ? (List) null : Arrays.asList(comment));
+    }
+
+    @NotNull
+    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable List<String> comment) {
+        return createSection(path, null, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        return createSection(path, commentStyle, comment.length == 0 ? (List) null : Arrays.asList(comment));
+    }
+
+    @NotNull
+    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
+        synchronized (root.lock) {
+            root.values.put(fullPath + path, section);
+        }
+        setComment(path, commentStyle, comment);
+        root.changed = true;
+        onChange();
+        return section;
+    }
+
+    @NotNull
     @Override
     public SongodaConfigurationSection createSection(@NotNull String path, Map<?, ?> map) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path);
-        synchronized(root.lock) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
+        synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
         for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -387,5 +516,10 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     public SongodaConfigurationSection getConfigurationSection(@NotNull String path) {
         Object result = get(path);
         return result instanceof SongodaConfigurationSection ? (SongodaConfigurationSection) result : null;
+    }
+
+    public SongodaConfigurationSection getOrCreateConfigurationSection(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof SongodaConfigurationSection ? (SongodaConfigurationSection) result : createSection(path);
     }
 }
