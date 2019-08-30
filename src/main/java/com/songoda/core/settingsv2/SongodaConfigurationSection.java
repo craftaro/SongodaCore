@@ -1,19 +1,17 @@
 package com.songoda.core.settingsv2;
 
-import com.songoda.core.settingsv2.adapters.ConfigAdapter;
+import com.songoda.core.settingsv2.adapters.ConfigDefaultsAdapter;
 import com.songoda.core.settingsv2.adapters.ConfigOptionsAdapter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.bukkit.Color;
-import org.bukkit.OfflinePlayer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,46 +23,105 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SongodaConfigurationSection extends MemoryConfiguration {
 
-    final Config root;
     final String fullPath;
+    final SongodaConfigurationSection root;
     final SongodaConfigurationSection parent;
-    final HashMap<String, Comment> configComments = new HashMap();
-    final HashMap<String, Class> strictKeys = new HashMap();
-    final HashMap<String, Object> defaults = new HashMap();
-    final HashMap<String, Object> values = new HashMap();
+    protected int indentation = 2; // between 2 and 9 (inclusive)
+    protected char pathChar = '.';
+    final HashMap<String, Comment> configComments;
+    final HashMap<String, Class> strictKeys;
+    final LinkedHashMap<String, Object> defaults;
+    final LinkedHashMap<String, Object> values;
+    /**
+     * Internal root state: if any configuration value has changed from file state
+     */
+    boolean changed = false;
+    final Object lock = new Object();
 
-    public SongodaConfigurationSection(Config root, SongodaConfigurationSection parent) {
-        this.root = root;
-        this.parent = parent;
+    SongodaConfigurationSection() {
+        this.root = this;
+        this.parent = null;
         fullPath = "";
+        configComments = new HashMap();
+        strictKeys = new HashMap();
+        defaults = new LinkedHashMap();
+        values = new LinkedHashMap();
     }
 
+    SongodaConfigurationSection(SongodaConfigurationSection root, SongodaConfigurationSection parent, String path) {
+        this.root = root;
+        this.parent = parent;
+        fullPath = parent.fullPath + path + root.pathChar;
+        configComments = null;
+        strictKeys = null;
+        defaults = null;
+        values = null;
+    }
 
+    public int getIndent() {
+        return root.indentation;
+    }
+
+    public void setIndent(int indentation) {
+        root.indentation = indentation;
+    }
+
+    public char getPathSeparator() {
+        return root.pathChar;
+    }
+    
+    protected void onChange() {
+        if(parent != null) {
+            root.onChange();
+        }
+    }
+
+    /**
+     * Sets the character used to separate configuration nodes. <br>
+     * IMPORTANT: Do not change this after loading or adding ConfigurationSections!
+     * 
+     * @param pathChar character to use
+     */
+    public void setPathSeparator(char pathChar) {
+        if(!root.values.isEmpty() || !root.defaults.isEmpty())
+            throw new RuntimeException("Path change after config initialization");
+        root.pathChar = pathChar;
+    }
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
-        defaults.put(path, value);
-        // TODO path iteration
+        root.defaults.put(fullPath + path, value);
+        if(!root.changed) {
+            root.changed = root.values.get(fullPath + path) == null;
+        }
+        onChange();
     }
 
     @Override
-    public void addDefaults(Map<String, Object> map) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void addDefaults(Configuration c) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addDefaults(@NotNull Map<String, Object> defaults) {
+        defaults.entrySet().stream().forEach(m -> root.defaults.put(fullPath + m.getKey(), m.getValue()));
     }
 
     @Override
     public void setDefaults(Configuration c) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(fullPath.isEmpty()) {
+            root.defaults.clear();
+        } else {
+            root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath))
+                    .forEach(k -> root.defaults.remove(k));
+        }
+        addDefaults(c);
     }
 
     @Override
-    public ConfigAdapter getDefaults() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ConfigDefaultsAdapter getDefaults() {
+        return new ConfigDefaultsAdapter(root, this);
+    }
+
+    @Override
+    public ConfigDefaultsAdapter getDefaultSection() {
+        return new ConfigDefaultsAdapter(root, this);
     }
 
     @Override
@@ -72,308 +129,263 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
         return new ConfigOptionsAdapter(root);
     }
 
+    @NotNull
     @Override
-    public Set<String> getKeys(boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Set<String> getKeys(boolean deep) {
+        LinkedHashSet<String> result = new LinkedHashSet();
+        int pathIndex = fullPath.lastIndexOf(root.pathChar);
+        if (deep) {
+            result.addAll(root.values.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath))
+                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+            result.addAll(root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath))
+                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+        } else {
+            result.addAll(root.values.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
+                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+            result.addAll(root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex + 1)
+                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+        }
+        return result;
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> getValues(boolean deep) {
+        LinkedHashMap<String, Object> result = new LinkedHashMap();
+        int pathIndex = fullPath.lastIndexOf(root.pathChar);
+        if (deep) {
+            result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(fullPath))
+                    .collect(Collectors.toMap(
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> e.getValue(),
+                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            LinkedHashMap::new)));
+            result.putAll((Map<String, Object>) root.values.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(fullPath))
+                    .collect(Collectors.toMap(
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> e.getValue(),
+                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            LinkedHashMap::new)));
+        } else {
+            result.putAll((Map<String, Object>) root.values.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
+                    .collect(Collectors.toMap(
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> e.getValue(),
+                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            LinkedHashMap::new)));
+           result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
+                    .collect(Collectors.toMap(
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> e.getValue(),
+                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            LinkedHashMap::new)));
+        }
+        return result;
     }
 
     @Override
-    public Map<String, Object> getValues(boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean contains(@NotNull String path) {
+        return root.defaults.containsKey(fullPath + path) || root.values.containsKey(fullPath + path);
     }
 
     @Override
-    public boolean contains(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean contains(@NotNull String path, boolean ignoreDefault) {
+        return (!ignoreDefault && root.defaults.containsKey(fullPath + path)) || root.values.containsKey(fullPath + path);
     }
 
     @Override
-    public boolean contains(String string, boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isSet(String path) {
-        return get(path, null) != null;
+    public boolean isSet(@NotNull String path) {
+        return root.defaults.get(fullPath + path) != null || root.values.get(fullPath + path) != null;
     }
 
     @Override
     public String getCurrentPath() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return fullPath.isEmpty() ? "" : fullPath.substring(0, fullPath.length() - 1);
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(fullPath.isEmpty())
+            return "";
+        String[] parts = fullPath.split(Pattern.quote(String.valueOf(root.pathChar)));
+        return parts[parts.length - 1];
     }
 
     @Override
-    public Configuration getRoot() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SongodaConfigurationSection getRoot() {
+        return root;
     }
 
     @Override
-    public ConfigurationSection getParent() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SongodaConfigurationSection getParent() {
+        return parent;
+    }
+
+    @Nullable
+    @Override
+    public Object get(@NotNull String path) {
+        Object result = root.values.get(fullPath + path);
+        if (result == null) {
+            result = root.defaults.get(fullPath + path);
+        }
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public Object get(@NotNull String path, @Nullable Object def) {
+        Object result = root.values.get(fullPath + path);
+        return result != null ? result : def;
     }
 
     @Override
-    public Object get(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void set(@NotNull String path, @Nullable Object value) {
+        synchronized(root.lock) {
+            if (value != null) {
+                root.changed |= root.values.put(fullPath + path, value) != value;
+            } else {
+                root.changed |= root.values.remove(fullPath + path) != null;
+            }
+        }
+        onChange();
+    }
+
+    @NotNull
+    @Override
+    public SongodaConfigurationSection createSection(@NotNull String path) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path);
+        synchronized(root.lock) {
+            root.values.put(fullPath + path, section);
+        }
+        root.changed = true;
+        onChange();
+        return section;
+    }
+
+    @NotNull
+    @Override
+    public SongodaConfigurationSection createSection(@NotNull String path, Map<?, ?> map) {
+        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path);
+        synchronized(root.lock) {
+            root.values.put(fullPath + path, section);
+        }
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                section.createSection(entry.getKey().toString(), (Map) entry.getValue());
+                continue;
+            }
+            section.set(entry.getKey().toString(), entry.getValue());
+        }
+        root.changed = true;
+        onChange();
+        return section;
+    }
+
+    @Nullable
+    @Override
+    public String getString(@NotNull String path) {
+        Object result = get(path);
+        return result != null ? result.toString() : null;
+    }
+
+    @Nullable
+    @Override
+    public String getString(@NotNull String path, @Nullable String def) {
+        Object result = get(path);
+        return result != null ? result.toString() : def;
     }
 
     @Override
-    public Object get(String string, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public int getInt(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).intValue() : 0;
     }
 
     @Override
-    public void set(String string, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public int getInt(@NotNull String path, int def) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).intValue() : def;
     }
 
     @Override
-    public ConfigurationSection createSection(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean getBoolean(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof Boolean ? (Boolean) result : false;
     }
 
     @Override
-    public ConfigurationSection createSection(String string, Map<?, ?> map) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean getBoolean(@NotNull String path, boolean def) {
+        Object result = get(path);
+        return result instanceof Boolean ? (Boolean) result : def;
     }
 
     @Override
-    public String getString(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public double getDouble(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).doubleValue() : 0;
     }
 
     @Override
-    public String getString(String string, String string1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public double getDouble(@NotNull String path, double def) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).doubleValue() : def;
     }
 
     @Override
-    public boolean isString(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public long getLong(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).longValue(): 0;
     }
 
     @Override
-    public int getInt(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public long getLong(@NotNull String path, long def) {
+        Object result = get(path);
+        return result instanceof Number ? ((Number) result).longValue() : def;
+    }
+
+    @Nullable
+    @Override
+    public List<?> getList(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof List ? (List) result : null;
+    }
+
+    @Nullable
+    @Override
+    public List<?> getList(@NotNull String path, @Nullable List<?> def) {
+        Object result = get(path);
+        return result instanceof List ? (List) result : def;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getObject(@NotNull String path, @NotNull Class<T> clazz) {
+        Object result = get(path);
+        return result != null && clazz.isInstance(result) ? clazz.cast(result) : null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getObject(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def) {
+        Object result = get(path);
+        return result != null && clazz.isInstance(result) ? clazz.cast(result) : def;
     }
 
     @Override
-    public int getInt(String string, int i) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isInt(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean getBoolean(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean getBoolean(String string, boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isBoolean(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public double getDouble(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public double getDouble(String string, double d) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isDouble(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public long getLong(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public long getLong(String string, long l) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isLong(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<?> getList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<?> getList(String string, List<?> list) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<String> getStringList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Integer> getIntegerList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Boolean> getBooleanList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Double> getDoubleList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Float> getFloatList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Long> getLongList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Byte> getByteList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Character> getCharacterList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Short> getShortList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Map<?, ?>> getMapList(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T getObject(String string, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T getObject(String string, Class<T> type, T t) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T extends ConfigurationSerializable> T getSerializable(String string, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T extends ConfigurationSerializable> T getSerializable(String string, Class<T> type, T t) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Vector getVector(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Vector getVector(String string, Vector vector) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isVector(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public OfflinePlayer getOfflinePlayer(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public OfflinePlayer getOfflinePlayer(String string, OfflinePlayer op) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isOfflinePlayer(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ItemStack getItemStack(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ItemStack getItemStack(String string, ItemStack is) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isItemStack(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Color getColor(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Color getColor(String string, Color color) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isColor(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ConfigurationSection getConfigurationSection(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isConfigurationSection(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ConfigurationSection getDefaultSection() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SongodaConfigurationSection getConfigurationSection(@NotNull String path) {
+        Object result = get(path);
+        return result instanceof SongodaConfigurationSection ? (SongodaConfigurationSection) result : null;
     }
 }

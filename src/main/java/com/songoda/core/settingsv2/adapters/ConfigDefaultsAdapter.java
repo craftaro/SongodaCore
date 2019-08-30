@@ -1,7 +1,6 @@
 package com.songoda.core.settingsv2.adapters;
 
-import com.songoda.core.settingsv2.Config;
-import java.util.HashMap;
+import com.songoda.core.settingsv2.SongodaConfigurationSection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,16 +13,14 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public class ConfigAdapter implements Configuration {
+public class ConfigDefaultsAdapter implements Configuration {
 
-    final Config root;
-    final HashMap<String, Object> map;
-    final String path;
+    final SongodaConfigurationSection root;
+    final SongodaConfigurationSection current;
 
-    public ConfigAdapter(Config config, HashMap<String, Object> map, String path) {
+    public ConfigDefaultsAdapter(SongodaConfigurationSection config, SongodaConfigurationSection current) {
         this.root = config;
-        this.map = map;
-        this.path = path;
+        this.current = current;
     }
 
     @Override
