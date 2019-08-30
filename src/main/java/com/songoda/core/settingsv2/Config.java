@@ -60,7 +60,8 @@ public class Config extends SongodaConfigurationSection {
     protected static final String COMMENT_PREFIX = "# ";
     protected static final String BLANK_CONFIG = "{}\n";
 
-    final File file;
+    protected File file;
+    final String dirName, fileName;
     final Plugin plugin;
     final DumperOptions yamlOptions = new DumperOptions();
     final Representer yamlRepresenter = new YamlRepresenter();
@@ -106,24 +107,36 @@ public class Config extends SongodaConfigurationSection {
     public Config(@NotNull File file) {
         this.plugin = null;
         this.file = file.getAbsoluteFile();
+        dirName = null;
+        fileName = null;
     }
 
     public Config(@NotNull Plugin plugin) {
         this.plugin = plugin;
-        this.file = new File(plugin.getDataFolder(), "config.yml");
+        dirName = null;
+        fileName = null;
     }
 
     public Config(@NotNull Plugin plugin, @NotNull String file) {
         this.plugin = plugin;
-        this.file = new File(plugin.getDataFolder(), file);
+        dirName = null;
+        fileName = file;
     }
 
     public Config(@NotNull Plugin plugin, @NotNull String directory, @NotNull String file) {
         this.plugin = plugin;
-        this.file = new File(plugin.getDataFolder() + directory, file);
+        dirName = directory;
+        fileName = file;
     }
 
     public File getFile() {
+        if (file == null) {
+            if (dirName != null) {
+                this.file = new File(plugin.getDataFolder() + dirName, fileName != null ? fileName : "config.yml");
+            } else {
+                this.file = new File(plugin.getDataFolder(), fileName != null ? fileName : "config.yml");
+            }
+        }
         return file;
     }
 
@@ -285,8 +298,7 @@ public class Config extends SongodaConfigurationSection {
     }
 
     public void load() throws FileNotFoundException, IOException, InvalidConfigurationException {
-        Validate.notNull(file, "File cannot be null");
-        FileInputStream stream = new FileInputStream(file);
+        FileInputStream stream = new FileInputStream(getFile());
         this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
     }
 
@@ -363,7 +375,7 @@ public class Config extends SongodaConfigurationSection {
     public void delaySave() {
         // save async even if no plugin or if plugin disabled
         if (changed && saveTask == null) {
-            autosaveTimer = new Timer((plugin != null ? plugin.getName() + "-ConfigSave-" : "ConfigSave-") + file.getName());
+            autosaveTimer = new Timer((plugin != null ? plugin.getName() + "-ConfigSave-" : "ConfigSave-") + getFile().getName());
             autosaveTimer.schedule(saveTask = new SaveTask(), autosaveInterval * 1000L);
         }
     }
@@ -391,7 +403,7 @@ public class Config extends SongodaConfigurationSection {
             saveTask = null;
             autosaveTimer = null;
         }
-        return save(file);
+        return save(getFile());
     }
 
     public boolean save(@NotNull String file) {

@@ -1,5 +1,6 @@
 package com.songoda.core.settingsv2;
 
+import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.settingsv2.adapters.ConfigDefaultsAdapter;
 import com.songoda.core.settingsv2.adapters.ConfigOptionsAdapter;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -135,6 +137,19 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     public SongodaConfigurationSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(lines));
+        }
+        return this;
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+        return setDefaultComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+        synchronized (root.lock) {
+            root.defaultComments.put(fullPath + path, new Comment(commentStyle, lines));
         }
         return this;
     }
@@ -365,6 +380,18 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
+    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+        addDefault(path, value);
+        return setDefaultComment(path, commentStyle, comment);
+    }
+
+    @NotNull
+    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+        addDefault(path, value);
+        return setDefaultComment(path, commentStyle, comment);
+    }
+
+    @NotNull
     @Override
     public SongodaConfigurationSection createSection(@NotNull String path) {
         SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
@@ -436,6 +463,16 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
         return result != null ? result.toString() : def;
     }
 
+    public char getChar(@NotNull String path) {
+        Object result = get(path);
+        return result != null && !result.toString().isEmpty() ? result.toString().charAt(0) : '\0';
+    }
+
+    public char getChar(@NotNull String path, char def) {
+        Object result = get(path);
+        return result != null && !result.toString().isEmpty() ? result.toString().charAt(0) : def;
+    }
+
     @Override
     public int getInt(@NotNull String path) {
         Object result = get(path);
@@ -496,6 +533,20 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     public List<?> getList(@NotNull String path, @Nullable List<?> def) {
         Object result = get(path);
         return result instanceof List ? (List) result : def;
+    }
+
+    @Nullable
+    public Material getMaterial(@NotNull String path) {
+        String val = getString(path);
+        LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
+        return mat != null ? mat.getMaterial() : null;
+    }
+
+    @Nullable
+    public Material getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
+        String val = getString(path);
+        LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
+        return mat != null ? mat.getMaterial() : (def != null ? def.getMaterial() : null);
     }
 
     @Nullable
