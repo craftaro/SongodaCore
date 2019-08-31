@@ -38,7 +38,7 @@ public class GuiUtils {
         return item;
     }
 
-    public static List<String> getSafeLore(String ... lines) {
+    public static List<String> getSafeLore(String... lines) {
         return getSafeLore(Arrays.asList(lines));
     }
 
@@ -91,24 +91,28 @@ public class GuiUtils {
     public static ItemStack createButtonItem(LegacyMaterials mat, String title, String... lore) {
         ItemStack item = mat.getItem();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack createButtonItem(ItemStack from, String title, String... lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
@@ -117,11 +121,13 @@ public class GuiUtils {
     public static ItemStack createButtonItem(LegacyMaterials mat, String title, List<String> lore) {
         ItemStack item = mat.getItem();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
@@ -130,11 +136,13 @@ public class GuiUtils {
     public static ItemStack createButtonItem(ItemStack from, String title, List<String> lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
@@ -142,41 +150,47 @@ public class GuiUtils {
 
     public static ItemStack updateItem(ItemStack item, String title, String... lore) {
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, LegacyMaterials matTo, String title, String... lore) {
-        if(!matTo.matches(item)) {
+        if (!matTo.matches(item)) {
             item = matTo.getItem();
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, String... lore) {
-        if(!LegacyMaterials.getMaterial(item).matches(to)) {
+        if (!LegacyMaterials.getMaterial(item).matches(to)) {
             item = to.clone();
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
@@ -184,41 +198,47 @@ public class GuiUtils {
 
     public static ItemStack updateItem(ItemStack item, String title, List<String> lore) {
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, LegacyMaterials matTo, String title, List<String> lore) {
-        if(!matTo.matches(item)) {
+        if (!matTo.matches(item)) {
             item = matTo.getItem();
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, List<String> lore) {
-        if(!LegacyMaterials.getMaterial(item).matches(to)) {
+        if (!LegacyMaterials.getMaterial(item).matches(to)) {
             item = to.clone();
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        if (lore != null) {
-            meta.setLore(getSafeLore(lore));
-        } else {
-            meta.setLore(Collections.EMPTY_LIST);
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
         }
         item.setItemMeta(meta);
         return item;

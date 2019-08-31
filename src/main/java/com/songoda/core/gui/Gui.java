@@ -72,6 +72,10 @@ public class Gui {
         }
     }
 
+    public Gui(Gui parent) {
+        this.parent = parent;
+    }
+
     public Gui(int rows) {
         this.rows = Math.max(1, Math.min(6, rows));
     }
@@ -476,7 +480,8 @@ public class Gui {
                 updatePageNavigation();
 
                 // push new inventory to the view inventory
-                update();
+                // shouldn't be needed since adding inventory update to setItem
+                //update();
             }
         }
     }
