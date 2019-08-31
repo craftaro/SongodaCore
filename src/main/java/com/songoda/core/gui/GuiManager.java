@@ -32,7 +32,7 @@ public class GuiManager {
     final Plugin plugin;
     final UUID uuid = UUID.randomUUID(); // manager tracking to fix weird bugs from lazy programming
     final GuiListener listener = new GuiListener(this);
-    final Map<Player, Inventory> openInventories = new HashMap();
+    final Map<Player, Gui> openInventories = new HashMap();
     private boolean initialized = false;
     private boolean shutdown = false;
 
@@ -70,10 +70,14 @@ public class GuiManager {
         } else if (!initialized) {
             init();
         }
+        Gui openInv = openInventories.get(player);
+        if(openInv != null) {
+            openInv.open = false;
+        }
         Inventory inv = gui.generateInventory(this);
         player.openInventory(inv);
         gui.onOpen(this, player);
-        openInventories.put(player, inv);
+        openInventories.put(player, gui);
     }
 
     public void showPopup(Player player, String message) {
@@ -160,6 +164,9 @@ public class GuiManager {
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
                     && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 Gui gui = ((GuiHolder) openInv.getHolder()).getGUI();
+                if(!gui.open) {
+                    return;
+                }
                 final Player player = (Player) event.getPlayer();
                 if (!gui.allowDropItems) {
                     player.setItemOnCursor(null);

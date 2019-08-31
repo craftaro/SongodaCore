@@ -46,8 +46,8 @@ public class SongodaCore {
     private static SongodaCore INSTANCE = null;
     private JavaPlugin piggybackedPlugin;
     private final CommandManager commandManager;
-    private final EventListener loginListener = new EventListener();
-    private final ShadedEventListener shadingListener = new ShadedEventListener();
+    private EventListener loginListener;
+    private ShadedEventListener shadingListener;
 
     public static boolean hasShading() {
         // sneaky hack to check the package name since maven tries to re-shade all references to the package string
@@ -68,7 +68,9 @@ public class SongodaCore {
                         clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
 
                         if(hasShading()) {
-                            Bukkit.getPluginManager().registerEvents(new ShadedEventListener(), plugin);
+                            (INSTANCE = new SongodaCore()).piggybackedPlugin = plugin;
+                            INSTANCE.shadingListener = new ShadedEventListener();
+                            Bukkit.getPluginManager().registerEvents(INSTANCE.shadingListener, plugin);
                         }
                         return;
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
@@ -77,23 +79,33 @@ public class SongodaCore {
             }
             // register ourselves as the SongodaCore service!
             INSTANCE = new SongodaCore(plugin);
+            INSTANCE.init();
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
         INSTANCE.register(plugin, pluginID, icon);
     }
 
-    public SongodaCore(JavaPlugin javaPlugin) {
+    SongodaCore() {
+        commandManager = null;
+    }
+
+    SongodaCore(JavaPlugin javaPlugin) {
         piggybackedPlugin = javaPlugin;
         commandManager = new CommandManager(piggybackedPlugin);
+        loginListener = new EventListener();
+        shadingListener = new ShadedEventListener();
+    }
+
+    private void init() {
         commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
                 .addSubCommand(new SongodaCoreDiagCommand(this));
-        Bukkit.getPluginManager().registerEvents(loginListener, javaPlugin);
-        Bukkit.getPluginManager().registerEvents(shadingListener, javaPlugin);
+        Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
+        Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
         // we aggressevely want to own this command
-        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(javaPlugin, ()->registerAllPlugins(), 20 * 60 * 2);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->registerAllPlugins(), 20 * 60 * 2);
     }
 
     /**

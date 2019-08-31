@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A comment for a configuration key
@@ -49,6 +50,11 @@ public class Comment {
 
     public List<String> getLines() {
         return lines;
+    }
+
+    @Override
+    public String toString() {
+        return lines.isEmpty() ? "" : lines.stream().collect(Collectors.joining("\n"));
     }
 
     public void writeComment(Writer output, int offset, CommentStyle defaultStyle) throws IOException {

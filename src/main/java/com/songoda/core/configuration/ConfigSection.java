@@ -177,6 +177,15 @@ public class ConfigSection extends MemoryConfiguration {
         return result;
     }
 
+    @Nullable
+    public String getCommentString(@NotNull String path) {
+        Comment result = root.configComments.get(fullPath + path);
+        if (result == null) {
+            result = root.defaultComments.get(fullPath + path);
+        }
+        return result != null ? result.toString() : null;
+    }
+
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
         root.defaults.put(fullPath + path, value);

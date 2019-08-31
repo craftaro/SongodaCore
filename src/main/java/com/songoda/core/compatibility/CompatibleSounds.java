@@ -818,7 +818,7 @@ public enum CompatibleSounds {
 
     protected /*final*/ Sound sound;
     protected /*final*/ boolean compatibilityMode;
-    protected static final boolean DEBUG = true;
+    protected static final boolean DEBUG = false;
 
     private CompatibleSounds() {
         // This could get risky, since we haven't finished this

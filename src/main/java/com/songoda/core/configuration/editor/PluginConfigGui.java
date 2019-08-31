@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Edit all configuration files for a specific plugin
@@ -25,7 +24,7 @@ import org.bukkit.plugin.Plugin;
  */
 public class PluginConfigGui extends SimplePagedGui {
 
-    final Plugin plugin;
+    final JavaPlugin plugin;
     LinkedHashMap<String, MemoryConfiguration> configs = new LinkedHashMap();
 
     public PluginConfigGui(SongodaPlugin plugin) {
@@ -47,11 +46,11 @@ public class PluginConfigGui extends SimplePagedGui {
         init();
     }
 
-    public PluginConfigGui(Plugin plugin) {
+    public PluginConfigGui(JavaPlugin plugin) {
         this(plugin, null);
     }
 
-    public PluginConfigGui(Plugin plugin, Gui parent) {
+    public PluginConfigGui(JavaPlugin plugin, Gui parent) {
         super(parent);
         this.plugin = plugin;
 
@@ -68,7 +67,7 @@ public class PluginConfigGui extends SimplePagedGui {
                     for (Object cfg : ((List) more)) {
                         configs.put(((File) method_Config_getFile.invoke(cfg)).getName(), (MemoryConfiguration) cfg);
                     }
-                } catch (Exception  ex) {
+                } catch (Exception ex) {
                     // include a failsafe, I guess
                     ((List) more).forEach(cfg -> configs.put("(File " + configs.size() + ")", (MemoryConfiguration) cfg));
                 }
@@ -80,6 +79,7 @@ public class PluginConfigGui extends SimplePagedGui {
     }
 
     private void init() {
+        this.blankItem = GuiUtils.getBorderItem(LegacyMaterials.LIGHT_GRAY_STAINED_GLASS_PANE);
 
         // decorate header
         this.setTitle(ChatColor.DARK_BLUE + plugin.getName() + " Plugin Config");
@@ -91,7 +91,7 @@ public class PluginConfigGui extends SimplePagedGui {
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
             this.setButton(i++, GuiUtils.createButtonItem(LegacyMaterials.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(config.getKey(), config.getValue())));
+                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, config.getKey(), config.getValue())));
         }
     }
 

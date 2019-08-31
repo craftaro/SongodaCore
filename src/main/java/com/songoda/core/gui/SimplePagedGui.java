@@ -54,6 +54,23 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
+    public SimplePagedGui setItem(int row, int col, ItemStack item) {
+        return setItem(col + row * 9, item);
+    }
+
+    @Override
+    public SimplePagedGui setItem(int cell, ItemStack item) {
+        // set the cell relative to the current page
+        int cellIndex = page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9));
+
+        cellItems.put(cellIndex, item);
+        if (open && cell >= 0 && cell < inventory.getSize()) {
+            inventory.setItem(cell, item);
+        }
+        return this;
+    }
+
+    @Override
     public void nextPage() {
         if (page < pages) {
             ++page;
@@ -109,7 +126,7 @@ public class SimplePagedGui extends Gui {
         int maxRows = (int) Math.ceil(maxCellSlot / 9.);
         pages = (int) Math.ceil(maxRows / rowsPerPage);
         page = 1;
-        this.setRows(maxRows + 1);
+        this.setRows(maxRows + (useHeader ? 2 : 1));
 
         // create inventory view
         final int cells = rows * 9;
@@ -148,8 +165,7 @@ public class SimplePagedGui extends Gui {
             // footer row
             conditionals = conditionalButtons.get(cell - (rows * 9));
         } else {
-            int startCell = useHeader ? 9 : 0;
-            int cellIndex = startCell + (page - 1) * rowsPerPage;
+            int cellIndex = page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9));
             conditionals = conditionalButtons.get(cellIndex);
         }
 

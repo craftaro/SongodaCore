@@ -37,7 +37,6 @@ public class ClientVersion {
         Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), ()-> {
             if(p.isOnline()) {
                 final int version = protocolsupport.api.ProtocolSupportAPI.getProtocolVersion(p).getId();
-                System.out.println("ProtoLogin" + version);
                 players.put(p.getUniqueId(), protocolToVersion(version));
             }
         }, 20);
@@ -51,7 +50,6 @@ public class ClientVersion {
         Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), ()-> {
             if(p.isOnline()) {
                 final int version = us.myles.ViaVersion.api.Via.getAPI().getPlayerVersion(p.getUniqueId());
-                System.out.println("ViaLogin" + version);
                 players.put(p.getUniqueId(), protocolToVersion(version));
             }
         }, 20);
