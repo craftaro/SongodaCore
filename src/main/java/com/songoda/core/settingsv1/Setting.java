@@ -1,4 +1,4 @@
-package com.songoda.core.settings;
+package com.songoda.core.settingsv1;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

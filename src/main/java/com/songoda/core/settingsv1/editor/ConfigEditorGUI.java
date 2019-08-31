@@ -1,10 +1,10 @@
-package com.songoda.core.settings.editor;
+package com.songoda.core.settingsv1.editor;
 
 import com.songoda.core.input.ChatPrompt;
 import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.settings.FoundSetting;
-import com.songoda.core.settings.Narrow;
-import com.songoda.core.settings.Setting;
+import com.songoda.core.settingsv1.FoundSetting;
+import com.songoda.core.settingsv1.Narrow;
+import com.songoda.core.settingsv1.Setting;
 import com.songoda.core.utils.gui.AbstractGUI;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

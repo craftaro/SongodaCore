@@ -1,4 +1,4 @@
-package com.songoda.core.settings;
+package com.songoda.core.settingsv1;
 
 public class Section {
 

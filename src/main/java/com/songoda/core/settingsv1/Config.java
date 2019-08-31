@@ -1,4 +1,4 @@
-package com.songoda.core.settings;
+package com.songoda.core.settingsv1;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemorySection;
@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class Config {
 
     private final Plugin plugin;

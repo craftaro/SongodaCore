@@ -1,7 +1,10 @@
 package com.songoda.core;
 
+import com.songoda.core.configuration.Config;
+import com.songoda.core.configuration.ConfigFileConfigurationAdapter;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
+import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class SongodaPlugin extends JavaPlugin {
 
     protected Locale locale;
+    protected Config config = new Config(this);
 
     protected ConsoleCommandSender console = Bukkit.getConsoleSender();
     private boolean emergencyStop = false;
@@ -27,7 +31,33 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     public abstract void onPluginDisable();
 
+    /**
+     * Called after reloadConfig​() is called
+     */
     public abstract void onConfigReload();
+
+    /**
+     * Any other plugin configuration files used by the plugin.
+     * 
+     * @return a list of Configs that are used in addition to the main config.
+     */
+    public abstract List<Config> getExtraConfig();
+
+    @Override
+    public ConfigFileConfigurationAdapter getConfig() {
+        return config.getConfig();
+    }
+
+    @Override
+    public void reloadConfig​() {
+        config.load();
+        onConfigReload();
+    }
+
+    @Override
+    public void saveConfig​() {
+        config.save();
+    }
 
     @Override
     public final void onLoad() {
@@ -54,9 +84,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         try {
             locale = Locale.loadDefaultLocale(this, "en_US");
-            // Starting Metrics
-            Metrics.start(this);
+            // plugin setup
             onPluginEnable();
+            // Start Metrics
+            Metrics.start(this);
         } catch (Throwable t) {
             getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
             emergencyStop = true;

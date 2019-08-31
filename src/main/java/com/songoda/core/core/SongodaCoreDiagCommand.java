@@ -4,6 +4,7 @@ import com.songoda.core.SongodaCore;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.compatibility.ServerProject;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -15,27 +16,23 @@ import java.util.List;
 public class SongodaCoreDiagCommand extends AbstractCommand {
 
     final SongodaCore instance;
-    private final String name = Bukkit.getServer().getClass().getPackage().getName();
-    private final String version = name.substring(name.lastIndexOf('.') + 1);
 
     private final DecimalFormat format = new DecimalFormat("##.##");
 
     private Object serverInstance;
     private Field tpsField;
 
-
     public SongodaCoreDiagCommand(SongodaCore instance) {
         super(false, "diag");
         this.instance = instance;
 
         try {
-            serverInstance = getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
+            serverInstance = NMSUtils.getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
             tpsField = serverInstance.getClass().getField("recentTps");
         } catch (NoSuchFieldException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -55,13 +52,15 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("Operating System: " + System.getProperty("os.name"));
         sender.sendMessage("Allocated Memory: " + format.format(Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "Mb");
         sender.sendMessage("Online Players: " +  Bukkit.getOnlinePlayers().size());
-        try {
-            double[] tps = ((double[]) tpsField.get(serverInstance));
+        if(tpsField != null) {
+            try {
+                double[] tps = ((double[]) tpsField.get(serverInstance));
 
-            sender.sendMessage("TPS from last 1m, 5m, 15m: " + format.format(tps[0]) + ", "
-                    + format.format(tps[1]) + ", " + format.format(tps[2]));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+                sender.sendMessage("TPS from last 1m, 5m, 15m: " + format.format(tps[0]) + ", "
+                        + format.format(tps[1]) + ", " + format.format(tps[2]));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         return ReturnType.SUCCESS;
@@ -85,13 +84,5 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
     @Override
     public String getDescription() {
         return "Display diagnostics information.";
-    }
-
-    private Class<?> getNMSClass(String className) {
-        try {
-            return Class.forName("net.minecraft.server." + version + "." + className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

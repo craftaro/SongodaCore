@@ -1,20 +1,27 @@
-package com.songoda.core.settingsv2;
+package com.songoda.core.configuration;
 
 import java.util.List;
-import org.bukkit.configuration.MemoryConfigurationOptions;
+import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConfigOptionsAdapter extends MemoryConfigurationOptions {
+public class ConfigOptionsAdapter extends FileConfigurationOptions {
 
-    ConfigOptionsAdapter(SongodaConfigurationSection root) {
-        super(root);
+    final ConfigSection config;
+
+    public ConfigOptionsAdapter(ConfigSection config) {
+        super(config);
+        this.config = config;
+    }
+
+    public Config getConfig() {
+        return (Config) config.root;
     }
 
     @NotNull
     @Override
-    public Config configuration() {
-        return (Config) super.configuration();
+    public ConfigFileConfigurationAdapter configuration() {
+        return new ConfigFileConfigurationAdapter((Config) config.root);
     }
 
     @NotNull
@@ -27,35 +34,37 @@ public class ConfigOptionsAdapter extends MemoryConfigurationOptions {
     @NotNull
     @Override
     public ConfigOptionsAdapter pathSeparator(char value) {
-        ((Config) super.configuration()).setPathSeparator(value);
+        ((Config) config.root).setPathSeparator(value);
         return this;
     }
 
     @NotNull
+    @Override
     public ConfigOptionsAdapter header(@Nullable String value) {
         if (value == null) {
-            ((Config) super.configuration()).setHeader((List) null);
+            ((Config) config.root).setHeader((List) null);
         } else {
-            ((Config) super.configuration()).setHeader(value.split("\n"));
+            ((Config) config.root).setHeader(value.split("\n"));
         }
         return this;
     }
 
     @NotNull
+    @Override
     public ConfigOptionsAdapter copyHeader(boolean value) {
         if (!value) {
-            ((Config) super.configuration()).setHeader((List) null);
+            ((Config) config.root).setHeader((List) null);
         }
         return this;
     }
 
     public int indent() {
-        return ((Config) super.configuration()).getIndent();
+        return ((Config) config.root).getIndent();
     }
 
     @NotNull
     public ConfigOptionsAdapter indent(int value) {
-        ((Config) super.configuration()).setIndent(value);
+        ((Config) config.root).setIndent(value);
         return this;
     }
 }

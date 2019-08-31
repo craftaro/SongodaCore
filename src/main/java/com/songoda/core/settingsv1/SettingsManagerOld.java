@@ -1,4 +1,4 @@
-package com.songoda.core.settings;
+package com.songoda.core.settingsv1;
 
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.utils.TextUtils;

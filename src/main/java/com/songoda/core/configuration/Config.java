@@ -1,4 +1,4 @@
-package com.songoda.core.settingsv2;
+package com.songoda.core.configuration;
 
 import com.google.common.base.Charsets;
 import java.io.BufferedReader;
@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
@@ -45,7 +46,7 @@ import org.yaml.snakeyaml.representer.Representer;
  * @since 2019-08-28
  * @author jascotty2
  */
-public class Config extends SongodaConfigurationSection {
+public class Config extends ConfigSection {
 
     /*
     Serialization notes:
@@ -61,6 +62,7 @@ public class Config extends SongodaConfigurationSection {
     protected static final String BLANK_CONFIG = "{}\n";
 
     protected File file;
+    protected final ConfigFileConfigurationAdapter config = new ConfigFileConfigurationAdapter(this);
     final String dirName, fileName;
     final Plugin plugin;
     final DumperOptions yamlOptions = new DumperOptions();
@@ -129,6 +131,10 @@ public class Config extends SongodaConfigurationSection {
         fileName = file;
     }
 
+    public ConfigFileConfigurationAdapter getConfig() {
+        return config;
+    }
+
     public File getFile() {
         if (file == null) {
             if (dirName != null) {
@@ -166,9 +172,11 @@ public class Config extends SongodaConfigurationSection {
      * If the configuration is changed within this period, the timer is not reset.
      * 
      * @param autosaveInterval time in seconds
+     * @return this class
      */
-    public void setAutosaveInterval(int autosaveInterval) {
+    public Config setAutosaveInterval(int autosaveInterval) {
         this.autosaveInterval = autosaveInterval;
+        return this;
     }
 
     public boolean getAutoremove() {
@@ -199,9 +207,12 @@ public class Config extends SongodaConfigurationSection {
 
     /**
      * Default comment applied to config nodes
+     * 
+     * @return this config
      */
-    public void setDefaultNodeCommentFormat(ConfigFormattingRules.CommentStyle defaultNodeCommentFormat) {
+    public Config setDefaultNodeCommentFormat(ConfigFormattingRules.CommentStyle defaultNodeCommentFormat) {
         this.defaultNodeCommentFormat = defaultNodeCommentFormat;
+        return this;
     }
 
     /**
@@ -213,9 +224,12 @@ public class Config extends SongodaConfigurationSection {
 
     /**
      * Default comment applied to section nodes
+     * 
+     * @return this config
      */
-    public void setDefaultSectionCommentFormat(ConfigFormattingRules.CommentStyle defaultSectionCommentFormat) {
+    public Config setDefaultSectionCommentFormat(ConfigFormattingRules.CommentStyle defaultSectionCommentFormat) {
         this.defaultSectionCommentFormat = defaultSectionCommentFormat;
+        return this;
     }
 
     /**
@@ -227,9 +241,12 @@ public class Config extends SongodaConfigurationSection {
 
     /**
      * Extra lines to put between root nodes
+     * 
+     * @return this config
      */
-    public void setRootNodeSpacing(int rootNodeSpacing) {
+    public Config setRootNodeSpacing(int rootNodeSpacing) {
         this.rootNodeSpacing = rootNodeSpacing;
+        return this;
     }
 
     /**
@@ -243,9 +260,12 @@ public class Config extends SongodaConfigurationSection {
     /**
      * Extra lines to put in front of comments. <br>
      * This is separate from rootNodeSpacing, if applicable.
+     * 
+     * @return this config
      */
-    public void setCommentSpacing(int commentSpacing) {
+    public Config setCommentSpacing(int commentSpacing) {
         this.commentSpacing = commentSpacing;
+        return this;
     }
 
     @NotNull
@@ -297,15 +317,49 @@ public class Config extends SongodaConfigurationSection {
         }
     }
 
-    public void load() throws FileNotFoundException, IOException, InvalidConfigurationException {
-        FileInputStream stream = new FileInputStream(getFile());
-        this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
+    public boolean load() {
+        if (getFile().exists()) {
+            FileInputStream stream = null;
+            try {
+                stream = new FileInputStream(getFile());
+                this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
+                return true;
+            } catch (IOException | InvalidConfigurationException ex) {
+                (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                    }
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
-    public void load(@NotNull File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public boolean load(@NotNull File file) {
         Validate.notNull(file, "File cannot be null");
-        FileInputStream stream = new FileInputStream(file);
-        this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_8));
+        if (file.exists()) {
+            FileInputStream stream = null;
+            try {
+                stream = new FileInputStream(file);
+                this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
+                return true;
+            } catch (IOException | InvalidConfigurationException ex) {
+                (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                    }
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     public void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException {
@@ -336,7 +390,7 @@ public class Config extends SongodaConfigurationSection {
         }
     }
 
-    protected void convertMapsToSections(@NotNull Map<?, ?> input, @NotNull SongodaConfigurationSection section) {
+    protected void convertMapsToSections(@NotNull Map<?, ?> input, @NotNull ConfigSection section) {
         for (Map.Entry<?, ?> entry : input.entrySet()) {
             String key = entry.getKey().toString();
             Object value = entry.getValue();

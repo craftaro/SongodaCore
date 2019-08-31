@@ -1,6 +1,6 @@
-package com.songoda.core.settingsv2;
+package com.songoda.core.configuration;
 
-import com.songoda.core.settingsv2.ConfigFormattingRules.CommentStyle;
+import com.songoda.core.configuration.ConfigFormattingRules.CommentStyle;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;

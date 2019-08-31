@@ -1,7 +1,9 @@
-package com.songoda.core.settingsv2;
+package com.songoda.core.configuration;
 
 import com.songoda.core.compatibility.LegacyMaterials;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -10,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +23,11 @@ import org.jetbrains.annotations.Nullable;
  * @since 2019-08-28
  * @author jascotty2
  */
-public class SongodaConfigurationSection extends MemoryConfiguration {
+public class ConfigSection extends MemoryConfiguration {
 
-    final String fullPath;
-    final SongodaConfigurationSection root;
-    final SongodaConfigurationSection parent;
+    final String fullPath, nodeKey;
+    final ConfigSection root;
+    final ConfigSection parent;
     protected int indentation = 2; // between 2 and 9 (inclusive)
     protected char pathChar = '.';
     final HashMap<String, Comment> configComments;
@@ -40,21 +41,22 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     final boolean isDefault;
     final Object lock = new Object();
 
-    SongodaConfigurationSection() {
+    ConfigSection() {
         this.root = this;
         this.parent = null;
         isDefault = false;
-        fullPath = "";
+        nodeKey = fullPath = "";
         configComments = new HashMap();
         defaultComments = new HashMap();
         defaults = new LinkedHashMap();
         values = new LinkedHashMap();
     }
 
-    SongodaConfigurationSection(SongodaConfigurationSection root, SongodaConfigurationSection parent, String path, boolean isDefault) {
+    ConfigSection(ConfigSection root, ConfigSection parent, String nodeKey, boolean isDefault) {
         this.root = root;
         this.parent = parent;
-        this.fullPath = path != null ? parent.fullPath + path + root.pathChar : parent.fullPath;
+        this.nodeKey = nodeKey;
+        this.fullPath = nodeKey != null ? parent.fullPath + nodeKey + root.pathChar : parent.fullPath;
         this.isDefault = isDefault;
         configComments = defaultComments = null;
         defaults = null;
@@ -90,10 +92,24 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     public char getPathSeparator() {
         return root.pathChar;
     }
-    
+
+    /**
+     * @return The full key for this section node
+     */
+    public String getKey() {
+        return !fullPath.endsWith(String.valueOf(root.pathChar)) ? fullPath : fullPath.substring(0, fullPath.length() - 1);
+    }
+
+    /**
+     * @return The specific key that was used from the last node to get to this node
+     */
+    public String getNodeKey() {
+        return nodeKey;
+    }
+
     @NotNull
-    public SongodaConfigurationSection createDefaultSection(@NotNull String path) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, true);
+    public ConfigSection createDefaultSection(@NotNull String path) {
+        ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
         }
@@ -101,8 +117,8 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
     
     @NotNull
-    public SongodaConfigurationSection createDefaultSection(@NotNull String path, String... comment) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, true);
+    public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
+        ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
         }
@@ -110,12 +126,12 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public SongodaConfigurationSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+    public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
         return setComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
     }
 
     @NotNull
-    public SongodaConfigurationSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+    public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
         synchronized (root.lock) {
             if (isDefault) {
                 root.defaultComments.put(fullPath + path, lines != null ? new Comment(commentStyle, lines) : null);
@@ -127,12 +143,12 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefaultComment(@NotNull String path, String... lines) {
+    public ConfigSection setDefaultComment(@NotNull String path, String... lines) {
         return setDefaultComment(path, lines.length == 0 ? (List) null : Arrays.asList(lines));
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
+    public ConfigSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(lines));
         }
@@ -140,12 +156,12 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+    public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
         return setDefaultComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+    public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(commentStyle, lines));
         }
@@ -184,13 +200,13 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @Override
-    public SongodaConfigurationSection getDefaults() {
-        return new SongodaConfigurationSection(root, this, null, true);
+    public ConfigSection getDefaults() {
+        return new ConfigSection(root, this, null, true);
     }
 
     @Override
-    public SongodaConfigurationSection getDefaultSection() {
-        return new SongodaConfigurationSection(root, this, null, true);
+    public ConfigSection getDefaultSection() {
+        return new ConfigSection(root, this, null, true);
     }
 
     @Override
@@ -264,6 +280,20 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
         return result;
     }
 
+    @NotNull
+    public List<ConfigSection> getSections(String path) {
+        ConfigSection rootSection = getConfigurationSection(path);
+        if (rootSection == null) {
+            return Collections.EMPTY_LIST;
+        }
+        ArrayList<ConfigSection> result = new ArrayList();
+        rootSection.getKeys(false).stream()
+                .map(key -> rootSection.get(key))
+                .filter(object -> object != null && object instanceof ConfigSection)
+                .forEachOrdered(object -> result.add((ConfigSection) object));
+        return result;
+    }
+
     @Override
     public boolean contains(@NotNull String path) {
         return root.defaults.containsKey(fullPath + path) || root.values.containsKey(fullPath + path);
@@ -293,12 +323,12 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @Override
-    public SongodaConfigurationSection getRoot() {
+    public ConfigSection getRoot() {
         return root;
     }
 
     @Override
-    public SongodaConfigurationSection getParent() {
+    public ConfigSection getParent() {
         return parent;
     }
 
@@ -336,63 +366,63 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, String ... comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, String ... comment) {
         set(path, value);
         return setComment(path, null, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, List<String> comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, List<String> comment) {
         set(path, value);
         return setComment(path, null, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
         set(path, value);
         return setComment(path, commentStyle, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
         set(path, value);
         return setComment(path, commentStyle, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value) {
         addDefault(path, value);
         return this;
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, String ... comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, String ... comment) {
         addDefault(path, value);
         return setDefaultComment(path, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, List<String> comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, List<String> comment) {
         addDefault(path, value);
         return setDefaultComment(path, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
         addDefault(path, value);
         return setDefaultComment(path, commentStyle, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
         addDefault(path, value);
         return setDefaultComment(path, commentStyle, comment);
     }
 
     @NotNull
     @Override
-    public SongodaConfigurationSection createSection(@NotNull String path) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
+    public ConfigSection createSection(@NotNull String path) {
+        ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized(root.lock) {
             root.values.put(fullPath + path, section);
         }
@@ -402,23 +432,23 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public SongodaConfigurationSection createSection(@NotNull String path, String... comment) {
+    public ConfigSection createSection(@NotNull String path, String... comment) {
         return createSection(path, null, comment.length == 0 ? (List) null : Arrays.asList(comment));
     }
 
     @NotNull
-    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable List<String> comment) {
+    public ConfigSection createSection(@NotNull String path, @Nullable List<String> comment) {
         return createSection(path, null, comment);
     }
 
     @NotNull
-    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+    public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         return createSection(path, commentStyle, comment.length == 0 ? (List) null : Arrays.asList(comment));
     }
 
     @NotNull
-    public SongodaConfigurationSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
+    public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
+        ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
@@ -430,8 +460,8 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
 
     @NotNull
     @Override
-    public SongodaConfigurationSection createSection(@NotNull String path, Map<?, ?> map) {
-        SongodaConfigurationSection section = new SongodaConfigurationSection(root, this, path, false);
+    public ConfigSection createSection(@NotNull String path, Map<?, ?> map) {
+        ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
@@ -534,17 +564,17 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @Nullable
-    public Material getMaterial(@NotNull String path) {
+    public LegacyMaterials getMaterial(@NotNull String path) {
         String val = getString(path);
         LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
-        return mat != null ? mat.getMaterial() : null;
+        return mat;
     }
 
     @Nullable
-    public Material getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
+    public LegacyMaterials getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
         String val = getString(path);
         LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
-        return mat != null ? mat.getMaterial() : (def != null ? def.getMaterial() : null);
+        return mat != null ? mat : def;
     }
 
     @Nullable
@@ -562,13 +592,13 @@ public class SongodaConfigurationSection extends MemoryConfiguration {
     }
 
     @Override
-    public SongodaConfigurationSection getConfigurationSection(@NotNull String path) {
+    public ConfigSection getConfigurationSection(@NotNull String path) {
         Object result = get(path);
-        return result instanceof SongodaConfigurationSection ? (SongodaConfigurationSection) result : null;
+        return result instanceof ConfigSection ? (ConfigSection) result : null;
     }
 
-    public SongodaConfigurationSection getOrCreateConfigurationSection(@NotNull String path) {
+    public ConfigSection getOrCreateConfigurationSection(@NotNull String path) {
         Object result = get(path);
-        return result instanceof SongodaConfigurationSection ? (SongodaConfigurationSection) result : createSection(path);
+        return result instanceof ConfigSection ? (ConfigSection) result : createSection(path);
     }
 }

@@ -1,4 +1,4 @@
-package com.songoda.core.settingsv2;
+package com.songoda.core.configuration;
 
 public class ConfigFormattingRules {
 

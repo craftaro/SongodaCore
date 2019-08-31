@@ -532,7 +532,7 @@ public enum LegacyMaterials {
 	LIGHT_GRAY_GLAZED_TERRACOTTA("SILVER_GLAZED_TERRACOTTA"),
 	LIGHT_GRAY_SHULKER_BOX(ServerVersion.V1_11, "SILVER_SHULKER_BOX"),
 	LIGHT_GRAY_STAINED_GLASS("STAINED_GLASS", (byte) 8),
-	LIGHT_GRAY_STAINED_GLASS_PANE("STAINED_GLASS_PANE", (byte) 8),
+	LIGHT_GRAY_STAINED_GLASS_PANE("STAINED_GLASS_PANE", (byte) 8), // this is nearly invisible in a chest, lol
 	LIGHT_GRAY_TERRACOTTA("STAINED_CLAY", (byte) 8),
 	LIGHT_GRAY_WALL_BANNER("WALL_BANNER", (byte) 7),
 	LIGHT_GRAY_WOOL("WOOL", (byte) 8),
@@ -551,7 +551,7 @@ public enum LegacyMaterials {
 	LIME_STAINED_GLASS("STAINED_GLASS", (byte) 5),
 	LIME_STAINED_GLASS_PANE("STAINED_GLASS_PANE", (byte) 5),
 	LIME_TERRACOTTA("STAINED_CLAY", (byte) 5),
-	LIME_WALL_BANNER("WALL_BANNER", (byte) 0),
+	LIME_WALL_BANNER("WALL_BANNER", (byte) 10),
 	LIME_WOOL("WOOL", (byte) 5),
 	LINGERING_POTION,
 	LLAMA_SPAWN_EGG("MONSTER_EGG", (byte) 103),
@@ -1837,9 +1837,109 @@ public enum LegacyMaterials {
 		}
 		return false;
 	}
-    
+
     /**
-     * Checks if this material is a food that can be cooked and is in its cooked state
+     * @return true if this material is valid as an item
+     */
+    public boolean isValidItem() {
+        switch(this) {
+            case ACACIA_WALL_SIGN:
+            case AIR:
+            case ATTACHED_MELON_STEM:
+            case ATTACHED_PUMPKIN_STEM:
+            case BAMBOO_SAPLING:
+            case BEETROOTS:
+            case BIRCH_WALL_SIGN:
+            case BLACK_WALL_BANNER:
+            case BLUE_WALL_BANNER:
+            case BRAIN_CORAL_WALL_FAN:
+            case BROWN_WALL_BANNER:
+            case BUBBLE_COLUMN:
+            case BUBBLE_CORAL_WALL_FAN:
+            case CARROTS:
+            case CAVE_AIR:
+            case COCOA:
+            case CREEPER_WALL_HEAD:
+            case CYAN_WALL_BANNER:
+            case DARK_OAK_WALL_SIGN:
+            case DEAD_BRAIN_CORAL_WALL_FAN:
+            case DEAD_BUBBLE_CORAL_WALL_FAN:
+            case DEAD_FIRE_CORAL_WALL_FAN:
+            case DEAD_HORN_CORAL_WALL_FAN:
+            case DEAD_TUBE_CORAL_WALL_FAN:
+            case DRAGON_WALL_HEAD:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case FIRE: // used to be able to in older versions
+            case FIRE_CORAL_WALL_FAN:
+            case FROSTED_ICE:
+            case GRAY_WALL_BANNER:
+            case GREEN_WALL_BANNER:
+            case HORN_CORAL_WALL_FAN:
+            case JUNGLE_WALL_SIGN:
+            case KELP_PLANT:
+            case LAVA:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIME_WALL_BANNER:
+            case MAGENTA_WALL_BANNER:
+            case MELON_STEM:
+            case MOVING_PISTON:
+            case NETHER_PORTAL:
+            case OAK_WALL_SIGN:
+            case ORANGE_WALL_BANNER:
+            case PINK_WALL_BANNER:
+            case PISTON_HEAD:
+            case PLAYER_WALL_HEAD:
+            case POTATOES:
+            case POTTED_ACACIA_SAPLING:
+            case POTTED_ALLIUM:
+            case POTTED_AZURE_BLUET:
+            case POTTED_BAMBOO:
+            case POTTED_BIRCH_SAPLING:
+            case POTTED_BLUE_ORCHID:
+            case POTTED_BROWN_MUSHROOM:
+            case POTTED_CACTUS:
+            case POTTED_CORNFLOWER:
+            case POTTED_DANDELION:
+            case POTTED_DARK_OAK_SAPLING:
+            case POTTED_DEAD_BUSH:
+            case POTTED_FERN:
+            case POTTED_JUNGLE_SAPLING:
+            case POTTED_LILY_OF_THE_VALLEY:
+            case POTTED_OAK_SAPLING:
+            case POTTED_ORANGE_TULIP:
+            case POTTED_OXEYE_DAISY:
+            case POTTED_PINK_TULIP:
+            case POTTED_POPPY:
+            case POTTED_RED_MUSHROOM:
+            case POTTED_RED_TULIP:
+            case POTTED_SPRUCE_SAPLING:
+            case POTTED_WHITE_TULIP:
+            case POTTED_WITHER_ROSE:
+            case PUMPKIN_STEM:
+            case PURPLE_WALL_BANNER:
+            case REDSTONE_WALL_TORCH:
+            case REDSTONE_WIRE:
+            case RED_TULIP:
+            case SKELETON_SPAWN_EGG:
+            case SPRUCE_WALL_SIGN:
+            case SWEET_BERRY_BUSH:
+            case TALL_SEAGRASS:
+            case TRIPWIRE:
+            case TUBE_CORAL_WALL_FAN:
+            case VOID_AIR:
+            case WALL_TORCH:
+            case WATER:
+            case WHITE_WALL_BANNER:
+            case WITHER_SKELETON_WALL_SKULL:
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return true if this material is a food that can be cooked and is in its cooked state
      */
     public boolean isCooked() {
         switch(this) { 
@@ -1858,7 +1958,7 @@ public enum LegacyMaterials {
     }
     
     /**
-     * Checks if this material is a food that can be cooked and is in its raw state
+     * @return true if this material is a food that can be cooked and is in its raw state
      */
     public boolean isRaw() {
         switch(this) {
@@ -1874,5 +1974,119 @@ public enum LegacyMaterials {
                 return true;
         }
         return false;
+    }
+
+    public static LegacyMaterials getGlassPaneColor(int color) {
+        switch (color) {
+            case 0:
+                return WHITE_STAINED_GLASS_PANE;
+            case 1:
+                return ORANGE_STAINED_GLASS_PANE;
+            case 2:
+                return MAGENTA_STAINED_GLASS_PANE;
+            case 3:
+                return LIGHT_BLUE_STAINED_GLASS_PANE;
+            case 4:
+                return YELLOW_STAINED_GLASS_PANE;
+            case 5:
+                return LIME_STAINED_GLASS_PANE;
+            case 6:
+                return PINK_STAINED_GLASS_PANE;
+            case 7:
+                return GRAY_STAINED_GLASS_PANE;
+            case 8:
+                return LIGHT_GRAY_STAINED_GLASS_PANE;
+            case 9:
+                return CYAN_STAINED_GLASS_PANE;
+            case 10:
+                return PURPLE_STAINED_GLASS_PANE;
+            case 11:
+                return BLUE_STAINED_GLASS_PANE;
+            case 12:
+                return BROWN_STAINED_GLASS_PANE;
+            case 13:
+                return GREEN_STAINED_GLASS_PANE;
+            case 14:
+                return RED_STAINED_GLASS_PANE;
+            case 15:
+                return BLACK_STAINED_GLASS_PANE;
+        }
+        return WHITE_STAINED_GLASS_PANE;
+    }
+
+    public static LegacyMaterials getGlassColor(int color) {
+        switch (color) {
+            case 0:
+                return WHITE_STAINED_GLASS;
+            case 1:
+                return ORANGE_STAINED_GLASS;
+            case 2:
+                return MAGENTA_STAINED_GLASS;
+            case 3:
+                return LIGHT_BLUE_STAINED_GLASS;
+            case 4:
+                return YELLOW_STAINED_GLASS;
+            case 5:
+                return LIME_STAINED_GLASS;
+            case 6:
+                return PINK_STAINED_GLASS;
+            case 7:
+                return GRAY_STAINED_GLASS;
+            case 8:
+                return LIGHT_GRAY_STAINED_GLASS;
+            case 9:
+                return CYAN_STAINED_GLASS;
+            case 10:
+                return PURPLE_STAINED_GLASS;
+            case 11:
+                return BLUE_STAINED_GLASS;
+            case 12:
+                return BROWN_STAINED_GLASS;
+            case 13:
+                return GREEN_STAINED_GLASS;
+            case 14:
+                return RED_STAINED_GLASS;
+            case 15:
+                return BLACK_STAINED_GLASS;
+        }
+        return WHITE_STAINED_GLASS;
+    }
+
+    public static LegacyMaterials getDyeColor(int color) {
+        switch (color) {
+            case 0:
+                return BLACK_DYE;
+            case 1:
+                return RED_DYE;
+            case 2:
+                return GREEN_DYE;
+            case 3:
+                return BROWN_DYE;
+            case 4:
+                return BLUE_DYE;
+            case 5:
+                return PURPLE_DYE;
+            case 6:
+                return CYAN_DYE;
+            case 7:
+                return LIGHT_GRAY_DYE;
+            case 8:
+                return GRAY_DYE;
+            case 9:
+                return PINK_DYE;
+            case 10:
+                return LIME_DYE;
+            case 11:
+                return YELLOW_DYE;
+            case 12:
+                return LIGHT_BLUE_DYE;
+            case 13:
+                return MAGENTA_DYE;
+            case 14:
+                return ORANGE_DYE;
+            case 15:
+                return WHITE_DYE;
+        }
+        return WHITE_DYE;
     }
 }
