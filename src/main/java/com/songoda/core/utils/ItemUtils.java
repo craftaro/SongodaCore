@@ -144,18 +144,23 @@ public class ItemUtils {
      * @return copy of the item without any enchantment tag
      */
     public static ItemStack removeGlow(ItemStack item) {
-        if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
-            try {
-                Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
-                Object tag = mc_ItemStack_getTag.invoke(nmsStack);
-                if (tag != null) {
-                    // remove enchantment list
-                    mc_NBTTagCompound_remove.invoke(tag, "ench");
-                    mc_ItemStack_setTag.invoke(nmsStack, tag);
-                    item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+            item.removeEnchantment(Enchantment.DURABILITY);
+            return item;
+        } else {
+            if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
+                try {
+                    Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
+                    Object tag = mc_ItemStack_getTag.invoke(nmsStack);
+                    if (tag != null) {
+                        // remove enchantment list
+                        mc_NBTTagCompound_remove.invoke(tag, "ench");
+                        mc_ItemStack_setTag.invoke(nmsStack, tag);
+                        item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
+                    }
+                } catch (Exception ex) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
                 }
-            } catch (Exception ex) {
-                Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
             }
         }
         return item;

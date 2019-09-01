@@ -43,6 +43,24 @@ public class SimplePagedGui extends Gui {
         return this;
     }
 
+    public ItemStack getHeaderBackItem() {
+        return headerBackItem;
+    }
+
+    public SimplePagedGui setHeaderBackItem(ItemStack headerBackItem) {
+        this.headerBackItem = headerBackItem;
+        return this;
+    }
+
+    public ItemStack getFooterBackItem() {
+        return footerBackItem;
+    }
+
+    public SimplePagedGui setFooterBackItem(ItemStack footerBackItem) {
+        this.footerBackItem = footerBackItem;
+        return this;
+    }
+
     public SimplePagedGui setNextPage(ItemStack item) {
         nextPage = item;
         return this;

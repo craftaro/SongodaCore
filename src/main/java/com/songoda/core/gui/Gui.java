@@ -136,9 +136,12 @@ public class Gui {
         return this;
     }
 
+    /**
+     * Close the GUI without calling onClose() and without opening any parent GUIs
+     */
     public void exit() {
         allowClose = true;
-        parent = null;
+        open = false;
         inventory.getViewers().stream()
                 .filter(e -> e instanceof Player)
                 .map(e -> (Player) e)
@@ -210,6 +213,10 @@ public class Gui {
     public Gui setDefaultItem(ItemStack item) {
         blankItem = item;
         return this;
+    }
+
+    public ItemStack getDefaultItem() {
+        return blankItem;
     }
 
     public Gui setItem(int cell, ItemStack item) {

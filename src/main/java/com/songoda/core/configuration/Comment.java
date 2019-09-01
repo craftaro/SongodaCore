@@ -27,7 +27,9 @@ public class Comment {
     }
 
     public Comment(List<String> lines) {
-        this.lines.addAll(lines);
+        if (lines != null) {
+            this.lines.addAll(lines);
+        }
     }
 
     public Comment(CommentStyle commentStyle, String... lines) {
@@ -37,7 +39,9 @@ public class Comment {
 
     public Comment(CommentStyle commentStyle, List<String> lines) {
         this.commentStyle = commentStyle;
-        this.lines.addAll(lines);
+        if (lines != null) {
+            this.lines.addAll(lines);
+        }
     }
 
     public CommentStyle getCommentStyle() {

@@ -40,6 +40,10 @@ public class GuiManager {
         this.plugin = plugin;
     }
 
+    public Plugin getPlugin() {
+        return plugin;
+    }
+
     /**
      * Initialize the GUI handlers
      */

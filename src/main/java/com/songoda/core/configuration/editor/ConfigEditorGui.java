@@ -10,15 +10,24 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Edit a configuration file for a specific plugin
+ *
+ * @since 2019-08-31
+ * @author jascotty2
+ */
 public class ConfigEditorGui extends SimplePagedGui {
 
     final JavaPlugin plugin;
@@ -53,7 +62,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         this.setUseHeader(true);
         headerBackItem = footerBackItem = GuiUtils.getBorderItem(LegacyMaterials.GRAY_STAINED_GLASS_PANE.getItem());
         final String path = node.getCurrentPath();
-        this.setItem(4, configItem(LegacyMaterials.FILLED_MAP, path, config, path, null));
+        this.setItem(4, configItem(LegacyMaterials.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, null));
         this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // compile list of settings
@@ -89,28 +98,98 @@ public class ConfigEditorGui extends SimplePagedGui {
                 this.setButton(index, configItem(LegacyMaterials.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Number) val), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
-                            ChatPrompt prompt = ChatPrompt.showPrompt(plugin, event.player, "Enter your new value.", response -> {
+                            ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + settingKey + ":", response -> {
                                 if (!setNumber(event.slot, settingKey, response.getMessage().trim())) {
                                     event.player.sendMessage(ChatColor.RED + "Error: \"" + response.getMessage().trim() + "\" is not a number!");
                                 }
-                            });
-                            prompt.setOnClose(() -> event.manager.showGUI(event.player, this));
+                            }).setOnClose(() -> event.manager.showGUI(event.player, this))
+                              .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
                         });
+            } else if (isMaterial(val)) {
+                // changing a block
+                // isMaterial is more of a guess, to be honest.
+                this.setButton(index, configItem(LegacyMaterials.STONE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                        (event) -> {
+                            SimplePagedGui paged = new SimplePagedGui(this);
+                            paged.setTitle(ChatColor.BLUE + settingKey);
+                            paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
+                            paged.setItem(4, configItem(LegacyMaterials.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
+                            int i = 9;
+                            for(LegacyMaterials mat : LegacyMaterials.getAllValidItemMaterials()) {
+                                paged.setButton(i++, GuiUtils.createButtonItem(mat, mat.name()), ClickType.LEFT, (matEvent) -> {
+                                    setMaterial(event.slot, settingKey, matEvent.clickedItem);
+                                    matEvent.player.closeInventory();
+                                });
+                            }
+                            event.manager.showGUI(event.player, paged);
+                        });
+                
+            } else if (val instanceof String) {
+                // changing a "string" value (or change to a feather for writing quill)
+                this.setButton(index, configItem(LegacyMaterials.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                        (event) -> {
+                            event.gui.exit();
+                            ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + settingKey + ":", response -> {
+                                node.set(settingKey, response.getMessage().trim());
+                                updateValue(event.slot, settingKey);
+                            }).setOnClose(() -> event.manager.showGUI(event.player, this))
+                              .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
+                        });
+            } else if (val instanceof List) {
+                this.setButton(index, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
+                        (event) -> {
+                            event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
+                                if(((ConfigEditorListEditorGui) gui.gui).saveChanges) {
+                                    setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).value);
+                                }
+                            }));
+                        });
+            } else {
+                // idk. should we display uneditable values?
             }
 
             ++index;
         }
 
     }
-    
+
+    public ConfigurationSection getCurrentNode() {
+        return node;
+    }
+
+    protected void updateValue(int clickCell, String path) {
+        ItemStack item = inventory.getItem(clickCell);
+        if(item == null || item == AIR) return;
+        ItemMeta meta = item.getItemMeta();
+        Object val = node.get(path);
+        if (meta != null && val != null) {
+            String valStr;
+            if (val instanceof List) {
+                valStr = String.format("(%d values)", ((List) val).size());
+            } else {
+                valStr = val.toString();
+            }
+            List<String> lore = meta.getLore();
+            if (lore == null || lore.isEmpty()) {
+                meta.setLore(Arrays.asList(valStr));
+            } else {
+                lore.set(0, valStr);
+                meta.setLore(lore);
+            }
+            item.setItemMeta(meta);
+            setItem(clickCell, item);
+        }
+    }
+
     void toggle(int clickCell, String path) {
         boolean val = !node.getBoolean(path);
         node.set(path, val);
         if(val) {
-            inventory.setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
+            setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
         } else {
-            removeHighlight(clickCell);
+            setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
         }
+        updateValue(clickCell, path);
     }
 
     boolean setNumber(int clickCell, String path, String input) {
@@ -122,10 +201,26 @@ public class ConfigEditorGui extends SimplePagedGui {
             } else if (node.isLong(path)) {
                 node.set(path, Long.parseLong(input));
             }
+            updateValue(clickCell, path);
         } catch (NumberFormatException e) {
             return false;
         }
         return true;
+    }
+
+    void setMaterial(int clickCell, String path, ItemStack item) {
+        LegacyMaterials mat = LegacyMaterials.getMaterial(item);
+        if (mat == null) {
+            node.set(path, LegacyMaterials.STONE.name());
+        } else {
+            node.set(path, mat.name());
+        }
+        updateValue(clickCell, path);
+    }
+
+    void setList(int clickCell, String path, List<String> list) {
+        node.set(path, list);
+        updateValue(clickCell, path);
     }
 
     void save() {
@@ -149,32 +244,38 @@ public class ConfigEditorGui extends SimplePagedGui {
                 || value instanceof Double);
     }
 
-    ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String def) {
+    private boolean isMaterial(Object value) {
+        LegacyMaterials m;
+        return value instanceof String && value.toString().equals(value.toString().toUpperCase())
+                && (m = LegacyMaterials.getMaterial(value.toString())) != null && m.isValidItem();
+    }
+
+    protected ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String def) {
         String[] info = null;
         if (configSection_getCommentString != null) {
             try {
-                Object comment = configSection_getCommentString.invoke(config, path);
+                Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
                     info = comment.toString().split("\n");
                 }
             } catch (Exception ex) {
             }
         }
-        return GuiUtils.createButtonItem(LegacyMaterials.FILLED_MAP, path, info != null ? info : (def != null ? def.split("\n") : null));
+        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? def.split("\n") : null));
     }
 
-    ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String value, String def) {
+    protected ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String value, String def) {
         if(value == null) value = "";
         String[] info = null;
         if (configSection_getCommentString != null) {
             try {
-                Object comment = configSection_getCommentString.invoke(config, path);
+                Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
                     info = (value + "\n" + comment.toString()).split("\n");
                 }
             } catch (Exception ex) {
             }
         }
-        return GuiUtils.createButtonItem(LegacyMaterials.FILLED_MAP, path, info != null ? info : (def != null ? (value + "\n" + def).split("\n") : null));
+        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (value + "\n" + def).split("\n") : null));
     }
 }

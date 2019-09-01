@@ -1,21 +1,17 @@
 package com.songoda.core.locale;
 
+import com.songoda.core.utils.TextUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +26,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Assists in the utilization of localization files. <br>
  * Created to be used by the Songoda Team. <br>
- * NOTE: Using this class in multiple plugins requires shading!
+ * NOTE: Using this class in multiple plugins requires shading! <br>
+ * Updated 2019-09-01 to support UTF encoded lang files - jascotty2
  *
  * @author Brianna O'Keefe - Songoda
  */
@@ -188,8 +185,8 @@ public class Locale {
         try (BufferedInputStream defaultIn = new BufferedInputStream(defaultFile);
                 BufferedInputStream existingIn = new BufferedInputStream(new FileInputStream(existingFile))) {
 
-            Charset defaultCharset = Locale.detectCharset(defaultIn);
-            Charset existingCharset = Locale.detectCharset(existingIn);
+            Charset defaultCharset = TextUtils.detectCharset(defaultIn, StandardCharsets.UTF_8);
+            Charset existingCharset = TextUtils.detectCharset(existingIn, StandardCharsets.UTF_8);
 
             try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(existingFile, true), existingCharset);
                     BufferedReader defaultReader = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
@@ -254,9 +251,10 @@ public class Locale {
         this.nodes.clear(); // Clear previous data (if any)
 
         // guess what encoding this file is in
-        Charset charset = detectCharset(file);
+        Charset charset = TextUtils.detectCharset(file, null);
         if(charset == null) {
-            return false;
+            plugin.getLogger().warning("Could not determine charset for locale \"" + this.name + "\"");
+            charset = StandardCharsets.UTF_8;
         }
 
         // load in the file!
@@ -291,80 +289,6 @@ public class Locale {
         return true;
     }
 
-    protected static final List<Charset> supportedCharsets = new ArrayList();
-
-    static {
-        supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
-        supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
-        //supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
-        //supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
-        //supportedCharsets.add(StandardCharsets.UTF_16);
-        try {
-        supportedCharsets.add(Charset.forName("windows-1253"));
-        supportedCharsets.add(Charset.forName("ISO-8859-7"));
-        } catch (Exception e) {
-        } // UnsupportedCharsetException technically can be thrown, but can also be ignored
-        supportedCharsets.add(StandardCharsets.US_ASCII);
-    }
-
-    protected static Charset detectCharset(File f) {
-        byte[] buffer = new byte[2048];
-        int read = -1;
-        // read the first 2kb of the file and test the file's encoding
-        try (FileInputStream input = new FileInputStream(f)) {
-            read = input.read(buffer);
-        } catch (Exception ex) {
-            return null;
-        }
-        return read != -1 ? detectCharset(buffer, read) : null;
-    }
-
-    protected static Charset detectCharset(BufferedInputStream reader) {
-        byte[] buffer = new byte[2048];
-        int read;
-        try {
-            reader.mark(2048);
-            read = reader.read(buffer);
-            reader.reset();
-        } catch (Exception ex) {
-            return null;
-        }
-        return read != -1 ? detectCharset(buffer, read) : null;
-    }
-
-    protected static Charset detectCharset(byte[] data, int len) {
-        // check the file header
-        if (len > 4) {
-            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) {
-                return StandardCharsets.UTF_16LE;
-                // FF FE 00 00 is UTF-32LE
-            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {
-                return StandardCharsets.UTF_16BE;
-                // 00 00 FE FF is UTF-32BE
-            } else if (data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { // UTF-8 with BOM, same sig as ISO-8859-1
-                return StandardCharsets.UTF_8;
-            }
-        }
-
-        // iterate through sets to test, and return the first that is ok
-        for (Charset charset : supportedCharsets) {
-            if (charset != null && isCharset(data, len, charset)) {
-                return charset;
-            }
-        }
-        return null;
-    }
-
-    protected static boolean isCharset(byte[] data, int len, Charset charset) {
-        try {
-            CharsetDecoder decoder = charset.newDecoder();
-            decoder.reset();
-            decoder.decode(ByteBuffer.wrap(data));
-            return true;
-        } catch (CharacterCodingException e) {
-        }
-        return false;
-    }
 
     /**
      * Supply the Message object with the plugins prefix.

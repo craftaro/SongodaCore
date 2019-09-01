@@ -1,7 +1,10 @@
 package com.songoda.core.compatibility;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -1120,7 +1123,8 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean usesCompatibility() {
-		return compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan);
+        return compatibleMaterial != null && material == compatibleMaterial.material;
+		//return compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan);
 	}
 
 	/**
@@ -1178,6 +1182,20 @@ public enum LegacyMaterials {
 		LegacyMaterials m = lookupMap.get(key);
 		return m != null ? m : lookupMap.get(key + item.getDurability());
 	}
+
+    static LinkedHashSet<LegacyMaterials> all = null;
+
+    public static Set<LegacyMaterials> getAllValidItemMaterials() {
+        if (all == null) {
+            all = new LinkedHashSet();
+            for (LegacyMaterials mat : values()) {
+                if (mat.isValidItem() && !mat.usesCompatibility()) {
+                    all.add(mat);
+                }
+            }
+        }
+        return Collections.unmodifiableSet(all);
+    }
 
 	/**
 	 * Lookup a Legacy Material by its modern id name and return its associated

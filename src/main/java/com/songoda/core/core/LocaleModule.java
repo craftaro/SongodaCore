@@ -14,6 +14,7 @@ public class LocaleModule implements PluginInfoModule {
 
     @Override
     public void run(PluginInfo plugin) {
+        if(plugin.getJavaPlugin() == null || plugin.getSongodaId() <= 0) return;
         JSONObject json = plugin.getJson();
         try {
             JSONArray files = (JSONArray) json.get("neededFiles");

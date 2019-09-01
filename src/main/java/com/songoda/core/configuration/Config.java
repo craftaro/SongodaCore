@@ -1,6 +1,7 @@
 package com.songoda.core.configuration;
 
-import com.google.common.base.Charsets;
+import com.songoda.core.utils.TextUtils;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -130,7 +133,7 @@ public class Config extends ConfigSection {
         fileName = file;
     }
 
-    public ConfigFileConfigurationAdapter getConfig() {
+    public ConfigFileConfigurationAdapter getFileConfig() {
         return config;
     }
 
@@ -317,44 +320,18 @@ public class Config extends ConfigSection {
     }
 
     public boolean load() {
-        if (getFile().exists()) {
-            FileInputStream stream = null;
-            try {
-                stream = new FileInputStream(getFile());
-                this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
-                return true;
-            } catch (IOException | InvalidConfigurationException ex) {
-                (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                    }
-                }
-            }
-            return false;
-        }
-        return true;
+        return load(getFile());
     }
 
     public boolean load(@NotNull File file) {
         Validate.notNull(file, "File cannot be null");
         if (file.exists()) {
-            FileInputStream stream = null;
-            try {
-                stream = new FileInputStream(file);
-                this.load(new InputStreamReader((InputStream) stream, Charsets.UTF_16));
+            try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+                Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
+                this.load(new InputStreamReader(stream, charset));
                 return true;
             } catch (IOException | InvalidConfigurationException ex) {
                 (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                    }
-                }
             }
             return false;
         }
@@ -363,9 +340,15 @@ public class Config extends ConfigSection {
 
     public void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException {
         StringBuilder builder = new StringBuilder();
+        
         try (BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader)) {
             String line;
+            boolean firstLine = true;
             while ((line = input.readLine()) != null) {
+                if(firstLine) {
+                    line = line.replaceAll("[\uFEFF\uFFFE\u200B]", ""); // clear BOM markers
+                    firstLine = false;
+                }
                 builder.append(line).append('\n');
             }
         }
@@ -410,8 +393,8 @@ public class Config extends ConfigSection {
 
     public void deleteNonDefaultSettings() {
         // Delete old config values (thread-safe)
-        List<String> defaultKeys = Arrays.asList((String[]) defaults.keySet().toArray());
-        for(String key : (String[]) values.keySet().toArray()) {
+        List<String> defaultKeys = Arrays.asList(defaults.keySet().toArray(new String[0]));
+        for(String key : values.keySet().toArray(new String[0])) {
             if(!defaultKeys.contains(key)) {
                 values.remove(key);
             }
@@ -470,7 +453,7 @@ public class Config extends ConfigSection {
             file.getParentFile().mkdirs();
         }
         String data = this.saveToString();
-        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), Charsets.UTF_16);) {
+        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), StandardCharsets.UTF_16);) {
             writer.write(data);
         } catch (IOException e) {
             return false;

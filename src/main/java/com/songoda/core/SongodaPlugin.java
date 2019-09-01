@@ -45,7 +45,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public ConfigFileConfigurationAdapter getConfig() {
-        return config.getConfig();
+        System.out.println("Plugin config adapter!");
+        return config.getFileConfig();
     }
 
     @Override

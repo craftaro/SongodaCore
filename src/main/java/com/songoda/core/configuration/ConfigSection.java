@@ -121,6 +121,17 @@ public class ConfigSection extends MemoryConfiguration {
         ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
+            root.defaultComments.put(fullPath + path, new Comment(comment));
+        }
+        return section;
+    }
+    
+    @NotNull
+    public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        ConfigSection section = new ConfigSection(root, this, path, true);
+        synchronized (root.lock) {
+            root.defaults.put(fullPath + path, section);
+            root.defaultComments.put(fullPath + path, new Comment(commentStyle, comment));
         }
         return section;
     }
@@ -188,12 +199,24 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
-        root.defaults.put(fullPath + path, value);
+        synchronized (root.lock) {
+            // if any intermediate nodes don't exist, create them
+            String[] pathParts = path.split(Pattern.quote(String.valueOf(root.pathChar)));
+            String nodePath = "";
+            for (int i = 0; i < pathParts.length - 1; ++i) {
+                nodePath += (nodePath.isEmpty() ? pathParts[i] : root.pathChar + pathParts[i]);
+                if (!(root.defaults.get(nodePath) instanceof ConfigSection)) {
+                    root.defaults.put(nodePath, new ConfigSection(root, this, nodePath, true));
+                }
+            }
+            root.defaults.put(fullPath + path, value);
+        }
     }
 
     @Override
     public void addDefaults(@NotNull Map<String, Object> defaults) {
-        defaults.entrySet().stream().forEach(m -> root.defaults.put(fullPath + m.getKey(), m.getValue()));
+        //defaults.entrySet().stream().forEach(m -> root.defaults.put(fullPath + m.getKey(), m.getValue()));
+        defaults.entrySet().stream().forEach(m -> addDefault(m.getKey(), m.getValue()));
     }
 
     @Override
