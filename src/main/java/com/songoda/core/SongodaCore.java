@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,6 +33,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -39,13 +42,18 @@ public class SongodaCore {
 
     private final static String prefix = "[SongodaCore]";
 
+    /**
+     * Whenever we make a major change to the core GUI, updater, 
+     * or other function used by the core, increment this number
+     */
+    private final static int coreRevision = 2;
     private final static int updaterVersion = 1;
 
     private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE = null;
     private JavaPlugin piggybackedPlugin;
-    private final CommandManager commandManager;
+    private CommandManager commandManager;
     private EventListener loginListener;
     private ShadedEventListener shadingListener;
 
@@ -64,13 +72,45 @@ public class SongodaCore {
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
                 if(clazz.getSimpleName().equals("SongodaCore")) {
                     try {
-                        // use the active service
-                        clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
+                        // test to see if we're up to date
+                        int otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                        if(otherVersion >= getCoreVersion()) {
+                            // use the active service
+                            clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
 
-                        if(hasShading()) {
-                            (INSTANCE = new SongodaCore()).piggybackedPlugin = plugin;
-                            INSTANCE.shadingListener = new ShadedEventListener();
-                            Bukkit.getPluginManager().registerEvents(INSTANCE.shadingListener, plugin);
+                            if(hasShading()) {
+                                (INSTANCE = new SongodaCore()).piggybackedPlugin = plugin;
+                                INSTANCE.shadingListener = new ShadedEventListener();
+                                Bukkit.getPluginManager().registerEvents(INSTANCE.shadingListener, plugin);
+                            }
+                        } else {
+                            // we are newer than the registered service: steal all of its registrations
+                            // grab the old core's registrations
+                            List otherPlugins = (List) clazz.getMethod("getPlugins").invoke(null);
+                            // destroy the old core
+                            Object oldCore = clazz.getMethod("getInstance").invoke(null);
+                            Method destruct = clazz.getDeclaredMethod("destroy");
+                            destruct.setAccessible(true);
+                            destruct.invoke(oldCore);
+                            // register ourselves as the SongodaCore service!
+                            INSTANCE = new SongodaCore(plugin);
+                            INSTANCE.init();
+                            INSTANCE.register(plugin, pluginID, icon);
+                            Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
+                            // we need (JavaPlugin plugin, int pluginID, String icon) for our object
+                            if(!otherPlugins.isEmpty()) {
+                                Object testSubject = otherPlugins.get(0);
+                                Class otherPluginInfo = testSubject.getClass();
+                                Method otherPluginInfo_getJavaPlugin = otherPluginInfo.getMethod("getJavaPlugin");
+                                Method otherPluginInfo_getSongodaId = otherPluginInfo.getMethod("getSongodaId");
+                                Method otherPluginInfo_getCoreIcon = otherPluginInfo.getMethod("getCoreIcon");
+                                for(Object other : otherPlugins) {
+                                    INSTANCE.register(
+                                            (JavaPlugin) otherPluginInfo_getJavaPlugin.invoke(other), 
+                                            (int) otherPluginInfo_getSongodaId.invoke(other), 
+                                            (String) otherPluginInfo_getCoreIcon.invoke(other));
+                                }
+                            }
                         }
                         return;
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
@@ -80,9 +120,9 @@ public class SongodaCore {
             // register ourselves as the SongodaCore service!
             INSTANCE = new SongodaCore(plugin);
             INSTANCE.init();
+            INSTANCE.register(plugin, pluginID, icon);
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        INSTANCE.register(plugin, pluginID, icon);
     }
 
     SongodaCore() {
@@ -97,16 +137,34 @@ public class SongodaCore {
 
     private void init() {
         shadingListener = new ShadedEventListener();
-        commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
-                .addSubCommand(new SongodaCoreDiagCommand(this));
+        commandManager.registerCommandDynamically(new SongodaCoreCommand())
+                .addSubCommand(new SongodaCoreDiagCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
         // we aggressevely want to own this command
-        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->registerAllPlugins(), 20 * 60 * 2);
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->registerAllPlugins(), 20 * 60 * 2));
     }
+
+    /**
+     * Used to yield this core to a newer core
+     */
+    private void destroy() {
+        Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
+        tasks.stream().filter(task -> task != null && !task.isCancelled())
+                .forEach(task ->  Bukkit.getScheduler().cancelTask(task.getTaskId()));
+        HandlerList.unregisterAll(loginListener);
+        if(!hasShading()) {
+            HandlerList.unregisterAll(shadingListener);
+        }
+        registeredPlugins.clear();
+        piggybackedPlugin = null;
+        commandManager = null;
+        loginListener = null;
+    }
+    private ArrayList<BukkitTask> tasks = new ArrayList();
 
     /**
      * Register plugins that may not have been updated yet
@@ -179,7 +237,7 @@ public class SongodaCore {
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 20L);
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
     private void update(PluginInfo plugin) {
@@ -223,11 +281,15 @@ public class SongodaCore {
         }
     }
 
-    public List<PluginInfo> getPlugins() {
+    public static List<PluginInfo> getPlugins() {
         return new ArrayList<>(registeredPlugins);
     }
 
-    public static int getVersion() {
+    public static int getCoreVersion() {
+        return coreRevision;
+    }
+
+    public static int getUpdaterVersion() {
         return updaterVersion;
     }
 

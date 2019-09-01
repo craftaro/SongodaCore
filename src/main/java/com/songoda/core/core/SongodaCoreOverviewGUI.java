@@ -11,11 +11,8 @@ import org.bukkit.event.inventory.ClickType;
 
 final class SongodaCoreOverviewGUI extends Gui {
 
-    private final SongodaCore update;
-
-    protected SongodaCoreOverviewGUI(SongodaCore update) {
-        this.update = update;
-        List<PluginInfo> plugins = update.getPlugins();
+    protected SongodaCoreOverviewGUI() {
+        List<PluginInfo> plugins = SongodaCore.getPlugins();
         // could do pages, too, but don't think we'll have that many at a time for a while
         int max = (int) Math.ceil(plugins.size() / 9.);
         setRows(max);

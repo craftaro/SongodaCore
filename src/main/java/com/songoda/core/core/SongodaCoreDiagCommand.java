@@ -15,16 +15,13 @@ import java.util.List;
 
 public class SongodaCoreDiagCommand extends AbstractCommand {
 
-    final SongodaCore instance;
-
     private final DecimalFormat format = new DecimalFormat("##.##");
 
     private Object serverInstance;
     private Field tpsField;
 
-    public SongodaCoreDiagCommand(SongodaCore instance) {
+    public SongodaCoreDiagCommand() {
         super(false, "diag");
-        this.instance = instance;
 
         try {
             serverInstance = NMSUtils.getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
@@ -42,7 +39,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("Songoda Diagnostics Information");
         sender.sendMessage("");
         sender.sendMessage("Plugins:");
-        for (PluginInfo plugin : instance.getPlugins()) {
+        for (PluginInfo plugin : SongodaCore.getPlugins()) {
             sender.sendMessage(plugin.getJavaPlugin().getName()
                     + " (" + plugin.getJavaPlugin().getDescription().getVersion() + ")");
         }

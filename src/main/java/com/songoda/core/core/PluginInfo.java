@@ -94,4 +94,8 @@ public final class PluginInfo {
     public int getSongodaId() {
         return songodaId;
     }
+
+    public String getCoreIcon() {
+        return coreIcon;
+    }
 }

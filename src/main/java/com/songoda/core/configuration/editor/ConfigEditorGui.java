@@ -62,7 +62,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         this.setUseHeader(true);
         headerBackItem = footerBackItem = GuiUtils.getBorderItem(LegacyMaterials.GRAY_STAINED_GLASS_PANE.getItem());
         final String path = node.getCurrentPath();
-        this.setItem(4, configItem(LegacyMaterials.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, null));
+        this.setItem(4, configItem(LegacyMaterials.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
         this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // compile list of settings
@@ -77,21 +77,20 @@ public class ConfigEditorGui extends SimplePagedGui {
         // next we need to display the config settings
         int index = 9;
         for (final String sectionKey : sections) {
-            this.setButton(index++, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
+            setButton(index++, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, file, config, node.getConfigurationSection(sectionKey))));
         }
 
-        // todo: display values of settings in gui, too
         // now display individual settings
         for (final String settingKey : settings) {
             final Object val = node.get(settingKey);
             if(val == null) continue;
-            else if(val instanceof Boolean) {
+            else if (val instanceof Boolean) {
                 // toggle switch
-                this.setButton(index, configItem(LegacyMaterials.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
-                    (event) -> this.toggle(event.slot, settingKey));
-                if((Boolean) val) {
-                    this.highlightItem(index);
+                setButton(index, configItem(LegacyMaterials.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
+                        (event) -> this.toggle(event.slot, settingKey));
+                if ((Boolean) val) {
+                    highlightItem(index);
                 }
             } else if (isNumber(val)) {
                 // number dial
@@ -108,7 +107,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             } else if (isMaterial(val)) {
                 // changing a block
                 // isMaterial is more of a guess, to be honest.
-                this.setButton(index, configItem(LegacyMaterials.STONE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                setButton(index, configItem(LegacyMaterials.STONE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
                         (event) -> {
                             SimplePagedGui paged = new SimplePagedGui(this);
                             paged.setTitle(ChatColor.BLUE + settingKey);
@@ -126,7 +125,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                 
             } else if (val instanceof String) {
                 // changing a "string" value (or change to a feather for writing quill)
-                this.setButton(index, configItem(LegacyMaterials.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                setButton(index, configItem(LegacyMaterials.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + settingKey + ":", response -> {
@@ -136,11 +135,11 @@ public class ConfigEditorGui extends SimplePagedGui {
                               .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
                         });
             } else if (val instanceof List) {
-                this.setButton(index, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
+                setButton(index, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
                         (event) -> {
                             event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
                                 if(((ConfigEditorListEditorGui) gui.gui).saveChanges) {
-                                    setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).value);
+                                    setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).values);
                                 }
                             }));
                         });

@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 
 public class SongodaCoreCommand extends AbstractCommand {
 
-    final SongodaCore instance;
     protected GuiManager guiManager;
 
-    public SongodaCoreCommand(SongodaCore instance) {
+    public SongodaCoreCommand() {
         super(false, "songoda");
-        this.instance = instance;
     }
 
     @Override
@@ -23,7 +21,7 @@ public class SongodaCoreCommand extends AbstractCommand {
             if(guiManager == null || guiManager.isClosed()) {
                 guiManager = new GuiManager(SongodaCore.getHijackedPlugin());
             }
-            guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI(instance));
+            guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
         } else {
             sender.sendMessage("/songoda diag");
         }

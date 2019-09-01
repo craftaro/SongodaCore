@@ -74,6 +74,7 @@ public class ChatPrompt implements Listener {
 
                 ChatConfirmEvent chatConfirmEvent = new ChatConfirmEvent(player, event.getMessage());
 
+                player.sendMessage("\u00BB " + event.getMessage());
                 try {
                     handler.onChat(chatConfirmEvent);
                 } catch (Throwable t) {

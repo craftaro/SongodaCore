@@ -140,36 +140,63 @@ public class SimplePagedGui extends Gui {
     protected Inventory generateInventory(GuiManager manager) {
         // calculate pages here
         rowsPerPage = useHeader ? 4 : 5;
-        maxCellSlot = this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get();
+        maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
         int maxRows = (int) Math.ceil(maxCellSlot / 9.);
         pages = (int) Math.ceil(maxRows / rowsPerPage);
-        page = 1;
-        this.setRows(maxRows + (useHeader ? 2 : 1));
+        this.setRows(maxRows + (useHeader ? 1 : 0));
 
         // create inventory view
         final int cells = rows * 9;
         inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), cells,
                 title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
 
-        // populate initial inventory
+        // populate and return the display inventory
+        page = 1;
+        update();
+        return inventory;
+    }
+
+    @Override
+    public void update() {
+        if (inventory == null) {
+            return;
+        }
+
+        // calculate pages here
+        rowsPerPage = useHeader ? 4 : 5;
+        maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
+        int maxRows = Math.max((useHeader ? 1 : 0), (int) Math.ceil(maxCellSlot / 9.));
+        pages = (int) Math.ceil(maxRows / rowsPerPage);
+
+        // create a new inventory if needed
+        final int cells = rows * 9;
+        boolean isNew = false;
+        if (cells != inventory.getSize()) {
+            this.setRows(maxRows + (useHeader ? 2 : 1));
+            inventory = Bukkit.getServer().createInventory(inventory.getHolder(), cells,
+                    title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
+            isNew = true;
+        }
+
+        // populate header
         if (useHeader) {
             for (int i = 0; i < 9; ++i) {
                 final ItemStack item = cellItems.get(i);
                 inventory.setItem(i, item != null ? item : (headerBackItem != null ? headerBackItem : blankItem));
             }
         }
-        for (int i = useHeader ? 9 : 0; i < cells - 9; ++i) {
-            final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : blankItem);
-        }
-
         // last row is dedicated to pagation
         for (int i = cells - 9; i < cells; ++i) {
             inventory.setItem(i, footerBackItem != null ? footerBackItem : blankItem);
         }
-        updatePageNavigation();
+        // fill out the rest of the page
+        showPage();
 
-        return inventory;
+        if(isNew) {
+            // whoopsie!
+            exit();
+            getPlayers().forEach(player -> ((GuiHolder) inventory.getHolder()).manager.showGUI(player, this));
+        }
     }
 
     @Override
