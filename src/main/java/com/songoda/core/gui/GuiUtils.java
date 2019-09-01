@@ -53,7 +53,7 @@ public class GuiUtils {
         ArrayList<String> newLore = new ArrayList();
         for (String l : lines) {
             for (String l2 : l.split("\n")) {
-                if (l2.length() < 58) {
+                if (l2.length() < 54) {
                     newLore.add(l2);
                 } else {
                     // try to shorten the string
@@ -62,7 +62,7 @@ public class GuiUtils {
                     int line = 0;
                     while (shorterString.length() > 50) {
                         int breakingSpace = -1;
-                        for (int i = 0; i < 55; ++i) {
+                        for (int i = 0; i < 50; ++i) {
                             if (shorterString.charAt(i) == ChatColor.COLOR_CHAR) {
                                 lastColor = ChatColor.getByChar(shorterString.charAt(++i));
                             } else if (shorterString.charAt(i) == ' ' || shorterString.charAt(i) == '-') {
@@ -70,7 +70,7 @@ public class GuiUtils {
                             }
                         }
                         if (breakingSpace == -1) {
-                            breakingSpace = Math.max(55, shorterString.length());
+                            breakingSpace = Math.max(50, shorterString.length());
                             newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace) + "-");
                             shorterString = breakingSpace == shorterString.length() ? "" : shorterString.substring(breakingSpace + 1);
                         } else {

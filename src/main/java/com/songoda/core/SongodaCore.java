@@ -160,7 +160,6 @@ public class SongodaCore {
             HandlerList.unregisterAll(shadingListener);
         }
         registeredPlugins.clear();
-        piggybackedPlugin = null;
         commandManager = null;
         loginListener = null;
     }
