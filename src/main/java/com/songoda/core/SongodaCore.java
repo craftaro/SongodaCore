@@ -93,10 +93,10 @@ public class SongodaCore {
         piggybackedPlugin = javaPlugin;
         commandManager = new CommandManager(piggybackedPlugin);
         loginListener = new EventListener();
-        shadingListener = new ShadedEventListener();
     }
 
     private void init() {
+        shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand(this))
                 .addSubCommand(new SongodaCoreDiagCommand(this));
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);

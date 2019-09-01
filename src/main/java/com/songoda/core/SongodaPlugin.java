@@ -92,6 +92,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
             emergencyStop = true;
             setEnabled(false);
+            console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            return;
         }
 
         console.sendMessage(ChatColor.GREEN + "=============================");

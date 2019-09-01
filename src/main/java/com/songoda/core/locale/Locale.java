@@ -1,18 +1,22 @@
 package com.songoda.core.locale;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.Plugin;
-
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Assists in the utilization of localization files. <br>
@@ -30,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public class Locale {
 
-    private static final Pattern NODE_PATTERN = Pattern.compile("(\\w+(?:\\.{1}\\w+)*)\\s*=\\s*\"(.*)\"");
+    private static final Pattern NODE_PATTERN = Pattern.compile("^([^ ]+)\\s*=\\s*\"?(.*?)\"?$");
     private static final String FILE_EXTENSION = ".lang";
 
     private final Map<String, String> nodes = new HashMap<>();
@@ -134,7 +140,7 @@ public class Locale {
      * @return true if the operation was successful, false otherwise
      */
     public static boolean saveDefaultLocale(JavaPlugin plugin, String locale, String fileName) {
-        return saveLocale(plugin, plugin.getResource(locale + FILE_EXTENSION), fileName);
+        return saveLocale(plugin, plugin.getResource(locale + FILE_EXTENSION), fileName, true);
     }
 
     /**
@@ -146,6 +152,11 @@ public class Locale {
      * @return true if the operation was successful, false otherwise
      */
     public static boolean saveLocale(Plugin plugin, InputStream in, String fileName) {
+        return saveLocale(plugin, in, fileName, false);
+    }
+
+    private static boolean saveLocale(Plugin plugin, InputStream in, String fileName, boolean builtin) {
+        if(in == null) return false;
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
         if (!localeFolder.exists()) localeFolder.mkdirs();
 
@@ -154,7 +165,7 @@ public class Locale {
 
         File destinationFile = new File(localeFolder, fileName);
         if (destinationFile.exists())
-            return updateFiles(plugin, in, destinationFile);
+            return updateFiles(plugin, in, destinationFile, builtin);
 
         try (OutputStream outputStream = new FileOutputStream(destinationFile)) {
             copy(in, outputStream);
@@ -170,44 +181,56 @@ public class Locale {
     }
 
     // Write new changes to existing files, if any at all
-    // TODO: implement auto-update lang files with missing translations (load from en_us)
-    private static boolean updateFiles(Plugin plugin, InputStream defaultFile, File existingFile) {
+    private static boolean updateFiles(Plugin plugin, InputStream defaultFile, File existingFile, boolean builtin) {
         boolean changed = false;
 
         List<String> defaultLines, existingLines;
-        try (BufferedReader defaultReader = new BufferedReader(new InputStreamReader(defaultFile));
-             BufferedReader existingReader = new BufferedReader(new FileReader(existingFile));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(existingFile, true))) {
-            defaultLines = defaultReader.lines().collect(Collectors.toList());
-            existingLines = existingReader.lines().map(s -> s.split("\\s*=")[0]).collect(Collectors.toList());
+        try (BufferedInputStream defaultIn = new BufferedInputStream(defaultFile);
+                BufferedInputStream existingIn = new BufferedInputStream(new FileInputStream(existingFile))) {
 
-            for (String defaultValue : defaultLines) {
-                if (defaultValue.isEmpty() || defaultValue.startsWith("#")) continue;
+            Charset defaultCharset = Locale.detectCharset(defaultIn);
+            Charset existingCharset = Locale.detectCharset(existingIn);
 
-                String key = defaultValue.split("\\s*=")[0];
+            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(existingFile, true), existingCharset);
+                    BufferedReader defaultReader = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
+                    BufferedReader existingReader = new BufferedReader(new InputStreamReader(existingIn, existingCharset));) {
+                defaultLines = defaultReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "")).collect(Collectors.toList());
+                existingLines = existingReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "").split("\\s*=")[0]).collect(Collectors.toList());
 
-                if (!existingLines.contains(key)) {
-                    if (!changed) {
-                        writer.newLine();
-                        writer.newLine();
-                        // Leave a note alerting the user of the newly added messages.
-                        writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".");
+                for (String defaultValue : defaultLines) {
 
-                        // If changes were found outside of the default file leave a note explaining that.
-                        if (defaultFile == null) {
-                            writer.newLine();
-                            writer.write("# These translations were found untranslated, join");
-                            writer.newLine();
-                            writer.write("# our translation Discord https://discord.gg/f7fpZEf");
-                            writer.newLine();
-                            writer.write("# to request an official update!");
-                        }
+                    if (defaultValue.isEmpty() || defaultValue.startsWith("#")) {
+                        continue;
                     }
 
-                    writer.newLine();
-                    writer.write(defaultValue);
+                    String key = defaultValue.split("\\s*=")[0];
 
-                    changed = true;
+                    if (!existingLines.contains(key)) {
+                        if (!changed) {
+                            writer.write("\n\n");
+                            // Leave a note alerting the user of the newly added messages.
+                            writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".");
+
+                            // If changes were found outside of the default file leave a note explaining that.
+                            if (!builtin) {
+                                writer.write("\n");
+                                writer.write("# These translations were found untranslated, join\n");
+                                writer.write("# our translation Discord https://discord.gg/f7fpZEf\n");
+                                writer.write("# to request an official update!\n");
+                            }
+                        }
+
+                        writer.write("\n");
+
+                        // re-encode to target format? (transform down, not up)
+//                        if (defaultCharset != existingCharset) {
+//                            byte[] encoded = defaultValue.getBytes(defaultCharset);
+//                            defaultValue = new String(encoded, 2, encoded.length - 2, existingCharset);
+//                        }
+                        writer.write(defaultValue);
+
+                        changed = true;
+                    }
                 }
             }
         } catch (IOException e) {
@@ -230,10 +253,28 @@ public class Locale {
 
         this.nodes.clear(); // Clear previous data (if any)
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        // guess what encoding this file is in
+        Charset charset = detectCharset(file);
+        if(charset == null) {
+            return false;
+        }
+
+        // load in the file!
+        try (FileInputStream stream = new FileInputStream(file);
+                BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) stream, charset));) {
             String line;
             for (int lineNumber = 0; (line = reader.readLine()) != null; lineNumber++) {
                 if ((line = line.trim()).isEmpty() || line.startsWith("#") /* Comment */) continue;
+                
+                if (lineNumber == 0){
+                    // remove BOM markers, if any
+                    line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
+                }
+                // convert to UTF-8 ?
+                /*if (charset == StandardCharsets.UTF_16LE || charset == StandardCharsets.UTF_16BE) {
+                    byte[] encoded = line.getBytes(charset);
+                    line = new String(encoded, 0, encoded.length, StandardCharsets.UTF_8);
+                } */
 
                 Matcher matcher = NODE_PATTERN.matcher(line);
                 if (!matcher.find()) {
@@ -248,6 +289,81 @@ public class Locale {
             return false;
         }
         return true;
+    }
+
+    protected static final List<Charset> supportedCharsets = new ArrayList();
+
+    static {
+        supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
+        supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
+        //supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
+        //supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
+        //supportedCharsets.add(StandardCharsets.UTF_16);
+        try {
+        supportedCharsets.add(Charset.forName("windows-1253"));
+        supportedCharsets.add(Charset.forName("ISO-8859-7"));
+        } catch (Exception e) {
+        } // UnsupportedCharsetException technically can be thrown, but can also be ignored
+        supportedCharsets.add(StandardCharsets.US_ASCII);
+    }
+
+    protected static Charset detectCharset(File f) {
+        byte[] buffer = new byte[2048];
+        int read = -1;
+        // read the first 2kb of the file and test the file's encoding
+        try (FileInputStream input = new FileInputStream(f)) {
+            read = input.read(buffer);
+        } catch (Exception ex) {
+            return null;
+        }
+        return read != -1 ? detectCharset(buffer, read) : null;
+    }
+
+    protected static Charset detectCharset(BufferedInputStream reader) {
+        byte[] buffer = new byte[2048];
+        int read;
+        try {
+            reader.mark(2048);
+            read = reader.read(buffer);
+            reader.reset();
+        } catch (Exception ex) {
+            return null;
+        }
+        return read != -1 ? detectCharset(buffer, read) : null;
+    }
+
+    protected static Charset detectCharset(byte[] data, int len) {
+        // check the file header
+        if (len > 4) {
+            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) {
+                return StandardCharsets.UTF_16LE;
+                // FF FE 00 00 is UTF-32LE
+            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {
+                return StandardCharsets.UTF_16BE;
+                // 00 00 FE FF is UTF-32BE
+            } else if (data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { // UTF-8 with BOM, same sig as ISO-8859-1
+                return StandardCharsets.UTF_8;
+            }
+        }
+
+        // iterate through sets to test, and return the first that is ok
+        for (Charset charset : supportedCharsets) {
+            if (charset != null && isCharset(data, len, charset)) {
+                return charset;
+            }
+        }
+        return null;
+    }
+
+    protected static boolean isCharset(byte[] data, int len, Charset charset) {
+        try {
+            CharsetDecoder decoder = charset.newDecoder();
+            decoder.reset();
+            decoder.decode(ByteBuffer.wrap(data));
+            return true;
+        } catch (CharacterCodingException e) {
+        }
+        return false;
     }
 
     /**
