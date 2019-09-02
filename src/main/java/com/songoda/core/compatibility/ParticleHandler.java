@@ -49,12 +49,13 @@ public class ParticleHandler {
         BLOCK_CRACK(), // BlockData
         BLOCK_DUST(), // BlockData
         WATER_DROP,
-        // 1.9-1.12 included ITEM_TAKE
+        // 1.8-1.12 included ITEM_TAKE
         MOB_APPEARANCE,
-        DRAGON_BREATH,
-        END_ROD,
-        DAMAGE_INDICATOR,
-        SWEEP_ATTACK,
+        /// End 1.8 particles ///
+        DRAGON_BREATH(ServerVersion.V1_9, "SPELL_MOB_AMBIENT"),
+        END_ROD(ServerVersion.V1_9, "ENCHANTMENT_TABLE"),
+        DAMAGE_INDICATOR(ServerVersion.V1_9, "VILLAGER_ANGRY"),
+        SWEEP_ATTACK(ServerVersion.V1_9, "CRIT"),
         /// End 1.9 particles ///
         FALLING_DUST(ServerVersion.V1_10, "BLOCK_DUST"), // BlockData
         /// End 1.10 ///
