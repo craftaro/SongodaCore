@@ -5,6 +5,7 @@ import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
 import com.songoda.core.gui.events.GuiOpenEvent;
+import com.songoda.core.gui.events.GuiPageEvent;
 import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.gui.methods.Droppable;
@@ -217,6 +218,15 @@ public class Gui {
 
     public ItemStack getDefaultItem() {
         return blankItem;
+    }
+
+    public ItemStack getItem(int cell) {
+        return cellItems.get(cell);
+    }
+
+    public ItemStack getItem(int row, int col) {
+        final int cell = col + row * 9;
+        return cellItems.get(cell);
     }
 
     public Gui setItem(int cell, ItemStack item) {
@@ -462,7 +472,7 @@ public class Gui {
     public Gui setNextPage(int row, int col, ItemStack item) {
         nextPageIndex = col + row * 9;
         if (page < pages) {
-            setButton(nextPageIndex, item, ClickType.LEFT, (event) -> this.nextPage());
+            setButton(nextPageIndex, item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         }
         return this;
     }
@@ -470,18 +480,18 @@ public class Gui {
     public Gui setPrevPage(int row, int col, ItemStack item) {
         prevPageIndex = col + row * 9;
         if (page > 1) {
-            setButton(prevPageIndex, item, ClickType.LEFT, (event) -> this.prevPage());
+            setButton(prevPageIndex, item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         }
         return this;
     }
 
-    public void nextPage() {
+    public void nextPage(GuiManager manager) {
         if (page < pages) {
             int lastPage = page;
             ++page;
             // page switch events
             if (pager != null) {
-                pager.onPageChange(this, lastPage, page);
+                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -493,12 +503,12 @@ public class Gui {
         }
     }
 
-    public void prevPage() {
+    public void prevPage(GuiManager manager) {
         if (page > 1) {
             int lastPage = page;
             --page;
             if (pager != null) {
-                pager.onPageChange(this, lastPage, page);
+                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -512,13 +522,13 @@ public class Gui {
 
     protected void updatePageNavigation() {
         if (page > 1) {
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         } else {
             this.setItem(prevPageIndex, null);
             this.clearActions(prevPageIndex);
         }
         if (pages > 1 && page != pages) {
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         } else {
             this.setItem(nextPageIndex, null);
             this.clearActions(nextPageIndex);
