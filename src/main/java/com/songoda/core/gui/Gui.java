@@ -52,6 +52,7 @@ public class Gui {
     protected static ItemStack AIR = new ItemStack(Material.AIR);
 
     protected boolean open = false;
+    protected Clickable defaultClicker = null;
     protected Openable opener = null;
     protected Closable closer = null;
     protected Droppable dropper = null;
@@ -208,6 +209,11 @@ public class Gui {
             default:
                 this.rows = Math.max(1, Math.min(6, rows));
         }
+        return this;
+    }
+
+    public Gui setDefaultAction(Clickable action) {
+        defaultClicker = action;
         return this;
     }
 
@@ -602,6 +608,10 @@ public class Gui {
             button.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
         } else {
             // no event for this button
+            if(defaultClicker != null) {
+                // this is a default action, not a triggered action
+                defaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
+            }
             return false;
         }
         return true;
