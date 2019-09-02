@@ -299,7 +299,7 @@ public class Gui {
     public Gui updateItem(int cell, String name, String... lore) {
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, GuiUtils.updateItem(item, title, lore));
+            setItem(cell, GuiUtils.updateItem(item, name, lore));
         }
         return this;
     }
