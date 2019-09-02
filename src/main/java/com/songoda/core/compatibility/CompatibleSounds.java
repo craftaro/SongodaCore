@@ -319,7 +319,7 @@ public enum CompatibleSounds {
     ENTITY_ENDER_DRAGON_HURT(ServerVersion.V1_13, v(ServerVersion.V1_9, "ENTITY_ENDERDRAGON_HURT"), v("ENDERDRAGON_HIT")),
     ENTITY_ENDER_DRAGON_SHOOT(ServerVersion.V1_13, v(ServerVersion.V1_9, "ENTITY_ENDERDRAGON_SHOOT"), v("GHAST_FIREBALL", true)),
     ENTITY_ENDER_EYE_DEATH(ServerVersion.V1_13, v(ServerVersion.V1_12, "ENTITY_ENDEREYE_DEATH"), v(ServerVersion.V1_9, "BLOCK_GLASS_BREAK", true), v("GLASS", true)),
-    ENTITY_ENDER_EYE_LAUNCH(ServerVersion.V1_13, v(ServerVersion.V1_9, "ENTITY_ENDEREYE_LAUNCH"), v("BLOCK_PORTAL_TRIGGER", true)),
+    ENTITY_ENDER_EYE_LAUNCH(ServerVersion.V1_13, v(ServerVersion.V1_9, "ENTITY_ENDEREYE_LAUNCH"), v(ServerVersion.V1_9, "BLOCK_PORTAL_TRIGGER", true), v("PORTAL_TRIGGER", true)),
     ENTITY_ENDER_PEARL_THROW,
     ENTITY_EVOKER_AMBIENT,
     ENTITY_EVOKER_CAST_SPELL,
