@@ -221,11 +221,17 @@ public class Gui {
     }
 
     public ItemStack getItem(int cell) {
+        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
+            return inventory.getItem(cell);
+        }
         return cellItems.get(cell);
     }
 
     public ItemStack getItem(int row, int col) {
         final int cell = col + row * 9;
+        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
+            return inventory.getItem(cell);
+        }
         return cellItems.get(cell);
     }
 
