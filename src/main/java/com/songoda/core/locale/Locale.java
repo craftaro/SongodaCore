@@ -262,8 +262,6 @@ public class Locale {
                 BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) stream, charset));) {
             String line;
             for (int lineNumber = 0; (line = reader.readLine()) != null; lineNumber++) {
-                if ((line = line.trim()).isEmpty() || line.startsWith("#") /* Comment */) continue;
-                
                 if (lineNumber == 0){
                     // remove BOM markers, if any
                     line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
@@ -273,6 +271,8 @@ public class Locale {
                     byte[] encoded = line.getBytes(charset);
                     line = new String(encoded, 0, encoded.length, StandardCharsets.UTF_8);
                 } */
+
+                if ((line = line.trim()).isEmpty() || line.startsWith("#") /* Comment */) continue;
 
                 Matcher matcher = NODE_PATTERN.matcher(line);
                 if (!matcher.find()) {
