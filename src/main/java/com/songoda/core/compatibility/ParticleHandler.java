@@ -66,7 +66,7 @@ public class ParticleHandler {
         BUBBLE_POP(ServerVersion.V1_13, "CRIT"),
         CURRENT_DOWN(ServerVersion.V1_13, "CRIT"),
         BUBBLE_COLUMN_UP(ServerVersion.V1_13, "CRIT"),
-        NAUTILUS(ServerVersion.V1_13, "END_ROD"),
+        NAUTILUS(ServerVersion.V1_13, "ENCHANTMENT_TABLE"),
         DOLPHIN(ServerVersion.V1_13, "TOWN_AURA"),
         /// End 1.13 ///
         SNEEZE(ServerVersion.V1_14, "REDSTONE"),
