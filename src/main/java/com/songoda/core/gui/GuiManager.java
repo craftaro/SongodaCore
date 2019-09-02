@@ -9,16 +9,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -132,12 +135,27 @@ public class GuiManager {
             if (!(event.getWhoClicked() instanceof Player)) {
                 return;
             }
+
             Inventory openInv = event.getInventory();
             final Player player = (Player) event.getWhoClicked();
             Gui gui;
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
                     && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
+
+                if (event.getClick() == ClickType.DOUBLE_CLICK) {
+                    // always cancel this event if there are matching gui elements, since it tends to do bad things
+                    ItemStack clicked = event.getCursor();
+                    if(clicked != null && clicked.getType() != Material.AIR) {
+                        int cell = 0;
+                        for(ItemStack it : gui.inventory.getContents()) {
+                            if(!gui.unlockedCells.getOrDefault(cell++, false) && clicked.isSimilar(it)) {
+                                event.setCancelled(true);
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 if (event.getSlotType() == SlotType.OUTSIDE) {
                     if (!gui.onClickOutside(manager, player, event)) {
