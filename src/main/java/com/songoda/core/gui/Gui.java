@@ -567,7 +567,7 @@ public class Gui {
 
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : blankItem);
+            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
 
         return inventory;
@@ -584,7 +584,7 @@ public class Gui {
         final int cells = rows * 9;
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : blankItem);
+            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
     }
 
