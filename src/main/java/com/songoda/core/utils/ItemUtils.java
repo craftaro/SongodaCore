@@ -17,13 +17,12 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -41,12 +40,34 @@ public class ItemUtils {
 		}
 	}
 
+    /**
+     * Clone of org.bukkit.inventory.ItemStack.asQuantity, since it is a paper-only function
+     * 
+     * @param item item to copy
+     * @param qty amount the new ItemStack should have
+     * @return a copy of the original item
+     */
 	public static ItemStack getAsCopy(ItemStack item, int qty) {
-		// org.bukkit.inventory.ItemStack.asQuantity is a paper-only function
 		ItemStack clone = item.clone();
 		clone.setAmount(qty);
 		return clone;
 	}
+
+    public static ItemStack addDamage(ItemStack item, int damage) {
+        if (item == null) {
+            return null;
+        } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+            // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
+            ItemMeta meta = item.getItemMeta();
+            if (meta instanceof Damageable) {
+                ((Damageable) meta).setDamage(((Damageable) meta).getDamage() + damage);
+                item.setItemMeta(meta);
+            }
+        } else {
+            item.setDurability((short) Math.max(0, item.getDurability() + damage));
+        }
+        return item;
+    }
 
     static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
     static Class mc_ItemStack = NMSUtils.getNMSClass("ItemStack");
