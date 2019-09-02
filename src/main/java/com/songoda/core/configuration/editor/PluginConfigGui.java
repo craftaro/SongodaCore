@@ -60,7 +60,7 @@ public class PluginConfigGui extends SimplePagedGui {
         try {
             // can we also grab extra config from this mysterious plugin?
             Object more = plugin.getClass().getDeclaredMethod("getExtraConfig").invoke(plugin);
-            if (more instanceof List && !((List) more).isEmpty()) {
+            if (more != null && more instanceof List && !((List) more).isEmpty()) {
                 try {
                     // if we have the getExtraConfig function, we should also be able to get the file
                     Method method_Config_getFile = ((List) more).get(0).getClass().getDeclaredMethod("getFile");
