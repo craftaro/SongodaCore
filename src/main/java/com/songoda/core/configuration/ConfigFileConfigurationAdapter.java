@@ -1,5 +1,8 @@
 package com.songoda.core.configuration;
 
+import com.songoda.core.compatibility.LegacyMaterials;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -7,6 +10,8 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ConfigFileConfigurationAdapter extends FileConfiguration {
 
@@ -116,4 +121,153 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
         return config.createSection(path, map);
     }
 
+    // Other non-FileConfiguration methods
+
+    @NotNull
+    public ConfigSection createDefaultSection(@NotNull String path) {
+        return config.createDefaultSection(path);
+    }
+
+    @NotNull
+    public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
+        return config.createDefaultSection(path, comment);
+    }
+
+    @NotNull
+    public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        return config.createDefaultSection(path, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+        return config.setComment(path, commentStyle, lines);
+    }
+
+    @NotNull
+    public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+        return config.setComment(path, commentStyle, lines);
+    }
+
+    @NotNull
+    public ConfigSection setDefaultComment(@NotNull String path, String... lines) {
+        return config.setDefaultComment(path, lines);
+    }
+
+    @NotNull
+    public ConfigSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
+        return config.setDefaultComment(path, lines);
+    }
+
+    @NotNull
+    public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+        return config.setDefaultComment(path, commentStyle, lines);
+    }
+
+    @NotNull
+    public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+        return config.setDefaultComment(path, commentStyle, lines);
+    }
+
+    @Nullable
+    public Comment getComment(@NotNull String path) {
+        return config.getComment(path);
+    }
+
+    @Nullable
+    public String getCommentString(@NotNull String path) {
+        return config.getCommentString(path);
+    }
+
+    @NotNull
+    public List<ConfigSection> getSections(String path) {
+        return config.getSections(path);
+    }
+
+    @NotNull
+    public ConfigSection set(@NotNull String path, @Nullable Object value, String... comment) {
+        return config.set(path, value, comment);
+    }
+
+    @NotNull
+    public ConfigSection set(@NotNull String path, @Nullable Object value, List<String> comment) {
+        return config.set(path, value, comment);
+    }
+
+    @NotNull
+    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        return config.set(path, value, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+        return config.set(path, value, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value) {
+        return config.setDefault(path, value);
+    }
+
+    @NotNull
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, String... comment) {
+        return config.setDefault(path, value, comment);
+    }
+
+    @NotNull
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, List<String> comment) {
+        return config.setDefault(path, value, comment);
+    }
+
+    @NotNull
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        return config.setDefault(path, value, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
+        return config.setDefault(path, value, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection createSection(@NotNull String path, String... comment) {
+        return config.createSection(path, comment);
+    }
+
+    @NotNull
+    public ConfigSection createSection(@NotNull String path, @Nullable List<String> comment) {
+        return config.createSection(path, comment);
+    }
+
+    @NotNull
+    public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        return config.createSection(path, commentStyle, comment);
+    }
+
+    @NotNull
+    public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
+        return config.createSection(path, commentStyle, comment);
+    }
+
+    public char getChar(@NotNull String path) {
+        return config.getChar(path);
+    }
+
+    public char getChar(@NotNull String path, char def) {
+        return config.getChar(path, def);
+    }
+
+    @Nullable
+    public LegacyMaterials getMaterial(@NotNull String path) {
+        return config.getMaterial(path);
+    }
+
+    @Nullable
+    public LegacyMaterials getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
+        return config.getMaterial(path, def);
+    }
+
+    @NotNull
+    public ConfigSection getOrCreateConfigurationSection(@NotNull String path) {
+        return config.getOrCreateConfigurationSection(path);
+    }
 }

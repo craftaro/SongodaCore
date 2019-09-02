@@ -49,8 +49,16 @@ public enum ServerVersion {
         return ArrayUtils.contains(versions, serverVersion);
     }
 
+    public static boolean isServerVersionAbove(ServerVersion version) {
+        return serverVersion.ordinal() > version.ordinal();
+    }
+
     public static boolean isServerVersionAtLeast(ServerVersion version) {
         return serverVersion.ordinal() >= version.ordinal();
+    }
+
+    public static boolean isServerVersionAtOrBelow(ServerVersion version) {
+        return serverVersion.ordinal() <= version.ordinal();
     }
 
     public static boolean isServerVersionBelow(ServerVersion version) {
