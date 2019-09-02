@@ -5,6 +5,7 @@ import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
 import com.songoda.core.gui.events.GuiOpenEvent;
+import com.songoda.core.gui.events.GuiPageEvent;
 import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.gui.methods.Droppable;
@@ -51,6 +52,7 @@ public class Gui {
     protected static ItemStack AIR = new ItemStack(Material.AIR);
 
     protected boolean open = false;
+    protected Clickable defaultClicker = null;
     protected Openable opener = null;
     protected Closable closer = null;
     protected Droppable dropper = null;
@@ -210,6 +212,11 @@ public class Gui {
         return this;
     }
 
+    public Gui setDefaultAction(Clickable action) {
+        defaultClicker = action;
+        return this;
+    }
+
     public Gui setDefaultItem(ItemStack item) {
         blankItem = item;
         return this;
@@ -217,6 +224,21 @@ public class Gui {
 
     public ItemStack getDefaultItem() {
         return blankItem;
+    }
+
+    public ItemStack getItem(int cell) {
+        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
+            return inventory.getItem(cell);
+        }
+        return cellItems.get(cell);
+    }
+
+    public ItemStack getItem(int row, int col) {
+        final int cell = col + row * 9;
+        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
+            return inventory.getItem(cell);
+        }
+        return cellItems.get(cell);
     }
 
     public Gui setItem(int cell, ItemStack item) {
@@ -277,7 +299,7 @@ public class Gui {
     public Gui updateItem(int cell, String name, String... lore) {
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, GuiUtils.updateItem(item, title, lore));
+            setItem(cell, GuiUtils.updateItem(item, name, lore));
         }
         return this;
     }
@@ -462,7 +484,7 @@ public class Gui {
     public Gui setNextPage(int row, int col, ItemStack item) {
         nextPageIndex = col + row * 9;
         if (page < pages) {
-            setButton(nextPageIndex, item, ClickType.LEFT, (event) -> this.nextPage());
+            setButton(nextPageIndex, item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         }
         return this;
     }
@@ -470,18 +492,18 @@ public class Gui {
     public Gui setPrevPage(int row, int col, ItemStack item) {
         prevPageIndex = col + row * 9;
         if (page > 1) {
-            setButton(prevPageIndex, item, ClickType.LEFT, (event) -> this.prevPage());
+            setButton(prevPageIndex, item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         }
         return this;
     }
 
-    public void nextPage() {
+    public void nextPage(GuiManager manager) {
         if (page < pages) {
             int lastPage = page;
             ++page;
             // page switch events
             if (pager != null) {
-                pager.onPageChange(this, lastPage, page);
+                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -493,12 +515,12 @@ public class Gui {
         }
     }
 
-    public void prevPage() {
+    public void prevPage(GuiManager manager) {
         if (page > 1) {
             int lastPage = page;
             --page;
             if (pager != null) {
-                pager.onPageChange(this, lastPage, page);
+                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -512,13 +534,13 @@ public class Gui {
 
     protected void updatePageNavigation() {
         if (page > 1) {
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         } else {
             this.setItem(prevPageIndex, null);
             this.clearActions(prevPageIndex);
         }
         if (pages > 1 && page != pages) {
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         } else {
             this.setItem(nextPageIndex, null);
             this.clearActions(nextPageIndex);
@@ -586,6 +608,10 @@ public class Gui {
             button.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
         } else {
             // no event for this button
+            if(defaultClicker != null) {
+                // this is a default action, not a triggered action
+                defaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
+            }
             return false;
         }
         return true;

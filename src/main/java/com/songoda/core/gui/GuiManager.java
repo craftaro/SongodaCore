@@ -78,7 +78,7 @@ public class GuiManager {
         if(openInv != null) {
             openInv.open = false;
         }
-        Inventory inv = gui.generateInventory(this);
+        Inventory inv = gui.getOrCreateInventory(this);
         player.openInventory(inv);
         gui.onOpen(this, player);
         openInventories.put(player, gui);

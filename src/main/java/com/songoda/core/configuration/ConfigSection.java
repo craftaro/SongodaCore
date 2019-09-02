@@ -629,6 +629,7 @@ public class ConfigSection extends MemoryConfiguration {
         return result instanceof ConfigSection ? (ConfigSection) result : null;
     }
 
+    @NotNull
     public ConfigSection getOrCreateConfigurationSection(@NotNull String path) {
         Object result = get(path);
         return result instanceof ConfigSection ? (ConfigSection) result : createSection(path);

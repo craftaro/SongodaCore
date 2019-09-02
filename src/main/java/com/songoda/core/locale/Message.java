@@ -1,5 +1,6 @@
 package com.songoda.core.locale;
 
+import com.songoda.core.compatibility.ServerVersion;
 import java.util.regex.Matcher;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -58,8 +59,12 @@ public class Message {
      * @param sender command sender to send the message to
      */
     public void sendTitle(CommandSender sender) {
-        if(sender instanceof Player) {
-            ((Player) sender).sendTitle("", this.getMessage(), 10, 20, 10);
+        if (sender instanceof Player) {
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+                ((Player) sender).sendTitle("", getMessage(), 10, 30, 10);
+            } else {
+                ((Player) sender).sendTitle("", getMessage());
+            }
         } else {
             sender.sendMessage(this.getMessage());
         }

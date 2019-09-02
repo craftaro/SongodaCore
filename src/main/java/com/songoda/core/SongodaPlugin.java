@@ -86,17 +86,24 @@ public abstract class SongodaPlugin extends JavaPlugin {
             locale = Locale.loadDefaultLocale(this, "en_US");
             // plugin setup
             onPluginEnable();
+            if(emergencyStop) {
+                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                return;
+            }
             // Start Metrics
             Metrics.start(this);
         } catch (Throwable t) {
             getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
-            emergencyStop = true;
-            setEnabled(false);
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             return;
         }
 
         console.sendMessage(ChatColor.GREEN + "=============================");
+    }
+
+    protected void emergencyStop() {
+        emergencyStop = true;
+        Bukkit.getPluginManager().disablePlugin(this);
     }
 
     @Override

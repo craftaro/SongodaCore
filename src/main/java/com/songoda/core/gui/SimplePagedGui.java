@@ -89,7 +89,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    public void nextPage() {
+    public void nextPage(GuiManager manager) {
         if (page < pages) {
             ++page;
             showPage();
@@ -97,7 +97,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    public void prevPage() {
+    public void prevPage(GuiManager manager) {
         if (page > 1) {
             --page;
             showPage();
@@ -120,7 +120,7 @@ public class SimplePagedGui extends Gui {
     protected void updatePageNavigation() {
         if (page > 1) {
             inventory.setItem((rows * 9) - 6, prevPage);
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         } else {
             inventory.setItem((rows * 9) - 6, footerBackItem != null ? footerBackItem : blankItem);
             this.setItem(prevPageIndex, null);
@@ -128,7 +128,7 @@ public class SimplePagedGui extends Gui {
         }
         if (pages > 1 && page != pages) {
             inventory.setItem((rows * 9) - 4, nextPage);
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         } else {
             inventory.setItem((rows * 9) - 4, footerBackItem != null ? footerBackItem : blankItem);
             this.setItem(nextPageIndex, null);
