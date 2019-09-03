@@ -1159,6 +1159,19 @@ public enum LegacyMaterials {
 	}
 
 	/**
+	 * Lookup a Legacy Material by its modern id name. <br />
+	 * This also can grab materials by their legacy, but only if there is no
+	 * modern material by that name.
+	 *
+	 * @param name item to lookup
+     * @param def default item if this is not a valid material
+	 * @return LegacyMaterial or null if none found
+	 */
+	public static LegacyMaterials getMaterial(String name, LegacyMaterials def) {
+		return name == null ? def : lookupMap.getOrDefault(name.toUpperCase(), def);
+	}
+
+	/**
 	 * Lookup a Legacy Material by bukkit material.
 	 *
 	 * @param mat item to lookup
@@ -1299,7 +1312,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isBlock() {
-		return material == null && material.isBlock();
+		return material != null && material.isBlock();
 	}
 
 	/**
@@ -1308,7 +1321,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isEdible() {
-		return material == null && material.isEdible();
+		return material != null && material.isEdible();
 	}
 
 	/**
@@ -1317,7 +1330,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isSolid() {
-		return material == null && material.isSolid();
+		return material != null && material.isSolid();
 	}
 
 	/**
@@ -1326,7 +1339,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isTransparent() {
-		return material == null && material.isTransparent();
+		return material != null && material.isTransparent();
 	}
 
 	/**
@@ -1335,7 +1348,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isFlammable() {
-		return material == null && material.isFlammable();
+		return material != null && material.isFlammable();
 	}
 
 	/**
@@ -1344,7 +1357,7 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isBurnable() {
-		return material == null && material.isBurnable();
+		return material != null && material.isBurnable();
 	}
 
 	/**
@@ -1544,14 +1557,14 @@ public enum LegacyMaterials {
 	 * @return
 	 */
 	public boolean isOccluding() {
-		return material == null && material.isOccluding();
+		return material != null && material.isOccluding();
 	}
 
 	/**
 	 * @return True if this material is affected by gravity.
 	 */
 	public boolean hasGravity() {
-		return material == null && material.hasGravity();
+		return material != null && material.hasGravity();
 	}
 
 	/**
