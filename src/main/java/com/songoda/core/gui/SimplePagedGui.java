@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.LegacyMaterials;
 import static com.songoda.core.gui.Gui.trimTitle;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.methods.Clickable;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -169,13 +170,12 @@ public class SimplePagedGui extends Gui {
         pages = (int) Math.ceil(maxRows / rowsPerPage);
 
         // create a new inventory if needed
-        final int cells = rows * 9;
-        boolean isNew = false;
-        if (cells != inventory.getSize()) {
-            this.setRows(maxRows + (useHeader ? 2 : 1));
-            inventory = Bukkit.getServer().createInventory(inventory.getHolder(), cells,
+        List<Player> toUpdate = null;
+        if (Math.min(54, (maxRows + (useHeader ? 1 : 0)) * 9) != inventory.getSize()) {
+            toUpdate = getPlayers();
+            this.setRows(maxRows + (useHeader ? 1 : 0));
+            inventory = Bukkit.getServer().createInventory(inventory.getHolder(), rows * 9,
                     title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
-            isNew = true;
         }
 
         // populate header
@@ -185,17 +185,21 @@ public class SimplePagedGui extends Gui {
                 inventory.setItem(i, item != null ? item : (headerBackItem != null ? headerBackItem : blankItem));
             }
         }
+
         // last row is dedicated to pagation
+        final int cells = rows * 9;
         for (int i = cells - 9; i < cells; ++i) {
             inventory.setItem(i, footerBackItem != null ? footerBackItem : blankItem);
         }
+
         // fill out the rest of the page
         showPage();
 
-        if(isNew) {
+        // did we need to change the display window size?
+        if(toUpdate != null) {
             // whoopsie!
             exit();
-            getPlayers().forEach(player -> ((GuiHolder) inventory.getHolder()).manager.showGUI(player, this));
+            toUpdate.forEach(player -> ((GuiHolder) inventory.getHolder()).manager.showGUI(player, this));
         }
     }
 

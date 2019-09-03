@@ -243,7 +243,7 @@ public class Gui {
 
     public Gui setItem(int cell, ItemStack item) {
         cellItems.put(cell, item);
-        if (open && cell >= 0 && cell < inventory.getSize()) {
+        if (inventory != null && cell >= 0 && cell < inventory.getSize()) {
             inventory.setItem(cell, item);
         }
         return this;
@@ -252,7 +252,7 @@ public class Gui {
     public Gui setItem(int row, int col, ItemStack item) {
         final int cell = col + row * 9;
         cellItems.put(cell, item);
-        if (open && cell >= 0 && cell < inventory.getSize()) {
+        if (inventory != null && cell >= 0 && cell < inventory.getSize()) {
             inventory.setItem(cell, item);
         }
         return this;

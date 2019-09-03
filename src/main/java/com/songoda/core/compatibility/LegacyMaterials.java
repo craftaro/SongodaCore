@@ -1159,6 +1159,19 @@ public enum LegacyMaterials {
 	}
 
 	/**
+	 * Lookup a Legacy Material by its modern id name. <br />
+	 * This also can grab materials by their legacy, but only if there is no
+	 * modern material by that name.
+	 *
+	 * @param name item to lookup
+     * @param def default item if this is not a valid material
+	 * @return LegacyMaterial or null if none found
+	 */
+	public static LegacyMaterials getMaterial(String name, LegacyMaterials def) {
+		return name == null ? def : lookupMap.getOrDefault(name.toUpperCase(), def);
+	}
+
+	/**
 	 * Lookup a Legacy Material by bukkit material.
 	 *
 	 * @param mat item to lookup
