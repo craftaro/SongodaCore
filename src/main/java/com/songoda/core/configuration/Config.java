@@ -409,7 +409,7 @@ public class Config extends ConfigSection {
 
     public void delaySave() {
         // save async even if no plugin or if plugin disabled
-        if (changed && saveTask == null) {
+        if (saveTask == null && (changed || hasNewDefaults())) {
             autosaveTimer = new Timer((plugin != null ? plugin.getName() + "-ConfigSave-" : "ConfigSave-") + getFile().getName());
             autosaveTimer.schedule(saveTask = new SaveTask(), autosaveInterval * 1000L);
         }
@@ -417,7 +417,7 @@ public class Config extends ConfigSection {
 
     public boolean saveChanges() {
         boolean saved = true;
-        if (changed) {
+        if (changed || hasNewDefaults()) {
             saved = save();
         }
         if(saveTask != null) {
@@ -428,6 +428,14 @@ public class Config extends ConfigSection {
             autosaveTimer = null;
         }
         return saved;
+    }
+
+    boolean hasNewDefaults() {
+        if (file != null && !file.exists()) return true;
+        for (String def : defaults.keySet()) {
+            if (!values.containsKey(def)) return true;
+        }
+        return false;
     }
 
     public boolean save() {

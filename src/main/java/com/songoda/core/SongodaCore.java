@@ -276,7 +276,7 @@ public class SongodaCore {
             final String er = e.getMessage();
             System.out.println("Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
         } catch (ParseException e) {
-            System.out.println("Failed to parse json.");
+            System.out.println("Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
         }
     }
 
