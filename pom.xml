@@ -129,16 +129,19 @@
             <groupId>com.songoda</groupId>
             <artifactId>UltimateStacker</artifactId>
             <version>1.9.6</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.bgsoftware</groupId>
             <artifactId>WildStacker</artifactId>
             <version>2-9-0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>uk.antiperson</groupId>
             <artifactId>stackmob</artifactId>
             <version>4-0-2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
