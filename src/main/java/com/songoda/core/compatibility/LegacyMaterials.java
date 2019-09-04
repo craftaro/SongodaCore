@@ -1966,6 +1966,23 @@ public enum LegacyMaterials {
             case WITHER_SKELETON_WALL_SKULL:
                 return false;
         }
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            switch (this) {
+                case ACACIA_WOOD:
+                case BIRCH_WOOD:
+                case DARK_OAK_WOOD:
+                case JUNGLE_WOOD:
+                case OAK_WOOD:
+                case SPRUCE_WOOD:
+                case STRIPPED_ACACIA_WOOD:
+                case STRIPPED_BIRCH_WOOD:
+                case STRIPPED_DARK_OAK_WOOD:
+                case STRIPPED_JUNGLE_WOOD:
+                case STRIPPED_OAK_WOOD:
+                case STRIPPED_SPRUCE_WOOD:
+                    return false;
+            }
+        }
         return true;
     }
 
