@@ -6,7 +6,7 @@ import com.sainttx.holograms.api.line.HologramLine;
 import com.sainttx.holograms.api.line.TextLine;
 import java.util.HashSet;
 import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -16,7 +16,7 @@ public class HologramsHolograms extends Holograms {
     HologramPlugin hologramPlugin;
     HashSet<String> ourHolograms = new HashSet();
 
-    public HologramsHolograms(JavaPlugin plugin) {
+    public HologramsHolograms(Plugin plugin) {
         super(plugin);
         hologramPlugin = (HologramPlugin) Bukkit.getPluginManager().getPlugin("Holograms");
     }

@@ -2,7 +2,7 @@ package com.songoda.core.hooks.holograms;
 
 import com.songoda.core.hooks.Hook;
 import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +13,9 @@ public abstract class Holograms implements Hook {
     protected double yOffset = 0.5;
     protected double zOffset = 0.5;
 
-    protected final JavaPlugin plugin;
+    protected final Plugin plugin;
 
-    public Holograms(JavaPlugin plugin) {
+    public Holograms(Plugin plugin) {
         this.plugin = plugin;
     }
 

@@ -3,13 +3,13 @@ package com.songoda.core.hooks.holograms;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
 public class HolographicDisplaysHolograms extends Holograms {
 
-    public HolographicDisplaysHolograms(JavaPlugin plugin) {
+    public HolographicDisplaysHolograms(Plugin plugin) {
         super(plugin);
     }
 

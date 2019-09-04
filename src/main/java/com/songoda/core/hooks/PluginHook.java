@@ -55,9 +55,12 @@ public final class PluginHook <T extends Class> {
         hooks.put(handler, this);
         // Does this class have a plugin constructor?
         try {
-            pluginConstructor = type.getDeclaredConstructor(Plugin.class);
+            pluginConstructor = handler.getDeclaredConstructor(Plugin.class);
         } catch (NoSuchMethodException | SecurityException ex) {
             // nope!
+        } catch (Throwable t) {
+            // (can also reach here if there is a class loader exception)
+            hooks.remove(handler);
         }
     }
 
