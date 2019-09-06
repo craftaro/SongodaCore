@@ -1952,8 +1952,8 @@ public enum LegacyMaterials {
             case PURPLE_WALL_BANNER:
             case REDSTONE_WALL_TORCH:
             case REDSTONE_WIRE:
-            case RED_TULIP:
-            case SKELETON_SPAWN_EGG:
+            case RED_WALL_BANNER:
+            case SKELETON_WALL_SKULL:
             case SPRUCE_WALL_SIGN:
             case SWEET_BERRY_BUSH:
             case TALL_SEAGRASS:
