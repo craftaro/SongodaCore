@@ -1970,6 +1970,8 @@ public enum LegacyMaterials {
             switch (this) {
                 case ACACIA_WOOD:
                 case BIRCH_WOOD:
+                case BREWING_STAND:
+                case CAULDRON:
                 case DARK_OAK_WOOD:
                 case JUNGLE_WOOD:
                 case OAK_WOOD:
