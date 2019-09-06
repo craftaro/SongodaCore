@@ -23,6 +23,16 @@ public class EntityStackerManager {
     }
 
     /**
+     * Check to see if there is a default stacker hook loaded. <br />
+     * NOTE: using a default stacker assumes that this library is shaded
+     *
+     * @return returns false if there are no supported plugins
+     */
+    public static boolean isEnabled() {
+        return manager.isEnabled();
+    }
+
+    /**
      * Grab the default hologram plugin. <br />
      * NOTE: using a default hologram assumes that this library is shaded
      *

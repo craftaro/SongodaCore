@@ -4,8 +4,6 @@ import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.configuration.DataStoreObject;
 import com.songoda.core.configuration.SimpleDataStore;
 import com.songoda.core.gui.methods.Clickable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
