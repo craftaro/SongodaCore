@@ -107,8 +107,34 @@ public class ConfigSection extends MemoryConfiguration {
         return nodeKey;
     }
 
+    /**
+     * Create the path required for this node to exist. <br />
+     * <b>DO NOT USE THIS IN A SYNCHRONIZED LOCK</b>
+     * 
+     * @param path full path of the node required. Eg, for foo.bar.node, this will create sections for foo and foo.bar
+     * @param useDefault set to true if this is a default value
+     */
+    protected void createNodePath(@NotNull String path, boolean useDefault) {
+        if (path.indexOf(root.pathChar) != -1) {
+            // if any intermediate nodes don't exist, create them
+            String[] pathParts = path.split(Pattern.quote(String.valueOf(root.pathChar)));
+            StringBuilder nodePath = new StringBuilder(fullPath);
+            LinkedHashMap<String, Object> writeTo = useDefault ? root.defaults : root.values;
+            ConfigSection travelNode = this;
+            synchronized (root.lock) {
+                for (int i = 0; i < pathParts.length - 1; ++i) {
+                    final String node = (i != 0 ? nodePath.append(root.pathChar) : nodePath).append(pathParts[i]).toString();
+                    if (!(writeTo.get(node) instanceof ConfigSection)) {
+                        writeTo.put(node, travelNode = new ConfigSection(root, travelNode, pathParts[i], useDefault));
+                    }
+                }
+            }
+        }
+    }
+
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path) {
+        createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
@@ -118,6 +144,7 @@ public class ConfigSection extends MemoryConfiguration {
     
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
+        createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
@@ -128,6 +155,7 @@ public class ConfigSection extends MemoryConfiguration {
     
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
+        createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
@@ -199,16 +227,8 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
+        createNodePath(path, true);
         synchronized (root.lock) {
-            // if any intermediate nodes don't exist, create them
-            String[] pathParts = path.split(Pattern.quote(String.valueOf(root.pathChar)));
-            String nodePath = "";
-            for (int i = 0; i < pathParts.length - 1; ++i) {
-                nodePath += (nodePath.isEmpty() ? pathParts[i] : root.pathChar + pathParts[i]);
-                if (!(root.defaults.get(nodePath) instanceof ConfigSection)) {
-                    root.defaults.put(nodePath, new ConfigSection(root, this, nodePath, true));
-                }
-            }
             root.defaults.put(fullPath + path, value);
         }
     }
@@ -262,7 +282,7 @@ public class ConfigSection extends MemoryConfiguration {
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         } else {
             result.addAll(root.defaults.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex + 1)
+                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
                     .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
             result.addAll(root.values.keySet().stream()
@@ -384,8 +404,9 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
         if (isDefault) {
-            root.defaults.put(fullPath + path, value);
+            addDefault(path, value);
         } else {
+            createNodePath(path, false);
             synchronized (root.lock) {
                 if (value != null) {
                     root.changed |= root.values.put(fullPath + path, value) != value;
@@ -454,6 +475,7 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     @Override
     public ConfigSection createSection(@NotNull String path) {
+        createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized(root.lock) {
             root.values.put(fullPath + path, section);
@@ -480,6 +502,7 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
+        createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
@@ -493,6 +516,7 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     @Override
     public ConfigSection createSection(@NotNull String path, Map<?, ?> map) {
+        createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);

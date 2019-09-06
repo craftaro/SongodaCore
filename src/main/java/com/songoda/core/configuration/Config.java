@@ -372,6 +372,7 @@ public class Config extends ConfigSection {
     }
 
     protected void convertMapsToSections(@NotNull Map<?, ?> input, @NotNull ConfigSection section) {
+        // TODO: make this non-recursive
         for (Map.Entry<?, ?> entry : input.entrySet()) {
             String key = entry.getKey().toString();
             Object value = entry.getValue();
