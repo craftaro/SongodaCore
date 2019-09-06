@@ -62,16 +62,6 @@ public class SimplePagedGui extends Gui {
         return this;
     }
 
-    public SimplePagedGui setNextPage(ItemStack item) {
-        nextPage = item;
-        return this;
-    }
-
-    public SimplePagedGui setPrevPage(ItemStack item) {
-        prevPage = item;
-        return this;
-    }
-
     @Override
     public SimplePagedGui setItem(int row, int col, ItemStack item) {
         return setItem(col + row * 9, item);

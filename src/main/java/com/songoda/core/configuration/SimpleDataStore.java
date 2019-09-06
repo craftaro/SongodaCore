@@ -2,6 +2,7 @@ package com.songoda.core.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -18,17 +19,16 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Used to easily store a set of one data value
  *
- * @param <K> Key value that DataObject class uses to uniquely identify values
  * @param <T> DataObject class that is used to store the data
  * @since 2019-09-06
  * @author jascotty2
  */
-public class SimpleDataStore<K, T extends DataStoreObject<K>> {
+public class SimpleDataStore<T extends DataStoreObject> {
 
     protected final Plugin plugin;
     protected final String filename, dirName;
     private final Function<ConfigurationSection, T> getFromSection;
-    protected final HashMap<K, T> data = new HashMap();
+    protected final HashMap<Object, T> data = new HashMap();
     private File file;
     private final Object lock = new Object();
     SaveTask saveTask;
@@ -38,7 +38,7 @@ public class SimpleDataStore<K, T extends DataStoreObject<K>> {
      */
     int autosaveInterval = 60;
 
-    public SimpleDataStore(@NotNull Plugin plugin, @NotNull String filename, Function<ConfigurationSection, T> loadFunction) {
+    public SimpleDataStore(@NotNull Plugin plugin, @NotNull String filename, @NotNull Function<ConfigurationSection, T> loadFunction) {
         this.plugin = plugin;
         this.filename = filename;
         dirName = null;
@@ -65,22 +65,23 @@ public class SimpleDataStore<K, T extends DataStoreObject<K>> {
     }
 
     /**
-     * @return a directly-modifiable instance of the data mapping for this storage
+     * @return a directly-modifiable instance of the data mapping for this
+     * storage
      */
-    public Map<K, T> getData() {
+    public Map<Object, T> getData() {
         return data;
     }
 
     /**
-     * Returns the value to which the specified key is mapped,
-     * or {@code null} if this map contains no mapping for the key.
+     * Returns the value to which the specified key is mapped, or {@code null}
+     * if this map contains no mapping for the key.
      *
      * @param key key whose mapping is to be retrieved from this storage
      * @return the value associated with <tt>key</tt>, or
      * <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     @Nullable
-    public T get(K key) {
+    public T get(Object key) {
         return data.get(key);
     }
 
@@ -92,7 +93,7 @@ public class SimpleDataStore<K, T extends DataStoreObject<K>> {
      * <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     @Nullable
-    public T remove(@NotNull K key) {
+    public T remove(@NotNull Object key) {
         T temp;
         synchronized (lock) {
             temp = data.remove(key);
@@ -143,6 +144,48 @@ public class SimpleDataStore<K, T extends DataStoreObject<K>> {
     }
 
     /**
+     * Adds the specified value in this storage. If the map previously contained
+     * a mapping for the key, the old value is replaced.
+     *
+     * @param value values to be added
+     */
+    @Nullable
+    public void addAll(@NotNull T[] value) {
+        if (value == null) {
+            return;
+        }
+        synchronized (lock) {
+            for (int i = 0; i < value.length; ++i) {
+                if (value[i] != null) {
+                    data.put(value[i].getKey(), value[i]);
+                }
+            }
+        }
+        save();
+    }
+
+    /**
+     * Adds the specified value in this storage. If the map previously contained
+     * a mapping for the key, the old value is replaced.
+     *
+     * @param value values to be added
+     */
+    @Nullable
+    public void addAll(@NotNull Collection<T> value) {
+        if (value == null) {
+            return;
+        }
+        synchronized (lock) {
+            for (T v : value) {
+                if (v != null) {
+                    data.put(v.getKey(), v);
+                }
+            }
+        }
+        save();
+    }
+
+    /**
      * Load data from the associated file
      */
     public void load() {
@@ -168,7 +211,8 @@ public class SimpleDataStore<K, T extends DataStoreObject<K>> {
     }
 
     /**
-     * Optionally save this storage's data to file if there have been changes made
+     * Optionally save this storage's data to file if there have been changes
+     * made
      */
     public void saveChanges() {
         if (saveTask != null || data.values().stream().anyMatch(v -> v.hasChanged())) {
