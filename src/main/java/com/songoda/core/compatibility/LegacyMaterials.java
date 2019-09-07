@@ -1902,6 +1902,7 @@ public enum LegacyMaterials {
             case DRAGON_WALL_HEAD:
             case END_GATEWAY:
             case END_PORTAL:
+            case FARMLAND:
             case FIRE: // used to be able to in older versions
             case FIRE_CORAL_WALL_FAN:
             case FROSTED_ICE:
