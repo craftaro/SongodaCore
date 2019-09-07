@@ -16,9 +16,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -28,16 +30,42 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemUtils {
 
-	static boolean check_compatibility = false;
 	static boolean can_getI18NDisplayName = true;
 
-	static void init() {
-		check_compatibility = true;
+	static {
 		try {
 			ItemStack.class.getMethod("getI18NDisplayName");
 		} catch (NoSuchMethodException | SecurityException ex) {
 			can_getI18NDisplayName = false;
 		}
+	}
+
+	public static String getItemName(ItemStack it) {
+		if (it == null) {
+			return null;
+		} else if (can_getI18NDisplayName) {
+			return it.getI18NDisplayName();
+		} else {
+			return itemName(it.getType());
+		}
+	}
+
+	static String itemName(Material mat) {
+		String matName = mat.name().replace("_", " ");
+		StringBuilder titleCase = new StringBuilder(matName.length());
+
+		Stream.of(matName.split(" ")).forEach(s -> {
+			s = s.toLowerCase();
+			if (s.equals("of")) {
+				titleCase.append(s).append(" ");
+			} else {
+				char[] str = s.toCharArray();
+				str[0] = Character.toUpperCase(str[0]);
+				titleCase.append(new String(str)).append(" ");
+			}
+		});
+
+		return titleCase.toString().trim();
 	}
 
     /**
@@ -187,38 +215,34 @@ public class ItemUtils {
         return item;
     }
 
-	public static String getItemName(ItemStack it) {
-		if (!check_compatibility) {
-			init();
-		}
-		if (it == null) {
-			return null;
-		} else if (can_getI18NDisplayName) {
-			return it.getI18NDisplayName();
-		} else {
-			return itemName(it.getType());
-		}
-	}
+    private static Class mc_Item = NMSUtils.getNMSClass("Item");
+    private static Method mc_Item_getItem;
+    private static Field mc_Item_maxStackSize;
 
-	static String itemName(Material mat) {
-		String matName = mat.name().replace("_", " ");
-		StringBuilder titleCase = new StringBuilder(matName.length());
+    static {
+        if(mc_ItemStack != null) {
+            try {
+                mc_Item_getItem = mc_ItemStack.getDeclaredMethod("getItem");
+                mc_Item_maxStackSize = mc_Item.getDeclaredField("maxStackSize");
+                mc_Item_maxStackSize.setAccessible(true);
+            } catch (Exception ex) {
+            }
+        }
+    }
 
-		Stream.of(matName.split(" ")).forEach(s -> {
-			s = s.toLowerCase();
-			if (s.equals("of")) {
-				titleCase.append(s).append(" ");
-			} else {
-				char[] str = s.toCharArray();
-				str[0] = Character.toUpperCase(str[0]);
-				titleCase.append(new String(str)).append(" ");
-			}
-		});
+    public static ItemStack setMaxStack(ItemStack item, int max) {
+        if (item != null && mc_Item_maxStackSize != null) {
+            try {
+                Object objItemStack = mc_Item_getItem.invoke(cb_CraftItemStack_asNMSCopy.invoke(null, item));
+                mc_Item_maxStackSize.set(objItemStack, max);
+            } catch (ReflectiveOperationException e) {
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to set max stack size on item " + item, e);
+            }
+        }
+        return item;
+    }
 
-		return titleCase.toString().trim();
-	}
-
-	public static ItemStack getPlayerSkull(OfflinePlayer player) {
+    public static ItemStack getPlayerSkull(OfflinePlayer player) {
 		ItemStack head = LegacyMaterials.PLAYER_HEAD.getItem();
 		if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
 			return head;
@@ -273,6 +297,40 @@ public class ItemUtils {
 		}
 	}
 
+    /**
+     * Use up whatever item the player is holding in their main hand
+     * 
+     * @param player player to grab item from
+     */
+    public static void takeActiveItem(Player player) {
+        takeActiveItem(player, 1);
+    }
+
+    /**
+     * Use up whatever item the player is holding in their main hand
+     * 
+     * @param player player to grab item from
+     * @param amount number of items to use up
+     */
+    public static void takeActiveItem(Player player, int amount) {
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+
+        ItemStack item = player.getInventory().getItemInHand();
+
+        int result = item.getAmount() - amount;
+        item.setAmount(result);
+
+        player.setItemInHand(result > 0 ? item : null);
+    }
+
+    /**
+     * Quickly check to see if the two items use the same material. <br />
+     * NOTE: Does not check meta data; only checks the item material.
+     * 
+     * @param is1 first item to compare
+     * @param is2 item to compare against
+     * @return true if both items are of the same material
+     */
 	public static boolean isSimilarMaterial(ItemStack is1, ItemStack is2) {
 		LegacyMaterials mat1 = LegacyMaterials.getMaterial(is1);
 		return mat1 != null && mat1 == LegacyMaterials.getMaterial(is2);

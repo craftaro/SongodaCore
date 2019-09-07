@@ -126,16 +126,18 @@ public class Config extends ConfigSection {
         fileName = file;
     }
 
-    public Config(@NotNull Plugin plugin, @NotNull String directory, @NotNull String file) {
+    public Config(@NotNull Plugin plugin, @Nullable String directory, @NotNull String file) {
         this.plugin = plugin;
         dirName = directory;
         fileName = file;
     }
 
+    @NotNull
     public ConfigFileConfigurationAdapter getFileConfig() {
         return config;
     }
 
+    @NotNull
     public File getFile() {
         if (file == null) {
             if (dirName != null) {
@@ -175,6 +177,7 @@ public class Config extends ConfigSection {
      * @param autosaveInterval time in seconds
      * @return this class
      */
+    @NotNull
     public Config setAutosaveInterval(int autosaveInterval) {
         this.autosaveInterval = autosaveInterval;
         return this;
@@ -202,6 +205,7 @@ public class Config extends ConfigSection {
     /**
      * Default comment applied to config nodes
      */
+    @Nullable
     public ConfigFormattingRules.CommentStyle getDefaultNodeCommentFormat() {
         return defaultNodeCommentFormat;
     }
@@ -211,7 +215,8 @@ public class Config extends ConfigSection {
      * 
      * @return this config
      */
-    public Config setDefaultNodeCommentFormat(ConfigFormattingRules.CommentStyle defaultNodeCommentFormat) {
+    @NotNull
+    public Config setDefaultNodeCommentFormat(@Nullable ConfigFormattingRules.CommentStyle defaultNodeCommentFormat) {
         this.defaultNodeCommentFormat = defaultNodeCommentFormat;
         return this;
     }
@@ -219,6 +224,7 @@ public class Config extends ConfigSection {
     /**
      * Default comment applied to section nodes
      */
+    @Nullable
     public ConfigFormattingRules.CommentStyle getDefaultSectionCommentFormat() {
         return defaultSectionCommentFormat;
     }
@@ -228,7 +234,8 @@ public class Config extends ConfigSection {
      * 
      * @return this config
      */
-    public Config setDefaultSectionCommentFormat(ConfigFormattingRules.CommentStyle defaultSectionCommentFormat) {
+    @NotNull
+    public Config setDefaultSectionCommentFormat(@Nullable ConfigFormattingRules.CommentStyle defaultSectionCommentFormat) {
         this.defaultSectionCommentFormat = defaultSectionCommentFormat;
         return this;
     }
@@ -245,6 +252,7 @@ public class Config extends ConfigSection {
      * 
      * @return this config
      */
+    @NotNull
     public Config setRootNodeSpacing(int rootNodeSpacing) {
         this.rootNodeSpacing = rootNodeSpacing;
         return this;
@@ -264,6 +272,7 @@ public class Config extends ConfigSection {
      * 
      * @return this config
      */
+    @NotNull
     public Config setCommentSpacing(int commentSpacing) {
         this.commentSpacing = commentSpacing;
         return this;

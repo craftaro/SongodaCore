@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -932,7 +933,7 @@ public enum LegacyMaterials {
 	TNT_MINECART("EXPLOSIVE_MINECART"),
 	TORCH,
 	TOTEM_OF_UNDYING("TOTEM"),
-	TRADER_LLAMA_SPAWN_EGG(ServerVersion.V1_14, "LLAMA_SPAWN_EGG"),
+	TRADER_LLAMA_SPAWN_EGG(),
 	TRAPPED_CHEST,
 	TRIDENT,
 	TRIPWIRE,
@@ -1952,8 +1953,8 @@ public enum LegacyMaterials {
             case PURPLE_WALL_BANNER:
             case REDSTONE_WALL_TORCH:
             case REDSTONE_WIRE:
-            case RED_TULIP:
-            case SKELETON_SPAWN_EGG:
+            case RED_WALL_BANNER:
+            case SKELETON_WALL_SKULL:
             case SPRUCE_WALL_SIGN:
             case SWEET_BERRY_BUSH:
             case TALL_SEAGRASS:
@@ -1970,6 +1971,8 @@ public enum LegacyMaterials {
             switch (this) {
                 case ACACIA_WOOD:
                 case BIRCH_WOOD:
+                case BREWING_STAND:
+                case CAULDRON:
                 case DARK_OAK_WOOD:
                 case JUNGLE_WOOD:
                 case OAK_WOOD:
@@ -2022,6 +2025,13 @@ public enum LegacyMaterials {
                 return true;
         }
         return false;
+    }
+
+    public static LegacyMaterials getSpawnEgg(EntityType type) {
+        if(type == EntityType.MUSHROOM_COW) {
+            return MOOSHROOM_SPAWN_EGG;
+        }
+        return lookupMap.get(type.name() + "_SPAWN_EGG");
     }
 
     public static LegacyMaterials getGlassPaneColor(int color) {

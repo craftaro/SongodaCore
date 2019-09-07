@@ -46,7 +46,7 @@ public class SongodaCore {
      * Whenever we make a major change to the core GUI, updater, 
      * or other function used by the core, increment this number
      */
-    private final static int coreRevision = 2;
+    private final static int coreRevision = 3;
     private final static int updaterVersion = 1;
 
     private final static Set<PluginInfo> registeredPlugins = new HashSet<>();

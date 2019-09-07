@@ -26,7 +26,7 @@ public class SimplePagedGui extends Gui {
     private int rowsPerPage, maxCellSlot;
     protected ItemStack headerBackItem;
     protected ItemStack footerBackItem;
-    final int nextPageIndex = -4, prevPageIndex = -6;
+    final int nextPageIndex = 4, prevPageIndex = 6;
 
     public SimplePagedGui() {
         this(null);
@@ -62,16 +62,6 @@ public class SimplePagedGui extends Gui {
         return this;
     }
 
-    public SimplePagedGui setNextPage(ItemStack item) {
-        nextPage = item;
-        return this;
-    }
-
-    public SimplePagedGui setPrevPage(ItemStack item) {
-        prevPage = item;
-        return this;
-    }
-
     @Override
     public SimplePagedGui setItem(int row, int col, ItemStack item) {
         return setItem(col + row * 9, item);
@@ -80,7 +70,7 @@ public class SimplePagedGui extends Gui {
     @Override
     public SimplePagedGui setItem(int cell, ItemStack item) {
         // set the cell relative to the current page
-        int cellIndex = page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9));
+        int cellIndex = cell < 0 ? cell : (page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9)));
 
         cellItems.put(cellIndex, item);
         if (open && cell >= 0 && cell < inventory.getSize()) {
@@ -120,20 +110,20 @@ public class SimplePagedGui extends Gui {
     @Override
     protected void updatePageNavigation() {
         if (page > 1) {
-            inventory.setItem((rows * 9) - 6, prevPage);
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            inventory.setItem(inventory.getSize() - prevPageIndex, prevPage);
+            this.setButton(-prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
         } else {
-            inventory.setItem((rows * 9) - 6, footerBackItem != null ? footerBackItem : blankItem);
-            this.setItem(prevPageIndex, null);
-            this.clearActions(prevPageIndex);
+            inventory.setItem(inventory.getSize() - prevPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+            this.setItem(-prevPageIndex, null);
+            this.clearActions(-prevPageIndex);
         }
         if (pages > 1 && page != pages) {
-            inventory.setItem((rows * 9) - 4, nextPage);
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            inventory.setItem(inventory.getSize() - nextPageIndex, nextPage);
+            this.setButton(-nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
         } else {
-            inventory.setItem((rows * 9) - 4, footerBackItem != null ? footerBackItem : blankItem);
-            this.setItem(nextPageIndex, null);
-            this.clearActions(nextPageIndex);
+            inventory.setItem(inventory.getSize() - nextPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+            this.setItem(-nextPageIndex, null);
+            this.clearActions(-nextPageIndex);
         }
     }
 
