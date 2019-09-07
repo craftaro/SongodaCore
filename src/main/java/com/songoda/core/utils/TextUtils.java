@@ -26,12 +26,49 @@ public class TextUtils {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
+    /**
+     * Convert a string to an invisible colored string that's lore-safe <br />
+     * (Safe to use as lore) <br />
+     * Note: Do not use semi-colons in this string, or they will be lost when decoding!
+     * 
+     * @param s string to convert
+     * @return encoded string
+     */
+    public static String convertToInvisibleLoreString(String s) {
+        if (s == null || s.equals(""))
+            return "";
+        StringBuilder hidden = new StringBuilder();
+        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR).append(';').append(ChatColor.COLOR_CHAR).append(c);
+        return hidden.toString();
+    }
+
+    /**
+     * Convert a string to an invisible colored string <br />
+     * (Not safe to use as lore) <br />
+     * Note: Do not use semi-colons in this string, or they will be lost when decoding!
+     * 
+     * @param s string to convert
+     * @return encoded string
+     */
     public static String convertToInvisibleString(String s) {
         if (s == null || s.equals(""))
             return "";
         StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR + "").append(c);
+        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR).append(c);
         return hidden.toString();
+    }
+
+    /**
+     * Removes color markers used to encode strings as invisible text
+     * 
+     * @param s encoded string
+     * @return string with color markers removed
+     */
+    public static String convertFromInvisibleString(String s) {
+        if (s == null || s.equals("")) {
+            return "";
+        }
+        return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
     }
 
     protected static final List<Charset> supportedCharsets = new ArrayList();
