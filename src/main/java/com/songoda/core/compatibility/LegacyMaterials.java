@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -932,7 +933,7 @@ public enum LegacyMaterials {
 	TNT_MINECART("EXPLOSIVE_MINECART"),
 	TORCH,
 	TOTEM_OF_UNDYING("TOTEM"),
-	TRADER_LLAMA_SPAWN_EGG(ServerVersion.V1_14, "LLAMA_SPAWN_EGG"),
+	TRADER_LLAMA_SPAWN_EGG(),
 	TRAPPED_CHEST,
 	TRIDENT,
 	TRIPWIRE,
@@ -2024,6 +2025,13 @@ public enum LegacyMaterials {
                 return true;
         }
         return false;
+    }
+
+    public static LegacyMaterials getSpawnEgg(EntityType type) {
+        if(type == EntityType.MUSHROOM_COW) {
+            return MOOSHROOM_SPAWN_EGG;
+        }
+        return lookupMap.get(type.name() + "_SPAWN_EGG");
     }
 
     public static LegacyMaterials getGlassPaneColor(int color) {
