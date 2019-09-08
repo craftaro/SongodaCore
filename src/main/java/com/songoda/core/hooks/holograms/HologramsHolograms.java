@@ -70,6 +70,14 @@ public class HologramsHolograms extends Holograms {
         location = fixLocation(location);
         Hologram hologram = hologramPlugin.getHologramManager().getHologram(locStr(location));
         if (hologram != null) {
+            // only update if there is a change to the text
+            boolean isChanged = lines.size() != hologram.getLines().size();
+            if(!isChanged) {
+                // double-check the lines
+                for(int i = 0; !isChanged && i < lines.size(); ++i) {
+                    isChanged = !hologram.getLine(i).getRaw().equals(lines.get(i));
+                }
+            }
             for(HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
                 hologram.removeLine(line);
             }
