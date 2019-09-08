@@ -69,6 +69,7 @@ public class Config extends ConfigSection {
     final DumperOptions yamlOptions = new DumperOptions();
     final Representer yamlRepresenter = new YamlRepresenter();
     final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+    Charset defaultCharset = StandardCharsets.UTF_8;
     SaveTask saveTask;
     Timer autosaveTimer;
     ////////////// Config settings ////////////////
@@ -147,6 +148,21 @@ public class Config extends ConfigSection {
             }
         }
         return file;
+    }
+
+    public Charset getDefaultCharset() {
+        return defaultCharset;
+    }
+
+    /**
+     * Set the Charset that will be used to save this config
+     *
+     * @param defaultCharset Charset to use
+     * @return this class
+     */
+    public Config setDefaultCharset(Charset defaultCharset) {
+        this.defaultCharset = defaultCharset;
+        return this;
     }
 
     public boolean getAutosave() {
@@ -352,6 +368,10 @@ public class Config extends ConfigSection {
         if (file.exists()) {
             try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
+                // upgrade charset if file was saved in a more complex format
+                if(charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
+                    defaultCharset = charset;
+                }
                 this.load(new InputStreamReader(stream, charset));
                 return true;
             } catch (IOException | InvalidConfigurationException ex) {
@@ -486,7 +506,7 @@ public class Config extends ConfigSection {
             file.getParentFile().mkdirs();
         }
         String data = this.saveToString();
-        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), StandardCharsets.UTF_16);) {
+        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), defaultCharset);) {
             writer.write(data);
         } catch (IOException e) {
             return false;
