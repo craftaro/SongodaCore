@@ -53,6 +53,7 @@ public class Gui {
     protected Gui parent = null;
     protected static ItemStack AIR = new ItemStack(Material.AIR);
 
+    protected GuiManager guiManager;
     protected boolean open = false;
     protected Clickable defaultClicker = null;
     protected Openable opener = null;
@@ -547,7 +548,7 @@ public class Gui {
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
         nextPageIndex = cell;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -556,7 +557,7 @@ public class Gui {
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
         nextPageIndex = col + row * 9;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -565,7 +566,7 @@ public class Gui {
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
         prevPageIndex = cell;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
@@ -574,18 +575,38 @@ public class Gui {
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
         prevPageIndex = col + row * 9;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
 
-    public void nextPage(@NotNull GuiManager manager) {
+    public void setPage(int page) {
+        int lastPage = page;
+        this.page = Math.max(1, Math.min(pages, page));
+        if(pager != null && this.page != lastPage) {
+            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            // page markers
+            updatePageNavigation();
+        }
+    }
+
+    public void changePage(int direction) {
+        int lastPage = page;
+        this.page = Math.max(1, Math.min(pages, page + direction));
+        if(pager != null && this.page != lastPage) {
+            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            // page markers
+            updatePageNavigation();
+        }
+    }
+
+    public void nextPage() {
         if (page < pages) {
             int lastPage = page;
             ++page;
             // page switch events
             if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
+                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -597,12 +618,12 @@ public class Gui {
         }
     }
 
-    public void prevPage(@NotNull GuiManager manager) {
+    public void prevPage() {
         if (page > 1) {
             int lastPage = page;
             --page;
             if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
+                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -616,13 +637,13 @@ public class Gui {
 
     protected void updatePageNavigation() {
         if (page > 1) {
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
         } else {
             this.setItem(prevPageIndex, null);
             this.clearActions(prevPageIndex);
         }
         if (pages > 1 && page != pages) {
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
         } else {
             this.setItem(nextPageIndex, null);
             this.clearActions(nextPageIndex);
@@ -709,6 +730,7 @@ public class Gui {
 
     public void onOpen(@NotNull GuiManager manager, @NotNull Player player) {
         open = true;
+        guiManager = manager;
         if (opener != null) {
             opener.onOpen(new GuiOpenEvent(manager, this, player));
         }
