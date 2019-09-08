@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -40,7 +39,7 @@ public class Gui {
     protected Inventory inventory;
     protected String title;
     protected GuiType inventoryType = GuiType.STANDARD;
-    protected int rows, page, pages;
+    protected int rows, page = 1, pages = 1;
     protected boolean acceptsItems = false;
     protected boolean allowDropItems = true;
     protected boolean allowClose = true;
@@ -206,7 +205,22 @@ public class Gui {
 
     @NotNull
     public Gui setTitle(String title) {
-        this.title = title;
+        System.out.println("Change title " + this.title + " -> " + title);
+        if(title == null) title = "";
+        if(!title.equals(this.title)) {
+            this.title = title;
+            if(inventory != null) {System.out.println("Update!");
+                // update active inventory
+                List<Player> toUpdate = getPlayers();
+                boolean isAllowClose = allowClose;
+                exit();
+                Inventory oldInv = inventory;
+                createInventory();
+                inventory.setContents(oldInv.getContents());
+                toUpdate.forEach(player -> player.openInventory(inventory));
+                allowClose = isAllowClose;
+            }
+        }
         return this;
     }
 
@@ -657,25 +671,30 @@ public class Gui {
 
     @NotNull
     protected Inventory generateInventory(@NotNull GuiManager manager) {
+        this.guiManager = manager;
         final int cells = rows * 9;
-        InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
-        switch (t) {
-            case DISPENSER:
-            case HOPPER:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), t,
-                        title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
-                break;
-            default:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), cells,
-                        title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
-        }
 
+        createInventory();
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
             inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
 
         return inventory;
+    }
+
+    protected void createInventory() {
+        final InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
+        switch (t) {
+            case DISPENSER:
+            case HOPPER:
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), t,
+                        title == null ? "" : trimTitle(title));
+                break;
+            default:
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), rows * 9,
+                        title == null ? "" : trimTitle(title));
+        }
     }
 
     @Nullable
@@ -741,11 +760,12 @@ public class Gui {
             manager.showGUI(player, this);
             return;
         }
+        boolean showParent = open && parent != null;
         if (open && closer != null) {
-            open = inventory.getViewers().isEmpty();
+            open = !inventory.getViewers().isEmpty();
             closer.onClose(new GuiCloseEvent(manager, this, player));
         }
-        if (parent != null) {
+        if (showParent) {
             manager.showGUI(player, parent);
         }
     }
