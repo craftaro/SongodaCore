@@ -145,11 +145,11 @@ public class LegacyParticleEffects {
     }
 
     public static void createParticle(Location l, Type e) {
-        createParticle(l, e, 0F, 0F, 0F, 1, 3, null);
+        createParticle(l, e, 0F, 0F, 0F, 1, 0, null);
     }
 
     public static void createParticle(Location l, Type e, List<Player> localOnly) {
-        createParticle(l, e, 0F, 0F, 0F, 1, 3, localOnly);
+        createParticle(l, e, 0F, 0F, 0F, 1, 0, localOnly);
     }
 
     public static void createParticle(Location l, Type e, float effectSpeed, int amountOfParticles) {
