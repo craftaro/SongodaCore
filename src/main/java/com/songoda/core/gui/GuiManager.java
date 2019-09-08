@@ -36,6 +36,7 @@ public class GuiManager {
     final UUID uuid = UUID.randomUUID(); // manager tracking to fix weird bugs from lazy programming
     final GuiListener listener = new GuiListener(this);
     final Map<Player, Gui> openInventories = new HashMap();
+    private final Object lock = new Object();
     private boolean initialized = false;
     private boolean shutdown = false;
 
@@ -77,14 +78,20 @@ public class GuiManager {
         } else if (!initialized) {
             init();
         }
-        Gui openInv = openInventories.get(player);
-        if(openInv != null) {
-            openInv.open = false;
-        }
-        Inventory inv = gui.getOrCreateInventory(this);
-        player.openInventory(inv);
-        gui.onOpen(this, player);
-        openInventories.put(player, gui);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Gui openInv = openInventories.get(player);
+            if (openInv != null) {
+                openInv.open = false;
+            }
+            Inventory inv = gui.getOrCreateInventory(this);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.openInventory(inv);
+                gui.onOpen(this, player);
+                synchronized(lock) {
+                    openInventories.put(player, gui);
+                }
+            });
+        });
     }
 
     public void showPopup(Player player, String message) {
@@ -115,11 +122,13 @@ public class GuiManager {
      * Close all active GUIs
      */
     public void closeAll() {
-        openInventories.entrySet().stream()
-                .filter(e -> e.getKey().getOpenInventory().getTopInventory().getHolder() instanceof GuiHolder)
-                .collect(Collectors.toList()) // to prevent concurrency exceptions
-                .forEach(e -> e.getKey().closeInventory());
-        openInventories.clear();
+        synchronized(lock) {
+            openInventories.entrySet().stream()
+                    .filter(e -> e.getKey().getOpenInventory().getTopInventory().getHolder() instanceof GuiHolder)
+                    .collect(Collectors.toList()) // to prevent concurrency exceptions
+                    .forEach(e -> e.getKey().closeInventory());
+            openInventories.clear();
+        }
     }
 
     protected static class GuiListener implements Listener {

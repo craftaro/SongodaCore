@@ -205,11 +205,10 @@ public class Gui {
 
     @NotNull
     public Gui setTitle(String title) {
-        System.out.println("Change title " + this.title + " -> " + title);
-        if(title == null) title = "";
-        if(!title.equals(this.title)) {
+        if (title == null) title = "";
+        if (!title.equals(this.title)) {
             this.title = title;
-            if(inventory != null) {System.out.println("Update!");
+            if (inventory != null) {
                 // update active inventory
                 List<Player> toUpdate = getPlayers();
                 boolean isAllowClose = allowClose;
@@ -718,7 +717,9 @@ public class Gui {
     }
 
     protected static String trimTitle(String title) {
-        if (title != null && title.length() > 32) {
+        if(title == null) {
+            return "";
+        } else if (title != null && title.length() > 32) {
             return title.substring(0, 31);
         }
         return title;
