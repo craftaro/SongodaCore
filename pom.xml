@@ -3,6 +3,7 @@
     <artifactId>SongodaCore</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <version>maven-version-number</version>
+    <packaging>jar</packaging>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>SongodaCore-${project.version}</finalName>

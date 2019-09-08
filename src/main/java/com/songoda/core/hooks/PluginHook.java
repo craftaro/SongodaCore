@@ -64,6 +64,22 @@ public final class PluginHook <T extends Class> {
         }
     }
 
+    /**
+     * Add a hook handler for us to use later. <br>
+     * NOTE: The class passed MUST extend Hook. <br>
+     * Permissible constructors are empty () or (org.bukkit.plugin.Plugin) <br>
+     * Each plugin defined must use a different handler class.
+     * 
+     * @param <T>
+     * @param type Generic hook type for this plugin
+     * @param pluginName Plugin name
+     * @param handler Specific class that will handle this plugin, if enabled.
+     * @return instance of the PluginHook that was added
+     */
+    public static <T extends Class> PluginHook addHook(T type, String pluginName, Class handler) {
+        return new PluginHook(type, pluginName, handler);
+    }
+
     protected static Map<PluginHook, Hook> loadHooks(Class type, Plugin plugin) {
         Map<PluginHook, Hook> loaded = new LinkedHashMap<>();
         PluginManager pluginManager = Bukkit.getPluginManager();

@@ -80,7 +80,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    public void nextPage(GuiManager manager) {
+    public void nextPage() {
         if (page < pages) {
             ++page;
             showPage();
@@ -88,7 +88,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    public void prevPage(GuiManager manager) {
+    public void prevPage() {
         if (page > 1) {
             --page;
             showPage();
@@ -111,7 +111,7 @@ public class SimplePagedGui extends Gui {
     protected void updatePageNavigation() {
         if (page > 1) {
             inventory.setItem(inventory.getSize() - prevPageIndex, prevPage);
-            this.setButton(-prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            this.setButton(-prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
         } else {
             inventory.setItem(inventory.getSize() - prevPageIndex, footerBackItem != null ? footerBackItem : blankItem);
             this.setItem(-prevPageIndex, null);
@@ -119,7 +119,7 @@ public class SimplePagedGui extends Gui {
         }
         if (pages > 1 && page != pages) {
             inventory.setItem(inventory.getSize() - nextPageIndex, nextPage);
-            this.setButton(-nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            this.setButton(-nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
         } else {
             inventory.setItem(inventory.getSize() - nextPageIndex, footerBackItem != null ? footerBackItem : blankItem);
             this.setItem(-nextPageIndex, null);
@@ -129,6 +129,7 @@ public class SimplePagedGui extends Gui {
 
     @Override
     protected Inventory generateInventory(GuiManager manager) {
+        this.guiManager = manager;
         // calculate pages here
         rowsPerPage = useHeader ? 4 : 5;
         maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
@@ -137,14 +138,19 @@ public class SimplePagedGui extends Gui {
         this.setRows(maxRows + (useHeader ? 1 : 0));
 
         // create inventory view
-        final int cells = rows * 9;
-        inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), cells,
-                title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
+        createInventory();
 
         // populate and return the display inventory
-        page = 1;
+        page = Math.min(page, pages);
         update();
         return inventory;
+    }
+
+    @Override
+    protected void createInventory() {
+        final int cells = rows * 9;
+        inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), cells,
+                title == null ? "" : trimTitle(title));
     }
 
     @Override
@@ -164,8 +170,7 @@ public class SimplePagedGui extends Gui {
         if (Math.min(54, (maxRows + (useHeader ? 1 : 0)) * 9) != inventory.getSize()) {
             toUpdate = getPlayers();
             this.setRows(maxRows + (useHeader ? 1 : 0));
-            inventory = Bukkit.getServer().createInventory(inventory.getHolder(), rows * 9,
-                    title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
+            createInventory();
         }
 
         // populate header
@@ -189,7 +194,7 @@ public class SimplePagedGui extends Gui {
         if(toUpdate != null) {
             // whoopsie!
             exit();
-            toUpdate.forEach(player -> ((GuiHolder) inventory.getHolder()).manager.showGUI(player, this));
+            toUpdate.forEach(player -> guiManager.showGUI(player, this));
         }
     }
 

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -40,7 +39,7 @@ public class Gui {
     protected Inventory inventory;
     protected String title;
     protected GuiType inventoryType = GuiType.STANDARD;
-    protected int rows, page, pages;
+    protected int rows, page = 1, pages = 1;
     protected boolean acceptsItems = false;
     protected boolean allowDropItems = true;
     protected boolean allowClose = true;
@@ -48,11 +47,12 @@ public class Gui {
     protected final Map<Integer, ItemStack> cellItems = new HashMap<>();
     protected final Map<Integer, Map<ClickType, Clickable>> conditionalButtons = new HashMap<>();
     protected ItemStack blankItem = GuiUtils.getBorderGlassItem();
-    protected int nextPageIndex, prevPageIndex;
+    protected int nextPageIndex = -1, prevPageIndex = -1;
     protected ItemStack nextPage, prevPage;
     protected Gui parent = null;
     protected static ItemStack AIR = new ItemStack(Material.AIR);
 
+    protected GuiManager guiManager;
     protected boolean open = false;
     protected Clickable defaultClicker = null;
     protected Openable opener = null;
@@ -205,7 +205,21 @@ public class Gui {
 
     @NotNull
     public Gui setTitle(String title) {
-        this.title = title;
+        if (title == null) title = "";
+        if (!title.equals(this.title)) {
+            this.title = title;
+            if (inventory != null) {
+                // update active inventory
+                List<Player> toUpdate = getPlayers();
+                boolean isAllowClose = allowClose;
+                exit();
+                Inventory oldInv = inventory;
+                createInventory();
+                inventory.setContents(oldInv.getContents());
+                toUpdate.forEach(player -> player.openInventory(inventory));
+                allowClose = isAllowClose;
+            }
+        }
         return this;
     }
 
@@ -547,7 +561,7 @@ public class Gui {
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
         nextPageIndex = cell;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -556,7 +570,7 @@ public class Gui {
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
         nextPageIndex = col + row * 9;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage(event.manager));
+            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -565,7 +579,7 @@ public class Gui {
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
         prevPageIndex = cell;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
@@ -574,18 +588,38 @@ public class Gui {
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
         prevPageIndex = col + row * 9;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage(event.manager));
+            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
 
-    public void nextPage(@NotNull GuiManager manager) {
+    public void setPage(int page) {
+        int lastPage = page;
+        this.page = Math.max(1, Math.min(pages, page));
+        if(pager != null && this.page != lastPage) {
+            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            // page markers
+            updatePageNavigation();
+        }
+    }
+
+    public void changePage(int direction) {
+        int lastPage = page;
+        this.page = Math.max(1, Math.min(pages, page + direction));
+        if(pager != null && this.page != lastPage) {
+            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            // page markers
+            updatePageNavigation();
+        }
+    }
+
+    public void nextPage() {
         if (page < pages) {
             int lastPage = page;
             ++page;
             // page switch events
             if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
+                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -597,12 +631,12 @@ public class Gui {
         }
     }
 
-    public void prevPage(@NotNull GuiManager manager) {
+    public void prevPage() {
         if (page > 1) {
             int lastPage = page;
             --page;
             if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, manager, lastPage, page));
+                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
 
                 // page markers
                 updatePageNavigation();
@@ -615,17 +649,21 @@ public class Gui {
     }
 
     protected void updatePageNavigation() {
-        if (page > 1) {
-            this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage(event.manager));
-        } else {
-            this.setItem(prevPageIndex, null);
-            this.clearActions(prevPageIndex);
+        if(prevPage != null) {
+            if (page > 1) {
+                this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+            } else {
+                this.setItem(prevPageIndex, null);
+                this.clearActions(prevPageIndex);
+            }
         }
-        if (pages > 1 && page != pages) {
-            this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage(event.manager));
-        } else {
-            this.setItem(nextPageIndex, null);
-            this.clearActions(nextPageIndex);
+        if(nextPage != null) {
+            if (pages > 1 && page != pages) {
+                this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+            } else {
+                this.setItem(nextPageIndex, null);
+                this.clearActions(nextPageIndex);
+            }
         }
     }
 
@@ -636,25 +674,30 @@ public class Gui {
 
     @NotNull
     protected Inventory generateInventory(@NotNull GuiManager manager) {
+        this.guiManager = manager;
         final int cells = rows * 9;
-        InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
-        switch (t) {
-            case DISPENSER:
-            case HOPPER:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), t,
-                        title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
-                break;
-            default:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(manager, this), cells,
-                        title == null ? "" : trimTitle(ChatColor.translateAlternateColorCodes('&', title)));
-        }
 
+        createInventory();
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
             inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
 
         return inventory;
+    }
+
+    protected void createInventory() {
+        final InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
+        switch (t) {
+            case DISPENSER:
+            case HOPPER:
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), t,
+                        title == null ? "" : trimTitle(title));
+                break;
+            default:
+                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), rows * 9,
+                        title == null ? "" : trimTitle(title));
+        }
     }
 
     @Nullable
@@ -674,7 +717,9 @@ public class Gui {
     }
 
     protected static String trimTitle(String title) {
-        if (title != null && title.length() > 32) {
+        if(title == null) {
+            return "";
+        } else if (title != null && title.length() > 32) {
             return title.substring(0, 31);
         }
         return title;
@@ -709,6 +754,7 @@ public class Gui {
 
     public void onOpen(@NotNull GuiManager manager, @NotNull Player player) {
         open = true;
+        guiManager = manager;
         if (opener != null) {
             opener.onOpen(new GuiOpenEvent(manager, this, player));
         }
@@ -719,11 +765,12 @@ public class Gui {
             manager.showGUI(player, this);
             return;
         }
+        boolean showParent = open && parent != null;
         if (open && closer != null) {
-            open = inventory.getViewers().isEmpty();
+            open = !inventory.getViewers().isEmpty();
             closer.onClose(new GuiCloseEvent(manager, this, player));
         }
-        if (parent != null) {
+        if (showParent) {
             manager.showGUI(player, parent);
         }
     }

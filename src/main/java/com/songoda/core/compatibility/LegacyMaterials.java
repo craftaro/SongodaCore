@@ -1022,15 +1022,17 @@ public enum LegacyMaterials {
 	private static final Map<String, LegacyMaterials> lookupMap = new HashMap();
 
 	static {
-		for (LegacyMaterials m : values()) {
-			lookupMap.put(m.name(), m);
-			lookupMap.put(m.material + ":" + (m.data == null ? "" : m.data), m);
-		}
-		for (LegacyMaterials m : values()) {
-			if (!lookupMap.containsKey(m.legacy)) {
-				lookupMap.put(m.legacy, m);
-			}
-		}
+        for (LegacyMaterials m : values()) {
+            lookupMap.put(m.name(), m);
+            if (!m.usesCompatibility()) {
+                lookupMap.put(m.material + ":" + (m.data == null ? "" : m.data), m);
+            }
+        }
+        for (LegacyMaterials m : values()) {
+            if (!m.usesCompatibility() && !lookupMap.containsKey(m.legacy)) {
+                lookupMap.put(m.legacy, m);
+            }
+        }
 	}
 
 	LegacyMaterials() {
@@ -1902,6 +1904,7 @@ public enum LegacyMaterials {
             case DRAGON_WALL_HEAD:
             case END_GATEWAY:
             case END_PORTAL:
+            case FARMLAND:
             case FIRE: // used to be able to in older versions
             case FIRE_CORAL_WALL_FAN:
             case FROSTED_ICE:
