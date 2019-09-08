@@ -51,9 +51,19 @@ public class HolographicDisplaysHolograms extends Holograms {
             if (hologram.getX() != location.getX()
                     || hologram.getY() != location.getY()
                     || hologram.getZ() != location.getZ()) continue;
-            hologram.clearLines();
-            for (String line : lines) {
-                hologram.appendTextLine(line);
+            // only update if there is a change to the text
+            boolean isChanged = lines.size() != hologram.size();
+            if(!isChanged) {
+                // double-check the lines
+                for(int i = 0; !isChanged && i < lines.size(); ++i) {
+                    isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
+                }
+            }
+            if(isChanged) {
+                hologram.clearLines();
+                for (String line : lines) {
+                    hologram.appendTextLine(line);
+                }
             }
             return;
         }
