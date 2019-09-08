@@ -327,6 +327,22 @@ public class Config extends ConfigSection {
         }
     }
 
+    public Config clearConfig(boolean clearDefaults) {
+        root.values.clear();
+        root.configComments.clear();
+        if (clearDefaults) {
+            root.defaultComments.clear();
+            root.defaults.clear();
+        }
+        return this;
+    }
+
+    public Config clearDefaults() {
+        root.defaultComments.clear();
+        root.defaults.clear();
+        return this;
+    }
+
     public boolean load() {
         return load(getFile());
     }
