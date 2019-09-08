@@ -126,6 +126,8 @@ public class ConfigSection extends MemoryConfiguration {
                     final String node = (i != 0 ? nodePath.append(root.pathChar) : nodePath).append(pathParts[i]).toString();
                     if (!(writeTo.get(node) instanceof ConfigSection)) {
                         writeTo.put(node, travelNode = new ConfigSection(root, travelNode, pathParts[i], useDefault));
+                    } else {
+                        travelNode = (ConfigSection) writeTo.get(node);
                     }
                 }
             }
