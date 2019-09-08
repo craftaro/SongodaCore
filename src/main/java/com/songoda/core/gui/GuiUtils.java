@@ -103,6 +103,22 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(LegacyMaterials mat, int amount, String title, String... lore) {
+        ItemStack item = mat.getItem();
+        item.setAmount(amount);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
     public static ItemStack createButtonItem(ItemStack from, String title, String... lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
@@ -120,6 +136,22 @@ public class GuiUtils {
 
     public static ItemStack createButtonItem(LegacyMaterials mat, String title, List<String> lore) {
         ItemStack item = mat.getItem();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(title);
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+        }
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack createButtonItem(LegacyMaterials mat, int amount, String title, List<String> lore) {
+        ItemStack item = mat.getItem();
+        item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(title);
