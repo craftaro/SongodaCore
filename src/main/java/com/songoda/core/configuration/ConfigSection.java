@@ -409,11 +409,20 @@ public class ConfigSection extends MemoryConfiguration {
             addDefault(path, value);
         } else {
             createNodePath(path, false);
+            Object last = null;
             synchronized (root.lock) {
                 if (value != null) {
-                    root.changed |= root.values.put(fullPath + path, value) != value;
+                    root.changed |= (last = root.values.put(fullPath + path, value)) != value;
                 } else {
-                    root.changed |= root.values.remove(fullPath + path) != null;
+                    root.changed |= (last = root.values.remove(fullPath + path)) != null;
+                }
+            }
+            if (last != value && last != null && last instanceof ConfigSection) {
+                // clean up orphaned nodes
+                final String trim = fullPath + path + root.pathChar;
+                synchronized (root.lock) {
+                    root.values.keySet().stream().filter(k -> k.startsWith(trim)).collect(Collectors.toSet()).stream()
+                            .forEach(k -> root.values.remove(k));
                 }
             }
             onChange();
