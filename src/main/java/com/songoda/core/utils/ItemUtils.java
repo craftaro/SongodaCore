@@ -354,7 +354,7 @@ public class ItemUtils {
     }
 
     public static String getDecodedTexture(String encoded) {
-        return StringUtils.substringBetween(new String(Base64.getDecoder().decode(encoded)), "texture/", "\"");
+        return encoded != null ? StringUtils.substringBetween(new String(Base64.getDecoder().decode(encoded)), "texture/", "\"") : null;
     }
 
     /**
