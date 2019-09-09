@@ -1,6 +1,9 @@
 package com.songoda.core.compatibility;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 /**
  * Sounds that are compatible with server versions 1.7+ <br>
@@ -916,11 +919,66 @@ public enum CompatibleSound {
     }
 
     /**
+     * Send a sound to a specific player
+     *
+     * @param sendTo player to send the sound to
+     */
+    public void play(Player sendTo) {
+        sendTo.playSound(sendTo.getLocation(), getSound(), 1F, 1F);
+    }
+
+    /**
+     * Send a sound to a specific player
+     *
+     * @param sendTo player to send the sound to
+     * @param volume the volume of the sound
+     * @param pitch the pitch of the sound
+     */
+    public void play(Player sendTo, float volume, float pitch) {
+        sendTo.playSound(sendTo.getLocation(), getSound(), volume, pitch);
+    }
+
+    /**
+     * Send a sound to a specific player
+     *
+     * @param sendTo player to send the sound to
+     * @param location where the sound should come from
+     * @param volume the volume of the sound
+     * @param pitch the pitch of the sound
+     */
+    public void play(Player sendTo, Location location, float volume, float pitch) {
+        sendTo.playSound(sendTo.getLocation(), getSound(), volume, pitch);
+    }
+
+    /**
+     * Play a sound in a world
+     *
+     * @param sendTo world to send the sound to
+     * @param location where the sound should come from
+     * @param volume the volume of the sound
+     * @param pitch the pitch of the sound
+     */
+    public void play(World sendTo, Location location, float volume, float pitch) {
+        sendTo.playSound(location, getSound(), volume, pitch);
+    }
+
+    /**
+     * Stop a currently active sound from playing for a player
+     *
+     * @param sendTo player to stop the sound for
+     */
+    public void stop(Player sendTo) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10)) {
+            sendTo.stopSound(getSound());
+        }
+    }
+
+    /**
      * Check to see if this sound is available on this server.
      *
      * @return Returns false if we are using a different sound.
      */
-    public boolean isMatch() {
+    public boolean usesCompatibility() {
         return !compatibilityMode;
     }
 
