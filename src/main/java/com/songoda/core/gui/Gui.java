@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
@@ -331,6 +331,48 @@ public class Gui {
     }
 
     @NotNull
+    public Gui updateItemLore(int row, int col, @NotNull String... lore) {
+        return updateItemLore(col + row * 9, lore);
+    }
+
+    @NotNull
+    public Gui updateItemLore(int cell, @NotNull String... lore) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, GuiUtils.updateItemLore(item, lore));
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui updateItemLore(int row, int col, @Nullable List<String> lore) {
+        return updateItemLore(col + row * 9, lore);
+    }
+
+    @NotNull
+    public Gui updateItemLore(int cell, @Nullable List<String> lore) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, GuiUtils.updateItemLore(item, lore));
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui updateItemName(int row, int col, @Nullable String name) {
+        return updateItemName(col + row * 9, name);
+    }
+
+    @NotNull
+    public Gui updateItemName(int cell, @Nullable String name) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, GuiUtils.updateItemName(item, name));
+        }
+        return this;
+    }
+
+    @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @NotNull String... lore) {
         return updateItem(col + row * 9, name, lore);
     }
@@ -373,12 +415,12 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull LegacyMaterials itemTo, @Nullable String title, @NotNull String... lore) {
+    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @NotNull String... lore) {
         return updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull LegacyMaterials itemTo, @Nullable String title, @Nullable String... lore) {
+    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable String... lore) {
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));
@@ -401,12 +443,12 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull LegacyMaterials itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         return updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull LegacyMaterials itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));

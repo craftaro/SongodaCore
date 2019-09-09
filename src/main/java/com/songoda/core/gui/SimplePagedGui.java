@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import static com.songoda.core.gui.Gui.trimTitle;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.methods.Clickable;
@@ -35,8 +35,8 @@ public class SimplePagedGui extends Gui {
     public SimplePagedGui(Gui parent) {
         super(parent);
 
-        nextPage = GuiUtils.createButtonItem(LegacyMaterials.ARROW, "Next Page");
-        prevPage = GuiUtils.createButtonItem(LegacyMaterials.ARROW, "Previous Page");
+        nextPage = GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Next Page");
+        prevPage = GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Previous Page");
     }
 
     public SimplePagedGui setUseHeader(boolean useHeader) {

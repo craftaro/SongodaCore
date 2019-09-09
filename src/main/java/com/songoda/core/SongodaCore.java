@@ -7,7 +7,7 @@ import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.ClientVersion;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -62,7 +62,7 @@ public class SongodaCore {
         return !SongodaCore.class.getPackage().getName().equals(new String(new char[]{'c','o','m','.','s','o','n','g','o','d','a','.','c','o','r','e'}));
     }
 
-    public static void registerPlugin(JavaPlugin plugin, int pluginID, LegacyMaterials icon) {
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
         registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name());
     }
 
@@ -172,61 +172,61 @@ public class SongodaCore {
         PluginManager pm = Bukkit.getPluginManager();
         String p;
         if (!isRegistered(p = "EpicAnchors") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 31, LegacyMaterials.END_PORTAL_FRAME.name());
+            register((JavaPlugin) pm.getPlugin(p), 31, CompatibleMaterial.END_PORTAL_FRAME.name());
         }
         if (!isRegistered(p = "EpicBosses") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 19, LegacyMaterials.ZOMBIE_SPAWN_EGG.name());
+            register((JavaPlugin) pm.getPlugin(p), 19, CompatibleMaterial.ZOMBIE_SPAWN_EGG.name());
         }
         if (!isRegistered(p = "EpicEnchants") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 67, LegacyMaterials.DIAMOND_SWORD.name());
+            register((JavaPlugin) pm.getPlugin(p), 67, CompatibleMaterial.DIAMOND_SWORD.name());
         }
         if (!isRegistered(p = "EpicFarming") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 21, LegacyMaterials.WHEAT.name());
+            register((JavaPlugin) pm.getPlugin(p), 21, CompatibleMaterial.WHEAT.name());
         }
         if (!isRegistered(p = "EpicFurnaces") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 22, LegacyMaterials.FURNACE.name());
+            register((JavaPlugin) pm.getPlugin(p), 22, CompatibleMaterial.FURNACE.name());
         }
         if (!isRegistered(p = "EpicHeads") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 26, LegacyMaterials.PLAYER_HEAD.name());
+            register((JavaPlugin) pm.getPlugin(p), 26, CompatibleMaterial.PLAYER_HEAD.name());
         }
         if (!isRegistered(p = "EpicHoppers") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 15, LegacyMaterials.HOPPER.name());
+            register((JavaPlugin) pm.getPlugin(p), 15, CompatibleMaterial.HOPPER.name());
         }
         if (!isRegistered(p = "EpicLevels") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 44, LegacyMaterials.NETHER_STAR.name());
+            register((JavaPlugin) pm.getPlugin(p), 44, CompatibleMaterial.NETHER_STAR.name());
         }
         if (!isRegistered(p = "EpicSpawners") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 13, LegacyMaterials.SPAWNER.name());
+            register((JavaPlugin) pm.getPlugin(p), 13, CompatibleMaterial.SPAWNER.name());
         }
         if (!isRegistered(p = "EpicVouchers") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 25, LegacyMaterials.EMERALD.name());
+            register((JavaPlugin) pm.getPlugin(p), 25, CompatibleMaterial.EMERALD.name());
         }
         if (!isRegistered(p = "FabledSkyBlock") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 17, LegacyMaterials.GRASS_BLOCK.name());
+            register((JavaPlugin) pm.getPlugin(p), 17, CompatibleMaterial.GRASS_BLOCK.name());
         }
         if (!isRegistered(p = "UltimateCatcher") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 51, LegacyMaterials.EGG.name());
+            register((JavaPlugin) pm.getPlugin(p), 51, CompatibleMaterial.EGG.name());
         }
         if (!isRegistered(p = "UltimateClaims") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 65, LegacyMaterials.CHEST.name());
+            register((JavaPlugin) pm.getPlugin(p), 65, CompatibleMaterial.CHEST.name());
         }
         if (!isRegistered(p = "UltimateFishing") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 59, LegacyMaterials.COD.name());
+            register((JavaPlugin) pm.getPlugin(p), 59, CompatibleMaterial.COD.name());
         }
         if (!isRegistered(p = "UltimateKits") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 14, LegacyMaterials.BEACON.name());
+            register((JavaPlugin) pm.getPlugin(p), 14, CompatibleMaterial.BEACON.name());
         }
         if (!isRegistered(p = "UltimateModeration") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 29, LegacyMaterials.DIAMOND_CHESTPLATE.name());
+            register((JavaPlugin) pm.getPlugin(p), 29, CompatibleMaterial.DIAMOND_CHESTPLATE.name());
         }
         if (!isRegistered(p = "UltimateRepairing") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 20, LegacyMaterials.ANVIL.name());
+            register((JavaPlugin) pm.getPlugin(p), 20, CompatibleMaterial.ANVIL.name());
         }
         if (!isRegistered(p = "UltimateStacker") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 16, LegacyMaterials.IRON_INGOT.name());
+            register((JavaPlugin) pm.getPlugin(p), 16, CompatibleMaterial.IRON_INGOT.name());
         }
         if (!isRegistered(p = "UltimateTimber") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 18, LegacyMaterials.IRON_AXE.name());
+            register((JavaPlugin) pm.getPlugin(p), 18, CompatibleMaterial.IRON_AXE.name());
         }
     }
 

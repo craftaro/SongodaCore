@@ -1,12 +1,11 @@
 package com.songoda.core.configuration.editor;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
 import com.songoda.core.input.ChatPrompt;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
@@ -30,16 +29,16 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         headerBackItem = footerBackItem = current.getHeaderBackItem();
         setTitle(ChatColor.DARK_BLUE + "String List Editor");
         this.setUseHeader(true);
-        this.setItem(4, current.configItem(LegacyMaterials.FILLED_MAP, key, current.getCurrentNode(), key, null));
-        this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        this.setItem(4, current.configItem(CompatibleMaterial.FILLED_MAP, key, current.getCurrentNode(), key, null));
+        this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
         this.values = new ArrayList(val);
 
-        this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.LAVA_BUCKET, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
-        this.setButton(0, GuiUtils.createButtonItem(LegacyMaterials.REDSTONE, ChatColor.GREEN + "Save"), (event) -> {
+        this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.LAVA_BUCKET, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
+        this.setButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE, ChatColor.GREEN + "Save"), (event) -> {
             saveChanges = true;
             event.player.closeInventory();
         });
-        this.setButton(1, GuiUtils.createButtonItem(LegacyMaterials.CHEST, ChatColor.BLUE + "Add Item"), 
+        this.setButton(1, GuiUtils.createButtonItem(CompatibleMaterial.CHEST, ChatColor.BLUE + "Add Item"), 
                 (event) -> {
                     event.gui.exit();
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a new value to add:", response -> {
@@ -68,7 +67,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         int i = 9;
         for (String item : values) {
             final int index = i - 9;
-            setButton(i++, GuiUtils.createButtonItem(LegacyMaterials.PAPER, item, "Right-click to remove"), ClickType.RIGHT, (event) -> {
+            setButton(i++, GuiUtils.createButtonItem(CompatibleMaterial.PAPER, item, "Right-click to remove"), ClickType.RIGHT, (event) -> {
                 values.remove(index);
                 redraw();
             });

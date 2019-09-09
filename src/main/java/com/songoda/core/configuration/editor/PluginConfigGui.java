@@ -1,7 +1,7 @@
 package com.songoda.core.configuration.editor;
 
 import com.songoda.core.SongodaPlugin;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
@@ -79,18 +79,18 @@ public class PluginConfigGui extends SimplePagedGui {
     }
 
     private void init() {
-        this.blankItem = GuiUtils.getBorderItem(LegacyMaterials.LIGHT_GRAY_STAINED_GLASS_PANE);
+        this.blankItem = GuiUtils.getBorderItem(CompatibleMaterial.LIGHT_GRAY_STAINED_GLASS_PANE);
 
         // decorate header
         this.setTitle(ChatColor.DARK_BLUE + plugin.getName() + " Plugin Config");
         this.setUseHeader(true);
-        headerBackItem = footerBackItem = GuiUtils.getBorderItem(LegacyMaterials.GRAY_STAINED_GLASS_PANE.getItem());
-        this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        headerBackItem = footerBackItem = GuiUtils.getBorderItem(CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem());
+        this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // List out all config files that this plugin has
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
-            this.setButton(i++, GuiUtils.createButtonItem(LegacyMaterials.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
+            this.setButton(i++, GuiUtils.createButtonItem(CompatibleMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, config.getKey(), config.getValue())));
         }
     }

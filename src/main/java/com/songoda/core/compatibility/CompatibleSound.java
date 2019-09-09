@@ -14,7 +14,7 @@ import org.bukkit.Sound;
  * @since 2019-08-25
  * @author jascotty2
  */
-public enum CompatibleSounds {
+public enum CompatibleSound {
 
     // some of these values are missing an API value.. 
     // would using the raw strings be better?
@@ -820,7 +820,7 @@ public enum CompatibleSounds {
     protected /*final*/ boolean compatibilityMode;
     protected static final boolean DEBUG = false;
 
-    private CompatibleSounds() {
+    private CompatibleSound() {
         // This could get risky, since we haven't finished this
         //sound = Sound.valueOf(name());
         Sound find = null;
@@ -838,7 +838,7 @@ public enum CompatibleSounds {
     }
 
     // if the sound ony ever changed from 1.8 -> 1.9
-    private CompatibleSounds(String compatibility_18) {
+    private CompatibleSound(String compatibility_18) {
         try {
             compatibilityMode = false;
             if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
@@ -852,7 +852,7 @@ public enum CompatibleSounds {
         }
     }
 
-    private CompatibleSounds(Version... versions) {
+    private CompatibleSound(Version... versions) {
         try {
             for (Version v : versions) {
                 if (v.sound != null && ServerVersion.isServerVersionAtLeast(v.version)) {
@@ -880,7 +880,7 @@ public enum CompatibleSounds {
         compatibilityMode = find == null;
     }
 
-    private CompatibleSounds(ServerVersion minVersion, Version... versions) {
+    private CompatibleSound(ServerVersion minVersion, Version... versions) {
         try {
             if (ServerVersion.isServerVersionAtLeast(minVersion)) {
                 // should be good to use this sound

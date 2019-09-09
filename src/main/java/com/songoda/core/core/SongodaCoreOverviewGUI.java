@@ -1,7 +1,7 @@
 package com.songoda.core.core;
 
 import com.songoda.core.SongodaCore;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.editor.PluginConfigGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
@@ -23,7 +23,7 @@ final class SongodaCoreOverviewGUI extends Gui {
         for (int i = 0; i < plugins.size(); i++) {
             final PluginInfo plugin = plugins.get(i);
             if (plugin.hasUpdate()) {
-                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : LegacyMaterials.STONE,
+                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
                         ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                         ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
                         ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
@@ -38,7 +38,7 @@ final class SongodaCoreOverviewGUI extends Gui {
                 setAction(i, ClickType.RIGHT, (event) -> event.manager.showGUI(event.player, new PluginConfigGui(plugin.getJavaPlugin(), event.gui)));
                 highlightItem(i);
             } else {
-                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : LegacyMaterials.STONE,
+                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
                         ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                         ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
                         "",

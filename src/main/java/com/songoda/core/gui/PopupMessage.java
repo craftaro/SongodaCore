@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import java.util.HashSet;
 import java.util.UUID;
@@ -30,19 +30,19 @@ class PopupMessage {
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
     private final TextComponent title;
-    LegacyMaterials icon;
+    CompatibleMaterial icon;
     int iconAmount = 1; // experimental, untested
     TriggerType trigger = TriggerType.IMPOSSIBLE;
     FrameType frame = FrameType.GOAL;
     BackgroundType background = BackgroundType.ADVENTURE;
 
-    PopupMessage(Plugin source, LegacyMaterials icon, String title) {
+    PopupMessage(Plugin source, CompatibleMaterial icon, String title) {
         this.key = new NamespacedKey(source, "popup/" + id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;
     }
 
-    PopupMessage(Plugin source, LegacyMaterials icon, String title, BackgroundType background) {
+    PopupMessage(Plugin source, CompatibleMaterial icon, String title, BackgroundType background) {
         this.key = new NamespacedKey(source, "popup/" + id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;

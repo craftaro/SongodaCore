@@ -5,7 +5,7 @@ package com.songoda.core.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -243,7 +243,7 @@ public class ItemUtils {
     }
 
     public static ItemStack getPlayerSkull(OfflinePlayer player) {
-		ItemStack head = LegacyMaterials.PLAYER_HEAD.getItem();
+		ItemStack head = CompatibleMaterial.PLAYER_HEAD.getItem();
 		if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
 			return head;
 		}
@@ -258,7 +258,7 @@ public class ItemUtils {
 	}
 
 	public static void setHeadOwner(ItemStack head, OfflinePlayer player) {
-		if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || head == null || !LegacyMaterials.PLAYER_HEAD.matches(head)) {
+		if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || head == null || !CompatibleMaterial.PLAYER_HEAD.matches(head)) {
 			return;
 		}
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
@@ -270,7 +270,7 @@ public class ItemUtils {
 	}
 
 	public static ItemStack getCustomHead(String texture) {
-		ItemStack skullItem = LegacyMaterials.PLAYER_HEAD.getItem();
+		ItemStack skullItem = CompatibleMaterial.PLAYER_HEAD.getItem();
 		if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
 			return skullItem;
 		}
@@ -332,8 +332,8 @@ public class ItemUtils {
      * @return true if both items are of the same material
      */
 	public static boolean isSimilarMaterial(ItemStack is1, ItemStack is2) {
-		LegacyMaterials mat1 = LegacyMaterials.getMaterial(is1);
-		return mat1 != null && mat1 == LegacyMaterials.getMaterial(is2);
+		CompatibleMaterial mat1 = CompatibleMaterial.getMaterial(is1);
+		return mat1 != null && mat1 == CompatibleMaterial.getMaterial(is2);
 	}
 
 	/**
@@ -610,7 +610,7 @@ public class ItemUtils {
 
 					check = new boolean[3];
 
-					boolean isFuel = !item.getType().name().contains("LOG") && LegacyMaterials.getMaterial(item.getType()).isFuel();
+					boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
 					// fuel is 2nd slot, input is first
 					if (isFuel) {
 
@@ -800,7 +800,7 @@ public class ItemUtils {
 
 					check = new boolean[3];
 
-					boolean isFuel = !item.getType().name().contains("LOG") && LegacyMaterials.getMaterial(item.getType()).isFuel();
+					boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
 					// fuel is 2nd slot, input is first
 					if (isFuel) {
 

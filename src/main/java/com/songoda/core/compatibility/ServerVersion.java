@@ -9,16 +9,16 @@ public enum ServerVersion {
 
     private final static String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
     private final static String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
-    private static ServerVersion serverVersion = UNKNOWN;
-    private static String serverReleaseVersion;
+    private final static String serverReleaseVersion = serverPackageVersion.indexOf('R') != -1 ? serverPackageVersion.substring(serverPackageVersion.indexOf('R') + 1) : "";
+    private final static ServerVersion serverVersion = getVersion();
 
-    static {
+    private static ServerVersion getVersion() {
         for (ServerVersion version : values()) {
             if (serverPackageVersion.toUpperCase().startsWith(version.name())) {
-                serverVersion = version;
-                serverReleaseVersion = serverPackageVersion.substring(version.name().length() + 2);
+                return version;
             }
         }
+        return UNKNOWN;
     }
 
     public boolean isLessThan(ServerVersion other) {

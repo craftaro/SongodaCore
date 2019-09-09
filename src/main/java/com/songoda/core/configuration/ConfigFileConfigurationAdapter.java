@@ -1,7 +1,6 @@
 package com.songoda.core.configuration;
 
-import com.songoda.core.compatibility.LegacyMaterials;
-import java.util.Arrays;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -257,12 +256,12 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
     }
 
     @Nullable
-    public LegacyMaterials getMaterial(@NotNull String path) {
+    public CompatibleMaterial getMaterial(@NotNull String path) {
         return config.getMaterial(path);
     }
 
     @Nullable
-    public LegacyMaterials getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
+    public CompatibleMaterial getMaterial(@NotNull String path, @Nullable CompatibleMaterial def) {
         return config.getMaterial(path, def);
     }
 

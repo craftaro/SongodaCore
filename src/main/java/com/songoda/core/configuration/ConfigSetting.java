@@ -1,6 +1,6 @@
 package com.songoda.core.configuration;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,16 +105,16 @@ public class ConfigSetting {
     }
 
     @NotNull
-    public LegacyMaterials getMaterial() {
-        LegacyMaterials m = getMaterial(null);
-        return m != null ? m : LegacyMaterials.STONE;
+    public CompatibleMaterial getMaterial() {
+        CompatibleMaterial m = getMaterial(null);
+        return m != null ? m : CompatibleMaterial.STONE;
     }
 
     @Nullable
-    public LegacyMaterials getMaterial(@Nullable LegacyMaterials def) {
+    public CompatibleMaterial getMaterial(@Nullable CompatibleMaterial def) {
         //return config.getMaterial(key, def);
         String val = config.getString(key);
-        LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
+        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
 
         if (mat == null) {
             System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));

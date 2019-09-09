@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  * @since 2019-08-23
  * @author jascotty2
  */
-public enum LegacyMaterials {
+public enum CompatibleMaterial {
 	/*
      TODO: add another handler for getBlockItem() for materials and fallback materials
     
@@ -1008,7 +1008,7 @@ public enum LegacyMaterials {
 	ZOMBIE_WALL_HEAD("SKULL", (byte) 2),;
 
 	private final String modern, modern2, legacy;
-	private final LegacyAnalouges compatibleMaterial;
+	private final LegacyMaterialAnalouge compatibleMaterial;
 	private final boolean legacyRequiresData;
 	// some materials (I'm looking at you, GREEN_DYE) have changed ID more than once
 	// minVersion is the min for modern, and minVersion2 is min to use legacyCompat1
@@ -1019,43 +1019,43 @@ public enum LegacyMaterials {
 	// quick test to see if our version is < 1.13
 	protected static final boolean useLegacy = ServerVersion.isServerVersionBelow(ServerVersion.V1_13);
 	// map to speed up name->material lookups
-	private static final Map<String, LegacyMaterials> lookupMap = new HashMap();
+	private static final Map<String, CompatibleMaterial> lookupMap = new HashMap();
 
 	static {
-        for (LegacyMaterials m : values()) {
+        for (CompatibleMaterial m : values()) {
             lookupMap.put(m.name(), m);
             if (!m.usesCompatibility()) {
                 lookupMap.put(m.material + ":" + (m.data == null ? "" : m.data), m);
             }
         }
-        for (LegacyMaterials m : values()) {
+        for (CompatibleMaterial m : values()) {
             if (!m.usesCompatibility() && !lookupMap.containsKey(m.legacy)) {
                 lookupMap.put(m.legacy, m);
             }
         }
 	}
 
-	LegacyMaterials() {
+	CompatibleMaterial() {
 		this(ServerVersion.UNKNOWN, null, null);
 	}
 
-	LegacyMaterials(String legacy) {
+	CompatibleMaterial(String legacy) {
 		this(ServerVersion.V1_13, null, null, legacy, null);
 	}
 
-	LegacyMaterials(String legacy, byte legacyData) {
+	CompatibleMaterial(String legacy, byte legacyData) {
 		this(ServerVersion.V1_13, null, null, legacy, legacyData);
 	}
 
-	LegacyMaterials(ServerVersion modernMinimum, String legacy) {
+	CompatibleMaterial(ServerVersion modernMinimum, String legacy) {
 		this(modernMinimum, null, null, legacy, null);
 	}
 
-	LegacyMaterials(ServerVersion modernMinimum, String legacy, Byte legacyData) {
+	CompatibleMaterial(ServerVersion modernMinimum, String legacy, Byte legacyData) {
 		this(modernMinimum, null, null, legacy, legacyData);
 	}
 
-	LegacyMaterials(ServerVersion modernMinimum, String modern2, ServerVersion modern2Minimum, String legacyMaterial, Byte legacyData) {
+	CompatibleMaterial(ServerVersion modernMinimum, String modern2, ServerVersion modern2Minimum, String legacyMaterial, Byte legacyData) {
 		this.modern = name();
 		this.modern2 = modern2;
 		this.minVersion = modernMinimum;
@@ -1063,7 +1063,7 @@ public enum LegacyMaterials {
 		this.legacy = legacyMaterial;
 		this.legacyData = legacyData == null ? 0 : legacyData;
 		this.legacyRequiresData = legacyData != null;
-		this.compatibleMaterial = LegacyAnalouges.lookupAnalouge(modern);
+		this.compatibleMaterial = LegacyMaterialAnalouge.lookupAnalouge(modern);
 
 		if (compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan)) {
 			// server older than this item: use a proxy
@@ -1157,7 +1157,7 @@ public enum LegacyMaterials {
 	 * @param name item to lookup
 	 * @return LegacyMaterial or null if none found
 	 */
-	public static LegacyMaterials getMaterial(String name) {
+	public static CompatibleMaterial getMaterial(String name) {
 		return name == null ? null : lookupMap.get(name.toUpperCase());
 	}
 
@@ -1170,7 +1170,7 @@ public enum LegacyMaterials {
      * @param def default item if this is not a valid material
 	 * @return LegacyMaterial or null if none found
 	 */
-	public static LegacyMaterials getMaterial(String name, LegacyMaterials def) {
+	public static CompatibleMaterial getMaterial(String name, CompatibleMaterial def) {
 		return name == null ? def : lookupMap.getOrDefault(name.toUpperCase(), def);
 	}
 
@@ -1180,7 +1180,7 @@ public enum LegacyMaterials {
 	 * @param mat item to lookup
 	 * @return LegacyMaterial or null if none found
 	 */
-	public static LegacyMaterials getMaterial(Material mat) {
+	public static CompatibleMaterial getMaterial(Material mat) {
 		return mat == null ? null : lookupMap.get(mat.name());
 	}
 
@@ -1190,21 +1190,21 @@ public enum LegacyMaterials {
 	 * @param item item to lookup
 	 * @return LegacyMaterial or null if none found
 	 */
-	public static LegacyMaterials getMaterial(ItemStack item) {
+	public static CompatibleMaterial getMaterial(ItemStack item) {
 		if (item == null) {
 			return null;
 		}
 		String key = item.getType() + ":";
-		LegacyMaterials m = lookupMap.get(key);
+		CompatibleMaterial m = lookupMap.get(key);
 		return m != null ? m : lookupMap.get(key + item.getDurability());
 	}
 
-    static LinkedHashSet<LegacyMaterials> all = null;
+    static LinkedHashSet<CompatibleMaterial> all = null;
 
-    public static Set<LegacyMaterials> getAllValidItemMaterials() {
+    public static Set<CompatibleMaterial> getAllValidItemMaterials() {
         if (all == null) {
             all = new LinkedHashSet();
-            for (LegacyMaterials mat : values()) {
+            for (CompatibleMaterial mat : values()) {
                 if (mat.isValidItem() && !mat.usesCompatibility()) {
                     all.add(mat);
                 }
@@ -1226,7 +1226,7 @@ public enum LegacyMaterials {
 		if (name == null) {
 			return null;
 		}
-		LegacyMaterials m = lookupMap.get(name.toUpperCase());
+		CompatibleMaterial m = lookupMap.get(name.toUpperCase());
 		if (m != null) {
 			return m.getItem();
 		}
@@ -2030,14 +2030,14 @@ public enum LegacyMaterials {
         return false;
     }
 
-    public static LegacyMaterials getSpawnEgg(EntityType type) {
+    public static CompatibleMaterial getSpawnEgg(EntityType type) {
         if(type == EntityType.MUSHROOM_COW) {
             return MOOSHROOM_SPAWN_EGG;
         }
         return lookupMap.get(type.name() + "_SPAWN_EGG");
     }
 
-    public static LegacyMaterials getGlassPaneColor(int color) {
+    public static CompatibleMaterial getGlassPaneColor(int color) {
         switch (color) {
             case 0:
                 return WHITE_STAINED_GLASS_PANE;
@@ -2075,7 +2075,7 @@ public enum LegacyMaterials {
         return WHITE_STAINED_GLASS_PANE;
     }
 
-    public static LegacyMaterials getGlassColor(int color) {
+    public static CompatibleMaterial getGlassColor(int color) {
         switch (color) {
             case 0:
                 return WHITE_STAINED_GLASS;
@@ -2113,7 +2113,7 @@ public enum LegacyMaterials {
         return WHITE_STAINED_GLASS;
     }
 
-    public static LegacyMaterials getDyeColor(int color) {
+    public static CompatibleMaterial getDyeColor(int color) {
         switch (color) {
             case 0:
                 return BLACK_DYE;

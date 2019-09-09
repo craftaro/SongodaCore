@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class GuiUtils {
 
     public static ItemStack getBorderGlassItem() {
-        ItemStack glass = LegacyMaterials.LIGHT_BLUE_STAINED_GLASS_PANE.getItem();
+        ItemStack glass = CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE.getItem();
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName(ChatColor.BLACK.toString());
         glass.setItemMeta(glassmeta);
@@ -30,7 +30,7 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack getBorderItem(LegacyMaterials mat) {
+    public static ItemStack getBorderItem(CompatibleMaterial mat) {
         ItemStack item = mat.getItem();
         ItemMeta glassmeta = item.getItemMeta();
         glassmeta.setDisplayName(ChatColor.BLACK.toString());
@@ -88,7 +88,7 @@ public class GuiUtils {
         return newLore;
     }
 
-    public static ItemStack createButtonItem(LegacyMaterials mat, String title, String... lore) {
+    public static ItemStack createButtonItem(CompatibleMaterial mat, String title, String... lore) {
         ItemStack item = mat.getItem();
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -103,7 +103,7 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack createButtonItem(LegacyMaterials mat, int amount, String title, String... lore) {
+    public static ItemStack createButtonItem(CompatibleMaterial mat, int amount, String title, String... lore) {
         ItemStack item = mat.getItem();
         item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
@@ -129,12 +129,12 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
-    public static ItemStack createButtonItem(LegacyMaterials mat, String title, List<String> lore) {
+    public static ItemStack createButtonItem(CompatibleMaterial mat, String title, List<String> lore) {
         ItemStack item = mat.getItem();
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -144,12 +144,12 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
-    public static ItemStack createButtonItem(LegacyMaterials mat, int amount, String title, List<String> lore) {
+    public static ItemStack createButtonItem(CompatibleMaterial mat, int amount, String title, List<String> lore) {
         ItemStack item = mat.getItem();
         item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
@@ -160,8 +160,8 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
@@ -175,8 +175,8 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
@@ -189,12 +189,47 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
-    public static ItemStack updateItem(ItemStack item, LegacyMaterials matTo, String title, String... lore) {
+    public static ItemStack updateItemName(ItemStack item, String title) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(title);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack updateItemLore(ItemStack item, String... lore) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && lore.length != 0) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack updateItemLore(ItemStack item, List<String> lore) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack updateItem(ItemStack item, CompatibleMaterial matTo, String title, String... lore) {
         if (!matTo.matches(item)) {
             item = matTo.getItem();
         }
@@ -206,13 +241,13 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, String... lore) {
-        if (!LegacyMaterials.getMaterial(item).matches(to)) {
+        if (!CompatibleMaterial.getMaterial(item).matches(to)) {
             item = to.clone();
         }
         ItemMeta meta = item.getItemMeta();
@@ -223,8 +258,8 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
@@ -237,12 +272,12 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
-    public static ItemStack updateItem(ItemStack item, LegacyMaterials matTo, String title, List<String> lore) {
+    public static ItemStack updateItem(ItemStack item, CompatibleMaterial matTo, String title, List<String> lore) {
         if (!matTo.matches(item)) {
             item = matTo.getItem();
         }
@@ -254,13 +289,13 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, List<String> lore) {
-        if (!LegacyMaterials.getMaterial(item).matches(to)) {
+        if (!CompatibleMaterial.getMaterial(item).matches(to)) {
             item = to.clone();
         }
         ItemMeta meta = item.getItemMeta();
@@ -271,8 +306,8 @@ public class GuiUtils {
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
         return item;
     }
 

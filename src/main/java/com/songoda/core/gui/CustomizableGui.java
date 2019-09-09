@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.DataStoreObject;
 import com.songoda.core.configuration.SimpleDataStore;
 import com.songoda.core.gui.methods.Clickable;
@@ -52,7 +52,7 @@ public class CustomizableGui extends Gui {
     @Override
     public CustomizableGui setDefaultItem(ItemStack item) {
         if ((blankItem = item) != null) {
-            buttons.put("__DEFAULT__", (new CustomButton("__DEFAULT__")).setIcon(LegacyMaterials.getMaterial(item)));
+            buttons.put("__DEFAULT__", (new CustomButton("__DEFAULT__")).setIcon(CompatibleMaterial.getMaterial(item)));
         }
         return this;
     }
@@ -72,7 +72,7 @@ public class CustomizableGui extends Gui {
     public CustomizableGui setItem(int defaultCell, @NotNull String key, @NotNull ItemStack item) {
         CustomButton btn = key == null ? null : buttons.get(key = key.toLowerCase());
         if (btn == null) {
-            buttons.put(key, btn = (new CustomButton(key, defaultCell)).setIcon(LegacyMaterials.getMaterial(item)));
+            buttons.put(key, btn = (new CustomButton(key, defaultCell)).setIcon(CompatibleMaterial.getMaterial(item)));
         } else {
             ItemStack btnItem = btn.icon.getItem();
             ItemMeta itemMeta = item.getItemMeta();
@@ -92,13 +92,13 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public CustomizableGui setItem(int defaultRow, int defaultCol, @NotNull String key, @NotNull LegacyMaterials defaultItem, @NotNull String title, @NotNull String... lore) {
+    public CustomizableGui setItem(int defaultRow, int defaultCol, @NotNull String key, @NotNull CompatibleMaterial defaultItem, @NotNull String title, @NotNull String... lore) {
         final int cell = defaultCol + defaultRow * 9;
         return setItem(cell, key, defaultItem, title, lore);
     }
 
     @NotNull
-    public CustomizableGui setItem(int defaultCell, @NotNull String key, @NotNull LegacyMaterials defaultItem, @NotNull String title, @NotNull String... lore) {
+    public CustomizableGui setItem(int defaultCell, @NotNull String key, @NotNull CompatibleMaterial defaultItem, @NotNull String title, @NotNull String... lore) {
         CustomButton btn = key == null ? null : buttons.get(key = key.toLowerCase());
         if (btn == null) {
             buttons.put(key, btn = (new CustomButton(key, defaultCell)).setIcon(defaultItem));
@@ -130,6 +130,33 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
+    public Gui updateItemLore(@NotNull String key, @NotNull String... lore) {
+        CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
+        if (btn != null) {
+            this.updateItemLore(btn.position, lore);
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui updateItemLore(@NotNull String key, @Nullable List<String> lore) {
+        CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
+        if (btn != null) {
+            this.updateItemLore(btn.position, lore);
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui updateItemName(@NotNull String key, @Nullable String name) {
+        CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
+        if (btn != null) {
+            this.updateItemName(btn.position, title);
+        }
+        return this;
+    }
+
+    @NotNull
     public CustomizableGui updateItem(@NotNull String key, @Nullable String title, @NotNull String... lore) {
         CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
         if (btn != null) {
@@ -148,7 +175,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public CustomizableGui updateItem(@NotNull String key, @NotNull LegacyMaterials itemTo, @NotNull String title, @NotNull String... lore) {
+    public CustomizableGui updateItem(@NotNull String key, @NotNull CompatibleMaterial itemTo, @NotNull String title, @NotNull String... lore) {
         CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
         if (btn != null) {
             this.updateItem(btn.position, itemTo, title, lore);
@@ -157,7 +184,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public CustomizableGui updateItem(@NotNull String key, @NotNull LegacyMaterials itemTo, @NotNull String title, @Nullable List<String> lore) {
+    public CustomizableGui updateItem(@NotNull String key, @NotNull CompatibleMaterial itemTo, @NotNull String title, @Nullable List<String> lore) {
         CustomButton btn = key == null ? null : buttons.get(key.toLowerCase());
         if (btn != null) {
             this.updateItem(btn.position, itemTo, title, lore);
@@ -224,7 +251,7 @@ public class CustomizableGui extends Gui {
     public CustomizableGui setNextPage(int cell, @NotNull ItemStack item) {
         CustomButton btn = buttons.get("__NEXT__");
         if (btn == null) {
-            buttons.put("__NEXT__", btn = (new CustomButton("__NEXT__", cell)).setIcon(LegacyMaterials.getMaterial(item)));
+            buttons.put("__NEXT__", btn = (new CustomButton("__NEXT__", cell)).setIcon(CompatibleMaterial.getMaterial(item)));
         } else {
             ItemStack btnItem = btn.icon.getItem();
             ItemMeta itemMeta = item.getItemMeta();
@@ -250,7 +277,7 @@ public class CustomizableGui extends Gui {
     public CustomizableGui setPrevPage(int cell, @NotNull ItemStack item) {
         CustomButton btn = buttons.get("__PREV__");
         if (btn == null) {
-            buttons.put("__PREV__", btn = (new CustomButton("__PREV__", cell)).setIcon(LegacyMaterials.getMaterial(item)));
+            buttons.put("__PREV__", btn = (new CustomButton("__PREV__", cell)).setIcon(CompatibleMaterial.getMaterial(item)));
         } else {
             ItemStack btnItem = btn.icon.getItem();
             ItemMeta itemMeta = item.getItemMeta();
@@ -278,7 +305,7 @@ public class CustomizableGui extends Gui {
         boolean _changed = false;
         final String key;
         int position = -1;
-        LegacyMaterials icon = LegacyMaterials.STONE;
+        CompatibleMaterial icon = CompatibleMaterial.STONE;
 
         public CustomButton(String key) {
             this.key = key;
@@ -291,7 +318,7 @@ public class CustomizableGui extends Gui {
 
         public static CustomButton loadFromSection(ConfigurationSection sec) {
             CustomButton dat = new CustomButton(sec.getName());
-            dat.icon = sec.contains("icon") ? LegacyMaterials.getMaterial(sec.getString("icon"), LegacyMaterials.STONE) : LegacyMaterials.STONE;
+            dat.icon = sec.contains("icon") ? CompatibleMaterial.getMaterial(sec.getString("icon"), CompatibleMaterial.STONE) : CompatibleMaterial.STONE;
             dat.position = sec.getInt("position");
             return dat;
         }
@@ -322,12 +349,12 @@ public class CustomizableGui extends Gui {
             _changed = isChanged;
         }
 
-        public LegacyMaterials getIcon() {
+        public CompatibleMaterial getIcon() {
             return icon;
         }
 
-        public CustomButton setIcon(LegacyMaterials icon) {
-            this.icon = icon != null ? icon : LegacyMaterials.STONE;
+        public CustomButton setIcon(CompatibleMaterial icon) {
+            this.icon = icon != null ? icon : CompatibleMaterial.STONE;
             _changed = true;
             return this;
         }

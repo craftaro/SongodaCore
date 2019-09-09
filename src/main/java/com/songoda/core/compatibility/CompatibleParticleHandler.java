@@ -9,7 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 
-public class ParticleHandler {
+public class CompatibleParticleHandler {
 
     public static enum ParticleType {
         EXPLOSION_NORMAL(),

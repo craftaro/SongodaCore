@@ -1,6 +1,6 @@
 package com.songoda.core.configuration.editor;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
@@ -49,7 +49,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         this.file = file;
         this.config = config;
         this.node = node;
-        this.blankItem = GuiUtils.getBorderItem(LegacyMaterials.LIGHT_GRAY_STAINED_GLASS_PANE);
+        this.blankItem = GuiUtils.getBorderItem(CompatibleMaterial.LIGHT_GRAY_STAINED_GLASS_PANE);
 
         // if we have a ConfigSection, we can also grab comments
         try {
@@ -60,10 +60,10 @@ public class ConfigEditorGui extends SimplePagedGui {
         // decorate header
         this.setTitle(ChatColor.DARK_BLUE + file);
         this.setUseHeader(true);
-        headerBackItem = footerBackItem = GuiUtils.getBorderItem(LegacyMaterials.GRAY_STAINED_GLASS_PANE.getItem());
+        headerBackItem = footerBackItem = GuiUtils.getBorderItem(CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem());
         final String path = node.getCurrentPath();
-        this.setItem(4, configItem(LegacyMaterials.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
-        this.setButton(8, GuiUtils.createButtonItem(LegacyMaterials.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        this.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
+        this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // compile list of settings
         for (String key : node.getKeys(false)) {
@@ -77,7 +77,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         // next we need to display the config settings
         int index = 9;
         for (final String sectionKey : sections) {
-            setButton(index++, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
+            setButton(index++, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, file, config, node.getConfigurationSection(sectionKey))));
         }
 
@@ -87,14 +87,14 @@ public class ConfigEditorGui extends SimplePagedGui {
             if(val == null) continue;
             else if (val instanceof Boolean) {
                 // toggle switch
-                setButton(index, configItem(LegacyMaterials.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
+                setButton(index, configItem(CompatibleMaterial.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
                         (event) -> this.toggle(event.slot, settingKey));
                 if ((Boolean) val) {
                     highlightItem(index);
                 }
             } else if (isNumber(val)) {
                 // number dial
-                this.setButton(index, configItem(LegacyMaterials.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Number) val), "Click to edit this setting"),
+                this.setButton(index, configItem(CompatibleMaterial.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Number) val), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + settingKey + ":", response -> {
@@ -107,14 +107,14 @@ public class ConfigEditorGui extends SimplePagedGui {
             } else if (isMaterial(val)) {
                 // changing a block
                 // isMaterial is more of a guess, to be honest.
-                setButton(index, configItem(LegacyMaterials.STONE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                setButton(index, configItem(CompatibleMaterial.STONE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
                         (event) -> {
                             SimplePagedGui paged = new SimplePagedGui(this);
                             paged.setTitle(ChatColor.BLUE + settingKey);
                             paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
-                            paged.setItem(4, configItem(LegacyMaterials.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
+                            paged.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
                             int i = 9;
-                            for(LegacyMaterials mat : LegacyMaterials.getAllValidItemMaterials()) {
+                            for(CompatibleMaterial mat : CompatibleMaterial.getAllValidItemMaterials()) {
                                 paged.setButton(i++, GuiUtils.createButtonItem(mat, mat.name()), ClickType.LEFT, (matEvent) -> {
                                     setMaterial(event.slot, settingKey, matEvent.clickedItem);
                                     matEvent.player.closeInventory();
@@ -125,7 +125,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                 
             } else if (val instanceof String) {
                 // changing a "string" value (or change to a feather for writing quill)
-                setButton(index, configItem(LegacyMaterials.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
+                setButton(index, configItem(CompatibleMaterial.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + settingKey + ":", response -> {
@@ -135,7 +135,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                               .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
                         });
             } else if (val instanceof List) {
-                setButton(index, configItem(LegacyMaterials.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
+                setButton(index, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
                         (event) -> {
                             event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
                                 if(((ConfigEditorListEditorGui) gui.gui).saveChanges) {
@@ -208,9 +208,9 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     void setMaterial(int clickCell, String path, ItemStack item) {
-        LegacyMaterials mat = LegacyMaterials.getMaterial(item);
+        CompatibleMaterial mat = CompatibleMaterial.getMaterial(item);
         if (mat == null) {
-            node.set(path, LegacyMaterials.STONE.name());
+            node.set(path, CompatibleMaterial.STONE.name());
         } else {
             node.set(path, mat.name());
         }
@@ -244,12 +244,12 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     private boolean isMaterial(Object value) {
-        LegacyMaterials m;
+        CompatibleMaterial m;
         return value instanceof String && value.toString().equals(value.toString().toUpperCase())
-                && (m = LegacyMaterials.getMaterial(value.toString())) != null && m.isValidItem();
+                && (m = CompatibleMaterial.getMaterial(value.toString())) != null && m.isValidItem();
     }
 
-    protected ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String def) {
+    protected ItemStack configItem(CompatibleMaterial type, String name, ConfigurationSection node, String path, String def) {
         String[] info = null;
         if (configSection_getCommentString != null) {
             try {
@@ -263,7 +263,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? def.split("\n") : null));
     }
 
-    protected ItemStack configItem(LegacyMaterials type, String name, ConfigurationSection node, String path, String value, String def) {
+    protected ItemStack configItem(CompatibleMaterial type, String name, ConfigurationSection node, String path, String value, String def) {
         if(value == null) value = "";
         String[] info = null;
         if (configSection_getCommentString != null) {

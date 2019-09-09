@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
 import com.songoda.core.gui.methods.Clickable;
@@ -378,12 +378,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, LegacyMaterials itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, LegacyMaterials itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
@@ -398,12 +398,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, LegacyMaterials itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, LegacyMaterials itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 

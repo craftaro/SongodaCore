@@ -1,6 +1,6 @@
 package com.songoda.core.core;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
@@ -13,7 +13,7 @@ public final class PluginInfo {
     protected final JavaPlugin javaPlugin;
     protected final int songodaId;
     protected final String coreIcon;
-    protected final LegacyMaterials icon;
+    protected final CompatibleMaterial icon;
     private final List<PluginInfoModule> modules = new ArrayList<>();
     private boolean hasUpdate = false;
     private String latestVersion;
@@ -26,7 +26,7 @@ public final class PluginInfo {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;
-        this.icon = LegacyMaterials.getMaterial(icon);
+        this.icon = CompatibleMaterial.getMaterial(icon);
     }
 
     public String getLatestVersion() {

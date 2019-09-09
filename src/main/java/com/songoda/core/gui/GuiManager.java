@@ -1,8 +1,8 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.ClientVersion;
-import com.songoda.core.compatibility.CompatibleSounds;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,14 +95,14 @@ public class GuiManager {
     }
 
     public void showPopup(Player player, String message) {
-        showPopup(player, message, LegacyMaterials.NETHER_STAR, BackgroundType.ADVENTURE);
+        showPopup(player, message, CompatibleMaterial.NETHER_STAR, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, LegacyMaterials icon) {
+    public void showPopup(Player player, String message, CompatibleMaterial icon) {
         showPopup(player, message, icon, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, LegacyMaterials icon, BackgroundType background) {
+    public void showPopup(Player player, String message, CompatibleMaterial icon, BackgroundType background) {
         if (ClientVersion.getClientVersion(player).isServerVersionAtLeast(ServerVersion.V1_12)) {
             PopupMessage popup = new PopupMessage(plugin, icon, message, background);
             popup.add();
@@ -176,12 +176,12 @@ public class GuiManager {
                     event.setCancelled(!gui.unlockedCells.entrySet().stream().anyMatch(e -> event.getSlot() == e.getKey() && e.getValue()));
                     // process button press
                     if (gui.onClick(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), CompatibleSounds.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                        player.playSound(player.getLocation(), CompatibleSound.UI_BUTTON_CLICK.getSound(), 1F, 1F);
                     }
                 } else {
                     // Player clicked in the bottom inventory while GUI is open
                     if (gui.onClickPlayerInventory(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), CompatibleSounds.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                        player.playSound(player.getLocation(), CompatibleSound.UI_BUTTON_CLICK.getSound(), 1F, 1F);
                     } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         event.setCancelled(true);
                     }

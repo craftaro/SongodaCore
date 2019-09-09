@@ -1,6 +1,6 @@
 package com.songoda.core.configuration;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -631,16 +631,16 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @Nullable
-    public LegacyMaterials getMaterial(@NotNull String path) {
+    public CompatibleMaterial getMaterial(@NotNull String path) {
         String val = getString(path);
-        LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
+        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
         return mat;
     }
 
     @Nullable
-    public LegacyMaterials getMaterial(@NotNull String path, @Nullable LegacyMaterials def) {
+    public CompatibleMaterial getMaterial(@NotNull String path, @Nullable CompatibleMaterial def) {
         String val = getString(path);
-        LegacyMaterials mat = val != null ? LegacyMaterials.getMaterial(val) : null;
+        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
         return mat != null ? mat : def;
     }
 
