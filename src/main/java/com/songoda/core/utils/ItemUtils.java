@@ -8,13 +8,16 @@ import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -296,6 +299,63 @@ public class ItemUtils {
 			throw new RuntimeException("Reflection error while setting head texture", ex);
 		}
 	}
+
+    static Class cb_CraftPlayer = NMSUtils.getCraftClass("entity.CraftPlayer");
+    static Method cb_CraftPlayer_getProfile;
+
+    static {
+        try {
+            cb_CraftPlayer_getProfile = cb_CraftPlayer.getMethod("getProfile");
+        } catch (Exception ex) {
+        }
+    }
+
+    public static String getSkullTexture(Player player) {
+        if (player == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
+            return "";
+        }
+        try {
+
+            Object craftPlayer = cb_CraftPlayer.cast(player);
+
+            Iterator<Property> iterator = ((GameProfile) cb_CraftPlayer_getProfile.invoke(craftPlayer)).getProperties().get("textures").iterator();
+
+            return iterator.hasNext() ? iterator.next().getValue() : null;
+
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    static Field cb_SkullMeta_profile;
+
+    static {
+        try {
+            cb_SkullMeta_profile = SkullMeta.class.getDeclaredField("profile");
+            cb_SkullMeta_profile.setAccessible(true);
+        } catch (Exception ex) {
+        }
+    }
+
+    public static String getSkullTexture(ItemStack item) {
+        if (cb_SkullMeta_profile == null || !CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
+            return "";
+        }
+        try {
+            SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
+            GameProfile profile = (GameProfile) cb_SkullMeta_profile.get(localSkullMeta);
+            Iterator<Property> iterator = profile.getProperties().get("textures").iterator();
+
+            return iterator.hasNext() ? iterator.next().getValue() : null;
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+        }
+        return "";
+    }
+
+    public static String getDecodedTexture(String encoded) {
+        return StringUtils.substringBetween(new String(Base64.getDecoder().decode(encoded)), "texture/", "\"");
+    }
 
     /**
      * Use up whatever item the player is holding in their main hand
