@@ -1,5 +1,7 @@
 package com.songoda.core.compatibility;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.bukkit.Color;
 import org.bukkit.Effect;
@@ -83,6 +85,13 @@ public class ParticleHandler {
         final boolean compatibilityMode;
         final LegacyParticleEffects.Type compatibleEffect;
         final Object particle;
+        final static Map<String, ParticleType> map = new HashMap();
+
+        static {
+            for (ParticleType t : values()) {
+                map.put(t.name(), t);
+            }
+        }
 
         private ParticleType() {
             if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
@@ -127,6 +136,28 @@ public class ParticleHandler {
                     this.compatibilityMode = true;
                 }
             }
+        }
+
+        public static ParticleType getParticle(String name) {
+            return map.get(name);
+        }
+    }
+
+    public static void spawnParticles(String type, Location location) {
+        spawnParticles(type, location, 0);
+    }
+
+    public static void spawnParticles(String type, Location location, int count) {
+        ParticleType pt;
+        if (type != null && (pt = ParticleType.getParticle(type.toUpperCase())) != null) {
+            spawnParticles(pt, location, count);
+        }
+    }
+
+    public static void spawnParticles(String type, Location location, int count, double offsetX, double offsetY, double offsetZ) {
+        ParticleType pt;
+        if (type != null && (pt = ParticleType.getParticle(type.toUpperCase())) != null) {
+            spawnParticles(pt, location, count, offsetX, offsetY, offsetZ);
         }
     }
 
