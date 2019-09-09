@@ -312,7 +312,7 @@ public class ItemUtils {
 
     public static String getSkullTexture(Player player) {
         if (player == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
-            return "";
+            return null;
         }
         try {
 
@@ -340,7 +340,7 @@ public class ItemUtils {
 
     public static String getSkullTexture(ItemStack item) {
         if (cb_SkullMeta_profile == null || !CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
-            return "";
+            return null;
         }
         try {
             SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
@@ -350,7 +350,7 @@ public class ItemUtils {
             return iterator.hasNext() ? iterator.next().getValue() : null;
         } catch (IllegalArgumentException | IllegalAccessException ex) {
         }
-        return "";
+        return null;
     }
 
     public static String getDecodedTexture(String encoded) {
