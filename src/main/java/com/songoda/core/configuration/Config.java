@@ -165,6 +165,16 @@ public class Config extends ConfigSection {
         return this;
     }
 
+    /**
+     * Set the default charset to use UTF-16
+     *
+     * @return this class
+     */
+    public Config setUseUTF16() {
+        this.defaultCharset = StandardCharsets.UTF_16;
+        return this;
+    }
+
     public boolean getAutosave() {
         return autosave;
     }
@@ -370,7 +380,7 @@ public class Config extends ConfigSection {
                 Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
                 // upgrade charset if file was saved in a more complex format
                 if(charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
-                    defaultCharset = charset;
+                    defaultCharset = StandardCharsets.UTF_16;
                 }
                 this.load(new InputStreamReader(stream, charset));
                 return true;
