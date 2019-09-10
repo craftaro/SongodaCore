@@ -171,13 +171,12 @@ public class CompatibleParticleHandler {
 
     public static void spawnParticles(ParticleType type, Location location, int count) {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
-            LegacyParticleEffects.createParticle(location, type.compatibleEffect);
             for (int i = 0; i < count; i++) {
                 float xx = (float) (1 * (Math.random() - Math.random()));
                 float yy = (float) (1 * (Math.random() - Math.random()));
                 float zz = (float) (1 * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
-                LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE);
+                LegacyParticleEffects.createParticle(at, type.compatibleEffect);
             }
         } else {
             location.getWorld().spawnParticle((Particle) type.particle, location, count);
@@ -186,16 +185,29 @@ public class CompatibleParticleHandler {
 
     public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ) {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
-            LegacyParticleEffects.createParticle(location, type.compatibleEffect);
             for (int i = 0; i < count; i++) {
                 float xx = (float) (offsetX * (Math.random() - Math.random()));
                 float yy = (float) (offsetY * (Math.random() - Math.random()));
                 float zz = (float) (offsetZ * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
-                LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE);
+                LegacyParticleEffects.createParticle(at, type.compatibleEffect);
             }
         } else {
             location.getWorld().spawnParticle((Particle) type.particle, location, count, offsetX, offsetY, offsetZ);
+        }
+    }
+
+    public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+            for (int i = 0; i < count; i++) {
+                float xx = (float) (offsetX * (Math.random() - Math.random()));
+                float yy = (float) (offsetY * (Math.random() - Math.random()));
+                float zz = (float) (offsetZ * (Math.random() - Math.random()));
+                Location at = location.clone().add(xx, yy, zz);
+                LegacyParticleEffects.createParticle(at, type.compatibleEffect, 0F, 0F, 0F, (float) extra, 0, null);
+            }
+        } else {
+            location.getWorld().spawnParticle((Particle) type.particle, location, count, offsetX, offsetY, offsetZ, extra);
         }
     }
 
