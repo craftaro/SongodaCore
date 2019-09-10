@@ -6,19 +6,15 @@ import org.bukkit.Location;
 
 public class WorldGuardHook {
 
-    static boolean canHook, checkedCanHook = false;
+    static boolean canHook = false;
 
-    private static void init() {
-        if(checkedCanHook) return;
-
+    static {
          try {
             // if this class exists, we're good to use WG classes
             Class.forName("com.sk89q.worldguard.protection.flags.Flag");
             canHook = true;
         } catch (ClassNotFoundException ex) {
         }
-
-        checkedCanHook = true;
     }
 
     /**
@@ -29,7 +25,6 @@ public class WorldGuardHook {
      * @param state default value of the flag
      */
     public static void addHook(String flag, boolean state) {
-        init();
         if(canHook) {
             WorldGuardFlagHandler.addHook(flag, state);
         }
@@ -42,7 +37,6 @@ public class WorldGuardHook {
      * called and added successfully
      */
     public static boolean isEnabled() {
-        init();
         return canHook && WorldGuardFlagHandler.isEnabled();
     }
 
@@ -54,7 +48,6 @@ public class WorldGuardHook {
      * @return flag state, or null if undefined
      */
     public static Boolean getBooleanFlag(Location l, String flag) {
-        init();
         return canHook ? WorldGuardFlagHandler.getBooleanFlag(l, flag) : null;
     }
 
@@ -66,7 +59,6 @@ public class WorldGuardHook {
      * @return flag state, or null if undefined
      */
     public static Boolean getBooleanFlag(Chunk c, String flag) {
-        init();
         return canHook ? WorldGuardFlagHandler.getBooleanFlag(c, flag) : null;
     }
 }

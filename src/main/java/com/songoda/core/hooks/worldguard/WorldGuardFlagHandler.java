@@ -33,6 +33,7 @@ public class WorldGuardFlagHandler {
     
 	static Boolean wgPlugin = null;
     static Object worldGuardPlugin;
+    static boolean wg_v7 = false;
     static boolean legacy_v6 = false;
     static boolean legacy_v5 = false;
 	static boolean hooksInstalled = false;
@@ -47,18 +48,24 @@ public class WorldGuardFlagHandler {
      */
     public static void addHook(String flag, boolean state) {
         if (wgPlugin == null && (wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null)) {
+            // a number of flags were introduced in 7.x that aren't in 5 or 6
             try {
-                // if this class exists, we're on 6.0
-                Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
-                legacy_v6 = true;
+                // if this class exists, we're on 7.x
+                Class.forName("com.sk89q.worldguard.protection.flags.WeatherTypeFlag");
+                wg_v7 = true;
             } catch (ClassNotFoundException ex) {
-            }
-            if(!legacy_v6) {
                 try {
-                    // if this class exists, we're on 5.x
-                    Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
-                    legacy_v5 = true;
-                } catch (ClassNotFoundException ex) {
+                    // if this class exists, we're on 6.0
+                    Class.forName("com.sk89q.worldguard.protection.flags.FlagContextCreateEvent");
+                    legacy_v6 = true;
+                } catch (ClassNotFoundException ex2) {
+                    try {
+                        // if this class exists, we're on 5.x
+                        Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
+                        legacy_v5 = true;
+                    } catch (ClassNotFoundException ex3) {
+                        // ¯\_(ツ)_/¯
+                    }
                 }
             }
         }
@@ -130,7 +137,7 @@ public class WorldGuardFlagHandler {
             flags.put(flag, wgFlag);
         } catch (Exception ex) {
             //Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to set legacy WorldGuard Flags", ex);
-            Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard", flag);
+            Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard " + (legacy_v6 ? "6" : "5"), flag);
 			Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             wgPlugin = false;
         }
