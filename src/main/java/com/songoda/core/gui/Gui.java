@@ -636,7 +636,7 @@ public class Gui {
     }
 
     public void setPage(int page) {
-        int lastPage = page;
+        int lastPage = this.page;
         this.page = Math.max(1, Math.min(pages, page));
         if(pager != null && this.page != lastPage) {
             pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));

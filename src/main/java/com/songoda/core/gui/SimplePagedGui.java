@@ -7,7 +7,6 @@ import com.songoda.core.gui.methods.Clickable;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -134,14 +133,14 @@ public class SimplePagedGui extends Gui {
         rowsPerPage = useHeader ? 4 : 5;
         maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
         int maxRows = (int) Math.ceil(maxCellSlot / 9.);
-        pages = (int) Math.ceil(maxRows / rowsPerPage);
+        pages = (int) Math.max(1, Math.ceil(maxRows / (double) rowsPerPage));
         this.setRows(maxRows + (useHeader ? 1 : 0));
 
         // create inventory view
         createInventory();
 
         // populate and return the display inventory
-        page = Math.min(page, pages);
+        setPage(Math.min(page, pages));
         update();
         return inventory;
     }
