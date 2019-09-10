@@ -78,11 +78,13 @@ public class HologramsHolograms extends Holograms {
                     isChanged = !hologram.getLine(i).getRaw().equals(lines.get(i));
                 }
             }
-            for(HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
-                hologram.removeLine(line);
-            }
-            for (String line : lines) {
-                hologram.addLine(new TextLine(hologram, line));
+            if(isChanged) {
+                for(HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
+                    hologram.removeLine(line);
+                }
+                for (String line : lines) {
+                    hologram.addLine(new TextLine(hologram, line));
+                }
             }
             return;
         }
