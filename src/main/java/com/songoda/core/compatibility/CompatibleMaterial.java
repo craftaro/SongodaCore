@@ -1241,7 +1241,7 @@ public enum CompatibleMaterial {
 	 * @return true if material of the ItemStack matches this item, corrected for legacy data
 	 */
 	public boolean matches(ItemStack item) {
-		return item != null && item.getType() == material && (data == null || item.getDurability() == data); // eons ago, ItemStack.getData() would return a byte. 1.7 doesn't, though.
+		return item != null && !usesCompatibility() && item.getType() == material && (data == null || item.getDurability() == data); // eons ago, ItemStack.getData() would return a byte. 1.7 doesn't, though.
 	}
 
 	/**
