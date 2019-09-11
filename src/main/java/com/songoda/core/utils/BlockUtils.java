@@ -1,5 +1,7 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
@@ -7,11 +9,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.CropState;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.material.Crops;
 
 public class BlockUtils {
 
@@ -342,6 +347,136 @@ public class BlockUtils {
         }
     }
 
+    /**
+     * Checks if a crop is at its max growth stage
+     *
+     * @param block The crop block to check
+     * @return true if the block is a crop and at its max growth stage
+     */
+    public static boolean isCropFullyGrown(Block block) {
+        if (block == null) {
+            return false;
+        } else if (!useLegacy) {
+            return BlockUtilsModern._isCropFullyGrown(block);
+        }
+        CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+        if (mat == null || !mat.isCrop()) {
+            return false;
+        } else {
+            return block.getData() >= (mat == CompatibleMaterial.BEETROOTS ? 3 : 7);
+        }
+    }
+
+    /**
+     * Gets the max growth stage for the given block
+     *
+     * @param block The crop block to check
+     * @return The max growth stage of the given crop type, or -1 if not a crop
+     */
+    public static int getMaxGrowthStage(Block block) {
+        if (block == null) {
+            return -1;
+        } else if (!useLegacy) {
+            return BlockUtilsModern._getMaxGrowthStage(block);
+        }
+        CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+        if (mat == null || !mat.isCrop()) {
+            return -1;
+        } else {
+            return mat == CompatibleMaterial.BEETROOTS ? 3 : 7;
+        }
+    }
+
+    /**
+     * Gets the max growth stage for the given material
+     *
+     * @param material The material of the crop
+     * @return The max growth stage of the given crop type
+     */
+    public static int getMaxGrowthStage(Material material) {
+        if (material == null) {
+            return -1;
+        } else if (!useLegacy) {
+            return BlockUtilsModern._getMaxGrowthStage(material);
+        }
+        CompatibleMaterial mat = CompatibleMaterial.getMaterial(material);
+        if (mat == null || !mat.isCrop()) {
+            return -1;
+        } else {
+            return mat == CompatibleMaterial.BEETROOTS ? 3 : 7;
+        }
+    }
+
+    /**
+     * Sets the max growth stage for the given block
+     *
+     * @param block The crop block to change
+     * @param stage new growth stage to use
+     */
+    public static void setGrowthStage(Block block, int stage) {
+        if (block == null) {
+        } else if (!useLegacy) {
+            BlockUtilsModern._setGrowthStage(block, stage);
+        } else {
+            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            if (mat != null && mat.isCrop()) {
+                try {
+                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, mat == CompatibleMaterial.BEETROOTS ? 3 : 7)));
+                } catch (Exception ex) {
+                    Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * Increments the growth stage for the given block
+     *
+     * @param block The crop block to grow
+     */
+    public static void incrementGrowthStage(Block block) {
+        if (block == null) {
+        } else if (!useLegacy) {
+            BlockUtilsModern._incrementGrowthStage(block);
+        } else {
+            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS ? 3 : 7)) {
+                try {
+                    legacySetBlockData.invoke(block, (byte) block.getData() + 1);
+                } catch (Exception ex) {
+                    Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets a crop's growth back to stage 0
+     *
+     * @param block The crop block to set
+     */
+    public static void resetGrowthStage(Block block) {
+        if (block == null) {
+        } else if (!useLegacy) {
+            BlockUtilsModern._resetGrowthStage(block);
+        } else {
+            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            if (mat != null && mat.isCrop()) {
+                try {
+                    legacySetBlockData.invoke(block, (byte) 0);
+                } catch (Exception ex) {
+                    Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * Check to see if this material does not impede player/mob movement at all.
+     * 
+     * @param m material to check
+     * @return true if this material doesn't have a solid hitbox
+     */
     public static boolean canPassThrough(Material m) {
 
         switch (m.name()) {
@@ -355,8 +490,6 @@ public class BlockUtils {
             case "ATTACHED_MELON_STEM":
             case "ATTACHED_PUMPKIN_STEM":
             case "AZURE_BLUET":
-            //case "BAMBOO_SAPLING":
-            //case "BARRIER": // could let robots pass through barriers
             case "BEETROOTS":
             case "BIRCH_BUTTON":
             case "BIRCH_PRESSURE_PLATE":
@@ -400,7 +533,7 @@ public class BlockUtils {
             case "DETECTOR_RAIL":
             case "END_PORTAL":
             case "FERN":
-            case "FIRE": // probably should take damage
+            case "FIRE":
             case "FIRE_CORAL_FAN":
             case "FIRE_CORAL_WALL_FAN":
             case "GRASS":
@@ -522,6 +655,13 @@ public class BlockUtils {
         return false;
     }
 
+    /**
+     * Check to see if a player can walk into this material<br />
+     * This includes blocks like slabs and stairs
+     * 
+     * @param m material to check
+     * @return true if this is a block that can be walked though or up
+     */
     public static boolean canWalkTo(Material m) {
         switch (m.name()) {
             case "ACACIA_BUTTON":
@@ -539,8 +679,6 @@ public class BlockUtils {
             case "ATTACHED_MELON_STEM":
             case "ATTACHED_PUMPKIN_STEM":
             case "AZURE_BLUET":
-            //case "BAMBOO_SAPLING":
-            //case "BARRIER": // could let robots pass through barriers
             case "BEETROOTS":
             case "BIRCH_BUTTON":
             case "BIRCH_DOOR":
@@ -569,7 +707,7 @@ public class BlockUtils {
             case "BUBBLE_CORAL_FAN":
             case "BUBBLE_CORAL_WALL_FAN":
             case "CAKE":
-            case "CAMPFIRE": // could take damage from walking over?
+            case "CAMPFIRE":
             case "CARROTS":
             case "CAVE_AIR":
             case "COBBLESTONE_SLAB":
@@ -614,7 +752,7 @@ public class BlockUtils {
             case "END_STONE_BRICK_SLAB":
             case "END_STONE_BRICK_STAIRS":
             case "FERN":
-            case "FIRE": // probably should take damage
+            case "FIRE":
             case "FIRE_CORAL_FAN":
             case "FIRE_CORAL_WALL_FAN":
             case "FLOWER_POT":
@@ -767,7 +905,7 @@ public class BlockUtils {
             case "SPRUCE_STAIRS":
             case "SPRUCE_TRAPDOOR":
             case "SPRUCE_WALL_SIGN":
-            case "STONECUTTER": // technically can step on, so sure
+            case "STONECUTTER":
             case "STONE_BRICK_SLAB":
             case "STONE_BRICK_STAIRS":
             case "STONE_BUTTON":

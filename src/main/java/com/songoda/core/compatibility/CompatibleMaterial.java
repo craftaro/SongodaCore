@@ -31,7 +31,7 @@ public enum CompatibleMaterial {
 	 */
 	ACACIA_BOAT("BOAT_ACACIA"),
 	ACACIA_BUTTON(),
-	ACACIA_DOOR("ACACIA_DOOR_ITEM"), // TODO: ACACIA_DOOR & WOODEN_DOOR are the legacy block variants
+	ACACIA_DOOR("ACACIA_DOOR_ITEM"),
 	ACACIA_FENCE(),
 	ACACIA_FENCE_GATE(),
 	ACACIA_LEAVES("LEAVES_2", (byte) 0),
@@ -133,7 +133,7 @@ public enum CompatibleMaterial {
 	BRAIN_CORAL_FAN,
 	BRAIN_CORAL_WALL_FAN,
 	BREAD,
-	BREWING_STAND,
+	BREWING_STAND("BREWING_STAND_ITEM"),
 	/**
 	 * minecraft:brick (item)
 	 */
@@ -175,7 +175,7 @@ public enum CompatibleMaterial {
 	CARTOGRAPHY_TABLE,
 	CARVED_PUMPKIN("JACK_O_LANTERN"),
 	CAT_SPAWN_EGG(),
-	CAULDRON,
+	CAULDRON("CAULDRON_ITEM"),
 	CAVE_AIR(),
 	CAVE_SPIDER_SPAWN_EGG("MONSTER_EGG", (byte) 59),
 	CHAINMAIL_BOOTS,
@@ -462,7 +462,7 @@ public enum CompatibleMaterial {
 	IRON_BLOCK,
 	IRON_BOOTS,
 	IRON_CHESTPLATE,
-	IRON_DOOR, // TODO: legacy block id is IRON_DOOR_BLOCK
+	IRON_DOOR,
 	IRON_HELMET,
 	IRON_HOE,
 	IRON_HORSE_ARMOR("IRON_BARDING"),
@@ -1009,6 +1009,7 @@ public enum CompatibleMaterial {
 
 	private final String modern, modern2, legacy;
 	private final LegacyMaterialAnalouge compatibleMaterial;
+    private final LegacyMaterialBlockType legacyBlockMaterial;
 	private final boolean legacyRequiresData;
 	// some materials (I'm looking at you, GREEN_DYE) have changed ID more than once
 	// minVersion is the min for modern, and minVersion2 is min to use legacyCompat1
@@ -1029,11 +1030,22 @@ public enum CompatibleMaterial {
             }
         }
         for (CompatibleMaterial m : values()) {
-            if (!m.usesCompatibility() && !lookupMap.containsKey(m.legacy)) {
-                lookupMap.put(m.legacy, m);
+            if (!m.usesCompatibility()) {
+                if (m.legacy != null && !lookupMap.containsKey(m.legacy)) {
+                    lookupMap.put(m.legacy, m);
+                }
+                if (m.modern2 != null && !lookupMap.containsKey(m.modern2)) {
+                    lookupMap.put(m.modern2, m);
+                }
+                if (m.legacyBlockMaterial != null && !lookupMap.containsKey(m.legacyBlockMaterial.blockMaterialName)) {
+                    lookupMap.put(m.legacyBlockMaterial.blockMaterialName, m);
+                }
+                if (m.legacyBlockMaterial != null && !lookupMap.containsKey(m.legacyBlockMaterial.alternateBlockMaterialName)) {
+                    lookupMap.put(m.legacyBlockMaterial.alternateBlockMaterialName, m);
+                }
             }
         }
-	}
+    }
 
 	CompatibleMaterial() {
 		this(ServerVersion.UNKNOWN, null, null);
@@ -1078,7 +1090,7 @@ public enum CompatibleMaterial {
 		} else if (legacyMaterial != null && (compatibleMaterial == null || ServerVersion.isServerVersionAtLeast(compatibleMaterial.versionLessThan))) {
 			// we're using a server that has the legacy value available
 			material = Material.getMaterial(legacyMaterial);
-			data = legacyRequiresData ? legacyData : null;
+			data = legacyRequiresData ? this.legacyData : null;
 		} else if (compatibleMaterial != null) {
 			// no match: use a proxy
 			material = compatibleMaterial.material;
@@ -1087,21 +1099,30 @@ public enum CompatibleMaterial {
 			material = null;
 			data = null;
 		}
-	}
+
+        if (material != null && ServerVersion.isServerVersionBelow(ServerVersion.V1_13) && (compatibleMaterial == null || material != compatibleMaterial.material)) {
+            legacyBlockMaterial = LegacyMaterialBlockType.getMaterial(this.modern);
+        } else {
+            legacyBlockMaterial = null;
+        }
+    }
 
 	/**
-	 * Get the Bukkit Material for this material
-	 *
-	 * @return
+	 * @return the Bukkit Material for this material
 	 */
 	public Material getMaterial() {
 		return material;
 	}
 
+    /**
+     * @return the Bukkit Material required to create a block
+     */
+    public Material getBlockMaterial() {
+        return legacyBlockMaterial != null ? legacyBlockMaterial.getBlockMaterial() : (isBlock() ? material : AIR.material);
+    }
+
 	/**
-	 * Get an item that resembles this material for the current server version
-	 *
-	 * @return
+	 * @return an item that resembles this material for the current server version
 	 */
 	public ItemStack getItem() {
 		if (usesCompatibility()) {
@@ -1974,8 +1995,6 @@ public enum CompatibleMaterial {
             switch (this) {
                 case ACACIA_WOOD:
                 case BIRCH_WOOD:
-                case BREWING_STAND:
-                case CAULDRON:
                 case DARK_OAK_WOOD:
                 case JUNGLE_WOOD:
                 case OAK_WOOD:
@@ -2025,6 +2044,28 @@ public enum CompatibleMaterial {
             case POTATO: 
             case RABBIT: 
             case SALMON: 
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return true if this is a block that has a growth state
+     */
+    public boolean isCrop() {
+        switch (this) {
+            case BEETROOTS:
+            case CACTUS:
+            case CARROTS:
+            case CHORUS_FLOWER:
+                // FROSTED_ICE is Ageable, but not a crop
+            case KELP:
+            case MELON_STEM:
+            case NETHER_WART:
+            case POTATOES:
+            case PUMPKIN_STEM:
+            case SUGAR_CANE:
+            case WHEAT:
                 return true;
         }
         return false;

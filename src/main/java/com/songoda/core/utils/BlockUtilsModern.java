@@ -1,8 +1,10 @@
 package com.songoda.core.utils;
 
 import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.AnaloguePowerable;
@@ -158,4 +160,55 @@ public class BlockUtilsModern {
         return null;
     }
 
+    protected static boolean _isCropFullyGrown(Block block) {
+        BlockData data = block.getBlockData();
+        if(data instanceof Ageable) {
+            return ((Ageable) data).getAge() == ((Ageable) data).getMaximumAge();
+        }
+        return false;
+    }
+
+    protected static int _getMaxGrowthStage(Block block) {
+        BlockData data = block.getBlockData();
+        if(data instanceof Ageable) {
+            return ((Ageable) data).getMaximumAge();
+        }
+        return -1;
+    }
+
+    protected static int _getMaxGrowthStage(Material material) {
+        BlockData data = material.createBlockData();
+        if(data instanceof Ageable) {
+            return ((Ageable) data).getMaximumAge();
+        }
+        return -1;
+    }
+
+    public static void _setGrowthStage(Block block, int stage) {
+        BlockData data = block.getBlockData();
+        if (data instanceof Ageable) {
+            ((Ageable) data).setAge(Math.max(0, Math.min(stage, ((Ageable) data).getMaximumAge())));
+            block.setBlockData(data);
+        }
+    }
+
+    public static void _incrementGrowthStage(Block block) {
+        BlockData data = block.getBlockData();
+        if (data instanceof Ageable) {
+            final int max = ((Ageable) data).getMaximumAge();
+            final int age = ((Ageable) data).getAge();
+            if (age < max) {
+                ((Ageable) data).setAge(age + 1);
+                block.setBlockData(data);
+            }
+        }
+    }
+
+    public static void _resetGrowthStage(Block block) {
+        BlockData data = block.getBlockData();
+        if (data instanceof Ageable) {
+            ((Ageable) data).setAge(0);
+            block.setBlockData(data);
+        }
+    }
 }
