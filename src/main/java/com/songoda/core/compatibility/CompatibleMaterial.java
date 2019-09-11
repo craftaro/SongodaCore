@@ -2113,6 +2113,44 @@ public enum CompatibleMaterial {
         return WHITE_STAINED_GLASS;
     }
 
+    public static CompatibleMaterial getWoolColor(int color) {
+        switch (color) {
+            case 0:
+                return WHITE_WOOL;
+            case 1:
+                return ORANGE_WOOL;
+            case 2:
+                return MAGENTA_WOOL;
+            case 3:
+                return LIGHT_BLUE_WOOL;
+            case 4:
+                return YELLOW_WOOL;
+            case 5:
+                return LIME_WOOL;
+            case 6:
+                return PINK_WOOL;
+            case 7:
+                return GRAY_WOOL;
+            case 8:
+                return LIGHT_GRAY_WOOL;
+            case 9:
+                return CYAN_WOOL;
+            case 10:
+                return PURPLE_WOOL;
+            case 11:
+                return BLUE_WOOL;
+            case 12:
+                return BROWN_WOOL;
+            case 13:
+                return GREEN_WOOL;
+            case 14:
+                return RED_WOOL;
+            case 15:
+                return BLACK_WOOL;
+        }
+        return WHITE_WOOL;
+    }
+
     public static CompatibleMaterial getDyeColor(int color) {
         switch (color) {
             case 0:
