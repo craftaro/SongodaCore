@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +47,7 @@ public class SongodaCore {
      * Whenever we make a major change to the core GUI, updater, 
      * or other function used by the core, increment this number
      */
-    private final static int coreRevision = 5;
+    private final static int coreRevision = 6;
     private final static int updaterVersion = 1;
 
     private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
@@ -114,15 +115,16 @@ public class SongodaCore {
                         }
                         return;
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+                        plugin.getLogger().log(Level.WARNING, "Error registering core service", ignored);
                     }
                 }
             }
             // register ourselves as the SongodaCore service!
             INSTANCE = new SongodaCore(plugin);
             INSTANCE.init();
-            INSTANCE.register(plugin, pluginID, icon);
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
+        INSTANCE.register(plugin, pluginID, icon);
     }
 
     SongodaCore() {
@@ -154,9 +156,9 @@ public class SongodaCore {
     private void destroy() {
         Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
         tasks.stream().filter(task -> task != null && !task.isCancelled())
-                .forEach(task ->  Bukkit.getScheduler().cancelTask(task.getTaskId()));
+                .forEach(task -> Bukkit.getScheduler().cancelTask(task.getTaskId()));
         HandlerList.unregisterAll(loginListener);
-        if(!hasShading()) {
+        if (!hasShading()) {
             HandlerList.unregisterAll(shadingListener);
         }
         registeredPlugins.clear();
