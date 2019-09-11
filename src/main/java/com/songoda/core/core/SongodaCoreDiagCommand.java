@@ -41,7 +41,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("Plugins:");
         for (PluginInfo plugin : SongodaCore.getPlugins()) {
             sender.sendMessage(plugin.getJavaPlugin().getName()
-                    + " (" + plugin.getJavaPlugin().getDescription().getVersion() + ")");
+                    + " (" + plugin.getJavaPlugin().getDescription().getVersion() + " Core " + plugin.getCoreLibraryVersion() + ")");
         }
         sender.sendMessage("");
         sender.sendMessage("Server Version: " + Bukkit.getVersion());

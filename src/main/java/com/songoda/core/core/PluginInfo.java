@@ -13,6 +13,7 @@ public final class PluginInfo {
     protected final JavaPlugin javaPlugin;
     protected final int songodaId;
     protected final String coreIcon;
+    protected final String coreLibraryVersion;
     protected final CompatibleMaterial icon;
     private final List<PluginInfoModule> modules = new ArrayList<>();
     private boolean hasUpdate = false;
@@ -22,11 +23,12 @@ public final class PluginInfo {
     private String marketplaceLink;
     private JSONObject json;
 
-    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon) {
+    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon, String coreLibraryVersion) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;
         this.icon = CompatibleMaterial.getMaterial(icon);
+        this.coreLibraryVersion = coreLibraryVersion;
     }
 
     public String getLatestVersion() {
@@ -97,5 +99,9 @@ public final class PluginInfo {
 
     public String getCoreIcon() {
         return coreIcon;
+    }
+
+    public String getCoreLibraryVersion() {
+        return coreLibraryVersion;
     }
 }

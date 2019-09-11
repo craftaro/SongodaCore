@@ -48,6 +48,16 @@ public class SongodaCore {
      * or other function used by the core, increment this number
      */
     private final static int coreRevision = 6;
+    
+    /**
+     * This has been added as of Rev 6 <br>
+     * This value is automatically filled in by gitlab-ci
+     */
+    private final static String coreVersion = "maven-version-number";
+    
+    /**
+     * This is specific to the website api
+     */
     private final static int updaterVersion = 1;
 
     private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
@@ -64,10 +74,14 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
-        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name());
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), coreVersion);
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
+        registerPlugin(plugin, pluginID, icon, "?");
+    }
+
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon, String coreVersion) {
         if(INSTANCE == null) {
             // First: are there any other instances of SongodaCore active?
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
@@ -77,7 +91,8 @@ public class SongodaCore {
                         int otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
                         if(otherVersion >= getCoreVersion()) {
                             // use the active service
-                            clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
+                            // assuming that the other is greater than R6 ;)
+                            clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
 
                             if(hasShading()) {
                                 (INSTANCE = new SongodaCore()).piggybackedPlugin = plugin;
@@ -96,7 +111,7 @@ public class SongodaCore {
                             // register ourselves as the SongodaCore service!
                             INSTANCE = new SongodaCore(plugin);
                             INSTANCE.init();
-                            INSTANCE.register(plugin, pluginID, icon);
+                            INSTANCE.register(plugin, pluginID, icon, coreVersion);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
                             if(!otherPlugins.isEmpty()) {
@@ -105,11 +120,13 @@ public class SongodaCore {
                                 Method otherPluginInfo_getJavaPlugin = otherPluginInfo.getMethod("getJavaPlugin");
                                 Method otherPluginInfo_getSongodaId = otherPluginInfo.getMethod("getSongodaId");
                                 Method otherPluginInfo_getCoreIcon = otherPluginInfo.getMethod("getCoreIcon");
+                                Method otherPluginInfo_getCoreLibraryVersion = otherVersion >= 6 ? otherPluginInfo.getMethod("getCoreLibraryVersion") : null;
                                 for(Object other : otherPlugins) {
                                     INSTANCE.register(
                                             (JavaPlugin) otherPluginInfo_getJavaPlugin.invoke(other), 
                                             (int) otherPluginInfo_getSongodaId.invoke(other), 
-                                            (String) otherPluginInfo_getCoreIcon.invoke(other));
+                                            (String) otherPluginInfo_getCoreIcon.invoke(other),
+                                            otherPluginInfo_getCoreLibraryVersion != null ? (String) otherPluginInfo_getCoreLibraryVersion.invoke(other) : "?");
                                 }
                             }
                         }
@@ -124,7 +141,7 @@ public class SongodaCore {
             INSTANCE.init();
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        INSTANCE.register(plugin, pluginID, icon);
+        INSTANCE.register(plugin, pluginID, icon, coreVersion);
     }
 
     SongodaCore() {
@@ -233,8 +250,12 @@ public class SongodaCore {
     }
 
     private void register(JavaPlugin plugin, int pluginID, String icon) {
+        register(plugin, pluginID, icon, "?");
+    }
+
+    private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
-        PluginInfo info = new PluginInfo(plugin, pluginID, icon);
+        PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
@@ -288,6 +309,10 @@ public class SongodaCore {
 
     public static int getCoreVersion() {
         return coreRevision;
+    }
+
+    public static String getCoreLibraryVersion() {
+        return coreVersion;
     }
 
     public static int getUpdaterVersion() {
