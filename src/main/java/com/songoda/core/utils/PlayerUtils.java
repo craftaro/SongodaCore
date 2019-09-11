@@ -3,11 +3,15 @@ package com.songoda.core.utils;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerUtils {
 
@@ -145,5 +149,39 @@ public class PlayerUtils {
             alli.next();
         }
         return alli.hasNext() ? alli.next() : null;
+    }
+
+    public static void giveItem(Player player, ItemStack item) {
+        if (player == null || !player.isOnline() || item == null) {
+            return;
+        }
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+        if (!leftover.isEmpty()) {
+            leftover.values().stream().forEach(it -> player.getWorld().dropItemNaturally(player.getLocation(), it));
+        }
+    }
+
+    public static void giveItem(Player player, ItemStack... items) {
+        if (player == null || !player.isOnline() || items == null || items.length == 0) {
+            return;
+        }
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items);
+        if (!leftover.isEmpty()) {
+            final World world = player.getWorld();
+            final Location location = player.getLocation();
+            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+        }
+    }
+
+    public static void giveItem(Player player, Collection<ItemStack> items) {
+        if (player == null || !player.isOnline() || items == null || items.isEmpty()) {
+            return;
+        }
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
+        if (!leftover.isEmpty()) {
+            final World world = player.getWorld();
+            final Location location = player.getLocation();
+            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+        }
     }
 }
