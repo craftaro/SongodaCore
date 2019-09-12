@@ -4,7 +4,7 @@
         <groupId>com.songoda</groupId>
         <artifactId>SongodaCore-Modules</artifactId>
         <version>maven-version-number</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../../</relativePath>
     </parent>
 
     <artifactId>SongodaCore-NMS-API</artifactId>
