@@ -1,4 +1,4 @@
-package com.songoda.core.nms.v1_8_R1;
+package com.songoda.core.nms.v1_8_R3;
 
 import com.songoda.core.nms.CoreNMS;
 
