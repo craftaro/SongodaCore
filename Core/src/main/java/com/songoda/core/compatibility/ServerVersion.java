@@ -25,8 +25,16 @@ public enum ServerVersion {
         return this.ordinal() < other.ordinal();
     }
 
+    public boolean isAtOrBelow(ServerVersion other) {
+        return this.ordinal() <= other.ordinal();
+    }
+
     public boolean isGreaterThan(ServerVersion other) {
         return this.ordinal() > other.ordinal();
+    }
+
+    public boolean isAtLeast(ServerVersion other) {
+        return this.ordinal() >= other.ordinal();
     }
 
     public static String getServerVersionString() {

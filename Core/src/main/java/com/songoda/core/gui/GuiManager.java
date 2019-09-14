@@ -103,7 +103,7 @@ public class GuiManager {
     }
 
     public void showPopup(Player player, String message, CompatibleMaterial icon, BackgroundType background) {
-        if (ClientVersion.getClientVersion(player).isServerVersionAtLeast(ServerVersion.V1_12)) {
+        if (ClientVersion.getClientVersion(player).isAtLeast(ServerVersion.V1_12)) {
             PopupMessage popup = new PopupMessage(plugin, icon, message, background);
             popup.add();
             popup.grant(player);
