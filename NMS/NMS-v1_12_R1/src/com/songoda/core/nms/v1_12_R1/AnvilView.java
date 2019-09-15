@@ -1,13 +1,20 @@
 package com.songoda.core.nms.v1_12_R1;
 
 import com.songoda.core.nms.CustomAnvil;
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.ChatMessage;
 import net.minecraft.server.v1_12_R1.ContainerAnvil;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.IInventory;
 import net.minecraft.server.v1_12_R1.PacketPlayOutOpenWindow;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class AnvilView extends ContainerAnvil implements CustomAnvil {
@@ -18,10 +25,47 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private int cost = -1;
     private boolean canUse = true;
 
-    public AnvilView(EntityPlayer entity) {
+    // used for setting custom inventory
+    static Field mc_ContainerAnvil_repairInventory; // subcontainer with only the result
+    static Field mc_ContainerAnvil_resultInventory; // full inventory
+    static Field mc_ContainerAnvil_bukkitEntity;
+
+    static {
+        try {
+            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("h");
+            mc_ContainerAnvil_repairInventory.setAccessible(true);
+            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("g");
+            mc_ContainerAnvil_resultInventory.setAccessible(true);
+            mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
+            mc_ContainerAnvil_bukkitEntity.setAccessible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
+        }
+    }
+
+    public AnvilView(EntityPlayer entity, InventoryHolder holder) {
         super(entity.inventory, entity.world, new BlockPosition(0, 0, 0), entity);
         this.entity = entity;
-        this.inventory = getBukkitView().getTopInventory();
+        if (holder != null) {
+            this.inventory = getBukkitView(entity, holder).getTopInventory();
+        } else {
+            this.inventory = getBukkitView().getTopInventory();
+        }
+    }
+
+    public CraftInventoryView getBukkitView(EntityHuman player, InventoryHolder holder) {
+        try {
+            AnvilInventoryCustom craftInventory = new AnvilInventoryCustom(holder,
+                    new Location(entity.world.getWorld(), 0, 0, 0),
+                    (IInventory) mc_ContainerAnvil_repairInventory.get(this),
+                    (IInventory) mc_ContainerAnvil_resultInventory.get(this), this);
+            CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
+            mc_ContainerAnvil_bukkitEntity.set(this, view);
+            return view;
+        } catch (Exception ex) {
+            Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
+        }
+        return getBukkitView();
     }
 
     @Override
