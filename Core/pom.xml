@@ -29,6 +29,40 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>shaded</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.songoda:*</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <includes>
+                                    <include>com/</include>
+                                    <include>META-INF/MANIFEST.MF</include>
+                                    <include>META-INF/maven/com.songoda/SongodaCore/</include>
+                                </includes>
+                            </filter>
+                        </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
@@ -47,10 +81,9 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>com.destroystokyo.papermc</groupId>
