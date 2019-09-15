@@ -9,3 +9,5 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+nbactions.xml
+nb-configuration.xml
