@@ -1,0 +1,87 @@
+package com.songoda.core.gui;
+
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.nms.CoreNMS;
+import com.songoda.core.nms.CustomAnvil;
+import com.songoda.core.nms.NmsManager;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Anvil GUI for text prompts
+ *
+ * @since 2019-09-15
+ * @author jascotty2
+ */
+public class AnvilGui extends Gui {
+
+    final Player player;
+    CustomAnvil anvil;
+
+    public AnvilGui(Player player) {
+        this.player = player;
+    }
+
+    public AnvilGui(Player player, Gui parent) {
+        super(parent);
+        this.player = player;
+    }
+
+    public void open() {
+        anvil.open();
+    }
+
+    public AnvilGui setInput(ItemStack item) {
+        return (AnvilGui) this.setItem(0, item);
+    }
+
+    public ItemStack getInput() {
+        return this.getItem(0);
+    }
+
+    public AnvilGui setOutput(ItemStack item) {
+        return (AnvilGui) this.setItem(2, item);
+    }
+
+    public ItemStack getOutput() {
+        return this.getItem(2);
+    }
+
+    public String getInputText() {
+        return anvil != null ? anvil.getRenameText() : null;
+    }
+
+    @NotNull
+    @Override
+    protected Inventory generateInventory(@NotNull GuiManager manager) {
+        this.guiManager = manager;
+
+        createInventory();
+        ItemStack item;
+        if ((item = cellItems.get(0)) != null) {
+            inventory.setItem(0, item);
+        } else if ((item = cellItems.get(1)) != null) {
+            inventory.setItem(1, item);
+        } else if (!acceptsItems) {
+            inventory.setItem(0, GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " "));
+        }
+        if ((item = cellItems.get(2)) != null) {
+            inventory.setItem(2, item);
+        }
+
+        return inventory;
+    }
+
+    @Override
+    protected void createInventory() {
+        CoreNMS nms = NmsManager.getNMS();
+        if (nms != null) {
+            anvil = nms.createAnvil(player, new GuiHolder(guiManager, this));
+            anvil.setCustomTitle(title);
+            anvil.setLevelCost(0);
+            inventory = anvil.getInventory();
+        }
+    }
+}

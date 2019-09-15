@@ -31,9 +31,8 @@ class PopupMessage {
     private final NamespacedKey key;
     private final TextComponent title;
     CompatibleMaterial icon;
-    int iconAmount = 1; // experimental, untested
     TriggerType trigger = TriggerType.IMPOSSIBLE;
-    FrameType frame = FrameType.GOAL;
+    FrameType frame = FrameType.GOAL; // TASK is the default
     BackgroundType background = BackgroundType.ADVENTURE;
 
     PopupMessage(Plugin source, CompatibleMaterial icon, String title) {
@@ -57,9 +56,6 @@ class PopupMessage {
             displayIcon.addProperty("item", "minecraft:" + this.icon.getMaterial().name().toLowerCase());
             if (this.icon.usesData()) {
                 displayIcon.addProperty("data", this.icon.getData());
-            }
-            if (this.iconAmount > 1) {
-                displayIcon.addProperty("amount", this.iconAmount); // not entirely sure if this works
             }
             advDisplay.add("icon", displayIcon);
         }

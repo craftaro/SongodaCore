@@ -78,20 +78,34 @@ public class GuiManager {
         } else if (!initialized) {
             init();
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        if (gui instanceof AnvilGui) {
+            // bukkit throws a fit now if you try to set anvil stuff asyncronously
             Gui openInv = openInventories.get(player);
             if (openInv != null) {
                 openInv.open = false;
             }
-            Inventory inv = gui.getOrCreateInventory(this);
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                player.openInventory(inv);
-                gui.onOpen(this, player);
-                synchronized(lock) {
-                    openInventories.put(player, gui);
+            gui.getOrCreateInventory(this);
+            ((AnvilGui) gui).open();
+            gui.onOpen(this, player);
+            synchronized (lock) {
+                openInventories.put(player, gui);
+            }
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                Gui openInv = openInventories.get(player);
+                if (openInv != null) {
+                    openInv.open = false;
                 }
+                Inventory inv = gui.getOrCreateInventory(this);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    player.openInventory(inv);
+                    gui.onOpen(this, player);
+                    synchronized(lock) {
+                        openInventories.put(player, gui);
+                    }
+                });
             });
-        });
+        }
     }
 
     public void showPopup(Player player, String message) {
@@ -195,7 +209,11 @@ public class GuiManager {
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
                     && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 Gui gui = ((GuiHolder) openInv.getHolder()).getGUI();
-                if(!gui.open) {
+                if (gui instanceof AnvilGui) {
+                    gui.inventory.clear();
+                    gui.inventory = null;
+                }
+                if (!gui.open) {
                     return;
                 }
                 final Player player = (Player) event.getPlayer();
