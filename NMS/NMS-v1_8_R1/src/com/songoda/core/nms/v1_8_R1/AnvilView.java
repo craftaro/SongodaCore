@@ -1,6 +1,9 @@
 package com.songoda.core.nms.v1_8_R1;
 
 import com.songoda.core.nms.CustomAnvil;
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.ChatMessage;
 import net.minecraft.server.v1_8_R1.ContainerAnvil;
@@ -17,6 +20,17 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private String title = "Repairing";
     private int cost = -1;
     private boolean canUse = true;
+
+    static Field mc_ContainerAnvil_renameText;
+
+    static {
+        try {
+            mc_ContainerAnvil_renameText = ContainerAnvil.class.getDeclaredField("l");
+            mc_ContainerAnvil_renameText.setAccessible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
+        }
+    }
 
     public AnvilView(EntityPlayer entity) {
         super(entity.inventory, entity.world, new BlockPosition(0, 0, 0), entity);
@@ -35,6 +49,22 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         if (cost >= 0) {
             this.a = cost;
         }
+    }
+
+    @Override
+    public String getRenameText() {
+        try {
+            //return this.l;
+            return (String) mc_ContainerAnvil_renameText.get(this);
+        } catch (Exception ex) {
+            Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public void setRenameText(String text) {
+        this.a(text);
     }
 
     @Override

@@ -21,6 +21,10 @@ public interface CustomAnvil {
 
     public void setCustomTitle(String title);
 
+    public String getRenameText();
+
+    public void setRenameText(String text);
+
     public ItemStack getLeftInput();
 
     public ItemStack getRightInput();

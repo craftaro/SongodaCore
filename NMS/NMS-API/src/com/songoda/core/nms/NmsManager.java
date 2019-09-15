@@ -6,14 +6,14 @@ import org.bukkit.Bukkit;
 
 public class NmsManager {
 
-    private final static CoreNMS nms = _getNMS();
     private final static String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
     private final static String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
+    private final static CoreNMS nms = _getNMS();
 
     private static CoreNMS _getNMS() {
         CoreNMS result = null;
         try {
-            result = (CoreNMS) Class.forName("com.songoda.core.nms" + serverPackageVersion + "NMS").newInstance();
+            result = (CoreNMS) Class.forName("com.songoda.core.nms." + serverPackageVersion + ".NMS").newInstance();
         } catch (Exception ex) {
             Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version", ex);
         }

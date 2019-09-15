@@ -39,6 +39,16 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     }
 
     @Override
+    public String getRenameText() {
+        return this.renameText;
+    }
+
+    @Override
+    public void setRenameText(String text) {
+        this.a(text);
+    }
+
+    @Override
     public String getCustomTitle() {
         return title;
     }
