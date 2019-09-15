@@ -74,12 +74,17 @@ public class GuiManager {
      */
     public void showGUI(Player player, Gui gui) {
         if (shutdown) {
-            return;
+            if(plugin.isEnabled()) {
+                // recover if reloaded without calling init manually
+                init();
+            } else {
+               return; 
+            }
         } else if (!initialized) {
             init();
         }
         if (gui instanceof AnvilGui) {
-            // bukkit throws a fit now if you try to set anvil stuff asyncronously
+            // bukkit throws a fit now if you try to set anvil stuff asynchronously
             Gui openInv = openInventories.get(player);
             if (openInv != null) {
                 openInv.open = false;
