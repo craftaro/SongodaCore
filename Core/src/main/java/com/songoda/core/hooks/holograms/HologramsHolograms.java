@@ -5,11 +5,10 @@ import com.sainttx.holograms.api.HologramPlugin;
 import com.sainttx.holograms.api.line.HologramLine;
 import com.sainttx.holograms.api.line.TextLine;
 import java.util.HashSet;
-import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
-
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 public class HologramsHolograms extends Holograms {
 

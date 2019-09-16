@@ -196,6 +196,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.zrips</groupId>
+            <artifactId>CMI</artifactId>
+            <version>8.4.0.2_1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.tnemc</groupId>
             <artifactId>Reserve</artifactId>
             <version>0.1.3.0</version>

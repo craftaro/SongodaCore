@@ -4,6 +4,7 @@ import com.songoda.core.hooks.economies.Economy;
 import com.songoda.core.hooks.economies.PlayerPointsEconomy;
 import com.songoda.core.hooks.economies.ReserveEconomy;
 import com.songoda.core.hooks.economies.VaultEconomy;
+import com.songoda.core.hooks.holograms.CMIHolograms;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
 import com.songoda.core.hooks.stackers.UltimateStacker;
@@ -33,6 +34,7 @@ public final class PluginHook <T extends Class> {
     public static final PluginHook STACKER_STACK_MOB    = new PluginHook(Stacker.class, "StackMob", StackMob.class);
     public static final PluginHook HOLO_DISPLAYS        = new PluginHook(Holograms.class, "HolographicDisplays", HolographicDisplaysHolograms.class);
     public static final PluginHook HOLO_HOLOGRAMS       = new PluginHook(Holograms.class, "Holograms", HologramsHolograms.class);
+    public static final PluginHook HOLO_CMI             = new PluginHook(Holograms.class, "CMI", CMIHolograms.class);
 
     /******* Start Manager stuff *******/
 
