@@ -1,13 +1,16 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.nms.CoreNMS;
 import com.songoda.core.nms.CustomAnvil;
 import com.songoda.core.nms.NmsManager;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Anvil GUI for text prompts
@@ -27,6 +30,16 @@ public class AnvilGui extends Gui {
     public AnvilGui(Player player, Gui parent) {
         super(parent);
         this.player = player;
+    }
+
+    @NotNull
+    public AnvilGui setAction(@Nullable Clickable action) {
+        return (AnvilGui) setAction(2, action);
+    }
+
+    @NotNull
+    public AnvilGui setAction(@Nullable ClickType type, @Nullable Clickable action) {
+        return (AnvilGui) setAction(2, type, action);
     }
 
     public void open() {
