@@ -42,7 +42,7 @@ public class AnvilGui extends Gui {
         return (AnvilGui) setAction(2, type, action);
     }
 
-    public void open() {
+    protected void open() {
         anvil.open();
     }
 
