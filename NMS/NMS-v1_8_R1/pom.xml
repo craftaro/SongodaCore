@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <parent>
+        <groupId>com.songoda</groupId>
+        <artifactId>SongodaCore-Modules</artifactId>
+        <version>maven-version-number</version>
+        <relativePath>../../</relativePath>
+    </parent>
+
+    <artifactId>SongodaCore-NMS-v1_8_R1</artifactId>
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.8-R0.1-20190912.143550-1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>SongodaCore-NMS-API</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
