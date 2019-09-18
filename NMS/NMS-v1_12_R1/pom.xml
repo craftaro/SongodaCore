@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <parent>
+        <groupId>com.songoda</groupId>
+        <artifactId>SongodaCore-Modules</artifactId>
+        <version>maven-version-number</version>
+        <relativePath>../../</relativePath>
+    </parent>
+
+    <artifactId>SongodaCore-NMS-v1_12_R1</artifactId>
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.destroystokyo.papermc</groupId>
+            <artifactId>paper</artifactId>
+            <version>1.12.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>SongodaCore-NMS-API</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
