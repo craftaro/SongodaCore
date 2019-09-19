@@ -88,10 +88,15 @@ public class SongodaCore {
                 if(clazz.getSimpleName().equals("SongodaCore")) {
                     try {
                         // test to see if we're up to date
-                        int otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                        int otherVersion;
+                        try {
+                            otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                        } catch (Exception ignore) {
+                            otherVersion = -1;
+                        }
                         if(otherVersion >= getCoreVersion()) {
                             // use the active service
-                            // assuming that the other is greater than R6 ;)
+                            // assuming that the other is greater than R6 if we get here ;)
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
 
                             if(hasShading()) {

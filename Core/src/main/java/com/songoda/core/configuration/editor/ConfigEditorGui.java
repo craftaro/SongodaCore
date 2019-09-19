@@ -40,10 +40,9 @@ public class ConfigEditorGui extends SimplePagedGui {
 
     public ConfigEditorGui(JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config) {
         this(plugin, parent, file, config, config);
-        setOnClose((gui) -> save());
     }
 
-    public ConfigEditorGui(JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
+    protected ConfigEditorGui(JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
         super(parent);
         this.plugin = plugin;
         this.file = file;
@@ -150,6 +149,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             ++index;
         }
 
+        setOnClose((gui) -> save());
     }
 
     public ConfigurationSection getCurrentNode() {

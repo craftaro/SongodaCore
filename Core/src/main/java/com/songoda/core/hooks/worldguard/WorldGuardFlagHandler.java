@@ -1,8 +1,3 @@
-/**
- * Hooks for adding a custom WorldGuard flag
- * 
- * Note: Hooks must be added before WG loads!
- */
 package com.songoda.core.hooks.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -29,6 +24,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
+/**
+ * Hooks for adding a custom WorldGuard flag
+ * 
+ * Note: Hooks must be added before WG loads!
+ */
 public class WorldGuardFlagHandler {
     
 	static Boolean wgPlugin = null;

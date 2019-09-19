@@ -52,4 +52,13 @@ public class DataManagerAbstract {
     public void async(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
     }
+
+    /**
+     * Queue a task to be run synchronously.
+     * 
+     * @param runnable task to run on the next server tick
+     */
+    public void sync(Runnable runnable) {
+        Bukkit.getScheduler().runTask(this.plugin, runnable);
+    }
 }
