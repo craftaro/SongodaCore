@@ -43,12 +43,13 @@ public class DataManagerAbstract {
         }
     }
 
+    /**
+     * Queue a task to be run asynchronously. <br>
+     * TODO: This needs to be separated from BukkitScheduler
+     * 
+     * @param runnable task to run
+     */
     public void async(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
     }
-
-    public void sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(this.plugin, runnable);
-    }
-
 }
