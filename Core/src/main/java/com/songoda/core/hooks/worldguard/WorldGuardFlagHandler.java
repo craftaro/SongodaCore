@@ -1,8 +1,3 @@
-/**
- * Hooks for adding a custom WorldGuard flag
- * 
- * Note: Hooks must be added before WG loads!
- */
 package com.songoda.core.hooks.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -29,6 +24,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
+/**
+ * Hooks for adding a custom WorldGuard flag
+ * 
+ * Note: Hooks must be added before WG loads!
+ */
 public class WorldGuardFlagHandler {
     
 	static Boolean wgPlugin = null;
@@ -229,6 +229,9 @@ public class WorldGuardFlagHandler {
     static Constructor legacy_newProtectedCuboidRegion;
     static Class legacy_blockVectorClazz;
     static Constructor legacy_newblockVector;
+    static Class legacy_VectorClazz;
+    static Constructor legacy_newVectorClazz;
+    static Method legacy_getApplicableRegions_Vector = null;
 
     private static Boolean getBooleanFlagLegacy(Location l, Object flag) {
         try {
@@ -244,6 +247,9 @@ public class WorldGuardFlagHandler {
                 legacy_newblockVector = legacy_blockVectorClazz.getConstructor(int.class, int.class, int.class);
                 legacy_newProtectedCuboidRegion = Class.forName("com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion")
                         .getConstructor(String.class, legacy_blockVectorClazz, legacy_blockVectorClazz);
+                legacy_VectorClazz = Class.forName("com.sk89q.worldedit.Vector");
+                legacy_newVectorClazz = legacy_VectorClazz.getConstructor(int.class, int.class, int.class);
+                legacy_getApplicableRegions_Vector = RegionManager.class.getDeclaredMethod("getApplicableRegions", legacy_VectorClazz);
             }
 
             // grab the applicable manager for this world
@@ -251,13 +257,15 @@ public class WorldGuardFlagHandler {
             if (worldManager == null)
                 return null;
 
+            // create a vector object
+            Object vec = legacy_newVectorClazz.newInstance(l.getBlockX(), l.getBlockY(), l.getBlockZ());
             // now look for any intersecting regions
-            Object set = legacy_getApplicableRegions_Region.invoke(worldManager, l);
+            Object set = legacy_getApplicableRegions_Vector.invoke(worldManager, legacy_VectorClazz.cast(vec));
 
             // so what's the verdict?
-            State result = null;
+            State result;
             if(legacy_v6) {
-                set = ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function
@@ -293,6 +301,9 @@ public class WorldGuardFlagHandler {
                 legacy_newblockVector = legacy_blockVectorClazz.getConstructor(int.class, int.class, int.class);
                 legacy_newProtectedCuboidRegion = Class.forName("com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion")
                         .getConstructor(String.class, legacy_blockVectorClazz, legacy_blockVectorClazz);
+                legacy_VectorClazz = Class.forName("com.sk89q.worldedit.Vector");
+                legacy_newVectorClazz = legacy_VectorClazz.getConstructor(int.class, int.class, int.class);
+                legacy_getApplicableRegions_Vector = RegionManager.class.getDeclaredMethod("getApplicableRegions", legacy_VectorClazz);
             }
 
             // grab the applicable manager for this world
@@ -309,9 +320,9 @@ public class WorldGuardFlagHandler {
             Object set = legacy_getApplicableRegions_Region.invoke(worldManager, chunkRegion);
 
             // so what's the verdict?
-            State result = null;
+            State result;
             if(legacy_v6) {
-                set = ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function

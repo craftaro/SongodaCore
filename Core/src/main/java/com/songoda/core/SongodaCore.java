@@ -15,12 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -88,10 +83,15 @@ public class SongodaCore {
                 if(clazz.getSimpleName().equals("SongodaCore")) {
                     try {
                         // test to see if we're up to date
-                        int otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                        int otherVersion;
+                        try {
+                            otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                        } catch (Exception ignore) {
+                            otherVersion = -1;
+                        }
                         if(otherVersion >= getCoreVersion()) {
                             // use the active service
-                            // assuming that the other is greater than R6 ;)
+                            // assuming that the other is greater than R6 if we get here ;)
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
 
                             if(hasShading()) {
@@ -172,7 +172,7 @@ public class SongodaCore {
      */
     private void destroy() {
         Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
-        tasks.stream().filter(task -> task != null && !task.isCancelled())
+        tasks.stream().filter(Objects::nonNull)
                 .forEach(task -> Bukkit.getScheduler().cancelTask(task.getTaskId()));
         HandlerList.unregisterAll(loginListener);
         if (!hasShading()) {
