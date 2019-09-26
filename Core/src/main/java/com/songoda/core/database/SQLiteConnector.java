@@ -18,16 +18,18 @@ public class SQLiteConnector implements DatabaseConnector {
         this.connectionString = "jdbc:sqlite:" + plugin.getDataFolder() + File.separator + plugin.getDescription().getName().toLowerCase() + ".db";
 
         try {
-            Class.forName("org.sqlite.JDBC"); // This is required to put here for Spigot 1.10 and below for some reason
+            Class.forName("org.sqlite.JDBC"); // This is required to put here for Spigot 1.10 and below to force class load
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
     public boolean isInitialized() {
         return true; // Always available
     }
 
+    @Override
     public void closeConnection() {
         try {
             if (this.connection != null) {
@@ -38,6 +40,7 @@ public class SQLiteConnector implements DatabaseConnector {
         }
     }
 
+    @Override
     public void connect(ConnectionCallback callback) {
         if (this.connection == null) {
             try {

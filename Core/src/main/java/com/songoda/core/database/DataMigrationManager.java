@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 public class DataMigrationManager {
 
-    private List<DataMigration> migrations;
-    private DatabaseConnector databaseConnector;
-    private DataManagerAbstract dataManagerAbstract;
+    private final List<DataMigration> migrations;
+    private final DatabaseConnector databaseConnector;
+    private final DataManagerAbstract dataManagerAbstract;
 
     public DataMigrationManager(DatabaseConnector databaseConnector, DataManagerAbstract dataManagerAbstract, DataMigration... migrations) {
         this.databaseConnector = databaseConnector;

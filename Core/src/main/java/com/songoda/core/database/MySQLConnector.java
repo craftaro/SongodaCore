@@ -30,14 +30,17 @@ public class MySQLConnector implements DatabaseConnector {
         }
     }
 
+    @Override
     public boolean isInitialized() {
         return this.initializedSuccessfully;
     }
 
+    @Override
     public void closeConnection() {
         this.hikari.close();
     }
 
+    @Override
     public void connect(ConnectionCallback callback) {
         try (Connection connection = this.hikari.getConnection()) {
             callback.accept(connection);
