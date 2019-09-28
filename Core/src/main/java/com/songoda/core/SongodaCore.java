@@ -15,12 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -177,7 +172,7 @@ public class SongodaCore {
      */
     private void destroy() {
         Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
-        tasks.stream().filter(task -> task != null && !task.isCancelled())
+        tasks.stream().filter(Objects::nonNull)
                 .forEach(task -> Bukkit.getScheduler().cancelTask(task.getTaskId()));
         HandlerList.unregisterAll(loginListener);
         if (!hasShading()) {
