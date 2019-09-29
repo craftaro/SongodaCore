@@ -4,7 +4,7 @@ stages:
 variables:
   name: "SongodaCore"
   path: "/builds/$CI_PROJECT_PATH"
-  version: "2.1.8"
+  version: "2.1.9"
 
 build:
   stage: build

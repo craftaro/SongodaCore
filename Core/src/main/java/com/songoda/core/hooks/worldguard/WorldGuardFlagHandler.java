@@ -34,7 +34,8 @@ public class WorldGuardFlagHandler {
 	static Boolean wgPlugin = null;
     static Object worldGuardPlugin;
     static boolean wg_v7 = false;
-    static boolean legacy_v6 = false;
+    static boolean legacy_v60 = false;
+    static boolean legacy_v62 = false;
     static boolean legacy_v5 = false;
 	static boolean hooksInstalled = false;
     static Map<String, Object> flags = new HashMap();
@@ -55,23 +56,29 @@ public class WorldGuardFlagHandler {
                 wg_v7 = true;
             } catch (ClassNotFoundException ex) {
                 try {
-                    // if this class exists, we're on 6.0
-                    Class.forName("com.sk89q.worldguard.protection.flags.FlagContextCreateEvent");
-                    legacy_v6 = true;
+                    // if this class exists, we're on 6.2
+                    Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
+                    legacy_v62 = true;
                 } catch (ClassNotFoundException ex2) {
                     try {
-                        // if this class exists, we're on 5.x
-                        Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
-                        legacy_v5 = true;
-                    } catch (ClassNotFoundException ex3) {
-                        // ¯\_(ツ)_/¯
+                        // if this class exists, we're on 6.0
+                        Class.forName("com.sk89q.worldguard.protection.flags.BuildFlag");
+                        legacy_v60 = true;
+                    } catch (ClassNotFoundException ex3) {try {
+                            // if this class exists, we're on 5.x
+                            Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
+                            legacy_v5 = true;
+                        } catch (ClassNotFoundException ex4) {
+                            // ¯\_(ツ)_/¯
+                            wgPlugin = false;
+                        }
                     }
                 }
             }
         }
         if (!wgPlugin) return;
 
-        if (legacy_v6 || legacy_v5) {
+        if (legacy_v62 || legacy_v60 || legacy_v5) {
             addLegacyHook(flag, state);
             return;
         }
@@ -125,7 +132,7 @@ public class WorldGuardFlagHandler {
             // and put the new list into place
 			setStaticField(flagField, flagsNew);
 
-            if(legacy_v6) {
+            if(legacy_v62) { // SimpleFlagRegistry is NOT in 6.0
                 // register this flag in the registry
                 Object flagRegistry = getPrivateField(worldGuardPlugin.getClass(), worldGuardPlugin, "flagRegistry");
                 Class simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
@@ -137,7 +144,7 @@ public class WorldGuardFlagHandler {
             flags.put(flag, wgFlag);
         } catch (Exception ex) {
             //Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to set legacy WorldGuard Flags", ex);
-            Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard " + (legacy_v6 ? "6" : "5"), flag);
+            Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard " + (legacy_v62 ? "6.2" : (legacy_v60 ? "6.0" : "5")), flag);
 			Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             wgPlugin = false;
         }
@@ -171,11 +178,11 @@ public class WorldGuardFlagHandler {
         if (wgPlugin == null || !wgPlugin) return null;
         Object flagObj = flags.get(flag);
         // There's a different way to get this in the old version
-        if (legacy_v6 || legacy_v5)
+        if (legacy_v62 || legacy_v60 || legacy_v5)
             return flagObj == null ? null : getBooleanFlagLegacy(l, flagObj);
 
         // for convinience, we can load a flag if we don't know it
-        if (flagObj == null && !legacy_v6)
+        if (flagObj == null)
             flags.put(flag, flagObj = WorldGuard.getInstance().getFlagRegistry().get(flag));
 
         // so, what's up?
@@ -198,7 +205,7 @@ public class WorldGuardFlagHandler {
         if (wgPlugin == null || !wgPlugin) return null;
         Object flagObj = flags.get(flag);
         // There's a different way to get this in the old version
-        if (legacy_v6 || legacy_v5)
+        if (legacy_v62 || legacy_v60 || legacy_v5)
             return flagObj == null ? null : getBooleanFlagLegacy(c, flagObj);
 
         // for convinience, we can load a flag if we don't know it
@@ -264,7 +271,7 @@ public class WorldGuardFlagHandler {
 
             // so what's the verdict?
             State result;
-            if(legacy_v6) {
+            if(legacy_v62 || legacy_v60) {
                 result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
@@ -321,7 +328,7 @@ public class WorldGuardFlagHandler {
 
             // so what's the verdict?
             State result;
-            if(legacy_v6) {
+            if(legacy_v62 || legacy_v60) {
                 result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet

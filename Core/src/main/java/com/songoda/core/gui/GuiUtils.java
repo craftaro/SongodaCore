@@ -180,6 +180,104 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(CompatibleMaterial mat, String[] lore) {
+        ItemStack item = mat.getItem();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && lore.length != 0) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(CompatibleMaterial mat, int amount, String[] lore) {
+        ItemStack item = mat.getItem();
+        item.setAmount(amount);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && lore.length != 0) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(ItemStack from, String[] lore) {
+        ItemStack item = from.clone();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && lore.length != 0) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(CompatibleMaterial mat, List<String> lore) {
+        ItemStack item = mat.getItem();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && !lore.isEmpty()) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(CompatibleMaterial mat, int amount, List<String> lore) {
+        ItemStack item = mat.getItem();
+        item.setAmount(amount);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && !lore.isEmpty()) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(ItemStack from, List<String> lore) {
+        ItemStack item = from.clone();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (lore != null && !lore.isEmpty()) {
+                List<String> safe = getSafeLore(lore);
+                meta.setDisplayName(safe.get(0));
+                meta.setLore(safe.subList(1, safe.size()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
     public static ItemStack updateItem(ItemStack item, String title, String... lore) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {

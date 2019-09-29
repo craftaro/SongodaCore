@@ -45,6 +45,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public ConfigFileConfigurationAdapter getConfig() {
+        // todo? change prototype to FileConfiguration? This seems to cause development issues due to shading.
         return config.getFileConfig();
     }
 
