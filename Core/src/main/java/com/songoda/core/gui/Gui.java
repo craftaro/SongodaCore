@@ -602,8 +602,9 @@ public class Gui {
     @NotNull
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
         nextPageIndex = cell;
+        nextPage = item;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
+            setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -611,8 +612,9 @@ public class Gui {
     @NotNull
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
         nextPageIndex = col + row * 9;
+        nextPage = item;
         if (page < pages) {
-            setButton(nextPageIndex, nextPage = item, ClickType.LEFT, (event) -> this.nextPage());
+            setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
         }
         return this;
     }
@@ -620,8 +622,9 @@ public class Gui {
     @NotNull
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
         prevPageIndex = cell;
+        prevPage = item;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
+            setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
@@ -629,8 +632,9 @@ public class Gui {
     @NotNull
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
         prevPageIndex = col + row * 9;
+        prevPage = item;
         if (page > 1) {
-            setButton(prevPageIndex, prevPage = item, ClickType.LEFT, (event) -> this.prevPage());
+            setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
         }
         return this;
     }
