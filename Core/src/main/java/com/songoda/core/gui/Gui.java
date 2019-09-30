@@ -635,6 +635,13 @@ public class Gui {
         return this;
     }
 
+    public void setPages(int pages) {
+        this.pages = Math.max(1, pages);
+        if (page > pages) {
+            setPage(pages);
+        }
+    }
+
     public void setPage(int page) {
         int lastPage = this.page;
         this.page = Math.max(1, Math.min(pages, page));
