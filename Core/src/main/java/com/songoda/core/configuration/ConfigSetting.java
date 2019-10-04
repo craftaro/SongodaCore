@@ -106,13 +106,14 @@ public class ConfigSetting {
 
     @NotNull
     public CompatibleMaterial getMaterial() {
-        CompatibleMaterial val = CompatibleMaterial.getMaterial(config.getString(key));
+        String val = config.getString(key);
+        CompatibleMaterial mat = CompatibleMaterial.getMaterial(config.getString(key));
 
-        if (val == null) {
+        if (mat == null) {
             System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
         }
 
-        return val != null ? val : CompatibleMaterial.STONE;
+        return mat != null ? mat : CompatibleMaterial.STONE;
     }
 
     @NotNull
