@@ -182,10 +182,27 @@ public class Gui {
     }
 
     @NotNull
+    public Gui setUnlockedRange(int cellFirst, int cellLast, boolean open) {
+        for (int cell = cellFirst; cell <= cellLast; ++cell) {
+            unlockedCells.put(cell, open);
+        }
+        return this;
+    }
+
+    @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
         final int last = cellColLast + cellRowLast * 9;
         for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
             unlockedCells.put(cell, true);
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
+        final int last = cellColLast + cellRowLast * 9;
+        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+            unlockedCells.put(cell, open);
         }
         return this;
     }

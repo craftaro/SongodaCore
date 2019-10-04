@@ -1,7 +1,6 @@
 package com.songoda.core;
 
 import com.songoda.core.configuration.Config;
-import com.songoda.core.configuration.ConfigFileConfigurationAdapter;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import java.util.List;
