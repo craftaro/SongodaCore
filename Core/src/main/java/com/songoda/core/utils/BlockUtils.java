@@ -442,7 +442,7 @@ public class BlockUtils {
             CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
             if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS ? 3 : 7)) {
                 try {
-                    legacySetBlockData.invoke(block, (byte) block.getData() + 1);
+                    legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
                     Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
                 }
