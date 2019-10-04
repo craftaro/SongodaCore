@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -44,9 +45,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public abstract List<Config> getExtraConfig();
 
     @Override
-    public ConfigFileConfigurationAdapter getConfig() {
-        // todo? change prototype to FileConfiguration? This seems to cause development issues due to shading.
+    public FileConfiguration getConfig() {
         return config.getFileConfig();
+    }
+
+    public Config getCoreConfig() {
+        return config;
     }
 
     @Override
