@@ -1,13 +1,14 @@
 package com.songoda.core.core;
 
 import com.songoda.core.locale.Locale;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
+import com.sun.istack.internal.logging.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class LocaleModule implements PluginInfoModule {
 
@@ -25,7 +26,7 @@ public class LocaleModule implements PluginInfoModule {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(LocaleModule.class).log(Level.INFO, "Failed to check for locale files: " + e.getMessage());
         }
     }
 
