@@ -789,8 +789,8 @@ public class Gui {
     protected static String trimTitle(String title) {
         if(title == null) {
             return "";
-        } else if (title != null && title.length() > 32) {
-            return title.substring(0, 31);
+        } else if (title.length() > 32) {
+            return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);
         }
         return title;
     }
