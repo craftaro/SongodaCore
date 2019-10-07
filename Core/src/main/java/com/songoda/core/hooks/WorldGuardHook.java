@@ -70,27 +70,59 @@ public class WorldGuardHook {
         return canHook ? WorldGuardFlagHandler.getBooleanFlag(c, flag) : null;
     }
 
+    /**
+     * Check to see if the pvp flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the pvp flag is not set for this region, or is set to DENY
+     */
     public static boolean isPvpAllowed(@NotNull Location loc) {
         return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "pvp"), Boolean.TRUE) : false;
     }
 
+    /**
+     * Check to see if the block-break flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the block-break flag is not set for this region, or is set to DENY
+     */
     public boolean isBreakAllowed(@NotNull Location loc) {
         return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "block-break"), Boolean.TRUE) : false;
     }
 
+    /**
+     * Check to see if the other-explosion flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the other-explosion flag is not set for this region, or is set to DENY
+     */
     public boolean isExplosionsAllowed(@NotNull Location loc) {
         return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "other-explosion"), Boolean.TRUE) : false;
     }
 
+    /**
+     * Check to see if the mob-spawning flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the mob-spawning flag is not set for this region, or is set to DENY
+     */
     public boolean isMobSpawningAllowed(@NotNull Location loc) {
         return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "mob-spawning"), Boolean.TRUE) : false;
     }
 
+    /**
+     * @param loc Location to check
+     * @return A list of regions that contain this location.
+     */
     @NotNull
     public static List<String> getRegionNames(@NotNull Location loc) {
         return canHook ? WorldGuardRegionHandler.getRegionNames(loc) : Collections.EMPTY_LIST;
     }
 
+    /**
+     * @param c Chunk to check
+     * @return A list of regions that contain any part of this chunk.
+     */
     @NotNull
     public static List<String> getRegionNames(@NotNull Chunk c) {
         return canHook ? WorldGuardRegionHandler.getRegionNames(c) : Collections.EMPTY_LIST;

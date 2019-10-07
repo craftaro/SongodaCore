@@ -19,7 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -214,11 +213,11 @@ public class WorldGuardFlagHandler {
     /**
      * Checks this location to see what this flag is set to
      *
-     * @param l location to check
+     * @param loc location to check
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Location l, String flag) {
+    public static Boolean getBooleanFlag(Location loc, String flag) {
         if (!wgPlugin) {
             return null;
         }
@@ -226,15 +225,15 @@ public class WorldGuardFlagHandler {
 
         // There's a different way to get this in the old version
         if (legacy_v62 || legacy_v60 || legacy_v5) {
-            return flagObj == null ? null : getBooleanFlagLegacy(l, flagObj);
+            return flagObj == null ? null : getBooleanFlagLegacy(loc, flagObj);
         }
 
         // so, what's up?
         if (flagObj instanceof StateFlag) {
-            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            RegionQuery query = container.createQuery();
-            com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(l);
-            return query.testState(loc, (RegionAssociable) null, (StateFlag) flagObj);
+            RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+            //return query.testState(BukkitAdapter.adapt(loc), (RegionAssociable) null, (StateFlag) flagObj);
+            State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(null, (StateFlag) flagObj);
+            return result != null ? result == State.ALLOW : null;
         }
         return null;
     }
