@@ -9,29 +9,42 @@ import java.util.List;
 
 public abstract class AbstractCommand {
 
-    private final boolean noConsole;
-    private boolean hasArgs = false;
+    private final CommandType _cmdType;
+    private final boolean _hasArgs;
+    private final List<String> _handledCommands = new ArrayList<>();
 
-    private final List<String> subCommand = new ArrayList<>();
-
-    protected AbstractCommand(boolean noConsole, String... command) {
-        this.subCommand.addAll(Arrays.asList(command));
-        this.noConsole = noConsole;
+    protected AbstractCommand(CommandType type, String... command) {
+        this._handledCommands.addAll(Arrays.asList(command));
+        this._hasArgs = false;
+        this._cmdType = type;
     }
 
-    protected AbstractCommand(boolean noConsole, boolean hasArgs, String... command) {
-        this.subCommand.addAll(Arrays.asList(command));
+    protected AbstractCommand(CommandType type, boolean hasArgs, String... command) {
+        this._handledCommands.addAll(Arrays.asList(command));
+        this._hasArgs = hasArgs;
+        this._cmdType = type;
+    }
 
-        this.hasArgs = hasArgs;
-        this.noConsole = noConsole;
+    @Deprecated
+    protected AbstractCommand(boolean noConsole, String... command) {
+        this._handledCommands.addAll(Arrays.asList(command));
+        this._hasArgs = false;
+        this._cmdType = noConsole ? CommandType.PLAYER_ONLY : CommandType.CONSOLE_OK;
+    }
+
+    @Deprecated
+    protected AbstractCommand(boolean noConsole, boolean hasArgs, String... command) {
+        this._handledCommands.addAll(Arrays.asList(command));
+        this._hasArgs = hasArgs;
+        this._cmdType = noConsole ? CommandType.PLAYER_ONLY : CommandType.CONSOLE_OK;
     }
 
     public final List<String> getCommands() {
-        return Collections.unmodifiableList(subCommand);
+        return Collections.unmodifiableList(_handledCommands);
     }
 
     public final void addSubCommand(String command) {
-        subCommand.add(command);
+        _handledCommands.add(command);
     }
 
     protected abstract ReturnType runCommand(CommandSender sender, String... args);
@@ -45,13 +58,14 @@ public abstract class AbstractCommand {
     public abstract String getDescription();
 
     public boolean hasArgs() {
-        return hasArgs;
+        return _hasArgs;
     }
 
     public boolean isNoConsole() {
-        return noConsole;
+        return _cmdType == CommandType.PLAYER_ONLY;
     }
 
-    public static enum ReturnType {SUCCESS, FAILURE, SYNTAX_ERROR}
+    public static enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
+    public static enum CommandType {PLAYER_ONLY, CONSOLE_OK}
 }
 

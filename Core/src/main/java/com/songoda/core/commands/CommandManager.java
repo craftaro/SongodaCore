@@ -2,17 +2,9 @@ package com.songoda.core.commands;
 
 import com.songoda.core.compatibility.ServerProject;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.utils.TextUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,18 +13,50 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandManager implements CommandExecutor, TabCompleter {
 
     private final JavaPlugin plugin;
 
     private final HashMap<String, SimpleNestedCommand> commands = new HashMap<>();
+    private String msg_noConsole = ChatColor.RED + "You must be a player to use this command.";
+    private String msg_noPerms = ChatColor.RED + "You do not have permission to do that.";
+    private String msg_noCommand = ChatColor.GRAY + "The command you entered does not exist or is spelt incorrectly.";
+    private List<String> msg_syntaxError = Arrays.asList(
+            ChatColor.RED + "Invalid Syntax!",
+            ChatColor.GRAY + "The valid syntax is: " + ChatColor.GOLD + "%syntax%" + ChatColor.GRAY + "."
+    );
+
     private boolean allowLooseCommands = false;
 
     public CommandManager(JavaPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void setNoConsoleMessage(String msg_noConsole) {
+        this.msg_noConsole = msg_noConsole;
+    }
+
+    public void setNoPermsMessage(String msg_noPerms) {
+        this.msg_noPerms = msg_noPerms;
+    }
+
+    public void setNoCommandMessage(String msg_noCommand) {
+        this.msg_noCommand = msg_noCommand;
+    }
+
+    public void setSyntaxErrorMessage(List<String> msg_syntaxError) {
+        this.msg_syntaxError = msg_syntaxError;
     }
 
     public Set<String> getCommands() {
@@ -51,8 +75,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 .forEach(c -> {
                     all.add(c.parent);
                     c.children.values().stream()
-                        .filter(s -> !all.contains(s))
-                        .forEach(s -> all.add(s));
+                    .filter(s -> !all.contains(s))
+                    .forEach(s -> all.add(s));
                 });
         return all;
     }
@@ -62,16 +86,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return this;
     }
 
-    /**
-     * TODO: Test compatibility. Seems to fail in 1.8
-     */
     public SimpleNestedCommand registerCommandDynamically(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
         abstractCommand.getCommands().stream().forEach(cmd -> {
             CommandManager.registerCommandDynamically(plugin, cmd, this, this);
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
-            if(pcmd != null) {
+            if (pcmd != null) {
                 pcmd.setExecutor(this);
                 pcmd.setTabCompleter(this);
             } else {
@@ -86,7 +107,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         abstractCommand.getCommands().stream().forEach(cmd -> {
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
-            if(pcmd != null) {
+            if (pcmd != null) {
                 pcmd.setExecutor(this);
                 pcmd.setTabCompleter(this);
             } else {
@@ -96,14 +117,43 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return nested;
     }
 
+    public MainCommand addMainCommand(String command) {
+        MainCommand nested = new MainCommand(plugin, command);
+        commands.put(command.toLowerCase(), nested.nestedCommands);
+
+        PluginCommand pcmd = plugin.getCommand(command);
+        if (pcmd != null) {
+            pcmd.setExecutor(this);
+            pcmd.setTabCompleter(this);
+        } else {
+            plugin.getLogger().warning("Failed to register command: /" + command);
+        }
+
+        return nested;
+    }
+
+    public MainCommand getMainCommand(String command) {
+        SimpleNestedCommand nested = command == null ? null : commands.get(command.toLowerCase());
+        if (nested != null && nested.parent instanceof MainCommand) {
+            return (MainCommand) nested.parent;
+        }
+        return null;
+    }
+
     public CommandManager addCommands(AbstractCommand... abstractCommands) {
-        for (AbstractCommand abstractCommand : abstractCommands)
+        for (AbstractCommand abstractCommand : abstractCommands) {
             addCommand(abstractCommand);
+        }
         return this;
     }
 
     public CommandManager setExecutor(String command) {
-        plugin.getCommand(command).setExecutor(this);
+        PluginCommand pcmd = command == null ? null : plugin.getCommand(command);
+        if (pcmd != null) {
+            pcmd.setExecutor(this);
+        } else {
+            plugin.getLogger().warning("Failed to register command: /" + command);
+        }
         return this;
     }
 
@@ -116,11 +166,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         // grab the specific command that's being called
         SimpleNestedCommand nested = commands.get(command.getName().toLowerCase());
-        if(nested != null) {
+        if (nested != null) {
             // check to see if we're trying to call a sub-command
-            if(args.length != 0 && !nested.children.isEmpty()) {
+            if (args.length != 0 && !nested.children.isEmpty()) {
                 String subCmd = getSubCommand(nested, args);
-                if(subCmd != null) {
+                if (subCmd != null) {
                     // we have a subcommand to use!
                     AbstractCommand sub = nested.children.get(subCmd);
                     // adjust the arguments to match - BREAKING!!
@@ -133,26 +183,32 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
             // if we've gotten this far, then just use the command we have
-            if(nested.parent != null) {
+            if (nested.parent != null) {
                 processRequirements(nested.parent, commandSender, args);
                 return true;
             }
         }
-        commandSender.sendMessage(TextUtils.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        commandSender.sendMessage(msg_noCommand);
         return true;
     }
 
     private String getSubCommand(SimpleNestedCommand nested, String[] args) {
         String cmd = args[0].toLowerCase();
-        if(nested.children.containsKey(cmd))
+        if (nested.children.containsKey(cmd)) {
             return cmd;
-        String match = null;
-        // support for two-argument subcommands
-        if(args.length >= 2 && nested.children.keySet().stream().anyMatch(k -> k.indexOf(' ') != -1)) {
-            String cmd2 = String.join(" ", args[0], args[1]);
-            if(nested.children.containsKey(cmd2))
-                return cmd2;
         }
+
+        String match = null;
+        // support for mulit-argument subcommands
+        if (args.length >= 2 && nested.children.keySet().stream().anyMatch(k -> k.indexOf(' ') != -1)) {
+            for (int len = args.length; len > 1; --len) {
+                String cmd2 = String.join(" ", Arrays.copyOf(args, len)).toLowerCase();
+                if (nested.children.containsKey(cmd2)) {
+                    return cmd2;
+                }
+            }
+        }
+
         // if we don't have a subcommand, should we search for one?
         if (allowLooseCommands) {
             // do a "closest match"
@@ -173,32 +229,35 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private void processRequirements(AbstractCommand command, CommandSender sender, String[] args) {
         if (!(sender instanceof Player) && command.isNoConsole()) {
-            sender.sendMessage("&cYou must be a player to use this command...");
+            sender.sendMessage(msg_noConsole);
             return;
         }
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(sender, args);
-            if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(TextUtils.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(TextUtils.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+            if (returnType == AbstractCommand.ReturnType.NEEDS_PLAYER) {
+                sender.sendMessage(msg_noConsole);
+            } else if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
+                for (String s : msg_syntaxError) {
+                    sender.sendMessage(s.replace("%syntax%", command.getSyntax()));
+                }
             }
             return;
         }
-        sender.sendMessage(TextUtils.formatText("&cYou do not have permission to do that."));
+        sender.sendMessage(msg_noPerms);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         // grab the specific command that's being called
         SimpleNestedCommand nested = commands.get(command.getName().toLowerCase());
-        if(nested != null) {
-            if(args.length == 0) {
+        if (nested != null) {
+            if (args.length == 0) {
                 return nested.parent != null ? nested.parent.onTab(sender, args) : null;
             }
             // check for each sub-command that they have access to
             final boolean op = sender.isOp();
             final boolean console = !(sender instanceof Player);
-            if(args.length == 1) {
+            if (args.length == 1) {
                 // suggest sub-commands that this user has access to
                 final String arg = args[0].toLowerCase();
                 return nested.children.entrySet().stream()
@@ -211,7 +270,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 // more than one arg, let's check to see if we have a command here
                 String subCmd = getSubCommand(nested, args);
                 AbstractCommand sub;
-                if(subCmd != null && (sub = nested.children.get(subCmd)) != null
+                if (subCmd != null && (sub = nested.children.get(subCmd)) != null
                         && (!console || !sub.isNoConsole())
                         && (op || sub.getPermissionNode() == null || sender.hasPermission(sub.getPermissionNode()))) {
                     // adjust the arguments to match - BREAKING!!
@@ -228,11 +287,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private List<String> fetchList(AbstractCommand abstractCommand, String[] args, CommandSender sender) {
         List<String> list = abstractCommand.onTab(sender, args);
-        String str = args[args.length - 1];
-        if (list != null && str != null && str.length() >= 1) {
-            try {
-                list.removeIf(s -> !s.toLowerCase().startsWith(str.toLowerCase()));
-            } catch (UnsupportedOperationException ignored) {
+        if (args.length != 0) {
+            String str = args[args.length - 1];
+            if (list != null && str != null && str.length() >= 1) {
+                try {
+                    list.removeIf(s -> !s.toLowerCase().startsWith(str.toLowerCase()));
+                } catch (UnsupportedOperationException ignored) {
+                }
             }
         }
         return list;
@@ -253,7 +314,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             // If we're on Paper 1.8, we need to register timings (spigot creates timings on init, paper creates it on register)
             // later versions of paper create timings if needed when the command is executed
-            if(ServerProject.isServer(ServerProject.PAPER, ServerProject.TACO) && ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
+            if (ServerProject.isServer(ServerProject.PAPER, ServerProject.TACO) && ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
                 commandObject.timings = co.aikar.timings.TimingsManager.getCommandTiming(plugin.getName().toLowerCase(), commandObject);
             }
 
