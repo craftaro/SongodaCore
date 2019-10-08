@@ -149,9 +149,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         String match = null;
         // support for two-argument subcommands
         if(args.length >= 2 && nested.children.keySet().stream().anyMatch(k -> k.indexOf(' ') != -1)) {
-            cmd = String.join(" ", args[0], args[1]);
-            if(nested.children.containsKey(cmd))
-                return cmd;
+            String cmd2 = String.join(" ", args[0], args[1]);
+            if(nested.children.containsKey(cmd2))
+                return cmd2;
         }
         // if we don't have a subcommand, should we search for one?
         if (allowLooseCommands) {
