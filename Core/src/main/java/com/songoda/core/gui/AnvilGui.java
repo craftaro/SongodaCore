@@ -5,6 +5,8 @@ import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.nms.CoreNMS;
 import com.songoda.core.nms.CustomAnvil;
 import com.songoda.core.nms.NmsManager;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -22,6 +24,7 @@ public class AnvilGui extends Gui {
 
     final Player player;
     CustomAnvil anvil;
+    List<String> endPrompt = null;
 
     public AnvilGui(Player player) {
         this.player = player;
@@ -58,6 +61,28 @@ public class AnvilGui extends Gui {
         return (AnvilGui) this.setItem(2, item);
     }
 
+    public AnvilGui setOutputPrompt(String str) {
+        endPrompt = Arrays.asList(str);
+        return this;
+    }
+
+    public AnvilGui setOutputPrompt(String ... str) {
+        endPrompt = Arrays.asList(str);
+        return this;
+    }
+
+    public AnvilGui setOutputPrompt(List<String> str) {
+        endPrompt = str;
+        return this;
+    }
+
+    void updateOutputPrompt() {
+        final ItemStack in;
+        if(endPrompt != null && (in = cellItems.get(0)) != null) {
+            setItem(2, GuiUtils.createButtonItem(in, endPrompt));
+        }
+    }
+
     public ItemStack getOutput() {
         return this.getItem(2);
     }
@@ -78,7 +103,8 @@ public class AnvilGui extends Gui {
         } else if ((item = cellItems.get(1)) != null) {
             inventory.setItem(1, item);
         } else if (!acceptsItems) {
-            inventory.setItem(0, GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " "));
+            cellItems.put(0, item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " "));
+            inventory.setItem(0, item);
         }
         if ((item = cellItems.get(2)) != null) {
             inventory.setItem(2, item);
@@ -95,6 +121,7 @@ public class AnvilGui extends Gui {
             anvil.setCustomTitle(title);
             anvil.setLevelCost(0);
             inventory = anvil.getInventory();
+            anvil.setOnChange(this::updateOutputPrompt);
         }
     }
 }

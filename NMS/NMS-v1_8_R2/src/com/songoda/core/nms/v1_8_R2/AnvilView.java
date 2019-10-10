@@ -1,6 +1,7 @@
 package com.songoda.core.nms.v1_8_R2;
 
 import com.songoda.core.nms.CustomAnvil;
+import com.songoda.core.nms.methods.AnvilTextChange;
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private String title = "Repairing";
     private int cost = -1;
     private boolean canUse = true;
+    private AnvilTextChange textChange = null;
 
     // used for setting custom inventory
     static Field mc_ContainerAnvil_repairInventory; // subcontainer with only the result
@@ -92,6 +94,11 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     }
 
     @Override
+    public void update() {
+        e();
+    }
+
+    @Override
     public String getRenameText() {
         try {
             //return this.l;
@@ -105,6 +112,11 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     @Override
     public void setRenameText(String text) {
         this.a(text);
+    }
+
+    @Override
+    public void setOnChange(AnvilTextChange handler) {
+        textChange = handler;
     }
 
     @Override

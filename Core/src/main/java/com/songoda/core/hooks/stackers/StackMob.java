@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.stackers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import uk.antiperson.stackmob.api.EntityManager;
@@ -72,4 +73,10 @@ public class StackMob extends Stacker {
         StackedEntity stackedEntity = plugin.getStackedEntity(entity);
         stackedEntity.setSize(stackedEntity.getSize() + amount);
     }
+
+    @Override
+    public int minimumEntityStack(EntityType type) {
+        return 0;
+    }
+
 }

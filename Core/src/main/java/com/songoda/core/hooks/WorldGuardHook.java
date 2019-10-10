@@ -1,8 +1,14 @@
 package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.worldguard.WorldGuardFlagHandler;
+import com.songoda.core.hooks.worldguard.WorldGuardRegionHandler;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldGuardHook {
 
@@ -24,7 +30,7 @@ public class WorldGuardHook {
      * @param flag name of the flag to set
      * @param state default value of the flag
      */
-    public static void addHook(String flag, boolean state) {
+    public static void addHook(@NotNull String flag, boolean state) {
         if(canHook) {
             WorldGuardFlagHandler.addHook(flag, state);
         }
@@ -47,7 +53,8 @@ public class WorldGuardHook {
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Location l, String flag) {
+    @Nullable
+    public static Boolean getBooleanFlag(@NotNull Location l, @NotNull String flag) {
         return canHook ? WorldGuardFlagHandler.getBooleanFlag(l, flag) : null;
     }
 
@@ -58,7 +65,66 @@ public class WorldGuardHook {
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Chunk c, String flag) {
+    @Nullable
+    public static Boolean getBooleanFlag(@NotNull Chunk c, @NotNull String flag) {
         return canHook ? WorldGuardFlagHandler.getBooleanFlag(c, flag) : null;
+    }
+
+    /**
+     * Check to see if the pvp flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the pvp flag is not set for this region, or is set to DENY
+     */
+    public static boolean isPvpAllowed(@NotNull Location loc) {
+        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "pvp"), Boolean.TRUE) : false;
+    }
+
+    /**
+     * Check to see if the block-break flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the block-break flag is not set for this region, or is set to DENY
+     */
+    public boolean isBreakAllowed(@NotNull Location loc) {
+        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "block-break"), Boolean.TRUE) : false;
+    }
+
+    /**
+     * Check to see if the other-explosion flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the other-explosion flag is not set for this region, or is set to DENY
+     */
+    public boolean isExplosionsAllowed(@NotNull Location loc) {
+        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "other-explosion"), Boolean.TRUE) : false;
+    }
+
+    /**
+     * Check to see if the mob-spawning flag is set and is set to ALLOW
+     * 
+     * @param loc Location to check
+     * @return false if the mob-spawning flag is not set for this region, or is set to DENY
+     */
+    public boolean isMobSpawningAllowed(@NotNull Location loc) {
+        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "mob-spawning"), Boolean.TRUE) : false;
+    }
+
+    /**
+     * @param loc Location to check
+     * @return A list of regions that contain this location.
+     */
+    @NotNull
+    public static List<String> getRegionNames(@NotNull Location loc) {
+        return canHook ? WorldGuardRegionHandler.getRegionNames(loc) : Collections.EMPTY_LIST;
+    }
+
+    /**
+     * @param c Chunk to check
+     * @return A list of regions that contain any part of this chunk.
+     */
+    @NotNull
+    public static List<String> getRegionNames(@NotNull Chunk c) {
+        return canHook ? WorldGuardRegionHandler.getRegionNames(c) : Collections.EMPTY_LIST;
     }
 }

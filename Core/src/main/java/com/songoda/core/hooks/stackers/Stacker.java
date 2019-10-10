@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.stackers;
 
 import com.songoda.core.hooks.Hook;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
@@ -29,4 +30,7 @@ public abstract class Stacker implements Hook {
     }
 
     public abstract void add(LivingEntity entity, int amount);
+
+    public abstract int minimumEntityStack(EntityType type);
+
 }

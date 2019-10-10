@@ -10,7 +10,6 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -31,7 +30,7 @@ import org.bukkit.Location;
  */
 public class WorldGuardFlagHandler {
 
-    static Boolean wgPlugin = null;
+    static boolean wgPlugin;
     static Object worldGuardPlugin;
     static boolean wg_v7 = false;
     static boolean legacy_v60 = false;
@@ -40,15 +39,8 @@ public class WorldGuardFlagHandler {
     static boolean hooksInstalled = false;
     static Map<String, Object> flags = new HashMap();
 
-    /**
-     * Attempt to register a worldGuard flag (ALLOW/DENY) <br />
-     * Note: This must be called before WorldGuard loads, or it will fail.
-     *
-     * @param flag name of the flag to set
-     * @param state default value of the flag
-     */
-    public static void addHook(String flag, boolean state) {
-        if (wgPlugin == null && (wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null)) {
+    static {
+        if ((wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null)) {
             // a number of flags were introduced in 7.x that aren't in 5 or 6
             try {
                 // if this class exists, we're on 7.x
@@ -77,6 +69,16 @@ public class WorldGuardFlagHandler {
                 }
             }
         }
+    }
+
+    /**
+     * Attempt to register a worldGuard flag (ALLOW/DENY) <br />
+     * Note: This must be called before WorldGuard loads, or it will fail.
+     *
+     * @param flag name of the flag to set
+     * @param state default value of the flag
+     */
+    public static void addHook(String flag, boolean state) {
         if (!wgPlugin) {
             return;
         }
@@ -135,12 +137,14 @@ public class WorldGuardFlagHandler {
             // and put the new list into place
             setStaticField(flagField, flagsNew);
 
-            if (legacy_v62) { // SimpleFlagRegistry is NOT in 6.0
+            if (legacy_v62) { // SimpleFlagRegistry is NOT in 6.0 or 6.1
                 // register this flag in the registry
-                Object flagRegistry = getPrivateField(worldGuardPlugin.getClass(), worldGuardPlugin, "flagRegistry");
-                Class simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
-                Method registerSimpleFlagRegistry = simpleFlagRegistryClazz.getDeclaredMethod("register", Flag.class);
-                registerSimpleFlagRegistry.invoke(flagRegistry, wgFlag);
+                if(legacy_simpleFlagRegistryClazz == null) {
+                    legacy_worldGuardPlugin_flagRegistry = getPrivateField(worldGuardPlugin.getClass(), worldGuardPlugin, "flagRegistry");
+                    legacy_simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
+                    legacy_simpleFlagRegistry_get = legacy_simpleFlagRegistryClazz.getDeclaredMethod("get", String.class);
+                }
+                legacy_simpleFlagRegistryClazz.getDeclaredMethod("register", Flag.class).invoke(legacy_worldGuardPlugin_flagRegistry, wgFlag);
             }
 
             // all good!
@@ -168,37 +172,67 @@ public class WorldGuardFlagHandler {
     }
 
     public static boolean isEnabled() {
-        return wgPlugin != null && wgPlugin;
+        return wgPlugin;
+    }
+
+    public static Object getFlag(String flag) {
+        Object flagObj = flags.get(flag);
+
+        // load a flag if we don't know it
+        if (flagObj == null) {
+            if (wg_v7) {
+                flags.put(flag, flagObj = WorldGuard.getInstance().getFlagRegistry().get(flag));
+            } else if (legacy_v62) {
+                try {
+                    if (legacy_simpleFlagRegistryClazz == null) {
+                        legacy_worldGuardPlugin_flagRegistry = getPrivateField(worldGuardPlugin.getClass(), worldGuardPlugin, "flagRegistry");
+                        legacy_simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
+                        legacy_simpleFlagRegistry_get = legacy_simpleFlagRegistryClazz.getDeclaredMethod("get", String.class);
+                    }
+                    flags.put(flag, flagObj = legacy_simpleFlagRegistry_get.invoke(legacy_worldGuardPlugin_flagRegistry, flag));
+                } catch (Exception ex) {
+                    Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
+                }
+            } else if (!legacy_loadedFlags && (legacy_v60 || legacy_v5)) {
+                try {
+                    Class defaultFlagClazz = Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
+                    Field flagField = defaultFlagClazz.getField("flagsList");
+                    Flag<?>[] flagsOld = (Flag<?>[]) flagField.get(null);
+                    Stream.of(flagsOld).forEach(f -> flags.put(f.getName(), f));
+                    flagObj = flags.get(flag);
+                } catch (Exception ex) {
+                    Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
+                }
+                legacy_loadedFlags = true;
+            }
+        }
+        return flagObj;
     }
 
     /**
      * Checks this location to see what this flag is set to
      *
-     * @param l location to check
+     * @param loc location to check
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Location l, String flag) {
-        if (wgPlugin == null || !wgPlugin) {
+    public static Boolean getBooleanFlag(Location loc, String flag) {
+        if (!wgPlugin) {
             return null;
         }
-        Object flagObj = flags.get(flag);
+        Object flagObj = getFlag(flag);
+
         // There's a different way to get this in the old version
         if (legacy_v62 || legacy_v60 || legacy_v5) {
-            return flagObj == null ? null : getBooleanFlagLegacy(l, flagObj);
-        }
-
-        // for convinience, we can load a flag if we don't know it
-        if (flagObj == null) {
-            flags.put(flag, flagObj = WorldGuard.getInstance().getFlagRegistry().get(flag));
+            return flagObj == null ? null : getBooleanFlagLegacy(loc, flagObj);
         }
 
         // so, what's up?
         if (flagObj instanceof StateFlag) {
-            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            RegionQuery query = container.createQuery();
-            com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(l);
-            return query.testState(loc, (RegionAssociable) null, (StateFlag) flagObj);
+            RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+            //return query.testState(BukkitAdapter.adapt(loc), (RegionAssociable) null, (StateFlag) flagObj);
+            State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(null, (StateFlag) flagObj);
+            return result != null ? result == State.ALLOW : null;
         }
         return null;
     }
@@ -211,18 +245,13 @@ public class WorldGuardFlagHandler {
      * @return flag state, or null if undefined
      */
     public static Boolean getBooleanFlag(Chunk c, String flag) {
-        if (wgPlugin == null || !wgPlugin) {
+        if (!wgPlugin) {
             return null;
         }
-        Object flagObj = flags.get(flag);
+        Object flagObj = getFlag(flag);
         // There's a different way to get this in the old version
         if (legacy_v62 || legacy_v60 || legacy_v5) {
             return flagObj == null ? null : getBooleanFlagLegacy(c, flagObj);
-        }
-
-        // for convinience, we can load a flag if we don't know it
-        if (flagObj == null) {
-            flags.put(flag, flagObj = WorldGuard.getInstance().getFlagRegistry().get(flag));
         }
 
         // so, what's up?
@@ -254,6 +283,10 @@ public class WorldGuardFlagHandler {
     static Class legacy_VectorClazz;
     static Constructor legacy_newVectorClazz;
     static Method legacy_getApplicableRegions_Vector = null;
+    static Class legacy_simpleFlagRegistryClazz = null; // only used for 6.2
+    static Method legacy_simpleFlagRegistry_get = null; // only used for 6.2
+    static Object legacy_worldGuardPlugin_flagRegistry = null; // only used for 6.2
+    static boolean legacy_loadedFlags = false;
 
     private static Boolean getBooleanFlagLegacy(Location l, Object flag) {
         try {
@@ -294,7 +327,7 @@ public class WorldGuardFlagHandler {
                 // also doesn't have a "queryState" function
                 //getFlag(T flag)
                 if (legacy5_applicableRegionSet_getFlag == null) {
-                    legacy5_applicableRegionSet_getFlag = Class.forName("com.sk89q.worldguard.protection.ApplicableRegionSet").getMethod("getFlag", Object.class);
+                    legacy5_applicableRegionSet_getFlag = Class.forName("com.sk89q.worldguard.protection.ApplicableRegionSet").getMethod("getFlag", Flag.class);
                 }
                 result = (State) legacy5_applicableRegionSet_getFlag.invoke(set, flag);
             }

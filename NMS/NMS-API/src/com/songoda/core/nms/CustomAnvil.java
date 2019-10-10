@@ -1,5 +1,6 @@
 package com.songoda.core.nms;
 
+import com.songoda.core.nms.methods.AnvilTextChange;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,6 +26,8 @@ public interface CustomAnvil {
 
     public void setRenameText(String text);
 
+    public void setOnChange(AnvilTextChange handler);
+
     public ItemStack getLeftInput();
 
     public ItemStack getRightInput();
@@ -43,4 +46,9 @@ public interface CustomAnvil {
      * Open this anvil for the provided player
      */
     public void open();
+
+    /**
+     * Force a redraw of the output
+     */
+    public void update();
 }

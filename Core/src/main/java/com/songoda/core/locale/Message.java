@@ -119,7 +119,7 @@ public class Message {
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
         final String place = Matcher.quoteReplacement(placeholder);
-        this.message = message.replaceAll("%" + place + "%|\\{" + place +"\\}", Matcher.quoteReplacement(replacement.toString()));
+        this.message = message.replaceAll("%" + place + "%|\\{" + place +"\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
         return this;
     }
 

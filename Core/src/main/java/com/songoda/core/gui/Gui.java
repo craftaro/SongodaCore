@@ -182,10 +182,27 @@ public class Gui {
     }
 
     @NotNull
+    public Gui setUnlockedRange(int cellFirst, int cellLast, boolean open) {
+        for (int cell = cellFirst; cell <= cellLast; ++cell) {
+            unlockedCells.put(cell, open);
+        }
+        return this;
+    }
+
+    @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
         final int last = cellColLast + cellRowLast * 9;
         for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
             unlockedCells.put(cell, true);
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
+        final int last = cellColLast + cellRowLast * 9;
+        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+            unlockedCells.put(cell, open);
         }
         return this;
     }
@@ -772,8 +789,8 @@ public class Gui {
     protected static String trimTitle(String title) {
         if(title == null) {
             return "";
-        } else if (title != null && title.length() > 32) {
-            return title.substring(0, 31);
+        } else if (title.length() > 32) {
+            return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);
         }
         return title;
     }

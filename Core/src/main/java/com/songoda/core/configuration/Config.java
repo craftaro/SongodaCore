@@ -87,9 +87,8 @@ public class Config extends ConfigSection {
     boolean autoremove = false;
     /**
      * load comments when loading the file
-     * TODO
      */
-    boolean loadComments = false;
+    boolean loadComments = true;
     /**
      * Default comment applied to config nodes
      */
@@ -440,7 +439,6 @@ public class Config extends ConfigSection {
     }
 
     protected void parseComments(@NotNull String contents, @NotNull Map<?, ?> input) {
-        // TODO?
         // if starts with a comment, load all nonbreaking comments as a header
         // then load all comments and assign to the next valid node loaded
         // (Only load comments that are on their own line)

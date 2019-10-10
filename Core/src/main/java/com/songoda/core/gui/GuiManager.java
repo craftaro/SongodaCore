@@ -179,6 +179,9 @@ public class GuiManager {
                         for(ItemStack it : gui.inventory.getContents()) {
                             if(!gui.unlockedCells.getOrDefault(cell++, false) && clicked.isSimilar(it)) {
                                 event.setCancelled(true);
+                                if(gui instanceof AnvilGui) {
+                                    ((AnvilGui) gui).anvil.update();
+                                }
                                 break;
                             }
                         }
@@ -203,6 +206,9 @@ public class GuiManager {
                         player.playSound(player.getLocation(), CompatibleSound.UI_BUTTON_CLICK.getSound(), 1F, 1F);
                     } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         event.setCancelled(true);
+                        if(gui instanceof AnvilGui) {
+                            ((AnvilGui) gui).anvil.update();
+                        }
                     }
                 }
             }

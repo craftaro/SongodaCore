@@ -47,6 +47,11 @@ public class DoubleGui extends Gui {
         allowDropItems = false;
     }
 
+    public DoubleGui(Gui parent) {
+        super(parent);
+        allowDropItems = false;
+    }
+
     public int getPlayerRows() {
         return playerRows;
     }
@@ -82,6 +87,38 @@ public class DoubleGui extends Gui {
 
     public DoubleGui setPlayerUnlocked(int row, int col, boolean open) {
         unlockedCells.put(invOffset(col + row * 9), open);
+        return this;
+    }
+
+    public DoubleGui setPlayerUnlockedRange(int cellFirst, int cellLast) {
+        final int last = invOffset(cellLast);
+        for (int cell = invOffset(cellFirst); cell <= last; ++cell) {
+            unlockedCells.put(cell, true);
+        }
+        return this;
+    }
+
+    public DoubleGui setPlayerUnlockedRange(int cellFirst, int cellLast, boolean open) {
+        final int last = invOffset(cellLast);
+        for (int cell = invOffset(cellFirst); cell <= last; ++cell) {
+            unlockedCells.put(cell, open);
+        }
+        return this;
+    }
+
+    public DoubleGui setPlayerUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
+        final int last = invOffset(cellColLast + cellRowLast * 9);
+        for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
+            unlockedCells.put(cell, true);
+        }
+        return this;
+    }
+
+    public DoubleGui setPlayerUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
+        final int last = invOffset(cellColLast + cellRowLast * 9);
+        for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
+            unlockedCells.put(cell, open);
+        }
         return this;
     }
 

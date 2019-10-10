@@ -1,15 +1,15 @@
 package com.songoda.core.hooks.economies;
 
 import org.black_ixx.playerpoints.PlayerPoints;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 
 public class PlayerPointsEconomy extends Economy {
 
     private final PlayerPoints playerPoints;
 
-    public PlayerPointsEconomy() {
-        this.playerPoints = (PlayerPoints) Bukkit.getServer().getPluginManager().getPlugin("PlayerPoints");
+    public PlayerPointsEconomy(Plugin plugin) {
+        this.playerPoints = (PlayerPoints) plugin;
     }
 
     private int convertAmount(double amount) {

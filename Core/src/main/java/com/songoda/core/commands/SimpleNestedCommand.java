@@ -1,12 +1,12 @@
 package com.songoda.core.commands;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 public class SimpleNestedCommand {
 
     final AbstractCommand parent;
-    final HashMap<String, AbstractCommand> children = new HashMap();
+    final LinkedHashMap<String, AbstractCommand> children = new LinkedHashMap();
 
     protected SimpleNestedCommand(AbstractCommand parent) {
         this.parent = parent;
