@@ -606,7 +606,6 @@ public class Config extends ConfigSection {
             if (footerComment != null) {
                 str.write("\n");
                 footerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
-                str.write("\n"); // add one space at the end of the file
             }
             return str.toString();
         } catch (Throwable ex) {
