@@ -1,6 +1,7 @@
 package com.songoda.core.configuration.editor;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
@@ -17,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,21 +36,30 @@ public class ConfigEditorGui extends SimplePagedGui {
     final String file;
     final MemoryConfiguration config;
     final ConfigurationSection node;
+    final Player player;
     Method configSection_getCommentString = null;
+    boolean edits = false;
     List<String> sections = new ArrayList();
     List<String> settings = new ArrayList();
 
-    public ConfigEditorGui(JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config) {
-        this(plugin, parent, file, config, config);
+    protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config) {
+        this(player, plugin, parent, file, config, config);
     }
 
-    protected ConfigEditorGui(JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
+    protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
         super(parent);
+        this.player = player;
         this.plugin = plugin;
         this.file = file;
         this.config = config;
         this.node = node;
         this.blankItem = GuiUtils.getBorderItem(CompatibleMaterial.LIGHT_GRAY_STAINED_GLASS_PANE);
+
+        if (!(parent instanceof ConfigEditorGui)) {
+            setOnClose((gui) -> save());
+        } else {
+            setOnClose((gui) -> ((ConfigEditorGui) parent).edits |= edits);
+        }
 
         // if we have a ConfigSection, we can also grab comments
         try {
@@ -77,7 +88,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         int index = 9;
         for (final String sectionKey : sections) {
             setButton(index++, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, file, config, node.getConfigurationSection(sectionKey))));
+                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(sectionKey))));
         }
 
         // now display individual settings
@@ -149,7 +160,6 @@ public class ConfigEditorGui extends SimplePagedGui {
             ++index;
         }
 
-        setOnClose((gui) -> save());
     }
 
     public ConfigurationSection getCurrentNode() {
@@ -178,6 +188,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             item.setItemMeta(meta);
             setItem(clickCell, item);
         }
+        edits = true;
     }
 
     void toggle(int clickCell, String path) {
@@ -223,6 +234,9 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     void save() {
+        if (!edits) {
+            return;
+        }
         // could also check and call saveChanges()
         if (config instanceof FileConfiguration) {
             try {
@@ -231,8 +245,15 @@ public class ConfigEditorGui extends SimplePagedGui {
                 plugin.getLogger().log(Level.SEVERE, "Failed to save config changes to " + file, ex);
                 return;
             }
+        } else if (config instanceof Config) {
+            ((Config) config).save();
+        } else {
+            player.sendMessage(ChatColor.RED + "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
+            plugin.getLogger().log(Level.WARNING, "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
+            return;
         }
         plugin.reloadConfig();
+        player.sendMessage(ChatColor.GREEN + "Config " + file + " saved!");
     }
 
     private boolean isNumber(Object value) {

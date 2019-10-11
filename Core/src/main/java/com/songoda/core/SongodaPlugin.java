@@ -68,7 +68,11 @@ public abstract class SongodaPlugin extends JavaPlugin {
         try {
             onPluginLoad();
         } catch (Throwable t) {
-            getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
+            Bukkit.getLogger().log(Level.SEVERE,
+                    "Unexpected error while loading " + getDescription().getName()
+                    + " v" + getDescription().getVersion()
+                    + " c" + SongodaCore.getCoreLibraryVersion()
+                    + ": Disabling plugin!", t);
             emergencyStop = true;
         }
     }
@@ -80,7 +84,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             return;
         }
 
-        console.sendMessage(""); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
@@ -93,21 +97,25 @@ public abstract class SongodaPlugin extends JavaPlugin {
             onPluginEnable();
             if(emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                console.sendMessage("");
+                console.sendMessage(" ");
                 return;
             }
             // Start Metrics
             Metrics.start(this);
         } catch (Throwable t) {
-            getLogger().log(Level.SEVERE, "Unexpected error while loading " + getDescription().getName() + ": Disabling plugin!", t);
+            Bukkit.getLogger().log(Level.SEVERE,
+                    "Unexpected error while loading " + getDescription().getName()
+                    + " v" + getDescription().getVersion()
+                    + " c" + SongodaCore.getCoreLibraryVersion()
+                    + ": Disabling plugin!", t);
             emergencyStop();
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            console.sendMessage("");
+            console.sendMessage(" ");
             return;
         }
 
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(""); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to separate chatter
     }
 
     protected void emergencyStop() {
@@ -120,7 +128,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
         if (emergencyStop) {
             return;
         }
-        console.sendMessage(""); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to speparate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
@@ -128,7 +136,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ChatColor.RED.toString(), "Disabling", ChatColor.GRAY.toString()));
         onPluginDisable();
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(""); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to speparate chatter
     }
 
     public ConsoleCommandSender getConsole() {

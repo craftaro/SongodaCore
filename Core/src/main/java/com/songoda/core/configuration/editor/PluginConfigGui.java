@@ -91,7 +91,7 @@ public class PluginConfigGui extends SimplePagedGui {
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
             this.setButton(i++, GuiUtils.createButtonItem(CompatibleMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(plugin, this, config.getKey(), config.getValue())));
+                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue())));
         }
     }
 

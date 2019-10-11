@@ -42,7 +42,7 @@ public final class PluginHook <T extends Class> {
     protected final String plugin;
     protected final Class managerClass;
     protected static Map<Class, PluginHook> hooks;
-    protected Constructor pluginConstructor;
+    protected Constructor pluginConstructor; // for passing the plugin loading the hook to the plugin hook
 
     private PluginHook(T type, String pluginName, Class handler) {
         if (!Hook.class.isAssignableFrom(handler)) {
