@@ -60,6 +60,14 @@ public class Comment {
     public String toString() {
         return lines.isEmpty() ? "" : lines.stream().collect(Collectors.joining("\n"));
     }
+    
+    public static Comment loadComment(List<String> lines) {
+        CommentStyle style = ConfigFormattingRules.parseStyle(lines);
+        int linePad = (style.drawBorder ? 1 : 0) + (style.drawSpace ? 1 : 0);
+        int prefix = style.commentPrefix.length();
+        int suffix = style.commentSuffix.length();
+        return new Comment(style, lines.subList(linePad, lines.size() - linePad).stream().map(s -> s.substring(prefix, s.length() - suffix).trim()).collect(Collectors.toList()));
+    }
 
     public void writeComment(Writer output, int offset, CommentStyle defaultStyle) throws IOException {
         CommentStyle style = commentStyle != null ? commentStyle : defaultStyle;

@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -59,11 +60,12 @@ public class Config extends ConfigSection {
     // public static valueOf(Map<String, ?> args);
     // public new (Map<String, ?> args)
      */
-    protected static final String COMMENT_PREFIX = "# ";
     protected static final String BLANK_CONFIG = "{}\n";
 
     protected File file;
     protected final ConfigFileConfigurationAdapter config = new ConfigFileConfigurationAdapter(this);
+    protected Comment headerComment = null;
+    protected Comment footerComment = null;
     final String dirName, fileName;
     final Plugin plugin;
     final DumperOptions yamlOptions = new DumperOptions();
@@ -306,9 +308,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@NotNull String... description) {
         if (description.length == 0) {
-            configComments.remove(null);
+            headerComment = null;
         } else {
-            configComments.put(null, new Comment(description));
+            headerComment = new Comment(description);
         }
         return this;
     }
@@ -316,9 +318,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @NotNull String... description) {
         if (description.length == 0) {
-            configComments.remove(null);
+            headerComment = null;
         } else {
-            configComments.put(null, new Comment(commentStyle, description));
+            headerComment = new Comment(commentStyle, description);
         }
         return this;
     }
@@ -326,9 +328,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable List<String> description) {
         if (description == null || description.isEmpty()) {
-            configComments.remove(null);
+            headerComment = null;
         } else {
-            configComments.put(null, new Comment(description));
+            headerComment = new Comment(description);
         }
         return this;
     }
@@ -336,17 +338,17 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> description) {
         if (description == null || description.isEmpty()) {
-            configComments.remove(null);
+            headerComment = null;
         } else {
-            configComments.put(null, new Comment(commentStyle, description));
+            headerComment = new Comment(commentStyle, description);
         }
         return this;
     }
 
     @NotNull
     public List<String> getHeader() {
-        if (configComments.containsKey(null)) {
-            return configComments.get(null).getLines();
+        if (headerComment != null) {
+            return headerComment.getLines();
         } else {
             return Collections.EMPTY_LIST;
         }
@@ -442,6 +444,67 @@ public class Config extends ConfigSection {
         // if starts with a comment, load all nonbreaking comments as a header
         // then load all comments and assign to the next valid node loaded
         // (Only load comments that are on their own line)
+
+        BufferedReader in = new BufferedReader(new StringReader(contents));
+        String line;
+        boolean insideScalar = false;
+        boolean firstNode = true;
+        int index = 0;
+        LinkedList<String> currentPath = new LinkedList();
+        ArrayList<String> commentBlock = new ArrayList();
+        try {
+            while ((line = in.readLine()) != null) {
+                if (line.isEmpty()) {
+                    if (firstNode && !commentBlock.isEmpty()) {
+                        // header comment
+                        firstNode = false;
+                        headerComment = Comment.loadComment(commentBlock);
+                        commentBlock.clear();
+                    }
+                    continue;
+                } else if (line.trim().startsWith("#")) {
+                    // only load full-line comments
+                    commentBlock.add(line.trim());
+                    continue;
+                }
+
+                // check to see if this is a line that we can process
+                int lineOffset = getOffset(line);
+                insideScalar &= lineOffset <= index;
+                Matcher m;
+                if (!insideScalar && (m = yamlNode.matcher(line)).find()) {
+                    // we found a config node! ^.^
+                    // check to see what the full path is
+                    int depth = (m.group(1).length() / indentation);
+                    while (depth < currentPath.size()) {
+                        currentPath.removeLast();
+                    }
+                    currentPath.add(m.group(2));
+
+                    // do we have a comment for this node?
+                    if (!commentBlock.isEmpty()) {
+                        String path = currentPath.stream().collect(Collectors.joining(String.valueOf(pathChar)));
+                        Comment comment = Comment.loadComment(commentBlock);
+                        commentBlock.clear();
+                        setComment(path, comment);
+                    }
+
+                    firstNode = false; // we're no longer on the first node
+
+                    // ignore scalars
+                    index = lineOffset;
+                    if (m.group(3).trim().equals("|") || m.group(3).trim().equals(">")) {
+                        insideScalar = true;
+                    }
+                }
+            }
+            if (!commentBlock.isEmpty()) {
+                footerComment = Comment.loadComment(commentBlock);
+                commentBlock.clear();
+            }
+        } catch (IOException ex) {
+        }
+
     }
 
     public void deleteNonDefaultSettings() {
@@ -510,7 +573,7 @@ public class Config extends ConfigSection {
 
     public boolean save(@NotNull File file) {
         Validate.notNull(file, "File cannot be null");
-        if (!file.getParentFile().exists()) {
+        if (file.getParentFile() != null && !file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
         String data = this.saveToString();
@@ -525,21 +588,25 @@ public class Config extends ConfigSection {
     @NotNull
     public String saveToString() {
         try {
-            if(autoremove) {
+            if (autoremove) {
                 deleteNonDefaultSettings();
             }
             yamlOptions.setIndent(indentation);
             yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             StringWriter str = new StringWriter();
-            Comment header = configComments.get(null);
-            if (header != null) {
-                header.writeComment(str, 0, ConfigFormattingRules.CommentStyle.SPACED);
+            if (headerComment != null) {
+                headerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
                 str.write("\n"); // add one space after the header
             }
             String dump = yaml.dump(this.getValues(false));
             if (!dump.equals(BLANK_CONFIG)) {
                 writeComments(dump, str);
+            }
+            if (footerComment != null) {
+                str.write("\n");
+                footerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
+                str.write("\n"); // add one space at the end of the file
             }
             return str.toString();
         } catch (Throwable ex) {

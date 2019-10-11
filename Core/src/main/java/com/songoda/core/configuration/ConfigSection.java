@@ -168,16 +168,21 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
-        return setComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
+        return setComment(path, lines != null ? new Comment(commentStyle, lines) : null);
     }
 
     @NotNull
     public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
+        return setComment(path, lines != null ? new Comment(commentStyle, lines) : null);
+    }
+
+    @NotNull
+    public ConfigSection setComment(@NotNull String path, @Nullable Comment comment) {
         synchronized (root.lock) {
             if (isDefault) {
-                root.defaultComments.put(fullPath + path, lines != null ? new Comment(commentStyle, lines) : null);
+                root.defaultComments.put(fullPath + path, comment);
             } else {
-                root.configComments.put(fullPath + path, lines != null ? new Comment(commentStyle, lines) : null);
+                root.configComments.put(fullPath + path, comment);
             }
         }
         return this;
@@ -195,7 +200,6 @@ public class ConfigSection extends MemoryConfiguration {
         }
         return this;
     }
-
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
         return setDefaultComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
@@ -205,6 +209,14 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(commentStyle, lines));
+        }
+        return this;
+    }
+
+    @NotNull
+    public ConfigSection setDefaultComment(@NotNull String path, @Nullable Comment comment) {
+        synchronized (root.lock) {
+            root.defaultComments.put(fullPath + path, comment);
         }
         return this;
     }
