@@ -176,6 +176,19 @@ public class Config extends ConfigSection {
         return this;
     }
 
+    public boolean getLoadComments() {
+        return loadComments;
+    }
+
+    /**
+     * Should comments from the config file be loaded when loading?
+     * 
+     * @param loadComments set to false if you do not want to preserve node comments
+     */
+    public void setLoadComments(boolean loadComments) {
+        this.loadComments = loadComments;
+    }
+
     public boolean getAutosave() {
         return autosave;
     }
