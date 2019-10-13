@@ -34,9 +34,9 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     static {
         try {
-            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("h");
+            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("repairInventory");
             mc_ContainerAnvil_repairInventory.setAccessible(true);
-            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("g");
+            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("resultInventory");
             mc_ContainerAnvil_resultInventory.setAccessible(true);
             mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
             mc_ContainerAnvil_bukkitEntity.setAccessible(true);
