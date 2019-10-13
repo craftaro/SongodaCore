@@ -34,12 +34,21 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     static {
         try {
-            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("h");
-            mc_ContainerAnvil_repairInventory.setAccessible(true);
-            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("g");
-            mc_ContainerAnvil_resultInventory.setAccessible(true);
             mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
             mc_ContainerAnvil_bukkitEntity.setAccessible(true);
+            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("repairInventory");
+            mc_ContainerAnvil_repairInventory.setAccessible(true);
+            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("resultInventory");
+            mc_ContainerAnvil_resultInventory.setAccessible(true);
+        } catch (NoSuchFieldException ignore) {
+            try {
+                mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("h");
+                mc_ContainerAnvil_repairInventory.setAccessible(true);
+                mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("g");
+                mc_ContainerAnvil_resultInventory.setAccessible(true);
+            } catch (Exception ex) {
+                Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
+            }
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
         }
