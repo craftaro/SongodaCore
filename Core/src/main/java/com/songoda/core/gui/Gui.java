@@ -1,6 +1,7 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
@@ -789,7 +790,7 @@ public class Gui {
     protected static String trimTitle(String title) {
         if(title == null) {
             return "";
-        } else if (title.length() > 32) {
+        } else if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8) && title.length() > 32) {
             return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);
         }
         return title;
