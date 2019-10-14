@@ -328,30 +328,24 @@ public class ItemUtils {
         }
     }
 
-    static Field cb_SkullMeta_profile;
+	public static String getSkullTexture(ItemStack item) {
+		if (!CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
+			return null;
+		}
+		try {
+			SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
+			Field cb_SkullMeta_profile = localSkullMeta.getClass().getDeclaredField("profile");
+			if (cb_SkullMeta_profile == null) return null;
+			cb_SkullMeta_profile.setAccessible(true);
 
-    static {
-        try {
-            cb_SkullMeta_profile = SkullMeta.class.getDeclaredField("profile");
-            cb_SkullMeta_profile.setAccessible(true);
-        } catch (Exception ex) {
-        }
-    }
+			GameProfile profile = (GameProfile) cb_SkullMeta_profile.get(localSkullMeta);
+			Iterator<Property> iterator = profile.getProperties().get("textures").iterator();
 
-    public static String getSkullTexture(ItemStack item) {
-        if (cb_SkullMeta_profile == null || !CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
-            return null;
-        }
-        try {
-            SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
-            GameProfile profile = (GameProfile) cb_SkullMeta_profile.get(localSkullMeta);
-            Iterator<Property> iterator = profile.getProperties().get("textures").iterator();
-
-            return iterator.hasNext() ? iterator.next().getValue() : null;
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-        }
-        return null;
-    }
+			return iterator.hasNext() ? iterator.next().getValue() : null;
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
+		}
+		return null;
+	}
 
     public static String getDecodedTexture(String encoded) {
         return encoded != null ? StringUtils.substringBetween(new String(Base64.getDecoder().decode(encoded)), "texture/", "\"") : null;
