@@ -1171,7 +1171,7 @@ public enum CompatibleMaterial {
 	}
 
 	/**
-	 * Lookup a Legacy Material by its modern id name. <br />
+	 * Lookup a Material by its modern id name. <br />
 	 * This also can grab materials by their legacy, but only if there is no
 	 * modern material by that name.
 	 *
@@ -1183,7 +1183,7 @@ public enum CompatibleMaterial {
 	}
 
 	/**
-	 * Lookup a Legacy Material by its modern id name. <br />
+	 * Lookup a Material by its modern id name. <br />
 	 * This also can grab materials by their legacy, but only if there is no
 	 * modern material by that name.
 	 *
@@ -1196,7 +1196,7 @@ public enum CompatibleMaterial {
 	}
 
 	/**
-	 * Lookup a Legacy Material by bukkit material.
+	 * Lookup a Material by bukkit material.
 	 *
 	 * @param mat item to lookup
 	 * @return LegacyMaterial or null if none found
@@ -1206,7 +1206,7 @@ public enum CompatibleMaterial {
 	}
 
 	/**
-	 * Lookup a Legacy Material by Itemstack.
+	 * Lookup a Material by Itemstack.
 	 *
 	 * @param item item to lookup
 	 * @return LegacyMaterial or null if none found
@@ -1218,7 +1218,66 @@ public enum CompatibleMaterial {
 		String key = item.getType() + ":";
 		CompatibleMaterial m = lookupMap.get(key);
 		return m != null ? m : lookupMap.get(key + item.getDurability());
-	}
+    }
+
+    /**
+     * Lookup a Block Material by its modern id name. <br />
+     * This also can grab materials by their legacy, but only if there is no
+     * modern material by that name.
+     *
+     * @param name item to lookup
+     * @return LegacyMaterial or null if none found
+     */
+    public static CompatibleMaterial getBlockMaterial(String name) {
+        if (name == null) {
+            return null;
+        } else if (useLegacy) {
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(name.toUpperCase());
+            if (legacyBlock != null) {
+                return lookupMap.get(legacyBlock.name());
+            }
+        }
+        return lookupMap.get(name.toUpperCase());
+    }
+
+    /**
+     * Lookup a Block Material by its modern id name. <br />
+     * This also can grab materials by their legacy, but only if there is no
+     * modern material by that name.
+     *
+     * @param name item to lookup
+     * @param def default item if this is not a valid material
+     * @return LegacyMaterial or null if none found
+     */
+    public static CompatibleMaterial getBlockMaterial(String name, CompatibleMaterial def) {
+        if (name == null) {
+            return def;
+        } else if (useLegacy) {
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(name.toUpperCase());
+            if (legacyBlock != null) {
+                return lookupMap.get(legacyBlock.name());
+            }
+        }
+        return lookupMap.getOrDefault(name.toUpperCase(), def);
+    }
+
+    /**
+     * Lookup a Block Material by bukkit material.
+     *
+     * @param mat item to lookup
+     * @return LegacyMaterial or null if none found
+     */
+    public static CompatibleMaterial getBlockMaterial(Material mat) {
+        if (mat == null) {
+            return null;
+        } else if (useLegacy) {
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name());
+            if (legacyBlock != null) {
+                return lookupMap.get(legacyBlock.name());
+            }
+        }
+        return lookupMap.get(mat.name());
+    }
 
     static LinkedHashSet<CompatibleMaterial> all = null;
 
