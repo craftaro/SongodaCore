@@ -13,6 +13,16 @@ import org.bukkit.entity.Player;
  */
 public class Message {
 
+    private static boolean canActionBar = false;
+    static {
+        try {
+			Class.forName("net.md_5.bungee.api.ChatMessageType");
+            Class.forName("net.md_5.bungee.api.chat.TextComponent");
+            Player.Spigot.class.getDeclaredMethod("sendMessage", net.md_5.bungee.api.ChatMessageType.class, net.md_5.bungee.api.chat.TextComponent.class);
+			canActionBar = true;
+		} catch (Exception ex) {
+        }
+    }
     private String prefix = null;
     private String message;
 
@@ -67,6 +77,22 @@ public class Message {
             }
         } else {
             sender.sendMessage(this.getMessage());
+        }
+    }
+
+    /**
+     * Format and send the held message to a player as an actionbar message
+     *
+     * @param sender command sender to send the message to
+     */
+    public void sendActionBar(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(this.getMessage());
+        } else if (!canActionBar) {
+            sendTitle(sender);
+        } else {
+            ((Player) sender).spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
+                    new net.md_5.bungee.api.chat.TextComponent(getMessage()));
         }
     }
 
