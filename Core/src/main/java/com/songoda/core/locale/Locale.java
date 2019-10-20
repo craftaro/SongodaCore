@@ -1,6 +1,7 @@
 package com.songoda.core.locale;
 
 import com.songoda.core.configuration.Config;
+import com.songoda.core.configuration.ConfigSection;
 import com.songoda.core.utils.TextUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -269,6 +270,7 @@ public class Locale {
                 BufferedReader reader = translatePropertyToYAML(source, charset);) {
             Config lang = new Config(file);
             lang.load(reader);
+            translateMsgRoot(lang, file, charset);
             // todo: how should string lists be handled?
             lang.getValues(true).forEach((k, v) -> nodes.put(k, v.toString()));
         } catch (IOException e) {
@@ -305,6 +307,32 @@ public class Locale {
         return new BufferedReader(new InputStreamReader(new BufferedInputStream(new ByteArrayInputStream(output.toString().getBytes(charset))), charset));
     }
 
+    protected static void translateMsgRoot(Config lang, File file, Charset charset) throws IOException {
+        List<String> msgs = lang.getValues(true).entrySet().stream()
+                .filter(e -> e.getValue() instanceof ConfigSection)
+                .map(e -> e.getKey())
+                .collect(Collectors.toList());
+        if (!msgs.isEmpty()) {
+            try (FileInputStream stream = new FileInputStream(file);
+                    BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset))) {
+                String line;
+                for (int lineNumber = 0; (line = source.readLine()) != null; lineNumber++) {
+                    if (lineNumber == 0) {
+                        // remove BOM markers, if any
+                        line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
+                    }
+                    Matcher matcher;
+                    if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
+                            && (matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
+                        if (msgs.contains(matcher.group(1))) {
+                            lang.set(matcher.group(1) + ".message", matcher.group(2));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Supply the Message object with the plugins prefix.
      *
@@ -332,6 +360,9 @@ public class Locale {
      * @return the message for the specified node
      */
     public Message getMessage(String node) {
+        if(this.nodes.containsKey(node + ".message")) {
+            node += ".message";
+        }
         return this.getMessageOrDefault(node, node);
     }
 
@@ -343,6 +374,9 @@ public class Locale {
      * @return the message for the specified node. Default if none found
      */
     public Message getMessageOrDefault(String node, String defaultValue) {
+        if(this.nodes.containsKey(node + ".message")) {
+            node += ".message";
+        }
         return supplyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
     }
 
