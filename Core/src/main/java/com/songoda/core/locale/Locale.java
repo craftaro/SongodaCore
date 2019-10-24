@@ -1,8 +1,11 @@
 package com.songoda.core.locale;
 
+import com.songoda.core.configuration.Config;
+import com.songoda.core.configuration.ConfigSection;
 import com.songoda.core.utils.TextUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,23 +20,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Assists in the utilization of localization files. <br>
  * Created to be used by the Songoda Team. <br>
- * NOTE: Using this class in multiple plugins requires shading! <br>
  * Updated 2019-09-01 to support UTF encoded lang files - jascotty2
  *
  * @author Brianna O'Keefe - Songoda
  */
 public class Locale {
 
-    private static final Pattern NODE_PATTERN = Pattern.compile("^([^ ]+)\\s*=\\s*\"?(.*?)\"?$");
+    private static final Pattern OLD_NODE_PATTERN = Pattern.compile("^([^ ]+)\\s*=\\s*\"?(.*?)\"?$");
     private static final String FILE_EXTENSION = ".lang";
 
     private final Map<String, String> nodes = new HashMap<>();
@@ -189,8 +194,10 @@ public class Locale {
             Charset existingCharset = TextUtils.detectCharset(existingIn, StandardCharsets.UTF_8);
 
             try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(existingFile, true), existingCharset);
-                    BufferedReader defaultReader = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
-                    BufferedReader existingReader = new BufferedReader(new InputStreamReader(existingIn, existingCharset));) {
+                    BufferedReader defaultReaderOriginal = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
+                    BufferedReader existingReaderOriginal = new BufferedReader(new InputStreamReader(existingIn, existingCharset));
+                    BufferedReader defaultReader = translatePropertyToYAML(defaultReaderOriginal, defaultCharset);
+                    BufferedReader existingReader = translatePropertyToYAML(existingReaderOriginal, existingCharset);) {
                 defaultLines = defaultReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "")).collect(Collectors.toList());
                 existingLines = existingReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "").split("\\s*=")[0]).collect(Collectors.toList());
 
@@ -200,7 +207,7 @@ public class Locale {
                         continue;
                     }
 
-                    String key = defaultValue.split("\\s*=")[0];
+                    String key = defaultValue.split("\\s*:")[0];
 
                     if (!existingLines.contains(key)) {
                         if (!changed) {
@@ -259,36 +266,72 @@ public class Locale {
 
         // load in the file!
         try (FileInputStream stream = new FileInputStream(file);
-                BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) stream, charset));) {
-            String line;
-            for (int lineNumber = 0; (line = reader.readLine()) != null; lineNumber++) {
-                if (lineNumber == 0){
-                    // remove BOM markers, if any
-                    line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
-                }
-                // convert to UTF-8 ?
-                /*if (charset == StandardCharsets.UTF_16LE || charset == StandardCharsets.UTF_16BE) {
-                    byte[] encoded = line.getBytes(charset);
-                    line = new String(encoded, 0, encoded.length, StandardCharsets.UTF_8);
-                } */
-
-                if ((line = line.trim()).isEmpty() || line.startsWith("#") /* Comment */) continue;
-
-                Matcher matcher = NODE_PATTERN.matcher(line);
-                if (!matcher.find()) {
-                    System.err.println("Invalid locale syntax at (line=" + lineNumber + "): " + line);
-                    continue;
-                }
-
-                nodes.put(matcher.group(1), matcher.group(2));
-            }
+                BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset));
+                BufferedReader reader = translatePropertyToYAML(source, charset);) {
+            Config lang = new Config(file);
+            lang.load(reader);
+            translateMsgRoot(lang, file, charset);
+            // todo: how should string lists be handled?
+            lang.getValues(true).forEach((k, v) -> nodes.put(k, v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } catch (InvalidConfigurationException ex) {
+            Logger.getLogger(Locale.class.getName()).log(Level.SEVERE, "Configuration error in language file \"" + file.getName() + "\"", ex);
             return false;
         }
         return true;
     }
 
+    protected static BufferedReader translatePropertyToYAML(BufferedReader source, Charset charset) throws IOException {
+        StringBuilder output = new StringBuilder();
+        String line, line1;
+        for (int lineNumber = 0; (line = source.readLine()) != null; lineNumber++) {
+            if (lineNumber == 0) {
+                // remove BOM markers, if any
+                line1 = line;
+                line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
+                if(line1.length() != line.length()) {
+                    output.append(line1.substring(0, line1.length() - line.length()));
+                }
+            }
+            Matcher matcher;
+            if ((line = line.trim().replace('\r', ' ')).isEmpty() || line.startsWith("#") /* Comment */
+                    || !(matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
+                output.append(line).append("\n");
+            } else {
+                output.append(matcher.group(1)).append(": \"").append(matcher.group(2)).append("\"\n");
+            }
+        }
+        // I hate Java sometimes because of crap like this:
+        return new BufferedReader(new InputStreamReader(new BufferedInputStream(new ByteArrayInputStream(output.toString().getBytes(charset))), charset));
+    }
+
+    protected static void translateMsgRoot(Config lang, File file, Charset charset) throws IOException {
+        List<String> msgs = lang.getValues(true).entrySet().stream()
+                .filter(e -> e.getValue() instanceof ConfigSection)
+                .map(e -> e.getKey())
+                .collect(Collectors.toList());
+        if (!msgs.isEmpty()) {
+            try (FileInputStream stream = new FileInputStream(file);
+                    BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset))) {
+                String line;
+                for (int lineNumber = 0; (line = source.readLine()) != null; lineNumber++) {
+                    if (lineNumber == 0) {
+                        // remove BOM markers, if any
+                        line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
+                    }
+                    Matcher matcher;
+                    if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
+                            && (matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
+                        if (msgs.contains(matcher.group(1))) {
+                            lang.set(matcher.group(1) + ".message", matcher.group(2));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Supply the Message object with the plugins prefix.
@@ -317,6 +360,9 @@ public class Locale {
      * @return the message for the specified node
      */
     public Message getMessage(String node) {
+        if(this.nodes.containsKey(node + ".message")) {
+            node += ".message";
+        }
         return this.getMessageOrDefault(node, node);
     }
 
@@ -328,6 +374,9 @@ public class Locale {
      * @return the message for the specified node. Default if none found
      */
     public Message getMessageOrDefault(String node, String defaultValue) {
+        if(this.nodes.containsKey(node + ".message")) {
+            node += ".message";
+        }
         return supplyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
     }
 

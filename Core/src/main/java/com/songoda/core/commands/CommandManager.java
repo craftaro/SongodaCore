@@ -251,7 +251,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         // grab the specific command that's being called
         SimpleNestedCommand nested = commands.get(command.getName().toLowerCase());
         if (nested != null) {
-            if (args.length == 0) {
+            if (args.length == 0 || nested.children.isEmpty()) {
                 return nested.parent != null ? nested.parent.onTab(sender, args) : null;
             }
             // check for each sub-command that they have access to

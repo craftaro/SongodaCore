@@ -359,7 +359,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             return BlockUtilsModern._isCropFullyGrown(block);
         }
-        CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return false;
         } else {
@@ -379,7 +379,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(block);
         }
-        CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return -1;
         } else {
@@ -399,7 +399,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(material);
         }
-        CompatibleMaterial mat = CompatibleMaterial.getMaterial(material);
+        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(material);
         if (mat == null || !mat.isCrop()) {
             return -1;
         } else {
@@ -418,7 +418,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._setGrowthStage(block, stage);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
             if (mat != null && mat.isCrop()) {
                 try {
                     legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, mat == CompatibleMaterial.BEETROOTS ? 3 : 7)));
@@ -439,7 +439,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
             if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
@@ -460,7 +460,7 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._resetGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getMaterial(block.getType());
+            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
             if (mat != null && mat.isCrop()) {
                 try {
                     legacySetBlockData.invoke(block, (byte) 0);

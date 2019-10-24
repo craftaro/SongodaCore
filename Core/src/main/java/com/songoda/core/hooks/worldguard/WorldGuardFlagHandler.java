@@ -94,13 +94,13 @@ public class WorldGuardFlagHandler {
             flags.put(flag, addFlag);
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard", addFlag.getName());
-            Flag wgFlag = (StateFlag) WorldGuard.getInstance().getFlagRegistry().get(addFlag.getName());
-            if (wgFlag == null) {
+            Object wgFlag = WorldGuard.getInstance().getFlagRegistry().get(addFlag.getName());
+            if (wgFlag == null || !(wgFlag instanceof StateFlag)) {
                 wgPlugin = false;
                 Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             } else {
                 flags.put(flag, wgFlag);
-                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[]{wgFlag.getName(), wgFlag.getClass().getSimpleName()});
+                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[]{((Flag) wgFlag).getName(), wgFlag.getClass().getSimpleName()});
             }
         }
     }
