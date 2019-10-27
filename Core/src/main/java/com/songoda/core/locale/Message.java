@@ -1,6 +1,8 @@
 package com.songoda.core.locale;
 
 import com.songoda.core.compatibility.ServerVersion;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -124,6 +126,15 @@ public class Message {
      */
     public String getMessage() {
         return ChatColor.translateAlternateColorCodes('&', this.message);
+    }
+
+    /**
+     * Get and format the held message
+     *
+     * @return the message
+     */
+    public List<String> getMessageLines() {
+        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message).split("\n|\\|"));
     }
 
     /**
