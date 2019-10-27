@@ -184,64 +184,70 @@ public class Locale {
 
     // Write new changes to existing files, if any at all
     private static boolean updateFiles(Plugin plugin, InputStream defaultFile, File existingFile, boolean builtin) {
-        boolean changed = false;
 
-        List<String> defaultLines, existingLines;
         try (BufferedInputStream defaultIn = new BufferedInputStream(defaultFile);
                 BufferedInputStream existingIn = new BufferedInputStream(new FileInputStream(existingFile))) {
 
             Charset defaultCharset = TextUtils.detectCharset(defaultIn, StandardCharsets.UTF_8);
             Charset existingCharset = TextUtils.detectCharset(existingIn, StandardCharsets.UTF_8);
 
-            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(existingFile, true), existingCharset);
-                    BufferedReader defaultReaderOriginal = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
+            try (BufferedReader defaultReaderOriginal = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
                     BufferedReader existingReaderOriginal = new BufferedReader(new InputStreamReader(existingIn, existingCharset));
                     BufferedReader defaultReader = translatePropertyToYAML(defaultReaderOriginal, defaultCharset);
                     BufferedReader existingReader = translatePropertyToYAML(existingReaderOriginal, existingCharset);) {
-                defaultLines = defaultReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "")).collect(Collectors.toList());
-                existingLines = existingReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "").split("\\s*=")[0]).collect(Collectors.toList());
 
-                for (String defaultValue : defaultLines) {
+                Config existingLang = new Config(existingFile);
+                existingLang.load(existingReader);
+                translateMsgRoot(existingLang, existingFile, existingCharset);
 
-                    if (defaultValue.isEmpty() || defaultValue.startsWith("#")) {
+                Config defaultLang = new Config();
+                String defaultData = defaultReader.lines().map(s -> s.replaceAll("[\uFEFF\uFFFE\u200B]", "")).collect(Collectors.joining("\n"));
+                defaultLang.loadFromString(defaultData);
+                translateMsgRoot(defaultLang, defaultData, defaultCharset);
+
+                List<String> added = new ArrayList();
+
+                for (String defaultValueKey : defaultLang.getKeys(true)) {
+
+                    Object val = defaultLang.get(defaultValueKey);
+                    if (val instanceof ConfigSection) {
                         continue;
                     }
 
-                    String key = defaultValue.split("\\s*:")[0];
-
-                    if (!existingLines.contains(key)) {
-                        if (!changed) {
-                            writer.write("\n\n");
-                            // Leave a note alerting the user of the newly added messages.
-                            writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".");
-
-                            // If changes were found outside of the default file leave a note explaining that.
-                            if (!builtin) {
-                                writer.write("\n");
-                                writer.write("# These translations were found untranslated, join\n");
-                                writer.write("# our translation Discord https://discord.gg/f7fpZEf\n");
-                                writer.write("# to request an official update!\n");
-                            }
-                        }
-
-                        writer.write("\n");
-
-                        // re-encode to target format? (transform down, not up)
-//                        if (defaultCharset != existingCharset) {
-//                            byte[] encoded = defaultValue.getBytes(defaultCharset);
-//                            defaultValue = new String(encoded, 2, encoded.length - 2, existingCharset);
-//                        }
-                        writer.write(defaultValue);
-
-                        changed = true;
+                    if (!existingLang.contains(defaultValueKey)) {
+                        added.add(defaultValueKey);
+                        existingLang.set(defaultValueKey, val);
                     }
                 }
+
+                if (!added.isEmpty()) {
+                    if (!builtin) {
+                        existingLang.setHeader("New messages added for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".",
+                                "",
+                                "These translations were found untranslated, join",
+                                "our translation Discord https://discord.gg/f7fpZEf",
+                                "to request an official update!",
+                                "",
+                                added.stream().collect(Collectors.joining("\n"))
+                        );
+                    } else {
+                        existingLang.setHeader("New messages added for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".",
+                                "",
+                                added.stream().collect(Collectors.joining("\n"))
+                        );
+                    }
+                    existingLang.setRootNodeSpacing(0);
+                    existingLang.save();
+                }
+                return !added.isEmpty();
+            } catch (InvalidConfigurationException ex) {
+                plugin.getLogger().log(Level.SEVERE, "Error checking config " + existingFile.getName(), ex);
             }
         } catch (IOException e) {
             return false;
         }
 
-        return changed;
+        return false;
     }
 
     /**
@@ -271,8 +277,11 @@ public class Locale {
             Config lang = new Config(file);
             lang.load(reader);
             translateMsgRoot(lang, file, charset);
-            // todo: how should string lists be handled?
-            lang.getValues(true).forEach((k, v) -> nodes.put(k, v.toString()));
+            // load lists as strings with newlines
+            lang.getValues(true).forEach((k, v) -> nodes.put(k,
+                    v instanceof List
+                            ? (((List) v).stream().map(l -> l.toString()).collect(Collectors.joining("\n")).toString())
+                            : v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -296,9 +305,15 @@ public class Locale {
                 }
             }
             Matcher matcher;
-            if ((line = line.trim().replace('\r', ' ')).isEmpty() || line.startsWith("#") /* Comment */
-                    || !(matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
-                output.append(line).append("\n");
+            if ((line = line.replace('\r', ' ')).trim().isEmpty() || line.trim().startsWith("#") /* Comment */
+                    // need to trim the search group because tab characters somehow ended up at the end of lines in a lot of these files
+                    || !(matcher = OLD_NODE_PATTERN.matcher(line.trim())).find()) {
+                if (line.startsWith("//")) {
+                    // someone used an improper comment in some files *grumble grumble*
+                    output.append("#").append(line).append("\n");
+                } else {
+                    output.append(line).append("\n");
+                }
             } else {
                 output.append(matcher.group(1)).append(": \"").append(matcher.group(2)).append("\"\n");
             }
@@ -330,6 +345,31 @@ public class Locale {
                     }
                 }
             }
+        }
+    }
+
+    protected static void translateMsgRoot(Config lang, String file, Charset charset) throws IOException {
+        List<String> msgs = lang.getValues(true).entrySet().stream()
+                .filter(e -> e.getValue() instanceof ConfigSection)
+                .map(e -> e.getKey())
+                .collect(Collectors.toList());
+        if (!msgs.isEmpty()) {
+            String source[] = file.split("\n");
+                String line;
+                for (int lineNumber = 0; lineNumber < source.length; lineNumber++) {
+                    line = source[lineNumber];
+                    if (lineNumber == 0) {
+                        // remove BOM markers, if any
+                        line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
+                    }
+                    Matcher matcher;
+                    if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
+                            && (matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
+                        if (msgs.contains(matcher.group(1))) {
+                            lang.set(matcher.group(1) + ".message", matcher.group(2));
+                        }
+                    }
+                }
         }
     }
 
