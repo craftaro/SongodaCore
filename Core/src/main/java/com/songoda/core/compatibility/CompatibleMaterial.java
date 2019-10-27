@@ -2138,14 +2138,12 @@ public enum CompatibleMaterial {
             case BEETROOTS:
             case CACTUS:
             case CARROTS:
-			case CARROT:
             case CHORUS_FLOWER:
                 // FROSTED_ICE is Ageable, but not a crop
             case KELP:
             case MELON_STEM:
             case NETHER_WART:
-			case POTATOES:
-			case POTATO:
+            case POTATOES:
             case PUMPKIN_STEM:
             case SUGAR_CANE:
             case WHEAT:
