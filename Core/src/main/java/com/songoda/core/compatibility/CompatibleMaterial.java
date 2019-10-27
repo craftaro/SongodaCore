@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -1218,6 +1219,27 @@ public enum CompatibleMaterial {
 		String key = item.getType() + ":";
 		CompatibleMaterial m = lookupMap.get(key);
 		return m != null ? m : lookupMap.get(key + item.getDurability());
+    }
+
+	/**
+	 * Lookup a Material by Block, corrected for legacy
+	 *
+	 * @param block block to check
+	 * @return LegacyMaterial or null if none found
+	 */
+	public static CompatibleMaterial getMaterial(Block block) {
+		if (block == null) {
+			return null;
+		}
+        Material mat = block.getType();
+        if(mat == null) return null;
+        else if (useLegacy) {
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name());
+            if (legacyBlock != null) {
+                return lookupMap.get(legacyBlock.name());
+            }
+        }
+        return lookupMap.get(mat.name());
     }
 
     /**
