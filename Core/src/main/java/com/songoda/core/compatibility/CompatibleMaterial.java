@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -1220,6 +1221,27 @@ public enum CompatibleMaterial {
 		return m != null ? m : lookupMap.get(key + item.getDurability());
     }
 
+	/**
+	 * Lookup a Material by Block, corrected for legacy
+	 *
+	 * @param block block to check
+	 * @return LegacyMaterial or null if none found
+	 */
+	public static CompatibleMaterial getMaterial(Block block) {
+		if (block == null) {
+			return null;
+		}
+        Material mat = block.getType();
+        if(mat == null) return null;
+        else if (useLegacy) {
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name());
+            if (legacyBlock != null) {
+                return lookupMap.get(legacyBlock.name());
+            }
+        }
+        return lookupMap.get(mat.name());
+    }
+
     /**
      * Lookup a Block Material by its modern id name. <br />
      * This also can grab materials by their legacy, but only if there is no
@@ -2116,14 +2138,12 @@ public enum CompatibleMaterial {
             case BEETROOTS:
             case CACTUS:
             case CARROTS:
-			case CARROT:
             case CHORUS_FLOWER:
                 // FROSTED_ICE is Ageable, but not a crop
             case KELP:
             case MELON_STEM:
             case NETHER_WART:
-			case POTATOES:
-			case POTATO:
+            case POTATOES:
             case PUMPKIN_STEM:
             case SUGAR_CANE:
             case WHEAT:

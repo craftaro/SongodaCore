@@ -23,24 +23,21 @@ public class Comment {
     }
 
     public Comment(String... lines) {
-        this.lines.addAll(Arrays.asList(lines));
+        this(null, Arrays.asList(lines));
     }
 
     public Comment(List<String> lines) {
-        if (lines != null) {
-            this.lines.addAll(lines);
-        }
+        this(null, lines);
     }
 
     public Comment(CommentStyle commentStyle, String... lines) {
-        this.commentStyle = commentStyle;
-        this.lines.addAll(Arrays.asList(lines));
+        this(commentStyle, Arrays.asList(lines));
     }
 
     public Comment(CommentStyle commentStyle, List<String> lines) {
         this.commentStyle = commentStyle;
         if (lines != null) {
-            this.lines.addAll(lines);
+            lines.forEach(s -> this.lines.addAll(Arrays.asList(s.split("\n"))));
         }
     }
 

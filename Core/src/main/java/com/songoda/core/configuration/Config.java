@@ -109,6 +109,13 @@ public class Config extends ConfigSection {
      */
     int commentSpacing = 1;
 
+    public Config() {
+        this.plugin = null;
+        this.file = null;
+        dirName = null;
+        fileName = null;
+    }
+
     public Config(@NotNull File file) {
         this.plugin = null;
         this.file = file.getAbsoluteFile();
