@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
@@ -156,6 +158,25 @@ public class GuiManager {
 
         public GuiListener(GuiManager manager) {
             this.manager = manager;
+        }
+
+        @EventHandler(priority = EventPriority.LOW)
+        void onDragGUI(InventoryDragEvent event) {
+            if (!(event.getWhoClicked() instanceof Player)) {
+                return;
+            }
+
+            Inventory openInv = event.getInventory();
+            Gui gui;
+            if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
+                && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
+                gui = ((GuiHolder) openInv.getHolder()).getGUI();
+
+                if(event.getRawSlots().stream().filter(slot -> gui.inventory.getSize() > slot).anyMatch(slot -> !gui.unlockedCells.getOrDefault(slot, false))){
+                    event.setCancelled(true);
+                    event.setResult(Result.DENY);
+                }
+            }
         }
 
         @EventHandler(priority = EventPriority.LOW)
