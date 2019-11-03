@@ -304,8 +304,12 @@ public class Locale {
                     output.append(line1.substring(0, line1.length() - line.length()));
                 }
             }
+
             Matcher matcher;
-            if ((line = line.replace('\r', ' ')).trim().isEmpty() || line.trim().startsWith("#") /* Comment */
+            if ((line = line.replace('\r', ' ')
+                    .replaceAll("\\p{C}", "?")
+                    .replaceAll(";", "")).trim().isEmpty()
+                    || line.trim().startsWith("#") /* Comment */
                     // need to trim the search group because tab characters somehow ended up at the end of lines in a lot of these files
                     || !(matcher = OLD_NODE_PATTERN.matcher(line.trim())).find()) {
                 if (line.startsWith("//")) {
