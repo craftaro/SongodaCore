@@ -257,6 +257,7 @@ public class ItemUtils {
 		} else {
 			meta.setOwner(player.getName());
 		}
+		head.setItemMeta(meta);
 		return head;
 	}
 
