@@ -1,17 +1,24 @@
 package com.songoda.core.compatibility;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
 public class CompatibleParticleHandler {
 
     public static enum ParticleType {
+        /* 1.15 */
+        DRIPPING_HONEY,
+        FALLING_HONEY,
+        FALLING_NECTAR,
+        LANDING_HONEY,
+
         EXPLOSION_NORMAL(),
         EXPLOSION_LARGE,
         EXPLOSION_HUGE,
@@ -214,17 +221,17 @@ public class CompatibleParticleHandler {
     public static void redstoneParticles(Location location, int red, int green, int blue) {
         redstoneParticles(location, red, green, blue, 1F, 1, 0);
     }
-    
+
     /**
      * Spawn colored redstone particles
-     * 
+     *
      * @param location area to spawn the particle in
-     * @param red red value 0-255
-     * @param green green value 0-255
-     * @param blue blue value 0-255
-     * @param size (1.13+) size of the particles
-     * @param count how many particles to spawn
-     * @param radius how far to spread out the particles from location
+     * @param red      red value 0-255
+     * @param green    green value 0-255
+     * @param blue     blue value 0-255
+     * @param size     (1.13+) size of the particles
+     * @param count    how many particles to spawn
+     * @param radius   how far to spread out the particles from location
      */
     public static void redstoneParticles(Location location, int red, int green, int blue, float size, int count, float radius) {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
@@ -247,23 +254,23 @@ public class CompatibleParticleHandler {
                 float yy = (float) (radius * (Math.random() - Math.random()));
                 float zz = (float) (radius * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
-                LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE, 
+                LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE,
                         red / 255F, green / 255F, blue / 255F, 1F, 0, null);
             }
         }
     }
 
-	public static void bonemealSmoke(Location l) {
-		final org.bukkit.World w = l.getWorld();
-		w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_EAST);
-		w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH);
-		w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_WEST);
-		w.playEffect(l, Effect.SMOKE, BlockFace.EAST);
-		w.playEffect(l, Effect.SMOKE, BlockFace.SELF);
-		w.playEffect(l, Effect.SMOKE, BlockFace.WEST);
-		w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_EAST);
-		w.playEffect(l, Effect.SMOKE, BlockFace.NORTH);
-		w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_WEST);
-	}
+    public static void bonemealSmoke(Location l) {
+        final org.bukkit.World w = l.getWorld();
+        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_EAST);
+        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH);
+        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_WEST);
+        w.playEffect(l, Effect.SMOKE, BlockFace.EAST);
+        w.playEffect(l, Effect.SMOKE, BlockFace.SELF);
+        w.playEffect(l, Effect.SMOKE, BlockFace.WEST);
+        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_EAST);
+        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH);
+        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_WEST);
+    }
 
 }

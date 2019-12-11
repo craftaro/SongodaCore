@@ -30,6 +30,16 @@ public enum CompatibleMaterial {
      DARK_OAK_DOOR_ITEM(431),
     
 	 */
+
+	/* 1.15 */
+	BEE_SPAWN_EGG(),
+	BEE_NEST(),
+	BEEHIVE(),
+	HONEY_BLOCK(),
+	HONEY_BOTTLE(),
+	HONEYCOMB(),
+	HONEYCOMB_BLOCK(),
+
 	ACACIA_BOAT("BOAT_ACACIA"),
 	ACACIA_BUTTON(),
 	ACACIA_DOOR("ACACIA_DOOR_ITEM"),
