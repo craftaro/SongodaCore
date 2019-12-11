@@ -46,8 +46,6 @@ public class ItemUtils {
 	public static String getItemName(ItemStack it) {
 		if (it == null) {
 			return null;
-		} else if (can_getI18NDisplayName) {
-			return it.getI18NDisplayName();
 		} else {
 			return itemName(it.getType());
 		}
