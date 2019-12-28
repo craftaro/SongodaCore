@@ -27,6 +27,11 @@ public class PlayerPointsEconomy extends Economy {
     }
 
     @Override
+    public double getBalance(OfflinePlayer player) {
+        return playerPoints.getAPI().look(player.getUniqueId());
+    }
+
+    @Override
     public boolean hasBalance(OfflinePlayer player, double cost) {
         int amount = convertAmount(cost);
         return playerPoints.getAPI().look(player.getUniqueId()) >= amount;

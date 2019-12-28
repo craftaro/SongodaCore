@@ -9,7 +9,7 @@ public class VaultEconomy extends Economy {
     private final net.milkbowl.vault.economy.Economy vault;
 
     public VaultEconomy() {
-        // this returns null if we have Vault with no compatibe eco plugin
+        // this returns null if we have Vault with no compatible eco plugin
         RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> v = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if(v != null) {
             this.vault = v.getProvider();
@@ -32,6 +32,13 @@ public class VaultEconomy extends Economy {
     @Override 
     public String formatEconomy(double amt) {
         return vault != null ? vault.format(amt) : super.formatEconomy(amt);
+    }
+
+    @Override
+    public double getBalance(OfflinePlayer player) {
+        if (vault == null)
+            return 0;
+        return vault.getBalance(player);
     }
 
     @Override
