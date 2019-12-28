@@ -7,6 +7,14 @@ import org.bukkit.OfflinePlayer;
 public abstract class Economy implements Hook {
 
     /**
+     * Get the players available balance
+     *
+     * @param player player
+     * @return the amount of available balance
+     */
+    public abstract double getBalance(OfflinePlayer player);
+
+    /**
      * Check to see if a player has at least some balance available
      *
      * @param player player to check
