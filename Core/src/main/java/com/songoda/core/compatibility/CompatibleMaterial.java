@@ -2166,6 +2166,11 @@ public enum CompatibleMaterial {
         if(type == EntityType.MUSHROOM_COW) {
             return MOOSHROOM_SPAWN_EGG;
         }
+
+        if (type == EntityType.PIG_ZOMBIE) {
+        	return ZOMBIE_PIGMAN_SPAWN_EGG;
+				}
+
         return lookupMap.get(type.name() + "_SPAWN_EGG");
     }
 
