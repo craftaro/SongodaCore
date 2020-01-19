@@ -1,22 +1,19 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.CropState;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.material.Crops;
 
 public class BlockUtils {
 
@@ -69,10 +66,10 @@ public class BlockUtils {
         if (isOpenable(bType)) {
             toggleDoorStates(true, b);
             return true;
-        } else if(bType == Material.LEVER) {
+        } else if (bType == Material.LEVER) {
             toggleLever(b);
             return true;
-        } else if(bType.name().endsWith("_BUTTON")) {
+        } else if (bType.name().endsWith("_BUTTON")) {
             pressButton(b);
             return true;
         }
@@ -82,6 +79,7 @@ public class BlockUtils {
 
     /**
      * Change a pressure plate's redstone state
+     *
      * @param plate plate to update
      * @param power power to set to 0-15 (wood plates are active if greater than 0)
      */
@@ -105,7 +103,7 @@ public class BlockUtils {
             Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
         }
     }
-    
+
     public static void pressButton(Block button) {
         if (useLegacy && legacySetBlockData != null) {
             _pressButtonLegacy(button);
@@ -113,7 +111,7 @@ public class BlockUtils {
             BlockUtilsModern._pressButtonModern(button);
         }
     }
-    
+
     public static void releaseButton(Block button) {
         if (useLegacy && legacySetBlockData != null) {
             _releaseButtonLegacy(button);
@@ -124,7 +122,7 @@ public class BlockUtils {
 
     private static void _pressButtonLegacy(Block button) {
         final Material m = button.getType();
-        if(!m.name().endsWith("_BUTTON")) return;
+        if (!m.name().endsWith("_BUTTON")) return;
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() | (31 & 0x8)));
             button.getState().update();
@@ -132,10 +130,10 @@ public class BlockUtils {
             Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
         }
     }
-    
+
     private static void _releaseButtonLegacy(Block button) {
         final Material m = button.getType();
-        if(!m.name().endsWith("_BUTTON")) return;
+        if (!m.name().endsWith("_BUTTON")) return;
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() & ~0x8));
             button.getState().update();
@@ -143,7 +141,7 @@ public class BlockUtils {
             Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
         }
     }
-    
+
     public static void toggleLever(Block lever) {
         if (useLegacy && legacySetBlockData != null) {
             _toggleLeverLegacy(lever);
@@ -154,7 +152,7 @@ public class BlockUtils {
 
     private static void _toggleLeverLegacy(Block lever) {
         final Material m = lever.getType();
-        if(m != Material.LEVER) return;
+        if (m != Material.LEVER) return;
         try {
             legacySetBlockData.invoke(lever, (byte) (lever.getData() ^ 0x8));
             lever.getState().update();
@@ -189,6 +187,7 @@ public class BlockUtils {
             Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
         }
     }
+
     /**
      * Change all of the given door states to be inverse; that is, if a door is
      * open, it will be closed afterwards. If the door is closed, it will become
@@ -197,8 +196,8 @@ public class BlockUtils {
      * Note that the blocks given must be the bottom block of the door.
      *
      * @param allowDoorToOpen If FALSE, and the door is currently CLOSED, it
-     * will NOT be opened!
-     * @param doors Blocks given must be the bottom block of the door
+     *                        will NOT be opened!
+     * @param doors           Blocks given must be the bottom block of the door
      */
     public static void toggleDoorStates(boolean allowDoorToOpen, Block... doors) {
         if (useLegacy && legacySetBlockData != null) {
@@ -312,6 +311,7 @@ public class BlockUtils {
 
     /**
      * Manually trigger the updateAdjacentComparators method for containers
+     *
      * @param containerLocation location of the container
      */
     public static void updateAdjacentComparators(Location containerLocation) {
@@ -363,7 +363,8 @@ public class BlockUtils {
         if (mat == null || !mat.isCrop()) {
             return false;
         } else {
-            return block.getData() >= (mat == CompatibleMaterial.BEETROOTS ? 3 : 7);
+            return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
+                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
     }
 
@@ -383,7 +384,8 @@ public class BlockUtils {
         if (mat == null || !mat.isCrop()) {
             return -1;
         } else {
-            return mat == CompatibleMaterial.BEETROOTS ? 3 : 7;
+            return (mat == CompatibleMaterial.BEETROOTS
+                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
     }
 
@@ -403,7 +405,8 @@ public class BlockUtils {
         if (mat == null || !mat.isCrop()) {
             return -1;
         } else {
-            return mat == CompatibleMaterial.BEETROOTS ? 3 : 7;
+            return (mat == CompatibleMaterial.BEETROOTS
+                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
     }
 
@@ -421,7 +424,8 @@ public class BlockUtils {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
             if (mat != null && mat.isCrop()) {
                 try {
-                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, mat == CompatibleMaterial.BEETROOTS ? 3 : 7)));
+                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, (mat == CompatibleMaterial.BEETROOTS
+                            || mat == CompatibleMaterial.NETHER_WART ? 3 : 7))));
                 } catch (Exception ex) {
                     Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
                 }
@@ -440,7 +444,8 @@ public class BlockUtils {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-            if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS ? 3 : 7)) {
+            if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS
+                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
@@ -473,7 +478,7 @@ public class BlockUtils {
 
     /**
      * Check to see if this material does not impede player/mob movement at all.
-     * 
+     *
      * @param m material to check
      * @return true if this material doesn't have a solid hitbox
      */
@@ -625,7 +630,7 @@ public class BlockUtils {
             case "WITHER_ROSE":
             case "YELLOW_BANNER":
             case "YELLOW_WALL_BANNER":
-            // Legacy values:
+                // Legacy values:
             case "WEB":
             case "LONG_GRASS":
             case "YELLOW_FLOWER":
@@ -658,7 +663,7 @@ public class BlockUtils {
     /**
      * Check to see if a player can walk into this material<br />
      * This includes blocks like slabs and stairs
-     * 
+     *
      * @param m material to check
      * @return true if this is a block that can be walked though or up
      */
@@ -936,7 +941,7 @@ public class BlockUtils {
             case "YELLOW_BANNER":
             case "YELLOW_CARPET":
             case "YELLOW_WALL_BANNER":
-            // Legacy values:
+                // Legacy values:
             case "WEB":
             case "LONG_GRASS":
             case "YELLOW_FLOWER":
