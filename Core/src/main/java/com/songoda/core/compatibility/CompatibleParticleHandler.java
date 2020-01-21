@@ -13,12 +13,6 @@ import java.util.stream.Stream;
 public class CompatibleParticleHandler {
 
     public static enum ParticleType {
-        /* 1.15 */
-        DRIPPING_HONEY,
-        FALLING_HONEY,
-        FALLING_NECTAR,
-        LANDING_HONEY,
-
         EXPLOSION_NORMAL(),
         EXPLOSION_LARGE,
         EXPLOSION_HUGE,
@@ -87,6 +81,11 @@ public class CompatibleParticleHandler {
         LANDING_LAVA(ServerVersion.V1_14, "LAVA"),
         FALLING_WATER(ServerVersion.V1_14, "DRIP_WATER"),
         /// End 1.14 ///
+        DRIPPING_HONEY(ServerVersion.V1_15, "DRIP_WATER"),
+        FALLING_HONEY(ServerVersion.V1_15, "DRIP_WATER"),
+        FALLING_NECTAR(ServerVersion.V1_15, "DRIP_WATER"),
+        LANDING_HONEY(ServerVersion.V1_15, "DRIP_WATER"),
+        /// End 1.15 ///
         ;
 
         final boolean compatibilityMode;
