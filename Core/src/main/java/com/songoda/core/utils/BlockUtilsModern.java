@@ -1,5 +1,9 @@
 package com.songoda.core.utils;
 
+import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -8,6 +12,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.AnaloguePowerable;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Gate;
 import org.bukkit.block.data.type.Switch;
@@ -15,47 +20,161 @@ import org.bukkit.block.data.type.TrapDoor;
 
 public class BlockUtilsModern {
 
-    protected static void _updatePressurePlateModern(Block plate, int power) {
-        BlockData blockData = plate.getBlockData();
-        if (blockData instanceof AnaloguePowerable) {
-            AnaloguePowerable a = (AnaloguePowerable) blockData;
-            a.setPower(Math.max(a.getMaximumPower(), power));
-            plate.setBlockData(a);
-        }
-    }
+	protected static void _updatePressurePlateModern(Block plate, int power) {
+		BlockData blockData = plate.getBlockData();
+		boolean update = false;
+		if (blockData instanceof AnaloguePowerable) {
+			AnaloguePowerable a = (AnaloguePowerable) blockData;
+			int toPower = Math.min(a.getMaximumPower(), power);
+			if ((update = toPower != a.getPower())) {
+				a.setPower(toPower);
+				plate.setBlockData(a);
+			}
+		} else if (blockData instanceof Powerable) {
+			Powerable p = (Powerable) blockData;
+			if ((update = p.isPowered() != (power != 0))) {
+				p.setPowered(power != 0);
+				plate.setBlockData(p);
+			}
+		}
+		if (update) {
+			_updateRedstoneNeighbours(plate);
+		}
+	}
 
-    protected static void _toggleLeverModern(Block lever) {
-        BlockData blockData = lever.getBlockData();
-        if (blockData instanceof Switch) {
-            Switch s = (Switch) blockData;
-            s.setPowered(!s.isPowered());
-            lever.setBlockData(s);
-            //lever.getWorld().playEffect(lever.getLocation(), Effect.CLICK1, 0);
-            lever.getState().update();
-        }
-    }
+	protected static void _toggleLeverModern(Block lever) {
+		BlockData blockData = lever.getBlockData();
+		if (blockData instanceof Switch) {
+			Switch s = (Switch) blockData;
+			s.setPowered(!s.isPowered());
+			lever.setBlockData(s);
+			_updateRedstoneNeighbours(lever);
+		}
+	}
 
-    protected static void _pressButtonModern(Block button) {
-        BlockData blockData = button.getBlockData();
-        if (blockData instanceof Switch) {
-            Switch s = (Switch) blockData;
-            s.setPowered(true);
-            button.setBlockData(s);
-            //lever.getWorld().playEffect(lever.getLocation(), Effect.CLICK1, 0);
-            button.getState().update();
-        }
-    }
+	protected static void _pressButtonModern(Block button) {
+		BlockData blockData = button.getBlockData();
+		if (blockData instanceof Switch) {
+			Switch s = (Switch) blockData;
+			s.setPowered(true);
+			button.setBlockData(s);
+			_updateRedstoneNeighbours(button);
+		}
+	}
 
-    static void _releaseButtonModern(Block button) {
-        BlockData blockData = button.getBlockData();
-        if (blockData instanceof Switch) {
-            Switch s = (Switch) blockData;
-            s.setPowered(false);
-            button.setBlockData(s);
-            //lever.getWorld().playEffect(lever.getLocation(), Effect.CLICK1, 0);
-            button.getState().update();
-        }
-    }
+	static void _releaseButtonModern(Block button) {
+		BlockData blockData = button.getBlockData();
+		if (blockData instanceof Switch) {
+			Switch s = (Switch) blockData;
+			s.setPowered(false);
+			button.setBlockData(s);
+			_updateRedstoneNeighbours(button);
+		}
+	}
+
+	private static Class<?> clazzCraftWorld, clazzCraftBlock,
+			clazzLeverBlock, clazzButtonBlock, clazzPressurePlateBlock;
+	private static Method craftWorld_getHandle, craftBlock_getNMSBlock, craftBlock_getPostition, craftBlockData_getState,
+			nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours;
+
+	static {
+		try {
+			// Cache reflection.
+
+			String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+			clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
+			clazzCraftBlock = Class.forName("org.bukkit.craftbukkit." + ver + ".block.CraftBlock");
+			//clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
+
+			craftWorld_getHandle = clazzCraftWorld.getMethod("getHandle");
+			craftBlock_getNMSBlock = clazzCraftBlock.getDeclaredMethod("getNMSBlock");
+			craftBlock_getNMSBlock.setAccessible(true);
+			craftBlock_getPostition = clazzCraftBlock.getDeclaredMethod("getPosition");
+
+			Class<?> clazzCraftBlockData = Class.forName("org.bukkit.craftbukkit." + ver + ".block.data.CraftBlockData");
+			craftBlockData_getState = clazzCraftBlockData.getDeclaredMethod("getState");
+
+			Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
+			Class<?> clazzBlockState = Class.forName("net.minecraft.server." + ver + ".IBlockData");
+			Class<?> clazzBlockPos = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
+			clazzLeverBlock = Class.forName("net.minecraft.server." + ver + ".BlockLever");
+			clazzButtonBlock = Class.forName("net.minecraft.server." + ver + ".BlockButtonAbstract");
+			clazzPressurePlateBlock = Class.forName("net.minecraft.server." + ver + ".BlockPressurePlateAbstract");
+
+			// nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours
+			nmsLever_updateNeighbours = clazzLeverBlock.getDeclaredMethod("e", clazzBlockState, clazzWorld, clazzBlockPos);
+			nmsLever_updateNeighbours.setAccessible(true);
+
+			nmsButton_updateNeighbours = clazzButtonBlock.getDeclaredMethod("f", clazzBlockState, clazzWorld, clazzBlockPos);
+			nmsButton_updateNeighbours.setAccessible(true);
+
+			nmsPlate_updateNeighbours = clazzPressurePlateBlock.getDeclaredMethod("a", clazzWorld, clazzBlockPos);
+			nmsPlate_updateNeighbours.setAccessible(true);
+		} catch (Throwable ex) {
+			Logger.getLogger(BlockUtilsModern.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	static void _updateRedstoneNeighbours(Block block) {
+		try {
+			// spigot made some changes to how data updates work in 1.13+
+			// updating the data value of a redstone power source
+			// does NOT update attatched block power,
+			// even if you update the block state. (Still broken last I checked in 1.15.2)
+			// so now we're going to manually call the updateNeighbours block method
+
+			// invoke and cast objects.
+			Object cworld = clazzCraftWorld.cast(block.getWorld());
+			Object mworld = craftWorld_getHandle.invoke(cworld);
+			Object cblock = clazzCraftBlock.cast(block);
+			Object mblock = craftBlock_getNMSBlock.invoke(cblock);
+			Object mpos = craftBlock_getPostition.invoke(cblock);
+
+			//System.out.println(mblock.getClass());
+			// now for testing stuff
+			if (clazzLeverBlock.isAssignableFrom(mblock.getClass())) {
+				final Object mstate = craftBlockData_getState.invoke(block.getBlockData());
+				nmsLever_updateNeighbours.invoke(mblock, mstate, mworld, mpos);
+			} else if (clazzButtonBlock.isAssignableFrom(mblock.getClass())) {
+				final Object mstate = craftBlockData_getState.invoke(block.getBlockData());
+				nmsButton_updateNeighbours.invoke(mblock, mstate, mworld, mpos);
+			} else if (clazzPressurePlateBlock.isAssignableFrom(mblock.getClass())) {
+				nmsPlate_updateNeighbours.invoke(mblock, mworld, mpos);
+			} else {
+				System.out.println("Unknown redstone: " + mblock.getClass().getName());
+			}
+//			
+//			if(mblock instanceof net.minecraft.server.v1_15_R1.BlockLever) {
+//				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockLever.class.getDeclaredMethod("e", net.minecraft.server.v1_15_R1.IBlockData.class, net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
+//				updateNeighbours.setAccessible(true);
+//				// IBlockData = block state after being powered
+//				
+//				updateNeighbours.invoke(mblock, 
+//						((org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData) block.getBlockData()).getState(),
+//						mworld,
+//						mpos);
+//			} else if(mblock instanceof net.minecraft.server.v1_15_R1.BlockButtonAbstract) {
+//				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockButtonAbstract.class.getDeclaredMethod("f", net.minecraft.server.v1_15_R1.IBlockData.class, net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
+//				updateNeighbours.setAccessible(true);
+//				// IBlockData = block state after being powered
+//				
+//				updateNeighbours.invoke(mblock, 
+//						((org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData) block.getBlockData()).getState(),
+//						mworld,
+//						mpos);
+//			} else if(mblock instanceof net.minecraft.server.v1_15_R1.BlockPressurePlateAbstract) {
+//				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockPressurePlateAbstract.class.getDeclaredMethod("a", net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
+//				updateNeighbours.setAccessible(true);
+//				// IBlockData = block state after being powered
+//				
+//				updateNeighbours.invoke(mblock, 
+//						mworld,
+//						mpos);
+//			}
+		} catch (Throwable ex) {
+			Logger.getLogger(BlockUtilsModern.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
     protected static void _toggleDoorStatesModern(boolean allowDoorToOpen, Block... doors) {
         for (Block door : doors) {
