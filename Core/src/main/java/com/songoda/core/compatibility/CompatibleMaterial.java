@@ -30,6 +30,16 @@ public enum CompatibleMaterial {
      DARK_OAK_DOOR_ITEM(431),
     
 	 */
+
+	/* 1.15 */
+	BEE_SPAWN_EGG(),
+	BEE_NEST(),
+	BEEHIVE(),
+	HONEY_BLOCK(),
+	HONEY_BOTTLE(),
+	HONEYCOMB(),
+	HONEYCOMB_BLOCK(),
+
 	ACACIA_BOAT("BOAT_ACACIA"),
 	ACACIA_BUTTON(),
 	ACACIA_DOOR("ACACIA_DOOR_ITEM"),
@@ -348,7 +358,7 @@ public enum CompatibleMaterial {
 	END_PORTAL_FRAME("ENDER_PORTAL_FRAME"),
 	END_ROD,
 	END_STONE("ENDER_STONE"),
-	END_STONE_BRICKS,
+	END_STONE_BRICKS("END_BRICKS"),
 	END_STONE_BRICK_SLAB(),
 	END_STONE_BRICK_STAIRS,
 	END_STONE_BRICK_WALL,
@@ -617,7 +627,7 @@ public enum CompatibleMaterial {
 	NETHERRACK,
 	NETHER_BRICK("NETHER_BRICK_ITEM"),
 	NETHER_BRICKS("NETHER_BRICK"),
-	NETHER_BRICK_FENCE(),
+	NETHER_BRICK_FENCE("NETHER_FENCE"),
 	NETHER_BRICK_SLAB("STEP", (byte) 6),
 	NETHER_BRICK_STAIRS,
 	NETHER_BRICK_WALL,
@@ -2156,6 +2166,11 @@ public enum CompatibleMaterial {
         if(type == EntityType.MUSHROOM_COW) {
             return MOOSHROOM_SPAWN_EGG;
         }
+
+        if (type == EntityType.PIG_ZOMBIE) {
+        	return ZOMBIE_PIGMAN_SPAWN_EGG;
+				}
+
         return lookupMap.get(type.name() + "_SPAWN_EGG");
     }
 

@@ -62,6 +62,19 @@ public class EconomyManager {
     }
 
     /**
+     * Get the players available balance
+     *
+     * @param player player
+     * @return the amount of available balance
+     */
+    public static double getBalance(OfflinePlayer player) {
+        if (!manager.isEnabled())
+            return 0;
+        return manager.getCurrentHook().getBalance(player);
+
+    }
+
+    /**
      * Check to see if a player has at least some balance available. <br />
      * NOTE: using a default economy assumes that this library is shaded
      *

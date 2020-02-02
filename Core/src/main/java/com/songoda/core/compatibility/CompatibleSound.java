@@ -23,6 +23,29 @@ public enum CompatibleSound {
     // would using the raw strings be better?
     // 1.8 list:
     // https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/mapping-and-modding-tutorials/2213619-1-8-all-playsound-sound-arguments
+
+    /* 1.15 */
+    BLOCK_BEEHIVE_DRIP,
+    BLOCK_BEEHIVE_ENTER,
+    BLOCK_BEEHIVE_EXIT,
+    BLOCK_BEEHIVE_SHEAR,
+    BLOCK_BEEHIVE_WORK,
+    BLOCK_HONEY_BLOCK_BREAK,
+    BLOCK_HONEY_BLOCK_FALL,
+    BLOCK_HONEY_BLOCK_HIT,
+    BLOCK_HONEY_BLOCK_PLACE,
+    BLOCK_HONEY_BLOCK_SLIDE,
+    BLOCK_HONEY_BLOCK_STEP,
+    ENTITY_BEE_DEATH,
+    ENTITY_BEE_HURT,
+    ENTITY_BEE_LOOP,
+    ENTITY_BEE_LOOP_AGGRESSIVE,
+    ENTITY_BEE_POLLINATE,
+    ENTITY_BEE_STING,
+    ENTITY_IRON_GOLEM_DAMAGE,
+    ENTITY_IRON_GOLEM_REPAIR,
+    ITEM_HONEY_BOTTLE_DRINK,
+
     AMBIENT_CAVE(ServerVersion.V1_9, v("AMBIENCE_CAVE")),
     AMBIENT_UNDERWATER_ENTER,
     AMBIENT_UNDERWATER_EXIT,

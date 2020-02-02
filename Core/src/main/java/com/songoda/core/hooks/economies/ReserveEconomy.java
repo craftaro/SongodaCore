@@ -31,6 +31,11 @@ public class ReserveEconomy extends Economy {
     }
 
     @Override
+    public double getBalance(OfflinePlayer player) {
+        return economyAPI.getBankHoldings(player.getUniqueId()).doubleValue();
+    }
+
+    @Override
     public boolean hasBalance(OfflinePlayer player, double cost) {
         return economyAPI.hasHoldings(player.getUniqueId(), new BigDecimal(cost));
     }

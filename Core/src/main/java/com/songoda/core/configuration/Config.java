@@ -613,6 +613,7 @@ public class Config extends ConfigSection {
             }
             yamlOptions.setIndent(indentation);
             yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            yamlOptions.setSplitLines(false);
             yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             StringWriter str = new StringWriter();
             if (headerComment != null) {
