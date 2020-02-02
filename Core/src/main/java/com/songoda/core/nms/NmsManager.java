@@ -40,6 +40,8 @@ public class NmsManager {
                 return new com.songoda.core.nms.v1_13_R2.NMS();
             case "v1_14_R1":
                 return new com.songoda.core.nms.v1_14_R1.NMS();
+            case "v1_15_R1":
+                return new com.songoda.core.nms.v1_15_R1.NMS();
         }
         Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version: version {0} not found", serverPackageVersion);
         return null;
