@@ -236,6 +236,8 @@ public class Locale {
                                 added.stream().collect(Collectors.joining("\n"))
                         );
                     }
+                    existingLang.setRootNodeSpacing(0);
+                    existingLang.save();
                 }
                 existingLang.setRootNodeSpacing(0);
                 existingLang.save();

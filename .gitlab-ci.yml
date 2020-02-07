@@ -10,6 +10,7 @@ build:
   stage: build
   image: maven:3.5.3-jdk-8
   script:
+    - sed -e "s/{REPO_USER}/$REPO_USER/g" -e "s/{REPO_PASS}/$REPO_PASS/g" $path/settings.xml > ~/.m2/settings.xml
     - find $path/ -type f -name "*.xml" -print0 | xargs -0 sed -i -e s/maven-version-number/$version/g
     - find $path/ -type f -name "*.yml" -print0 | xargs -0 sed -i -e s/maven-version-number/$version/g
     - find $path/ -type f -name "*SongodaCore.java" -print0 | xargs -0 sed -i -e s/maven-version-number/$version/g

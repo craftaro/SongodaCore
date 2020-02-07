@@ -12,6 +12,15 @@ import org.bukkit.inventory.ItemStack;
  */
 public enum LegacyMaterialAnalouge {
 
+	/* 1.15 */
+	BEE_SPAWN_EGG(ServerVersion.V1_15, "PARROT_SPAWN_EGG", ServerVersion.V1_12, "MONSTER_EGG", (byte) 65),
+	BEE_NEST(ServerVersion.V1_15, "BIRCH_LOG", "LOG", (byte) 2),
+	BEEHIVE(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+	HONEY_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+	HONEY_BOTTLE(ServerVersion.V1_15, "DRAGON_BREATH", ServerVersion.V1_9, "POTION", (byte) 0),
+	HONEYCOMB(ServerVersion.V1_15, "SUNFLOWER", "DOUBLE_PLANT", (byte) 0),
+	HONEYCOMB_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+
     ACACIA_BOAT(ServerVersion.V1_9, "BOAT"),
     ACACIA_BUTTON(ServerVersion.V1_13, "WOOD_BUTTON"),
     ACACIA_DOOR(ServerVersion.V1_8, "WOOD_DOOR"), // TODO? ACACIA_DOOR & WOODEN_DOOR are the legacy block variants

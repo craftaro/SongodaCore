@@ -155,6 +155,18 @@ public class Gui {
                 .collect(Collectors.toList())
                 .forEach(Player::closeInventory);
     }
+	
+	/**
+	 * Close the GUI as if the player closed it normally
+	 */
+	public void close() {
+        allowClose = true;
+        inventory.getViewers().stream()
+                .filter(e -> e instanceof Player)
+                .map(e -> (Player) e)
+                .collect(Collectors.toList())
+                .forEach(Player::closeInventory);
+	}
 
     @NotNull
     public GuiType getType() {

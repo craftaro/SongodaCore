@@ -4,6 +4,7 @@ import com.songoda.core.nms.CustomAnvil;
 import com.songoda.core.nms.methods.AnvilTextChange;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_15_R1.BlockPosition;
@@ -11,7 +12,6 @@ import net.minecraft.server.v1_15_R1.ChatMessage;
 import net.minecraft.server.v1_15_R1.Container;
 import net.minecraft.server.v1_15_R1.ContainerAccess;
 import net.minecraft.server.v1_15_R1.ContainerAnvil;
-import net.minecraft.server.v1_15_R1.ContainerProperty;
 import net.minecraft.server.v1_15_R1.Containers;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
@@ -50,37 +50,26 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         }
     }
 
-    // 1.14.3 and 1.14.4 have different fields for levelCost
-    static boolean compat_mode = true;
     static Method mc_ContainerProperty_set;
     static Method mc_ContainerProperty_get;
-    // 1.14 also made this field private. Fun.
+    // 1.15 made this field public again, but now it's final. idk.
     static Field mc_Container_windowId;
     // 1.14 also introduced a title field, also private, which can only be set once and can't be checked
     static Field mc_Container_title;
 
     static {
         try {
-            mc_Container_windowId = Container.class.getDeclaredField("windowId");
-            mc_Container_windowId.setAccessible(true);
             mc_Container_title = Container.class.getDeclaredField("title");
             mc_Container_title.setAccessible(true);
+            mc_Container_windowId = Container.class.getDeclaredField("windowId");
+            mc_Container_windowId.setAccessible(true);
+			
+			// remove the final modifier
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(mc_Container_windowId, mc_Container_windowId.getModifiers() & ~Modifier.FINAL);
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
-        }
-        for (Method m : ContainerProperty.class.getMethods()) {
-            if (m.getName().equals("set")) {
-                compat_mode = false;
-                break;
-            }
-        }
-        if (compat_mode) {
-            try {
-                mc_ContainerProperty_set = ContainerProperty.class.getDeclaredMethod("a", int.class);
-                mc_ContainerProperty_get = ContainerProperty.class.getDeclaredMethod("b");
-            } catch (Exception ex) {
-                Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
-            }
         }
     }
 
@@ -120,18 +109,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     public void e() {
         super.e();
         if (cost >= 0) {
-            if (compat_mode) {
-                if (mc_ContainerProperty_set != null) {
-                    try {
-                        mc_ContainerProperty_set.invoke(this.levelCost, 0);
-                    } catch (Exception ex) {
-                        Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
-                        mc_ContainerProperty_set = null;
-                    }
-                }
-            } else {
-                this.levelCost.set(cost);
-            }
+            this.levelCost.set(cost);
         }
         textChange.onChange();
     }
@@ -180,19 +158,9 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     public int getLevelCost() {
         if (cost >= 0) {
             return cost;
-        } else if (compat_mode) {
-            if (mc_ContainerProperty_get != null) {
-                try {
-                    return (int) mc_ContainerProperty_get.invoke(this.levelCost);
-                } catch (Exception ex) {
-                    Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
-                    mc_ContainerProperty_get = null;
-                }
-            }
         } else {
             return this.levelCost.get();
         }
-        return -1;
     }
 
     @Override
