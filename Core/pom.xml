@@ -268,15 +268,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
+            <groupId>com.sk89q</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.0</version>
+            <version>7.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
+            <groupId>com.sk89q</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.0.0</version>
+            <version>7.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
