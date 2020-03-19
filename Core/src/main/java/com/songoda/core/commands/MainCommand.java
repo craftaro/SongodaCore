@@ -1,13 +1,15 @@
 package com.songoda.core.commands;
 
 import com.songoda.core.input.ClickableChat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainCommand extends AbstractCommand {
 
@@ -58,29 +60,29 @@ public class MainCommand extends AbstractCommand {
             sender.sendMessage(header);
         } else {
             sender.sendMessage(String.format("%s%s %s» %sVersion %s Created with <3 by %sSongoda",
-                    ChatColor.AQUA.toString() + ChatColor.BOLD, plugin.getDescription().getName(),
+                    ChatColor.GOLD.toString() + ChatColor.BOLD, plugin.getDescription().getName(),
                     ChatColor.DARK_GRAY.toString(), ChatColor.GRAY.toString(), plugin.getDescription().getVersion(),
                     ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD + ChatColor.ITALIC
             ));
         }
 
         if (nestedCommands != null) {
-            ArrayList<String> commands = new ArrayList(nestedCommands.children.keySet());
+            List<String> commands = nestedCommands.children.values().stream().distinct().map(c -> c.getCommands().get(0)).collect(Collectors.toList());
             if (sortHelp) {
                 Collections.sort(commands);
             }
             boolean isPlayer = sender instanceof Player;
             // todo? pagation if commands.size is too large? (player-only)
-            sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GREEN + getSyntax() + ChatColor.GRAY + " - " + getDescription());
+            sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + getSyntax() + ChatColor.GRAY + " - " + getDescription());
             for (String cmdStr : commands) {
                 final AbstractCommand cmd = nestedCommands.children.get(cmdStr);
                 if (!isPlayer) {
-                    sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GREEN + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
+                    sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
                     ClickableChat msg = new ClickableChat();
                     final String c = "/" + command + " ";
                     msg.addMessage(ChatColor.DARK_GRAY + "- ")
-                            .addPromptCommand(ChatColor.GREEN + c + cmd.getSyntax(), ChatColor.GREEN + c + cmdStr, c + cmdStr)
+                            .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
                             .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
                     msg.sendTo((Player) sender);
                 }
@@ -91,7 +93,7 @@ public class MainCommand extends AbstractCommand {
 
         return ReturnType.SUCCESS;
     }
-    
+
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
         // don't need to worry about tab for a root command - handled by the manager
