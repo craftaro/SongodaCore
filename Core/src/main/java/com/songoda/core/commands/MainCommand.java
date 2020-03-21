@@ -76,6 +76,7 @@ public class MainCommand extends AbstractCommand {
             sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + getSyntax() + ChatColor.GRAY + " - " + getDescription());
             for (String cmdStr : commands) {
                 final AbstractCommand cmd = nestedCommands.children.get(cmdStr);
+                if (cmd == null) continue;
                 if (!isPlayer) {
                     sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
