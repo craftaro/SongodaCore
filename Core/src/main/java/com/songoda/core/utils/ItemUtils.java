@@ -5,6 +5,7 @@ package com.songoda.core.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import java.lang.reflect.Field;
@@ -354,26 +355,35 @@ public class ItemUtils {
      * Use up whatever item the player is holding in their main hand
      * 
      * @param player player to grab item from
+	 * @param hand the hand to take the item from.
      */
-    public static void takeActiveItem(Player player) {
-        takeActiveItem(player, 1);
+    public static void takeActiveItem(Player player, CompatibleHand hand) {
+        takeActiveItem(player, hand, 1);
     }
 
     /**
      * Use up whatever item the player is holding in their main hand
      * 
      * @param player player to grab item from
+	 * @param hand the hand to take the item from.
      * @param amount number of items to use up
      */
-    public static void takeActiveItem(Player player, int amount) {
-        if (player.getGameMode() == GameMode.CREATIVE) return;
+    public static void takeActiveItem(Player player, CompatibleHand hand, int amount) {
+    	if (hand == CompatibleHand.MAIN_HAND) {
+			ItemStack item = player.getInventory().getItemInHand();
 
-        ItemStack item = player.getInventory().getItemInHand();
+			int result = item.getAmount() - amount;
+			item.setAmount(result);
 
-        int result = item.getAmount() - amount;
-        item.setAmount(result);
+			player.setItemInHand(result > 0 ? item : null);
+		} else {
+			ItemStack item = player.getInventory().getItemInOffHand();
 
-        player.setItemInHand(result > 0 ? item : null);
+			int result = item.getAmount() - amount;
+			item.setAmount(result);
+
+			player.getEquipment().setItemInOffHand(result > 0 ? item : null);
+		}
     }
 
     /**
