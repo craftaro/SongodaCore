@@ -31,11 +31,8 @@ public enum CompatibleHand {
                 methodCache.put(className, method);
             }
             EquipmentSlot slot = (EquipmentSlot) method.invoke(event);
-            if (slot == EquipmentSlot.OFF_HAND)
-                return OFF_HAND;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            return MAIN_HAND;
-        }
+            if (slot == EquipmentSlot.OFF_HAND) return OFF_HAND;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
         return MAIN_HAND;
     }
 

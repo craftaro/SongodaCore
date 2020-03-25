@@ -19,7 +19,7 @@ public class RotationUtils {
     }
 
     public static BlockFace yawToFace(float face) {
-        switch ((int) Math.round((face + 360) / 90) * 90) {
+        switch (Math.round((face + 360) / 90) * 90) {
             case 0:
             case 360:
                 return BlockFace.SOUTH;
