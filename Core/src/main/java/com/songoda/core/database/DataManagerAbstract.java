@@ -31,12 +31,21 @@ public class DataManagerAbstract {
         return this.plugin.getDescription().getName().toLowerCase() + '_';
     }
 
+    /**
+     * Deprecated because it is often times not accurate to its use case.
+     */
+    @Deprecated
     protected int lastInsertedId(Connection connection) {
+        return lastInsertedId(connection, null);
+    }
+
+    protected int lastInsertedId(Connection connection, String table) {
+        String select = "SELECT * FROM " + this.getTablePrefix() + table + " ORDER BY id DESC LIMIT 1";
         String query;
         if (this.databaseConnector instanceof SQLiteConnector) {
-            query = "SELECT last_insert_rowid()";
+            query = table == null ? "SELECT last_insert_rowid()" : select;
         } else {
-            query = "SELECT LAST_INSERT_ID()";
+            query = table == null ? "SELECT LAST_INSERT_ID()" : select;
         }
 
         try (Statement statement = connection.createStatement()) {
@@ -52,7 +61,7 @@ public class DataManagerAbstract {
     /**
      * Queue a task to be run asynchronously. <br>
      * TODO: This needs to be separated from BukkitScheduler
-     * 
+     *
      * @param runnable task to run
      */
     public void async(Runnable runnable) {
