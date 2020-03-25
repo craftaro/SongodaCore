@@ -7,11 +7,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class DataManagerAbstract {
 
     protected final DatabaseConnector databaseConnector;
     protected final Plugin plugin;
+
+    private static Map<String, ScheduledExecutorService> threads = new HashMap<>();
 
     public DataManagerAbstract(DatabaseConnector databaseConnector, Plugin plugin) {
         this.databaseConnector = databaseConnector;
@@ -55,10 +61,21 @@ public class DataManagerAbstract {
 
     /**
      * Queue a task to be run synchronously.
-     * 
+     *
      * @param runnable task to run on the next server tick
      */
     public void sync(Runnable runnable) {
         Bukkit.getScheduler().runTask(this.plugin, runnable);
+    }
+
+    /**
+     * Queue a task to be run synchronously on a new thread.
+     *
+     * @param runnable  task to run on the next server tick
+     * @param threadKey the thread key to run on.
+     */
+    public void sync(Runnable runnable, String threadKey) {
+        threads.computeIfAbsent(threadKey.toUpperCase(),
+                t -> Executors.newSingleThreadScheduledExecutor()).execute(runnable);
     }
 }
