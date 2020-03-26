@@ -3,15 +3,8 @@ package com.songoda.core.gui;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
-import com.songoda.core.gui.methods.Clickable;
-import com.songoda.core.gui.methods.Closable;
-import com.songoda.core.gui.methods.Droppable;
-import com.songoda.core.gui.methods.Openable;
-import com.songoda.core.gui.methods.Pagable;
+import com.songoda.core.gui.methods.*;
 import com.songoda.core.utils.ItemUtils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,16 +12,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * TODO: does not restore inventory if server crashes while player inventory is open
  * Method to fix: save inv + ender slot to file, store paper in ender inv with name of cache file, check for paper item in slot when loading
  * Or just manually manage all inventories in a file and remove when restored
  *
- * @since 2019-08-25
  * @author jascotty2
+ * @since 2019-08-25
  */
 public class DoubleGui extends Gui {
 
+    protected boolean startStashed = true;
     protected int playerRows = 4;
     protected Map<Player, ItemStack[]> stash = new HashMap();
 
@@ -73,6 +71,10 @@ public class DoubleGui extends Gui {
     // offset required to make inventory translations
     int invOffset(int cell) {
         return 54 + cell;
+    }
+
+    public void setStartStashed(boolean startStashed) {
+        this.startStashed = startStashed;
     }
 
     public DoubleGui setPlayerUnlocked(int cell) {
@@ -284,16 +286,9 @@ public class DoubleGui extends Gui {
     @Override
     public void onOpen(GuiManager manager, Player player) {
         // replace the player's inventory
-        ItemStack[] oldInv = player.getInventory().getContents();
-        ItemStack[] newInv = new ItemStack[oldInv.length];
+        if (startStashed)
+            stashItems(player);
 
-        for (int i = 0; i < 36; ++i) {
-            final ItemStack item = cellItems.get(invOffset(i < 9 ? i + 27 : i - 9));
-            newInv[i] = item != null ? item : blankItem;
-        }
-
-        stash.put(player, oldInv);
-        player.getInventory().setContents(newInv);
         // other opening functions
         super.onOpen(manager, player);
     }
@@ -301,18 +296,30 @@ public class DoubleGui extends Gui {
     @Override
     public void onClose(GuiManager manager, Player player) {
         // restore the player's inventory
-        if (stash.containsKey(player)) {
-            player.getInventory().setContents(stash.remove(player));
-            player.updateInventory();
-        }
+        restoreStash(player);
+
         // other closing functions
         super.onClose(manager, player);
     }
 
+    protected void restoreStash(Player player) {
+        if (stash.containsKey(player)) {
+            player.getInventory().setContents(stash.remove(player));
+            player.updateInventory();
+        }
+    }
+
+    protected void stashItems(Player player) {
+        if (!stash.containsKey(player)) {
+            stash.put(player, player.getInventory().getContents().clone());
+            player.getInventory().clear();
+        }
+    }
+
     /*
-	 *********************************************************
-	 * Other functions from GUI that we don't actually override 
-	 *********************************************************
+     *********************************************************
+     * Other functions from GUI that we don't actually override
+     *********************************************************
      */
     @Override
     public DoubleGui setAcceptsItems(boolean acceptsItems) {
