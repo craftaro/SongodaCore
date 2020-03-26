@@ -1677,7 +1677,11 @@ public enum CompatibleMaterial {
         if (entityName.equals("ZOMBIE_PIGMAN")) {
             return EntityType.PIG_ZOMBIE;
         }
-        return EntityType.valueOf(entityName);
+        try {
+            return EntityType.valueOf(entityName);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**
