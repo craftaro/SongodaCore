@@ -32,6 +32,11 @@ public class DoubleGui extends Gui {
     protected int playerRows = 4;
     protected Map<Player, ItemStack[]> stash = new HashMap();
 
+    public DoubleGui() {
+        super(GuiType.STANDARD);
+        allowDropItems = false;
+    }
+
     public DoubleGui(GuiType type) {
         super(type);
         allowDropItems = false;
