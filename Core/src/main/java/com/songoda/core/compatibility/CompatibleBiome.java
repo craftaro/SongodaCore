@@ -122,6 +122,13 @@ public enum CompatibleBiome {
         return new LinkedList<>(versions);
     }
 
+    public Biome getBiome() {
+        for (Version version : versions)
+            if (ServerVersion.isServerVersionAtLeast(version.version))
+                return Biome.valueOf(version.biome);
+        return null;
+    }
+
     public static CompatibleBiome getBiome(Biome biome) {
         return biome == null ? null : lookupMap.get(biome.name());
     }
