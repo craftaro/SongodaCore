@@ -436,7 +436,7 @@ public enum CompatibleMaterial {
     GREEN_CARPET("CARPET", (byte) 13),
     GREEN_CONCRETE(ServerVersion.V1_13, "CONCRETE", (byte) 13),
     GREEN_CONCRETE_POWDER(ServerVersion.V1_13, "CONCRETE_POWDER", (byte) 13),
-    GREEN_DYE(ServerVersion.V1_14, "CACTUS_GREEEN", ServerVersion.V1_13, "INK_SACK", (byte) 2),
+    GREEN_DYE(ServerVersion.V1_14, "CACTUS_GREEN", ServerVersion.V1_13, "INK_SACK", (byte) 2),
     GREEN_GLAZED_TERRACOTTA(),
     GREEN_SHULKER_BOX(),
     GREEN_STAINED_GLASS("STAINED_GLASS", (byte) 13),
