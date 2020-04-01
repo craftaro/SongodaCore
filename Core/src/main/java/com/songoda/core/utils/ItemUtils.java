@@ -361,30 +361,25 @@ public class ItemUtils {
         takeActiveItem(player, hand, 1);
     }
 
-    /**
-     * Use up whatever item the player is holding in their main hand
-     * 
-     * @param player player to grab item from
-	 * @param hand the hand to take the item from.
-     * @param amount number of items to use up
-     */
-    public static void takeActiveItem(Player player, CompatibleHand hand, int amount) {
-    	if (hand == CompatibleHand.MAIN_HAND) {
-			ItemStack item = player.getInventory().getItemInHand();
+	/**
+	 * Use up whatever item the player is holding in their main hand
+	 *
+	 * @param player player to grab item from
+	 * @param hand   the hand to take the item from.
+	 * @param amount number of items to use up
+	 */
+	public static void takeActiveItem(Player player, CompatibleHand hand, int amount) {
+		ItemStack item = hand == CompatibleHand.MAIN_HAND
+				? player.getInventory().getItemInHand() : player.getInventory().getItemInOffHand();
 
-			int result = item.getAmount() - amount;
-			item.setAmount(result);
+		int result = item.getAmount() - amount;
+		item.setAmount(result);
 
+		if (hand == CompatibleHand.MAIN_HAND)
 			player.setItemInHand(result > 0 ? item : null);
-		} else {
-			ItemStack item = player.getInventory().getItemInOffHand();
-
-			int result = item.getAmount() - amount;
-			item.setAmount(result);
-
+		else
 			player.getEquipment().setItemInOffHand(result > 0 ? item : null);
-		}
-    }
+	}
 
     /**
      * Quickly check to see if the two items use the same material. <br />
