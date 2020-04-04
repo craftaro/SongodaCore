@@ -2159,6 +2159,22 @@ public enum CompatibleMaterial {
     }
 
     /**
+     * @return true if this material is two blocks tall
+     */
+    public boolean isTall() {
+        switch (this) {
+            case SUNFLOWER:
+            case LILAC:
+            case LARGE_FERN:
+            case ROSE_BUSH:
+            case PEONY:
+            case TALL_GRASS:
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * @return true if this is a block that has a growth state
      */
     public boolean isCrop() {
