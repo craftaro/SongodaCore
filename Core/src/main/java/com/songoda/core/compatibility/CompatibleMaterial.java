@@ -1034,7 +1034,11 @@ public enum CompatibleMaterial {
 
     static {
         for (CompatibleMaterial m : values()) {
-            lookupMap.put(m.name(), m);
+            if (m.isRecycled()) {
+                lookupMap.put(m.legacy, m);
+                continue;
+            }
+                lookupMap.put(m.name(), m);
             if (!m.usesCompatibility()) {
                 lookupMap.put(m.material + ":" + (m.data == null ? "" : m.data), m);
             }
@@ -1158,6 +1162,15 @@ public enum CompatibleMaterial {
     public boolean usesCompatibility() {
         return compatibleMaterial != null && material == compatibleMaterial.material;
         //return compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan);
+    }
+
+    /**
+     * Is this item reused in later versions of Minecraft?
+     *
+     * @return
+     */
+    public boolean isRecycled() {
+        return usesLegacy() && this == CompatibleMaterial.GRASS;
     }
 
     /**
