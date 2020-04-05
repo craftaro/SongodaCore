@@ -351,7 +351,7 @@ public class BlockUtils {
     /**
      * Set a block to a certain type by updating the block directly in the
      * NMS chunk.
-     *
+     * <p>
      * The chunk must be loaded and players must relog if they have the
      * chunk loaded in order to use this method.
      *
@@ -375,15 +375,16 @@ public class BlockUtils {
                 Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
                 Class<?> clazzChunk = Class.forName("net.minecraft.server." + ver + ".Chunk");
 
-                getByCombinedId = clazzBlock.getMethod("getByCombinedId", int.class);
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 getChunkAt = clazzWorld.getMethod("getChunkAt", int.class, int.class);
 
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) {
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
                     getBlockData = clazzBlock.getMethod("getBlockData");
                     setType = clazzChunk.getMethod("setType", clazzBlockPosition, clazzIBlockData, boolean.class);
-                } else
+                } else {
+                    getByCombinedId = clazzBlock.getMethod("getByCombinedId", int.class);
                     setType = clazzChunk.getMethod("a", clazzBlockPosition, clazzIBlockData);
+                }
             }
 
             // invoke and cast objects.
@@ -393,7 +394,7 @@ public class BlockUtils {
             Object blockPosition = clazzBlockPosition.getConstructor(int.class, int.class, int.class).newInstance(x & 0xF, y, z & 0xF);
 
             // Invoke final method.
-            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) {
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
                 Object block = clazzBlocks.getField(material.getMaterial().name()).get(null);
                 Object IBlockData = getBlockData.invoke(block);
                 setType.invoke(chunk, blockPosition, IBlockData, true);
