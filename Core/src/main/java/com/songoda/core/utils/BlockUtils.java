@@ -362,7 +362,7 @@ public class BlockUtils {
      * @param material
      * @param data
      */
-    public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
+    public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
         try {
             // Cache reflection
             if (clazzIBlockData == null) {
@@ -395,16 +395,20 @@ public class BlockUtils {
 
             // Invoke final method.
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-                Object block = clazzBlocks.getField(material.getMaterial().name()).get(null);
+                Object block = clazzBlocks.getField(material.name()).get(null);
                 Object IBlockData = getBlockData.invoke(block);
                 setType.invoke(chunk, blockPosition, IBlockData, true);
             } else {
-                Object IBlockData = getByCombinedId.invoke(null, material.getMaterial().getId() + (data << 12));
+                Object IBlockData = getByCombinedId.invoke(null, material.getId() + (data << 12));
                 setType.invoke(chunk, blockPosition, IBlockData);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
+        setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
     }
 
     /**
