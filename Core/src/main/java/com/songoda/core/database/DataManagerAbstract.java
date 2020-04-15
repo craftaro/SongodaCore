@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class DataManagerAbstract {
 
@@ -87,5 +88,35 @@ public class DataManagerAbstract {
     public void sync(Runnable runnable, String threadKey) {
         threads.computeIfAbsent(threadKey.toUpperCase(),
                 t -> Executors.newSingleThreadScheduledExecutor()).execute(runnable);
+    }
+
+    /**
+     * Terminate thread once all tasks have been completed.
+     *
+     * @param threadKey the thread key to terminate.
+     */
+    public static void terminateThread(String threadKey) {
+        ScheduledExecutorService service = threads.get(threadKey);
+        if (service != null) {
+            threads.remove(threadKey);
+            try {
+                service.awaitTermination(0, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Terminate all active threads.
+     */
+    public static void terminateAllThreads() {
+        for (ScheduledExecutorService service : threads.values()) {
+            try {
+                service.awaitTermination(0, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

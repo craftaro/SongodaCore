@@ -17,6 +17,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
+
+import com.songoda.core.database.DataManagerAbstract;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -402,6 +404,8 @@ public class SongodaCore {
             if (pi != null) {
                 registeredPlugins.remove(pi);
             }
+            // Terminate all active threads
+            DataManagerAbstract.terminateAllThreads();
             if (event.getPlugin() == piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
