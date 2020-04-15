@@ -48,14 +48,15 @@ public class DataManagerAbstract {
             query = table == null ? "SELECT LAST_INSERT_ID()" : select;
         }
 
+        int id = -1;
         try (Statement statement = connection.createStatement()) {
             ResultSet result = statement.executeQuery(query);
             result.next();
-            return result.getInt(1);
+            id = result.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
-            return -1;
         }
+        return id;
     }
 
     /**
