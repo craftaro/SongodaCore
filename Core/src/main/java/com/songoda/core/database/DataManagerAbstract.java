@@ -8,17 +8,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class DataManagerAbstract {
 
     protected final DatabaseConnector databaseConnector;
     protected final Plugin plugin;
 
-    private static Map<String, ScheduledExecutorService> threads = new HashMap<>();
+    private static Map<String, LinkedList<Runnable>> queues = new HashMap<>();
 
     public DataManagerAbstract(DatabaseConnector databaseConnector, Plugin plugin) {
         this.databaseConnector = databaseConnector;
@@ -62,7 +62,6 @@ public class DataManagerAbstract {
 
     /**
      * Queue a task to be run asynchronously. <br>
-     * TODO: This needs to be separated from BukkitScheduler
      *
      * @param runnable task to run
      */
@@ -80,43 +79,33 @@ public class DataManagerAbstract {
     }
 
     /**
-     * Queue a task to be run synchronously on a new thread.
+     * Queue tasks to be ran asynchronously.
      *
-     * @param runnable  task to run on the next server tick
-     * @param threadKey the thread key to run on.
+     * @param runnable task to put into queue.
+     * @param queueKey the queue key to add the runnable to.
      */
-    public void sync(Runnable runnable, String threadKey) {
-        threads.computeIfAbsent(threadKey.toUpperCase(),
-                t -> Executors.newSingleThreadScheduledExecutor()).execute(runnable);
+    public void queueAsync(Runnable runnable, String queueKey) {
+        if (queueKey == null) return;
+        List<Runnable> queue = queues.computeIfAbsent(queueKey, t -> new LinkedList<>());
+        queue.add(runnable);
+        if (queue.size() == 1) runQueue(queueKey);
     }
 
-    /**
-     * Terminate thread once all tasks have been completed.
-     *
-     * @param threadKey the thread key to terminate.
-     */
-    public static void terminateThread(String threadKey) {
-        ScheduledExecutorService service = threads.get(threadKey);
-        if (service != null) {
-            threads.remove(threadKey);
-            try {
-                service.awaitTermination(0, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    private void runQueue(String queueKey) {
+        doQueue(queueKey, (s) -> {
+            if (!queues.get(queueKey).isEmpty())
+                runQueue(queueKey);
+        });
     }
 
-    /**
-     * Terminate all active threads.
-     */
-    public static void terminateAllThreads() {
-        for (ScheduledExecutorService service : threads.values()) {
-            try {
-                service.awaitTermination(0, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    private void doQueue(String queueKey, Consumer<Boolean> callback) {
+        Runnable runnable = queues.get(queueKey).getFirst();
+        async(() -> {
+            runnable.run();
+            sync(() -> {
+                queues.get(queueKey).remove(runnable);
+                callback.accept(true);
+            });
+        });
     }
 }

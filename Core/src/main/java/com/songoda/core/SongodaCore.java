@@ -404,8 +404,6 @@ public class SongodaCore {
             if (pi != null) {
                 registeredPlugins.remove(pi);
             }
-            // Terminate all active threads
-            DataManagerAbstract.terminateAllThreads();
             if (event.getPlugin() == piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
                 Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
