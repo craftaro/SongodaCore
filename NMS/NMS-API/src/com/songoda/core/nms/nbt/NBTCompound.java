@@ -1,7 +1,5 @@
 package com.songoda.core.nms.nbt;
 
-import java.util.List;
-
 public interface NBTCompound {
 
     NBTCompound set(String tag, String s);
@@ -9,6 +7,8 @@ public interface NBTCompound {
     NBTCompound set(String tag, boolean b);
 
     NBTCompound set(String tag, int i);
+
+    NBTCompound set(String tag, double i);
 
     NBTCompound set(String tag, long l);
 

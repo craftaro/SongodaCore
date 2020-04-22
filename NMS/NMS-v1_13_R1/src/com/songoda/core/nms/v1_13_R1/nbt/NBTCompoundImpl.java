@@ -4,7 +4,7 @@ import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTObject;
 import net.minecraft.server.v1_13_R1.NBTTagCompound;
 
-public class NBTCompoundImpl implements NBTCompound {
+public class  NBTCompoundImpl implements NBTCompound {
 
     protected NBTTagCompound compound;
 
@@ -31,6 +31,12 @@ public class NBTCompoundImpl implements NBTCompound {
     @Override
     public NBTCompound set(String tag, int i) {
         compound.setInt(tag, i);
+        return this;
+    }
+
+    @Override
+    public NBTCompound set(String tag, double i) {
+        compound.setDouble(tag, i);
         return this;
     }
 
