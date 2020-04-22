@@ -928,6 +928,42 @@ public class ItemUtils {
 		return false;
 	}
 
+	public static CompatibleMaterial getDyeColor(char color) {
+		switch (color) {
+			case '0':
+				return CompatibleMaterial.BLACK_DYE;
+			case '1':
+				return CompatibleMaterial.BLUE_DYE;
+			case '2':
+				return CompatibleMaterial.GREEN_DYE;
+			case '3':
+				return CompatibleMaterial.CYAN_DYE;
+			case '4':
+				return CompatibleMaterial.BROWN_DYE;
+			case '5':
+				return CompatibleMaterial.PURPLE_DYE;
+			case '6':
+				return CompatibleMaterial.ORANGE_DYE;
+			case '7':
+				return CompatibleMaterial.LIGHT_GRAY_DYE;
+			case '8':
+				return CompatibleMaterial.GREEN_DYE;
+			case 'a':
+				return CompatibleMaterial.LIME_DYE;
+			case 'b':
+				return CompatibleMaterial.LIGHT_BLUE_DYE;
+			case 'c':
+				return CompatibleMaterial.RED_DYE;
+			case 'd':
+				return CompatibleMaterial.MAGENTA_DYE;
+			case 'e':
+				return CompatibleMaterial.YELLOW_DYE;
+			case 'f':
+				return CompatibleMaterial.WHITE_DYE;
+		}
+		return CompatibleMaterial.STONE;
+	}
+
 	/**
 	 *
 	 * Add an item to this inventory.

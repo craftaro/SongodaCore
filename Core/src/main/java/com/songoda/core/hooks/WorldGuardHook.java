@@ -77,17 +77,27 @@ public class WorldGuardHook {
      * @return false if the pvp flag is not set for this region, or is set to DENY
      */
     public static boolean isPvpAllowed(@NotNull Location loc) {
-        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "pvp"), Boolean.TRUE) : false;
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "pvp"), Boolean.TRUE);
     }
 
     /**
      * Check to see if the block-break flag is set and is set to ALLOW
-     * 
+     *
      * @param loc Location to check
      * @return false if the block-break flag is not set for this region, or is set to DENY
      */
-    public boolean isBreakAllowed(@NotNull Location loc) {
-        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "block-break"), Boolean.TRUE) : false;
+    public static boolean isBreakAllowed(@NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "block-break"), Boolean.TRUE);
+    }
+
+    /**
+     * Check to see if the use flag is set and is set to ALLOW
+     *
+     * @param loc Location to check
+     * @return false if the use flag is not set for this region, or is set to DENY
+     */
+    public static boolean isInteractAllowed(@NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "use"), Boolean.TRUE);
     }
 
     /**
@@ -96,8 +106,8 @@ public class WorldGuardHook {
      * @param loc Location to check
      * @return false if the other-explosion flag is not set for this region, or is set to DENY
      */
-    public boolean isExplosionsAllowed(@NotNull Location loc) {
-        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "other-explosion"), Boolean.TRUE) : false;
+    public static boolean isExplosionsAllowed(@NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "other-explosion"), Boolean.TRUE);
     }
 
     /**
@@ -106,8 +116,8 @@ public class WorldGuardHook {
      * @param loc Location to check
      * @return false if the mob-spawning flag is not set for this region, or is set to DENY
      */
-    public boolean isMobSpawningAllowed(@NotNull Location loc) {
-        return canHook ? Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "mob-spawning"), Boolean.TRUE) : false;
+    public static boolean isMobSpawningAllowed(@NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "mob-spawning"), Boolean.TRUE);
     }
 
     /**
