@@ -35,6 +35,12 @@ public class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound set(String tag, double i) {
+        compound.setDouble(tag, i);
+        return this;
+    }
+
+    @Override
     public NBTCompound set(String tag, long l) {
         compound.setLong(tag, l);
         return this;
