@@ -25,6 +25,10 @@ public class NBTObjectImpl implements NBTObject {
         return compound.getInt(tag);
     }
 
+    public double asDouble() {
+        return compound.getDouble(tag);
+    }
+
     public long asLong() {
         return compound.getLong(tag);
     }

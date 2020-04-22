@@ -1,7 +1,5 @@
 package com.songoda.core.nms.nbt;
 
-import java.util.List;
-
 public interface NBTObject {
 
     String asString();
@@ -9,6 +7,8 @@ public interface NBTObject {
     boolean asBoolean();
 
     int asInt();
+
+    double asDouble();
 
     long asLong();
 
