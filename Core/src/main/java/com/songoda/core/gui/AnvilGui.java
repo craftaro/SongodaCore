@@ -2,8 +2,8 @@ package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.methods.Clickable;
-import com.songoda.core.nms.CoreNMS;
-import com.songoda.core.nms.CustomAnvil;
+import com.songoda.core.nms.anvil.AnvilCore;
+import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.NmsManager;
 import java.util.Arrays;
 import java.util.List;
@@ -115,7 +115,7 @@ public class AnvilGui extends Gui {
 
     @Override
     protected void createInventory() {
-        CoreNMS nms = NmsManager.getNMS();
+        AnvilCore nms = NmsManager.getAnvil();
         if (nms != null) {
             anvil = nms.createAnvil(player, new GuiHolder(guiManager, this));
             anvil.setCustomTitle(title);
