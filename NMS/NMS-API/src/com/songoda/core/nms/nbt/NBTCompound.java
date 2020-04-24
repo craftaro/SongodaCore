@@ -16,6 +16,8 @@ public interface NBTCompound {
 
     NBTCompound set(String tag, byte b);
 
+    NBTCompound remove(String tag);
+
     boolean has(String tag);
 
     NBTObject getNBTObject(String tag);
