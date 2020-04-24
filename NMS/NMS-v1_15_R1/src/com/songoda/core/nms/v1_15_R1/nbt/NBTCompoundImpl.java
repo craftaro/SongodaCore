@@ -62,6 +62,12 @@ public class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound remove(String tag) {
+        compound.remove(tag);
+        return this;
+    }
+
+    @Override
     public boolean has(String tag) {
         return compound.hasKey(tag);
     }
