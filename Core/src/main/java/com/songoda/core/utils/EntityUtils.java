@@ -34,7 +34,6 @@ public class EntityUtils {
             } catch (NoSuchFieldException ee) {
                 ee.printStackTrace();
             }
-            e.printStackTrace();
         }
     }
 
