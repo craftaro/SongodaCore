@@ -1,10 +1,6 @@
 package com.songoda.core.utils;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class PlayerUtils {
 
@@ -183,5 +180,32 @@ public class PlayerUtils {
             final Location location = player.getLocation();
             leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
         }
+    }
+
+    public static int getNumberFromPermission(Player player, String permission, int def) {
+        final Set<PermissionAttachmentInfo> permissions = player.getEffectivePermissions();
+
+        boolean set = false;
+        int highest = 0;
+
+        for (PermissionAttachmentInfo info : permissions) {
+
+            final String perm = info.getPermission();
+
+            if (!perm.startsWith(permission)) continue;
+
+            final int index = perm.lastIndexOf('.');
+
+            if (index == -1 || index == perm.length()) continue;
+
+            final int number = Integer.parseInt(perm.substring(perm.lastIndexOf('.') + 1));
+
+            if (number >= highest) {
+                highest = number;
+                set = true;
+            }
+        }
+
+        return set ? highest : def;
     }
 }
