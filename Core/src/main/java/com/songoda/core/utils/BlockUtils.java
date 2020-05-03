@@ -310,13 +310,15 @@ public class BlockUtils {
     /**
      * Manually trigger the updateAdjacentComparators method for containers
      *
-     * @param containerLocation location of the container
+     * @param location location of the container
      */
-    public static void updateAdjacentComparators(Location containerLocation) {
+    public static void updateAdjacentComparators(Location location) {
+        if(location == null || location.getWorld() == null) return;
         try {
             // Cache reflection.
             if (clazzCraftWorld == null) {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+                String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
+                String ver = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
                 clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
                 clazzCraftBlock = Class.forName("org.bukkit.craftbukkit." + ver + ".block.CraftBlock");
                 clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
@@ -330,14 +332,14 @@ public class BlockUtils {
             }
 
             // invoke and cast objects.
-            Object craftWorld = clazzCraftWorld.cast(containerLocation.getWorld());
+            Object craftWorld = clazzCraftWorld.cast(location.getWorld());
             Object world = getHandle.invoke(craftWorld);
-            Object craftBlock = clazzCraftBlock.cast(containerLocation.getBlock());
+            Object craftBlock = clazzCraftBlock.cast(location.getBlock());
 
             // Invoke final method.
             updateAdjacentComparators
                     .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
-                                    .newInstance(containerLocation.getX(), containerLocation.getY(), containerLocation.getZ()),
+                                    .newInstance(location.getX(), location.getY(), location.getZ()),
                             getNMSBlock.invoke(craftBlock));
 
         } catch (ReflectiveOperationException e) {
