@@ -234,9 +234,9 @@ public class CompatibleParticleHandler {
      */
     public static void redstoneParticles(Location location, int red, int green, int blue, float size, int count, float radius) {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-            float xx = (float) (0 + (Math.random() * 1));
-            float yy = (float) (0 + (Math.random() * 1));
-            float zz = (float) (0 + (Math.random() * 1));
+            float xx = (float) (radius * (Math.random() - Math.random()));
+            float yy = (float) (radius * (Math.random() - Math.random()));
+            float zz = (float) (radius * (Math.random() - Math.random()));
             location.getWorld().spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
             for (int i = 0; i < count; i++) {
