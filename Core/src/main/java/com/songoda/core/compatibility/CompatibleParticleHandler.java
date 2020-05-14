@@ -5,7 +5,9 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -218,7 +220,11 @@ public class CompatibleParticleHandler {
     }
 
     public static void redstoneParticles(Location location, int red, int green, int blue) {
-        redstoneParticles(location, red, green, blue, 1F, 1, 0);
+        redstoneParticles(location, red, green, blue, 1F, 1, 0, null);
+    }
+
+    public static void redstoneParticles(Location location, int red, int green, int blue, float size, int count, float radius) {
+        redstoneParticles(location, red, green, blue, size, count, radius, null);
     }
 
     /**
@@ -232,19 +238,25 @@ public class CompatibleParticleHandler {
      * @param count    how many particles to spawn
      * @param radius   how far to spread out the particles from location
      */
-    public static void redstoneParticles(Location location, int red, int green, int blue, float size, int count, float radius) {
+    public static void redstoneParticles(Location location, int red, int green, int blue, float size, int count, float radius, Player player) {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             float xx = (float) (radius * (Math.random() - Math.random()));
             float yy = (float) (radius * (Math.random() - Math.random()));
             float zz = (float) (radius * (Math.random() - Math.random()));
-            location.getWorld().spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
+            if (player == null)
+                location.getWorld().spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
+            else
+                player.spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
             for (int i = 0; i < count; i++) {
                 float xx = (float) (radius * (Math.random() - Math.random()));
                 float yy = (float) (radius * (Math.random() - Math.random()));
                 float zz = (float) (radius * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
-                location.getWorld().spawnParticle(Particle.REDSTONE, at, 0, red / 255F, green / 255F, blue / 255F, size); // particle, location, count, red, green, blue, extra data
+                if (player == null)
+                    location.getWorld().spawnParticle(Particle.REDSTONE, at, 0, red / 255F, green / 255F, blue / 255F, size); // particle, location, count, red, green, blue, extra data
+                else
+                    player.spawnParticle(Particle.REDSTONE, at, 0, red / 255F, green / 255F, blue / 255F, size); // particle, location, count, red, green, blue, extra data
             }
         } else {
             // WE NEED MAGIC!
@@ -254,7 +266,8 @@ public class CompatibleParticleHandler {
                 float zz = (float) (radius * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
                 LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE,
-                        red / 255F, green / 255F, blue / 255F, 1F, 0, null);
+                        red / 255F, green / 255F, blue / 255F, 1F,
+                        0, player == null ? null : Collections.singletonList(player));
             }
         }
     }
