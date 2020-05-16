@@ -170,7 +170,7 @@ public enum LegacyMaterialAnalouge {
     ELYTRA(ServerVersion.V1_9, "IRON_CHESTPLATE"),
     END_CRYSTAL(ServerVersion.V1_9, "STAINED_GLASS", (byte) 0),
     END_GATEWAY(ServerVersion.V1_9, "BEACON"),
-    END_PORTAL(ServerVersion.V1_9, "PORTAL"),
+    END_PORTAL(ServerVersion.V1_9, "ENDER_PORTAL"),
     END_ROD(ServerVersion.V1_9, "STAINED_GLASS_PANE", (byte) 0),
     END_STONE_BRICK_SLAB(ServerVersion.V1_14, "STONE_SLAB", "STEP", (byte) 0),
     END_STONE_BRICK_STAIRS(ServerVersion.V1_14, "SANDSTONE_STAIRS"),
