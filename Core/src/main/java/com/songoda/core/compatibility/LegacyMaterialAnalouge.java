@@ -172,7 +172,6 @@ public enum LegacyMaterialAnalouge {
     END_GATEWAY(ServerVersion.V1_9, "BEACON"),
     END_PORTAL(ServerVersion.V1_9, "PORTAL"),
     END_ROD(ServerVersion.V1_9, "STAINED_GLASS_PANE", (byte) 0),
-    END_STONE(ServerVersion.V1_9, "SANDSTONE", (byte) 0),
     END_STONE_BRICK_SLAB(ServerVersion.V1_14, "STONE_SLAB", "STEP", (byte) 0),
     END_STONE_BRICK_STAIRS(ServerVersion.V1_14, "SANDSTONE_STAIRS"),
     END_STONE_BRICK_WALL(ServerVersion.V1_14, "COBBLESTONE_WALL", "COBBLE_WALL"),
