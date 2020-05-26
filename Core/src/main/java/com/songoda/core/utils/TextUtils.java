@@ -10,6 +10,8 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.ChatColor;
 
 public class TextUtils {
@@ -25,6 +27,11 @@ public class TextUtils {
             text = text.substring(0, 1).toUpperCase() + text.substring(1);
         return ChatColor.translateAlternateColorCodes('&', text);
     }
+
+    public static List<String> formatText(List<String> list) {
+        return list.stream().map(TextUtils::formatText).collect(Collectors.toList());
+    }
+
 
     /**
      * Convert a string to an invisible colored string that's lore-safe <br />
