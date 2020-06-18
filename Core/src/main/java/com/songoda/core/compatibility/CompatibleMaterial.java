@@ -1353,6 +1353,27 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Block block) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
+            return CompatibleMaterial.getMaterialFromNewBlock(block);
+        } else {
+            if(block != null){
+                if(block.getData() == 0){
+                    return CompatibleMaterial.getMaterialFromNewBlock(block);
+                } else {
+                    for(CompatibleMaterial cm : CompatibleMaterial.values()){
+                        if(cm.getMaterial().equals(block.getType())){
+                            if(cm.getData() == block.getData()){
+                                return cm;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static CompatibleMaterial getMaterialFromNewBlock(Block block) {
         if (block == null) {
             return null;
         }
