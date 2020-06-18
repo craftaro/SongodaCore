@@ -1353,9 +1353,9 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Block block) {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
             return CompatibleMaterial.getMaterialFromNewBlock(block);
-        } else {
+        } else { // Pre-Flattening
             if(block != null){
                 if (block.getData() != 0) {
                     for (CompatibleMaterial cm : CompatibleMaterial.values()) {
