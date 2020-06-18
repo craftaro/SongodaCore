@@ -1357,17 +1357,16 @@ public enum CompatibleMaterial {
             return CompatibleMaterial.getMaterialFromNewBlock(block);
         } else {
             if(block != null){
-                if(block.getData() == 0){
-                    return CompatibleMaterial.getMaterialFromNewBlock(block);
-                } else {
-                    for(CompatibleMaterial cm : CompatibleMaterial.values()){
-                        if(cm.getMaterial().equals(block.getType())){
-                            if(cm.getData() == block.getData()){
+                if (block.getData() != 0) {
+                    for (CompatibleMaterial cm : CompatibleMaterial.values()) {
+                        if (cm.getMaterial().equals(block.getType())) {
+                            if (cm.getData() == block.getData()) {
                                 return cm;
                             }
                         }
                     }
                 }
+                return CompatibleMaterial.getMaterialFromNewBlock(block);
             }
         }
         return null;
