@@ -53,13 +53,13 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     @Override
-    public void reloadConfig​() {
+    public void reloadConfig() {
         config.load();
         onConfigReload();
     }
 
     @Override
-    public void saveConfig​() {
+    public void saveConfig() {
         config.save();
     }
 
