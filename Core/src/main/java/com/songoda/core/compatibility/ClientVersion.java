@@ -91,6 +91,9 @@ public class ClientVersion {
             case 575:
             case 578:
                 return ServerVersion.V1_15;
+            case 735:
+            case 736:
+                return ServerVersion.V1_16;
         }
         return version > 498 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;
     }

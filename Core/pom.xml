@@ -115,9 +115,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.destroystokyo.papermc</groupId>
-            <artifactId>paper</artifactId>
-            <version>1.15.2</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.16.1</version>
         </dependency>
         <!--dependency>
             <groupId>org.spigotmc</groupId>
@@ -213,6 +213,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-NMS-v1_15_R1</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SongodaCore-NMS-v1_16_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>

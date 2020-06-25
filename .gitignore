@@ -210,3 +210,5 @@ gradle-app.setting
 
 ### Gradle Patch ###
 **/build/
+
+.DS_Store

@@ -12,6 +12,12 @@ import java.util.*;
  */
 public enum CompatibleBiome {
 
+    /* 1.16 */
+    SOUL_SAND_VALLEY(ServerVersion.V1_16),
+    CRIMSON_FOREST(ServerVersion.V1_16),
+    WARPED_FOREST(ServerVersion.V1_16),
+    BASALT_DELTAS(ServerVersion.V1_16),
+
     BADLANDS(ServerVersion.V1_13, v("MESA")),
     BADLANDS_PLATEAU(ServerVersion.V1_13, v(ServerVersion.V1_9, "MESA_CLEAR_ROCK"), v("MESA_PLATEAU")),
     BAMBOO_JUNGLE(ServerVersion.V1_14),
@@ -57,7 +63,7 @@ public enum CompatibleBiome {
     MOUNTAIN_EDGE(ServerVersion.V1_13, v(ServerVersion.V1_9, "SMALLER_EXTREME_HILLS")),
     MUSHROOM_FIELDS(ServerVersion.V1_13, v("MUSHROOM_ISLAND")),
     MUSHROOM_FIELD_SHORE(ServerVersion.V1_13, v(ServerVersion.V1_9, "MUSHROOM_ISLAND_SHORE"), v("MUSHROOM_SHORE")),
-    NETHER(ServerVersion.V1_13, v("HELL")),
+    NETHER_WASTES(ServerVersion.V1_16, v(ServerVersion.V1_13, "NETHER"), v("HELL")),
     OCEAN(),
     PLAINS(),
     RIVER(),

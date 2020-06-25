@@ -88,6 +88,18 @@ public class CompatibleParticleHandler {
         FALLING_NECTAR(ServerVersion.V1_15, "DRIP_WATER"),
         LANDING_HONEY(ServerVersion.V1_15, "DRIP_WATER"),
         /// End 1.15 ///
+        // ToDo: Someone needs to make better compatible fall backs.
+        SOUL_FIRE_FLAME(ServerVersion.V1_16, "DRIP_WATER"),
+        ASH(ServerVersion.V1_16, "DRIP_WATER"),
+        CRIMSON_SPORE(ServerVersion.V1_16, "DRIP_WATER"),
+        WARPED_SPORE(ServerVersion.V1_16, "DRIP_WATER"),
+        SOUL(ServerVersion.V1_16, "DRIP_WATER"),
+        DRIPPING_OBSIDIAN_TEAR(ServerVersion.V1_16, "DRIP_WATER"),
+        FALLING_OBSIDIAN_TEAR(ServerVersion.V1_16, "DRIP_WATER"),
+        LANDING_OBSIDIAN_TEAR(ServerVersion.V1_16, "DRIP_WATER"),
+        REVERSE_PORTAL(ServerVersion.V1_16, "DRIP_WATER"),
+        WHITE_ASH(ServerVersion.V1_16, "DRIP_WATER"),
+        /// End 1.16 ///
         ;
 
         final boolean compatibilityMode;
