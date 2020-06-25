@@ -29,6 +29,110 @@ public enum CompatibleMaterial {
     
 	 */
 
+    /* 1.16 */
+    ANCIENT_DEBRIES(),
+    BASALT(),
+    BLACKSTONE(),
+    BLACKSTONE_STAIRS(),
+    BLACKSTONE_WALL(),
+    BLASTSTONE_SLAB(),
+    CHAIN(),
+    CHISELED_NETHER_BRICKS(),
+    CHISELED_POLISHED_BLACKSTONE(),
+    CRACKED_NETHER_BRICKS(),
+    CRACKED_POLISHED_BLACKSTONE_BRICKS(),
+    CRIMSON_BUTTON(),
+    CRIMSON_DOOR(),
+    CRIMSON_FENCE(),
+    CRIMSON_FENCE_GATE(),
+    CRIMSON_FUNGUS(),
+    CRIMSON_HYPHAE(),
+    CRIMSON_NYLIUM(),
+    CRIMSON_PLANKS(),
+    CRIMSON_PRESSURE_PLATE(),
+    CRIMSON_ROOTS(),
+    CRIMSON_SIGN(),
+    CRIMSON_SLAB(),
+    CRIMSON_STAIRS(),
+    CRIMSON_STEM(),
+    CRIMSON_TRAPDOOR(),
+    CRIMSON_WALL_SIGN(),
+    CRYING_OBSIDIAN(),
+    GILDED_BLACKSTONE(),
+    HOGLIN_SPAWN_EGG(),
+    LODESTONE(),
+    MUSIC_DISC_PIGSTEP(),
+    NETHERITE_AXE(),
+    NETHERITE_BLOCK(),
+    NETHERITE_BOOTS(),
+    NETHERITE_CHESTPLATE(),
+    NETHERITE_HELMET(),
+    NETHERITE_HOE(),
+    NETHERITE_INGOT(),
+    NETHERITE_LEGGINGS(),
+    NETHERITE_PICKAXE(),
+    NETHERITE_SCRAP(),
+    NETHERITE_SHOVEL(),
+    NETHERITE_SWORD(),
+    NETHER_GOLD_ORE(),
+    NETHER_SPROUTS(),
+    PIGLIN_BANNER_PATTERN(),
+    PIGLIN_SPAWN_EGG(),
+    POLISHED_BASALT(),
+    POLISHED_BLACKSTONE(),
+    POLISHED_BLACKSTONE_BRICKS(),
+    POLISHED_BLACKSTONE_BRICK_SLAB(),
+    POLISHED_BLACKSTONE_BRICK_STAIRS(),
+    POLISHED_BLACKSTONE_BRICK_WALL(),
+    POLISHED_BLACKSTONE_BUTTON(),
+    POLISHED_BLACKSTONE_PRESSURE_PLATE(),
+    POLISHED_BLACKSTONE_SLAB(),
+    POLISHED_BLACKSTONE_STAIRS(),
+    POLISHED_BLACKSTONE_WALL(),
+    POTTED_CRIMSON_FUNGUS(),
+    POTTED_CRIMSON_ROOTS(),
+    POTTED_WARPED_FUNGUS(),
+    POTTED_WARPED_ROOTS(),
+    QUARTZ_BRICKS(),
+    RESPAWN_ANCHOR(),
+    SHROOMLIGHT(),
+    SOUL_CAMPFIRE(),
+    SOUL_FIRE(),
+    SOUL_LANTERN(),
+    SOUL_SOIL(),
+    SOUL_TORCH(),
+    SOUL_WALL_TORCH(),
+    STRIDER_SPAWN_EGG(),
+    STRIPPED_CRIMSON_HYPHAE(),
+    STRIPPED_CRIMSON_STEM(),
+    STRIPPED_WARPED_HYPHAE(),
+    STRIPPED_WARPED_STEM(),
+    TARGET(),
+    TWISTING_VINES(),
+    TWISTING_VINES_PLANT(),
+    WARPED_BUTTON(),
+    WARPED_DOOR(),
+    WARPED_FENCE(),
+    WARPED_FENCE_GATE(),
+    WARPED_FUNGUS(),
+    WARPED_FUNGUS_ON_A_STICK(),
+    WARPED_HYPHAE(),
+    WARPED_NYLIUM(),
+    WARPED_PLANKS(),
+    WARPED_PRESSURE_PLATE(),
+    WARPED_ROOTS(),
+    WARPED_SIGN(),
+    WARPED_SLAB(),
+    WARPED_STAIRS(),
+    WARPED_STEM(),
+    WARPED_TRAPDOOR(),
+    WARPED_WALL_SIGN(),
+    WARPED_WART_BLOCK(),
+    WEEPING_VINES(),
+    WEEPING_VINES_PLANT(),
+    ZOGLIN_SPAWN_EGG(),
+    ZOMBIFIED_PIGLIN_SPAWN_EGG(),
+
     /* 1.15 */
     BEE_SPAWN_EGG(),
     BEE_NEST(),
@@ -1038,7 +1142,7 @@ public enum CompatibleMaterial {
                 lookupMap.put(m.legacy, m);
                 continue;
             }
-                lookupMap.put(m.name(), m);
+            lookupMap.put(m.name(), m);
             if (!m.usesCompatibility()) {
                 lookupMap.put(m.material + ":" + (m.data == null ? "" : m.data), m);
             }
@@ -1684,12 +1788,10 @@ public enum CompatibleMaterial {
      */
     public EntityType getEggType() {
         String entityName = this.name().replace("_SPAWN_EGG", "");
-        if (entityName.equals("MOOSHROOM")) {
-            return EntityType.MUSHROOM_COW;
-        }
-        if (entityName.equals("ZOMBIE_PIGMAN")) {
-            return EntityType.PIG_ZOMBIE;
-        }
+        if (entityName.equals("MOOSHROOM"))
+            entityName = "MUSHROOM_COW";
+        else if (entityName.equals("ZOMBIE_PIGMAN"))
+            entityName = "PIG_ZOMBIE";
         try {
             return EntityType.valueOf(entityName);
         } catch (IllegalArgumentException e) {
@@ -2214,7 +2316,8 @@ public enum CompatibleMaterial {
             return MOOSHROOM_SPAWN_EGG;
         }
 
-        if (type == EntityType.PIG_ZOMBIE) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_16)
+                && type == EntityType.valueOf("PIG_ZOMBIE")) {
             return ZOMBIE_PIGMAN_SPAWN_EGG;
         }
 
