@@ -1,5 +1,7 @@
 package com.songoda.core.gui;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -26,5 +28,13 @@ class GuiHolder implements InventoryHolder {
 
     public Gui getGUI() {
         return gui;
+    }
+
+    public Inventory newInventory(int size, String title) {
+        return Bukkit.createInventory(this, size, title);
+    }
+
+    public Inventory newInventory(InventoryType type, String title) {
+        return Bukkit.createInventory(this, type, title);
     }
 }
