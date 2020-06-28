@@ -119,7 +119,7 @@ public class Message {
      * @return the prefixed message
      */
     public String getPrefixedMessage() {
-        return TextUtils.formatText((prefix == null ? "" : this.prefix) + " " +  this.message.toText());
+        return TextUtils.formatText((prefix == null ? "" : this.prefix.toText()) + " " +  this.message.toText());
     }
 
     /**
