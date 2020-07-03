@@ -1353,12 +1353,59 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Block block) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
+            return CompatibleMaterial.getMaterialFromNewBlock(block);
+        } else { // Pre-Flattening
+            if(block != null){
+                if (block.getData() != 0) {
+                    for (CompatibleMaterial cm : CompatibleMaterial.values()) {
+                        if (cm.getMaterial().equals(block.getType())) {
+                            if (cm.getData() == block.getData()) {
+                                return cm;
+                            }
+                        }
+                    }
+                }
+                return CompatibleMaterial.getMaterialFromNewBlock(block);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Lookup a Material by Material and data, corrected for legacy
+     *
+     * @param mat material to check
+     * @param data data of the block
+     * @return LegacyMaterial or null if none found
+     */
+    public static CompatibleMaterial getMaterial(Material mat, byte data) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
+            return CompatibleMaterial.getMaterial(mat);
+        } else { // Pre-Flattening
+            if(mat != null){
+                if (data != 0) {
+                    for (CompatibleMaterial cm : CompatibleMaterial.values()) {
+                        if (cm.getMaterial() != null
+                                && cm.getMaterial().equals(mat)) {
+                            if (cm.getData() == data) {
+                                return cm;
+                            }
+                        }
+                    }
+                }
+                return CompatibleMaterial.getMaterial(mat);
+            }
+        }
+        return null;
+    }
+
+    private static CompatibleMaterial getMaterialFromNewBlock(Block block) {
         if (block == null) {
             return null;
         }
         Material mat = block.getType();
-        if (mat == null) return null;
-        else if (useLegacy) {
+        if (useLegacy) {
             LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name());
             if (legacyBlock != null) {
                 return lookupMap.get(legacyBlock.name());
