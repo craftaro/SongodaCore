@@ -1,6 +1,7 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -60,13 +62,14 @@ public class Gui {
     protected Closable closer = null;
     protected Droppable dropper = null;
     protected Pagable pager = null;
+    protected CompatibleSound defaultSound = CompatibleSound.UI_BUTTON_CLICK;
 
     public Gui() {
         this.rows = 3;
     }
 
     public Gui(@NotNull GuiType type) {
-        this.inventoryType = type != null ? type : GuiType.STANDARD;
+        this.inventoryType = type;
         switch (type) {
             case HOPPER:
             case DISPENSER:
@@ -181,7 +184,7 @@ public class Gui {
 
     @NotNull
     public Gui setUnlocked(int row, int col) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         unlockedCells.put(cell, true);
         return this;
     }
@@ -204,8 +207,8 @@ public class Gui {
 
     @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
-        final int last = cellColLast + cellRowLast * 9;
-        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
             unlockedCells.put(cell, true);
         }
         return this;
@@ -213,8 +216,8 @@ public class Gui {
 
     @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
-        final int last = cellColLast + cellRowLast * 9;
-        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
             unlockedCells.put(cell, open);
         }
         return this;
@@ -228,7 +231,7 @@ public class Gui {
 
     @NotNull
     public Gui setUnlocked(int row, int col, boolean open) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         unlockedCells.put(cell, open);
         return this;
     }
@@ -296,7 +299,7 @@ public class Gui {
 
     @Nullable
     public ItemStack getItem(int row, int col) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
             return inventory.getItem(cell);
         }
@@ -314,7 +317,7 @@ public class Gui {
 
     @NotNull
     public Gui setItem(int row, int col, @Nullable ItemStack item) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         cellItems.put(cell, item);
         if (inventory != null && cell >= 0 && cell < inventory.getSize()) {
             inventory.setItem(cell, item);
@@ -333,7 +336,7 @@ public class Gui {
 
     @NotNull
     public Gui highlightItem(int row, int col) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, ItemUtils.addGlow(item));
@@ -352,7 +355,7 @@ public class Gui {
 
     @NotNull
     public Gui removeHighlight(int row, int col) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, ItemUtils.removeGlow(item));
@@ -362,7 +365,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItemLore(int row, int col, @NotNull String... lore) {
-        return updateItemLore(col + row * 9, lore);
+        return updateItemLore(col + row * inventoryType.columns, lore);
     }
 
     @NotNull
@@ -376,7 +379,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItemLore(int row, int col, @Nullable List<String> lore) {
-        return updateItemLore(col + row * 9, lore);
+        return updateItemLore(col + row * inventoryType.columns, lore);
     }
 
     @NotNull
@@ -390,7 +393,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItemName(int row, int col, @Nullable String name) {
-        return updateItemName(col + row * 9, name);
+        return updateItemName(col + row * inventoryType.columns, name);
     }
 
     @NotNull
@@ -404,7 +407,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @NotNull String... lore) {
-        return updateItem(col + row * 9, name, lore);
+        return updateItem(col + row * inventoryType.columns, name, lore);
     }
 
     @NotNull
@@ -418,7 +421,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @Nullable List<String> lore) {
-        return updateItem(col + row * 9, name, lore);
+        return updateItem(col + row * inventoryType.columns, name, lore);
     }
 
     @NotNull
@@ -432,7 +435,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull ItemStack itemTo, @Nullable String title, @NotNull String... lore) {
-        return updateItem(col + row * 9, itemTo, title, lore);
+        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
@@ -446,7 +449,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @NotNull String... lore) {
-        return updateItem(col + row * 9, itemTo, title, lore);
+        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
@@ -460,7 +463,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull ItemStack itemTo, @Nullable String title, @Nullable List<String> lore) {
-        return updateItem(col + row * 9, itemTo, title, lore);
+        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
@@ -474,7 +477,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
-        return updateItem(col + row * 9, itemTo, title, lore);
+        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
@@ -494,7 +497,7 @@ public class Gui {
 
     @NotNull
     public Gui setAction(int row, int col, @Nullable Clickable action) {
-        setConditional(col + row * 9, null, action);
+        setConditional(col + row * inventoryType.columns, null, action);
         return this;
     }
 
@@ -506,7 +509,7 @@ public class Gui {
 
     @NotNull
     public Gui setAction(int row, int col, @Nullable ClickType type, @Nullable Clickable action) {
-        setConditional(col + row * 9, type, action);
+        setConditional(col + row * inventoryType.columns, type, action);
         return this;
     }
 
@@ -520,8 +523,8 @@ public class Gui {
 
     @NotNull
     public Gui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, @Nullable Clickable action) {
-        final int last = cellColLast + cellRowLast * 9;
-        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
             setConditional(cell, null, action);
         }
         return this;
@@ -537,8 +540,8 @@ public class Gui {
 
     @NotNull
     public Gui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, @Nullable ClickType type, @Nullable Clickable action) {
-        final int last = cellColLast + cellRowLast * 9;
-        for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
+        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
             setConditional(cell, type, action);
         }
         return this;
@@ -552,7 +555,7 @@ public class Gui {
 
     @NotNull
     public Gui clearActions(int row, int col) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         conditionalButtons.remove(cell);
         return this;
     }
@@ -566,7 +569,7 @@ public class Gui {
 
     @NotNull
     public Gui setButton(int row, int col, @Nullable ItemStack item, @Nullable Clickable action) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         setItem(cell, item);
         setConditional(cell, null, action);
         return this;
@@ -581,7 +584,7 @@ public class Gui {
 
     @NotNull
     public Gui setButton(int row, int col, @Nullable ItemStack item, @Nullable ClickType type, @Nullable Clickable action) {
-        final int cell = col + row * 9;
+        final int cell = col + row * inventoryType.columns;
         setItem(cell, item);
         setConditional(cell, type, action);
         return this;
@@ -641,7 +644,7 @@ public class Gui {
 
     @NotNull
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
-        nextPageIndex = col + row * 9;
+        nextPageIndex = col + row * inventoryType.columns;
         nextPage = item;
         if (page < pages) {
             setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
@@ -661,7 +664,7 @@ public class Gui {
 
     @NotNull
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
-        prevPageIndex = col + row * 9;
+        prevPageIndex = col + row * inventoryType.columns;
         prevPage = item;
         if (page > 1) {
             setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
@@ -758,7 +761,7 @@ public class Gui {
     @NotNull
     protected Inventory generateInventory(@NotNull GuiManager manager) {
         this.guiManager = manager;
-        final int cells = rows * 9;
+        final int cells = rows * inventoryType.columns;
 
         createInventory();
         for (int i = 0; i < cells; ++i) {
@@ -771,14 +774,15 @@ public class Gui {
 
     protected void createInventory() {
         final InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
+
         switch (t) {
             case DISPENSER:
             case HOPPER:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), t,
+                inventory = new GuiHolder(guiManager, this).newInventory(t,
                         title == null ? "" : trimTitle(title));
                 break;
             default:
-                inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), rows * 9,
+                inventory = new GuiHolder(guiManager, this).newInventory(rows * 9,
                         title == null ? "" : trimTitle(title));
         }
     }
@@ -792,7 +796,7 @@ public class Gui {
         if (inventory == null) {
             return;
         }
-        final int cells = rows * 9;
+        final int cells = rows * inventoryType.columns;
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
             inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
@@ -858,4 +862,11 @@ public class Gui {
         }
     }
 
+    public CompatibleSound getDefaultSound() {
+        return defaultSound;
+    }
+
+    public void setDefaultSound(CompatibleSound sound) {
+        defaultSound = sound;
+    }
 }

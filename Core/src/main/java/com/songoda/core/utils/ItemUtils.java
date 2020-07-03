@@ -414,7 +414,7 @@ public class ItemUtils {
 		if (hand == CompatibleHand.MAIN_HAND)
 			player.setItemInHand(result > 0 ? item : null);
 		else
-			player.getEquipment().setItemInOffHand(result > 0 ? item : null);
+			player.getInventory().setItemInOffHand(result > 0 ? item : null);
 	}
 
     /**

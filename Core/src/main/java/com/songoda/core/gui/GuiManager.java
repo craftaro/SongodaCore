@@ -187,6 +187,7 @@ public class GuiManager {
 
             Inventory openInv = event.getInventory();
             final Player player = (Player) event.getWhoClicked();
+
             Gui gui;
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
                     && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
@@ -216,15 +217,15 @@ public class GuiManager {
                 } // did we click the gui or in the user's inventory?
                 else if (event.getRawSlot() < gui.inventory.getSize()) {// or could use event.getClickedInventory() == gui.inventory
                     // allow event if this is not a GUI element
-                    event.setCancelled(!gui.unlockedCells.entrySet().stream().anyMatch(e -> event.getSlot() == e.getKey() && e.getValue()));
+                    event.setCancelled(gui.unlockedCells.entrySet().stream().noneMatch(e -> event.getSlot() == e.getKey() && e.getValue()));
                     // process button press
                     if (gui.onClick(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), CompatibleSound.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                        player.playSound(player.getLocation(), gui.getDefaultSound().getSound(), 1F, 1F);
                     }
                 } else {
                     // Player clicked in the bottom inventory while GUI is open
                     if (gui.onClickPlayerInventory(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), CompatibleSound.UI_BUTTON_CLICK.getSound(), 1F, 1F);
+                        player.playSound(player.getLocation(), gui.getDefaultSound().getSound(), 1F, 1F);
                     } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         event.setCancelled(true);
                         if(gui instanceof AnvilGui) {
