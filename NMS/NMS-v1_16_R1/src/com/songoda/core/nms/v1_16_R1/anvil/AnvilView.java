@@ -12,6 +12,7 @@ import net.minecraft.server.v1_16_R1.ChatMessage;
 import net.minecraft.server.v1_16_R1.Container;
 import net.minecraft.server.v1_16_R1.ContainerAccess;
 import net.minecraft.server.v1_16_R1.ContainerAnvil;
+import net.minecraft.server.v1_16_R1.ContainerAnvilAbstract;
 import net.minecraft.server.v1_16_R1.Containers;
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
@@ -39,9 +40,9 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     static {
         try {
-            mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("repairInventory");
+            mc_ContainerAnvil_repairInventory = ContainerAnvilAbstract.class.getDeclaredField("repairInventory");
             mc_ContainerAnvil_repairInventory.setAccessible(true);
-            mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("resultInventory");
+            mc_ContainerAnvil_resultInventory = ContainerAnvilAbstract.class.getDeclaredField("resultInventory");
             mc_ContainerAnvil_resultInventory.setAccessible(true);
             mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
             mc_ContainerAnvil_bukkitEntity.setAccessible(true);
