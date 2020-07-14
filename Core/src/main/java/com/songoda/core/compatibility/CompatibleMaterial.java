@@ -30,7 +30,7 @@ public enum CompatibleMaterial {
 	 */
 
     /* 1.16 */
-    ANCIENT_DEBRIES(),
+    ANCIENT_DEBRIS(),
     BASALT(),
     BLACKSTONE(),
     BLACKSTONE_STAIRS(),
