@@ -1356,10 +1356,10 @@ public enum CompatibleMaterial {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
             return CompatibleMaterial.getMaterialFromNewBlock(block);
         } else { // Pre-Flattening
-            if(block != null){
+            if(block != null) {
                 if (block.getData() != 0) {
                     for (CompatibleMaterial cm : CompatibleMaterial.values()) {
-                        if (cm.getMaterial().equals(block.getType())) {
+                        if (cm.isValidItem() && !cm.usesCompatibility() && cm.getMaterial() != null && cm.getMaterial().equals(block.getType())) {
                             if (cm.getData() == block.getData()) {
                                 return cm;
                             }
