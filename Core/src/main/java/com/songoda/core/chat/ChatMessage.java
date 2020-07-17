@@ -49,7 +49,6 @@ public class ChatMessage {
                 } else if (colorChar == '&')
                     color = new ColorContainer(ColorCode.getByChar(match1.charAt(0)));
             }
-            if (color != null && color.getColorCode() == ColorCode.RESET) color = null;
             Pattern subPattern = Pattern.compile("(.*?)(?=\\&(o|m|n|l|k)|$)");
             Matcher subMatcher = subPattern.matcher(match1);
 
@@ -58,9 +57,9 @@ public class ChatMessage {
                 String match2 = subMatcher.group(1);
                 if (match2.length() == 0) continue;
                 ColorCode code = ColorCode.getByChar(match2.charAt(0));
-                if (code != null)
+                if (code != null && code != ColorCode.RESET)
                     stackedCodes.add(code);
-                if (color != null)
+                if (color != null || code != ColorCode.RESET)
                     match2 = match2.substring(1);
                 if (match2.length() == 0) continue;
                 addMessage(match2, color, stackedCodes);
