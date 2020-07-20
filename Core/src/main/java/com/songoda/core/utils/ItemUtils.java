@@ -393,6 +393,7 @@ public class ItemUtils {
      * @param player player to grab item from
 	 * @param hand the hand to take the item from.
      */
+    @Deprecated
     public static void takeActiveItem(Player player, CompatibleHand hand) {
         takeActiveItem(player, hand, 1);
     }
@@ -404,17 +405,9 @@ public class ItemUtils {
 	 * @param hand   the hand to take the item from.
 	 * @param amount number of items to use up
 	 */
+	@Deprecated
 	public static void takeActiveItem(Player player, CompatibleHand hand, int amount) {
-		ItemStack item = hand == CompatibleHand.MAIN_HAND
-				? player.getInventory().getItemInHand() : player.getInventory().getItemInOffHand();
-
-		int result = item.getAmount() - amount;
-		item.setAmount(result);
-
-		if (hand == CompatibleHand.MAIN_HAND)
-			player.setItemInHand(result > 0 ? item : null);
-		else
-			player.getInventory().setItemInOffHand(result > 0 ? item : null);
+		hand.takeItem(player, amount);
 	}
 
     /**

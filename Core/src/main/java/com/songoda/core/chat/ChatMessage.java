@@ -59,7 +59,7 @@ public class ChatMessage {
                 ColorCode code = ColorCode.getByChar(match2.charAt(0));
                 if (code != null && code != ColorCode.RESET)
                     stackedCodes.add(code);
-                if (color != null || code != ColorCode.RESET)
+                if (color != null)
                     match2 = match2.substring(1);
                 if (match2.length() == 0) continue;
                 addMessage(match2, color, stackedCodes);
