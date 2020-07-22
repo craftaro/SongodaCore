@@ -88,7 +88,7 @@ public class ChatMessage {
             }
             text.append(object.get("text").getAsString());
         }
-        return "&r" + text.toString();
+        return text.toString();
     }
 
     public ChatMessage addMessage(String s) {
