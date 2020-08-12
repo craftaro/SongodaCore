@@ -3,9 +3,12 @@ package com.songoda.core.utils;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -102,10 +105,12 @@ public class BlockUtilsModern {
 			clazzPressurePlateBlock = Class.forName("net.minecraft.server." + ver + ".BlockPressurePlateAbstract");
 
 			// nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours
-			nmsLever_updateNeighbours = clazzLeverBlock.getDeclaredMethod("e", clazzBlockState, clazzWorld, clazzBlockPos);
+			nmsLever_updateNeighbours = clazzLeverBlock.getDeclaredMethod(ServerVersion.isServerVersionAbove(ServerVersion.V1_13)
+                    ? "e" : "b", clazzBlockState, clazzWorld, clazzBlockPos);
 			nmsLever_updateNeighbours.setAccessible(true);
 
-			nmsButton_updateNeighbours = clazzButtonBlock.getDeclaredMethod("f", clazzBlockState, clazzWorld, clazzBlockPos);
+			nmsButton_updateNeighbours = clazzButtonBlock.getDeclaredMethod(ServerVersion.isServerVersionAbove(ServerVersion.V1_13)
+                    ? "f" : "c", clazzBlockState, clazzWorld, clazzBlockPos);
 			nmsButton_updateNeighbours.setAccessible(true);
 
 			nmsPlate_updateNeighbours = clazzPressurePlateBlock.getDeclaredMethod("a", clazzWorld, clazzBlockPos);
