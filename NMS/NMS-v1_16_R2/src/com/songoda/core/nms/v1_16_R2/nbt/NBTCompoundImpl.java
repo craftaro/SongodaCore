@@ -1,9 +1,9 @@
-package com.songoda.core.nms.v1_16_R1.nbt;
+package com.songoda.core.nms.v1_16_R2.nbt;
 
 import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTObject;
-import net.minecraft.server.v1_16_R1.NBTTagCompound;
-import net.minecraft.server.v1_16_R1.NBTTagList;
+import net.minecraft.server.v1_16_R2.NBTTagCompound;
+import net.minecraft.server.v1_16_R2.NBTTagList;
 
 public class NBTCompoundImpl implements NBTCompound {
 
