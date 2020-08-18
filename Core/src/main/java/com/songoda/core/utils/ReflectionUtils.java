@@ -64,17 +64,29 @@ public class ReflectionUtils {
     }
 
     // does not work in JRE 8+
-    private static Method getStackTraceElementMethod;
-    private static Method getStackTraceDepthMethod;
+    private static Method j7getStackTraceElementMethod;
+    private static Method j7getStackTraceDepthMethod;
+    
+    // does not work in JRE != 8
+    private static Method j8getJavaLangAccess;
+    private static Method j8getStackTraceElementMethod;
 
     static {
         try {
-            getStackTraceElementMethod = Throwable.class.getDeclaredMethod("getStackTraceElement", int.class);
-            getStackTraceElementMethod.setAccessible(true);
-            getStackTraceDepthMethod = Throwable.class.getDeclaredMethod("getStackTraceDepth");
-            getStackTraceDepthMethod.setAccessible(true);
+            j7getStackTraceElementMethod = Throwable.class.getDeclaredMethod("getStackTraceElement", int.class);
+            j7getStackTraceElementMethod.setAccessible(true);
+            j7getStackTraceDepthMethod = Throwable.class.getDeclaredMethod("getStackTraceDepth");
+            j7getStackTraceDepthMethod.setAccessible(true);
         } catch (Exception ex) {
-            getStackTraceElementMethod = getStackTraceDepthMethod = null;
+            j7getStackTraceElementMethod = j7getStackTraceDepthMethod = null;
+        }
+        try {
+            j8getJavaLangAccess = Class.forName("sun.misc.SharedSecrets").getDeclaredMethod("getStackTraceElement");
+            j8getJavaLangAccess.setAccessible(true);
+            j8getStackTraceElementMethod = Class.forName("sun.misc.JavaLangAccess").getDeclaredMethod("getStackTraceDepth", Throwable.class, int.class);
+            j8getStackTraceElementMethod.setAccessible(true);
+        } catch (Exception ex) {
+            j8getJavaLangAccess = j8getStackTraceElementMethod = null;
         }
     }
 
@@ -87,18 +99,18 @@ public class ReflectionUtils {
         try {
             Throwable dummy = new Throwable();
 
-            if (JAVA_VERSION >= 8 && JAVA_VERSION < 9) {
-                return sun.misc.SharedSecrets.getJavaLangAccess().getStackTraceElement(dummy, index);
+            if (j8getStackTraceElementMethod != null) {
+                return (StackTraceElement) j8getStackTraceElementMethod.invoke(j8getJavaLangAccess.invoke(null), dummy, index);
 //			} else if (JAVA_VERSION >= 9) {
 //				return StackWalker.getInstance(Collections.emptySet(), index + 1)
 //				.walk(s -> s.skip(index).findFirst())
 //				.orElse(null);
-            } else if (getStackTraceElementMethod == null) {
+            } else if (j7getStackTraceElementMethod == null) {
                 // better than nothing, right? :/
                 return (new Throwable()).getStackTrace()[index];
             } else {
-                if (index < (Integer) getStackTraceDepthMethod.invoke(dummy)) {
-                    return (StackTraceElement) getStackTraceElementMethod.invoke(new Throwable(), index);
+                if (index < (Integer) j7getStackTraceDepthMethod.invoke(dummy)) {
+                    return (StackTraceElement) j7getStackTraceElementMethod.invoke(new Throwable(), index);
                 } else {
                     return null;
                 }
