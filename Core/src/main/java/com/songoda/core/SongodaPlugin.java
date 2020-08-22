@@ -21,6 +21,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     protected Locale locale;
     protected Config config = new Config(this);
+    protected long dataLoadDelay = 20L;
 
     protected ConsoleCommandSender console = Bukkit.getConsoleSender();
     private boolean emergencyStop = false;
@@ -30,6 +31,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public abstract void onPluginEnable();
 
     public abstract void onPluginDisable();
+
+    public abstract void onDataLoad();
 
     /**
      * Called after reloadConfig​() is called
@@ -95,6 +98,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
             locale = Locale.loadDefaultLocale(this, "en_US");
             // plugin setup
             onPluginEnable();
+            // Load Data.
+            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
             if(emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 console.sendMessage(" ");

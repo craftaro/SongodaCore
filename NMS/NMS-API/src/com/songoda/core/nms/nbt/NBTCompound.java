@@ -22,4 +22,10 @@ public interface NBTCompound {
 
     NBTObject getNBTObject(String tag);
 
+    byte[] serialize(String... exclusions);
+
+    void deSerialize(byte[] serialized);
+
+    void addExtras();
+
 }
