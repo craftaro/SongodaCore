@@ -15,4 +15,6 @@ public interface NBTObject {
     short asShort();
 
     byte asByte();
+
+    int[] asIntArray();
 }

@@ -62,6 +62,12 @@ public abstract class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound set(String tag, int[] i) {
+        compound.setIntArray(tag, i);
+        return this;
+    }
+
+    @Override
     public NBTCompound remove(String tag) {
         compound.remove(tag);
         return this;
