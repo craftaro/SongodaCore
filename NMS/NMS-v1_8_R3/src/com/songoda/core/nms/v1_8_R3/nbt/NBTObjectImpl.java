@@ -41,4 +41,8 @@ public class NBTObjectImpl implements NBTObject {
         return compound.getByte(tag);
     }
 
+    public int[] asIntArray() {
+        return compound.getIntArray(tag);
+    }
+
 }
