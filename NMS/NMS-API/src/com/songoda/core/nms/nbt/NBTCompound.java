@@ -1,5 +1,7 @@
 package com.songoda.core.nms.nbt;
 
+import java.util.UUID;
+
 public interface NBTCompound {
 
     NBTCompound set(String tag, String s);
@@ -17,6 +19,8 @@ public interface NBTCompound {
     NBTCompound set(String tag, byte b);
 
     NBTCompound set(String tag, int[] i);
+
+    NBTCompound set(String tag, UUID u);
 
     NBTCompound remove(String tag);
 

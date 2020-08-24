@@ -6,6 +6,7 @@ import net.minecraft.server.v1_8_R1.NBTCompressedStreamTools;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
 
 import java.io.*;
+import java.util.UUID;
 
 public abstract class NBTCompoundImpl implements NBTCompound {
 
@@ -64,6 +65,13 @@ public abstract class NBTCompoundImpl implements NBTCompound {
     @Override
     public NBTCompound set(String tag, int[] i) {
         compound.setIntArray(tag, i);
+        return this;
+    }
+
+    @Override
+    public NBTCompound set(String tag, UUID u) {
+        set(tag + "Most", u.getMostSignificantBits());
+        set(tag + "Least", u.getLeastSignificantBits());
         return this;
     }
 
