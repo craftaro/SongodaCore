@@ -74,6 +74,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.songoda:*</include>
+                                    <include>com.zaxxer:HikariCP</include>
                                 </includes>
                             </artifactSet>
                             <filters>
