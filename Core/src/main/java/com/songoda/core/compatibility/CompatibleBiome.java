@@ -1,7 +1,13 @@
 package com.songoda.core.compatibility;
 
+import com.songoda.core.utils.NMSUtils;
+import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -94,8 +100,14 @@ public enum CompatibleBiome {
     WOODED_HILLS(ServerVersion.V1_13, v("FOREST_HILLS")),
     WOODED_MOUNTAINS(ServerVersion.V1_13, v(ServerVersion.V1_9, "EXTREME_HILLS_WITH_TREES"), v("EXTREME_HILLS_PLUS"));
 
+    private static final boolean isAbove1_16_R1 = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)
+            && !ServerVersion.getServerVersionString().equals("v1_16_R1");
+
     private static final Map<String, CompatibleBiome> lookupMap = new HashMap();
     private static final Set<CompatibleBiome> compatibleBiomes = new HashSet<>();
+    private final Deque<Version> versions = new ArrayDeque<>();
+    private static Method methodGetHandle, methodMarkDirty, methodBiomeToBiomeBase, methodGetBiomeIndex, methodSetBiome;
+    private static Field fieldStorageRegistry;
 
     static {
         for (CompatibleBiome biome : values())
@@ -105,9 +117,28 @@ public enum CompatibleBiome {
         for (CompatibleBiome biome : CompatibleBiome.values())
             if (biome.isCompatible())
                 compatibleBiomes.add(biome);
-    }
 
-    private Deque<Version> versions = new ArrayDeque<>();
+        Class<?> classBiomeBase = NMSUtils.getNMSClass("BiomeBase"),
+                classCraftChunk = NMSUtils.getCraftClass("CraftChunk"),
+                classCraftBlock = NMSUtils.getCraftClass("block.CraftBlock"),
+                classChunk = NMSUtils.getNMSClass("Chunk"),
+                classBiomeStorage = NMSUtils.getNMSClass("BiomeStorage"),
+                classIRegistry = NMSUtils.getNMSClass("IRegistry");
+        try {
+            methodBiomeToBiomeBase = isAbove1_16_R1 ? classCraftBlock.getMethod("biomeToBiomeBase", classIRegistry, Biome.class)
+                    : classCraftBlock.getMethod("biomeToBiomeBase", Biome.class);
+            methodGetHandle = classCraftChunk.getMethod("getHandle");
+            methodMarkDirty = classChunk.getMethod("markDirty");
+            methodGetBiomeIndex = classChunk.getMethod("getBiomeIndex");
+            methodSetBiome = classBiomeStorage.getMethod("setBiome", int.class, int.class, int.class, classBiomeBase);
+
+
+            fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
+            fieldStorageRegistry.setAccessible(true);
+        } catch (NoSuchMethodException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
 
     CompatibleBiome() {
         versions.add(v(ServerVersion.UNKNOWN, name()));
@@ -135,12 +166,43 @@ public enum CompatibleBiome {
         return null;
     }
 
+    public static Set<CompatibleBiome> getCompatibleBiomes() {
+        return compatibleBiomes;
+    }
+
+
     public static CompatibleBiome getBiome(Biome biome) {
         return biome == null ? null : lookupMap.get(biome.name());
     }
 
-    public static Set<CompatibleBiome> getCompatibleBiomes() {
-        return compatibleBiomes;
+    public void setBiome(Chunk chunk) throws InvocationTargetException, IllegalAccessException {
+        Object nmsChunk = methodGetHandle.invoke(chunk);
+        Object biomeStorage = methodGetBiomeIndex.invoke(nmsChunk);
+        Object biomeBase;
+        if (isAbove1_16_R1) {
+            Object registry = fieldStorageRegistry.get(biomeStorage);
+            biomeBase = methodBiomeToBiomeBase.invoke(null, registry, getBiome());
+        } else
+            biomeBase = methodBiomeToBiomeBase.invoke(null, getBiome());
+
+        World world = chunk.getWorld();
+        int chunkX = chunk.getX();
+        int chunkZ = chunk.getZ();
+        for (int x = chunkX << 4; x < (chunkX << 4) + 16; x++) {
+            for (int z = chunkZ << 4; z < (chunkZ << 4) + 16; z++) {
+                for (int y = 0; y < world.getMaxHeight(); ++y) {
+                    methodSetBiome.invoke(biomeStorage, x >> 2, y >> 2, z >> 2, biomeBase);
+                }
+            }
+        }
+        methodMarkDirty.invoke(nmsChunk);
+    }
+
+    public void setBiome(World world, int x, int y, int z) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
+            world.setBiome(x, y, z, getBiome());
+        else
+            world.setBiome(x, z, getBiome());
     }
 
     private static Version v(ServerVersion version, String biome) {
