@@ -1,26 +1,20 @@
 package com.songoda.core.hooks.stackers;
 
-import com.songoda.ultimatestacker.entity.EntityStack;
+import com.songoda.ultimatestacker.stackable.entity.EntityStack;
 import com.songoda.ultimatestacker.utils.Methods;
-import java.lang.reflect.Method;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
+
 public class UltimateStacker extends Stacker {
 
     private final com.songoda.ultimatestacker.UltimateStacker plugin;
-    private boolean oldItemMethods = false;
-    private Method oldUltimateStacker_updateItemAmount;
 
     public UltimateStacker() {
         this.plugin = com.songoda.ultimatestacker.UltimateStacker.getInstance();
-        try {
-            oldUltimateStacker_updateItemAmount = com.songoda.ultimatestacker.utils.Methods.class.getDeclaredMethod("updateItemAmount", Item.class, int.class);
-            oldItemMethods = true;
-        } catch (NoSuchMethodException | SecurityException ex) {
-        }
     }
 
     @Override
@@ -45,16 +39,7 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void setItemAmount(Item item, int amount) {
-        if (oldItemMethods) {
-            // TODO: direct reference when this is re-added to the API
-            try {
-                oldUltimateStacker_updateItemAmount.invoke(null, item, amount);
-            } catch (Exception ex) {
-                item.remove(); // not the best solution, but prevents duping
-            }
-        } else {
-            Methods.updateItemAmount(item, item.getItemStack(), amount);
-        }
+        com.songoda.ultimatestacker.UltimateStacker.updateItemAmount(item, amount);
     }
 
     @Override
@@ -64,7 +49,7 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public boolean isStacked(LivingEntity entity) {
-        return plugin.getEntityStackManager().isStacked(entity);
+        return plugin.getEntityStackManager().isStackedAndLoaded(entity);
     }
 
     @Override
@@ -75,12 +60,13 @@ public class UltimateStacker extends Stacker {
     @Override
     public void remove(LivingEntity entity, int amount) {
         EntityStack stack = plugin.getEntityStackManager().getStack(entity);
-        stack.setAmount(stack.getAmount() - amount);
+        stack.takeEntities(amount);
+        stack.updateStack();
     }
 
     @Override
     public void add(LivingEntity entity, int amount) {
-        plugin.getEntityStackManager().getStack(entity).addAmount(amount);
+        plugin.getEntityStackManager().getStack(entity).createDuplicates(amount);
     }
 
     @Override
