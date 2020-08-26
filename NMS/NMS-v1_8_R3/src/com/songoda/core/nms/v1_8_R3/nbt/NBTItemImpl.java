@@ -17,9 +17,7 @@ public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
 
     public ItemStack finish() {
         if (nmsItem == null) {
-            net.minecraft.server.v1_8_R3.ItemStack itemStack = CraftItemStack.asNMSCopy(new ItemStack(Material.STONE));
-            itemStack.setTag(compound);
-            return CraftItemStack.asBukkitCopy(nmsItem);
+            return CraftItemStack.asBukkitCopy(net.minecraft.server.v1_8_R3.ItemStack.createStack(compound));
         } else {
             return CraftItemStack.asBukkitCopy(nmsItem);
         }
