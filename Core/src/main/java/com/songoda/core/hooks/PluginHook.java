@@ -5,13 +5,19 @@ import com.songoda.core.hooks.economies.PlayerPointsEconomy;
 import com.songoda.core.hooks.economies.ReserveEconomy;
 import com.songoda.core.hooks.economies.VaultEconomy;
 import com.songoda.core.hooks.holograms.CMIHolograms;
+import com.songoda.core.hooks.holograms.Holograms;
+import com.songoda.core.hooks.holograms.HologramsHolograms;
+import com.songoda.core.hooks.holograms.HolographicDisplaysHolograms;
+import com.songoda.core.hooks.log.CoreProtectLog;
+import com.songoda.core.hooks.log.Log;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
 import com.songoda.core.hooks.stackers.UltimateStacker;
 import com.songoda.core.hooks.stackers.WildStacker;
-import com.songoda.core.hooks.holograms.Holograms;
-import com.songoda.core.hooks.holograms.HologramsHolograms;
-import com.songoda.core.hooks.holograms.HolographicDisplaysHolograms;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
@@ -20,21 +26,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
-public final class PluginHook <T extends Class> {
+public final class PluginHook<T extends Class> {
 
-    public static final PluginHook ECO_VAULT            = new PluginHook(Economy.class, "Vault", VaultEconomy.class);
-    public static final PluginHook ECO_PLAYER_POINTS    = new PluginHook(Economy.class, "PlayerPoints", PlayerPointsEconomy.class);
-    public static final PluginHook ECO_RESERVE          = new PluginHook(Economy.class, "Reserve", ReserveEconomy.class);
-    public static final PluginHook STACKER_ULTIMATE     = new PluginHook(Stacker.class, "UltimateStacker", UltimateStacker.class);
-    public static final PluginHook STACKER_WILD         = new PluginHook(Stacker.class, "WildStacker", WildStacker.class);
-    public static final PluginHook STACKER_STACK_MOB    = new PluginHook(Stacker.class, "StackMob", StackMob.class);
-    public static final PluginHook HOLO_DISPLAYS        = new PluginHook(Holograms.class, "HolographicDisplays", HolographicDisplaysHolograms.class);
-    public static final PluginHook HOLO_HOLOGRAMS       = new PluginHook(Holograms.class, "Holograms", HologramsHolograms.class);
-    public static final PluginHook HOLO_CMI             = new PluginHook(Holograms.class, "CMI", CMIHolograms.class);
+    public static final PluginHook ECO_VAULT = new PluginHook(Economy.class, "Vault", VaultEconomy.class);
+    public static final PluginHook ECO_PLAYER_POINTS = new PluginHook(Economy.class, "PlayerPoints", PlayerPointsEconomy.class);
+    public static final PluginHook ECO_RESERVE = new PluginHook(Economy.class, "Reserve", ReserveEconomy.class);
+    public static final PluginHook STACKER_ULTIMATE = new PluginHook(Stacker.class, "UltimateStacker", UltimateStacker.class);
+    public static final PluginHook STACKER_WILD = new PluginHook(Stacker.class, "WildStacker", WildStacker.class);
+    public static final PluginHook STACKER_STACK_MOB = new PluginHook(Stacker.class, "StackMob", StackMob.class);
+    public static final PluginHook HOLO_DISPLAYS = new PluginHook(Holograms.class, "HolographicDisplays", HolographicDisplaysHolograms.class);
+    public static final PluginHook HOLO_HOLOGRAMS = new PluginHook(Holograms.class, "Holograms", HologramsHolograms.class);
+    public static final PluginHook HOLO_CMI = new PluginHook(Holograms.class, "CMI", CMIHolograms.class);
+    public static final PluginHook LOG_CORE_PROTECT = new PluginHook(Log.class, "CoreProtect", CoreProtectLog.class);
 
     /******* Start Manager stuff *******/
 
@@ -71,11 +75,11 @@ public final class PluginHook <T extends Class> {
      * NOTE: The class passed MUST extend Hook. <br>
      * Permissible constructors are empty () or (org.bukkit.plugin.Plugin) <br>
      * Each plugin defined must use a different handler class.
-     * 
+     *
      * @param <T>
-     * @param type Generic hook type for this plugin
+     * @param type       Generic hook type for this plugin
      * @param pluginName Plugin name
-     * @param handler Specific class that will handle this plugin, if enabled.
+     * @param handler    Specific class that will handle this plugin, if enabled.
      * @return instance of the PluginHook that was added
      */
     public static <T extends Class> PluginHook addHook(T type, String pluginName, Class handler) {
@@ -87,6 +91,7 @@ public final class PluginHook <T extends Class> {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         for (PluginHook hook : getHooks(type)) {
+            System.out.println("Looking at " + hook.plugin);
             if (pluginManager.isPluginEnabled(hook.plugin)) {
                 Hook handler = (Hook) (plugin != null ? hook.load(plugin) : hook.load());
                 if (handler != null && handler.isEnabled()) {
