@@ -23,14 +23,7 @@ public class HookManager<T extends Hook> {
      * Load all supported plugins.
      */
     public void load() {
-        if (!loaded) {
-            registeredHooks.putAll(PluginHook.loadHooks(typeClass, null).entrySet().stream()
-                    .collect(Collectors.toMap(e -> e.getKey(), e -> (T) e.getValue())));
-            if (!registeredHooks.isEmpty()) {
-                defaultHook = (T) registeredHooks.values().iterator().next();
-            }
-            loaded = true;
-        }
+        load(null);
     }
 
     /**
@@ -40,7 +33,7 @@ public class HookManager<T extends Hook> {
     public void load(Plugin hookingPlugin) {
         if (!loaded) {
             registeredHooks.putAll(PluginHook.loadHooks(typeClass, hookingPlugin).entrySet().stream()
-                    .collect(Collectors.toMap(e -> e.getKey(), e -> (T) e.getValue())));
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> (T) e.getValue())));
             if (!registeredHooks.isEmpty()) {
                 defaultHook = (T) registeredHooks.values().iterator().next();
             }
