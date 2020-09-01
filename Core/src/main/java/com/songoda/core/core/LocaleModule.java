@@ -1,20 +1,21 @@
 package com.songoda.core.core;
 
 import com.songoda.core.locale.Locale;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 public class LocaleModule implements PluginInfoModule {
 
     @Override
     public void run(PluginInfo plugin) {
-        if(plugin.getJavaPlugin() == null || plugin.getSongodaId() <= 0) return;
+        if (plugin.getJavaPlugin() == null || plugin.getSongodaId() <= 0) return;
         JSONObject json = plugin.getJson();
         try {
             JSONArray files = (JSONArray) json.get("neededFiles");

@@ -1,14 +1,6 @@
 package com.songoda.core.commands;
 
 import com.songoda.core.compatibility.EntityNamespace;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -18,6 +10,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class SelectorArguments {
 
     static Pattern selectorPattern = Pattern.compile("^(@[apers])(\\[(.*?)\\])?$");
@@ -26,8 +27,8 @@ public class SelectorArguments {
     /**
      * Parse a command selector using Minecraft's selector format. <br>
      * Currently only supports distance and entity type
-     * 
-     * @param sender CommandBlock or Player running the command
+     *
+     * @param sender   CommandBlock or Player running the command
      * @param argument argument with the selector to parse
      * @return SelectorArguments Object for grabbing the list of entities, or null if the selector is invalid
      */
@@ -149,7 +150,7 @@ public class SelectorArguments {
                 return rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntitiesByClasses(Player.class)
                         : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2).stream()
-                                .filter(e -> e instanceof Player).collect(Collectors.toSet());
+                        .filter(e -> e instanceof Player).collect(Collectors.toSet());
             case ALL_ENTITIES:
                 return rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntities()
@@ -159,7 +160,7 @@ public class SelectorArguments {
         }
         return Collections.EMPTY_LIST;
     }
-    
+
     protected List<Entity> filter(Location location, Collection<Entity> list) {
         Stream<Entity> stream = list.stream()
                 .filter(p -> rangeMin == 0 || p.getLocation().distance(location) > rangeMin)

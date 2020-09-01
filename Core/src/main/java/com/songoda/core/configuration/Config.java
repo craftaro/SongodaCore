@@ -1,19 +1,20 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.utils.TextUtils;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConstructor;
+import org.bukkit.configuration.file.YamlRepresenter;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,24 +30,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConstructor;
-import org.bukkit.configuration.file.YamlRepresenter;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * Configuration settings for a plugin
  *
- * @since 2019-08-28
  * @author jascotty2
+ * @since 2019-08-28
  */
 public class Config extends ConfigSection {
 
@@ -189,7 +178,7 @@ public class Config extends ConfigSection {
 
     /**
      * Should comments from the config file be loaded when loading?
-     * 
+     *
      * @param loadComments set to false if you do not want to preserve node comments
      */
     public void setLoadComments(boolean loadComments) {
@@ -203,7 +192,7 @@ public class Config extends ConfigSection {
     /**
      * Should the configuration automatically save whenever it's been changed? <br>
      * All saves are done asynchronously, so this should not impact server performance.
-     * 
+     *
      * @param autosave set to true if autosaving is enabled.
      * @return this class
      */
@@ -220,7 +209,7 @@ public class Config extends ConfigSection {
     /**
      * If autosave is enabled, this is the delay between a change and when the save is started. <br>
      * If the configuration is changed within this period, the timer is not reset.
-     * 
+     *
      * @param autosaveInterval time in seconds
      * @return this class
      */
@@ -259,7 +248,7 @@ public class Config extends ConfigSection {
 
     /**
      * Default comment applied to config nodes
-     * 
+     *
      * @return this config
      */
     @NotNull
@@ -278,7 +267,7 @@ public class Config extends ConfigSection {
 
     /**
      * Default comment applied to section nodes
-     * 
+     *
      * @return this config
      */
     @NotNull
@@ -296,7 +285,7 @@ public class Config extends ConfigSection {
 
     /**
      * Extra lines to put between root nodes
-     * 
+     *
      * @return this config
      */
     @NotNull
@@ -316,7 +305,7 @@ public class Config extends ConfigSection {
     /**
      * Extra lines to put in front of comments. <br>
      * This is separate from rootNodeSpacing, if applicable.
-     * 
+     *
      * @return this config
      */
     @NotNull
@@ -400,7 +389,7 @@ public class Config extends ConfigSection {
             try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
                 // upgrade charset if file was saved in a more complex format
-                if(charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
+                if (charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
                     defaultCharset = StandardCharsets.UTF_16;
                 }
                 this.load(new InputStreamReader(stream, charset));
@@ -415,12 +404,12 @@ public class Config extends ConfigSection {
 
     public void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException {
         StringBuilder builder = new StringBuilder();
-        
+
         try (BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader)) {
             String line;
             boolean firstLine = true;
             while ((line = input.readLine()) != null) {
-                if(firstLine) {
+                if (firstLine) {
                     line = line.replaceAll("[\uFEFF\uFFFE\u200B]", ""); // clear BOM markers
                     firstLine = false;
                 }
@@ -440,7 +429,7 @@ public class Config extends ConfigSection {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
         if (input != null) {
-            if(loadComments) {
+            if (loadComments) {
                 this.parseComments(contents, input);
             }
             this.convertMapsToSections(input, this);
@@ -530,8 +519,8 @@ public class Config extends ConfigSection {
     public void deleteNonDefaultSettings() {
         // Delete old config values (thread-safe)
         List<String> defaultKeys = Arrays.asList(defaults.keySet().toArray(new String[0]));
-        for(String key : values.keySet().toArray(new String[0])) {
-            if(!defaultKeys.contains(key)) {
+        for (String key : values.keySet().toArray(new String[0])) {
+            if (!defaultKeys.contains(key)) {
                 values.remove(key);
             }
         }
@@ -557,7 +546,7 @@ public class Config extends ConfigSection {
         if (changed || hasNewDefaults()) {
             saved = save();
         }
-        if(saveTask != null) {
+        if (saveTask != null) {
             //Close Threads
             saveTask.cancel();
             autosaveTimer.cancel();
@@ -576,7 +565,7 @@ public class Config extends ConfigSection {
     }
 
     public boolean save() {
-        if(saveTask != null) {
+        if (saveTask != null) {
             //Close Threads
             saveTask.cancel();
             autosaveTimer.cancel();

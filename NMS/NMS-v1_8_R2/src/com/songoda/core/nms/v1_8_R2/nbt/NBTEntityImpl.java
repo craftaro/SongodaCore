@@ -1,7 +1,10 @@
 package com.songoda.core.nms.v1_8_R2.nbt;
 
 import com.songoda.core.nms.nbt.NBTEntity;
-import net.minecraft.server.v1_8_R2.*;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R2.ItemMonsterEgg;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;

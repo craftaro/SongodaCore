@@ -66,7 +66,7 @@ public class ReflectionUtils {
     // does not work in JRE 8+
     private static Method j7getStackTraceElementMethod;
     private static Method j7getStackTraceDepthMethod;
-    
+
     // does not work in JRE != 8
     private static Method j8getJavaLangAccess;
     private static Method j8getStackTraceElementMethod;
@@ -201,7 +201,7 @@ public class ReflectionUtils {
         int packageDelim = classPath.lastIndexOf('.');
         return getClassNamesFromPackage(getJarFile(classInPackage), classPath.substring(0, packageDelim), ITERATION.NONE);
     }
-    
+
     public static List<String> getClassNamesFromPackage(String packageName) throws IOException, URISyntaxException, ClassNotFoundException {
         return getClassNamesFromPackage(packageName, ITERATION.NONE);
     }
@@ -296,7 +296,7 @@ public class ReflectionUtils {
                 }
             }
         } else {
-			// hits here if running in IDE
+            // hits here if running in IDE
 
             // loop through files in classpath
             URI uri = new URI(packageURL.toString());

@@ -5,9 +5,10 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.editor.PluginConfigGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
+
+import java.util.List;
 
 final class SongodaCoreOverviewGUI extends Gui {
 
@@ -33,7 +34,7 @@ final class SongodaCoreOverviewGUI extends Gui {
                         "",
                         ChatColor.GOLD + "Click for the marketplace page link.",
                         ChatColor.GOLD + "Right Click to edit plugin settings."
-                ),
+                        ),
                         ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
                 setAction(i, ClickType.RIGHT, (event) -> event.manager.showGUI(event.player, new PluginConfigGui(plugin.getJavaPlugin(), event.gui)));
                 highlightItem(i);
@@ -44,7 +45,7 @@ final class SongodaCoreOverviewGUI extends Gui {
                         "",
                         ChatColor.GOLD + "Click for the marketplace page link.",
                         ChatColor.GOLD + "Right Click to edit plugin settings."
-                ),
+                        ),
                         ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
                 setAction(i, ClickType.RIGHT, (event) -> event.manager.showGUI(event.player, new PluginConfigGui(plugin.getJavaPlugin(), event.gui)));
             }

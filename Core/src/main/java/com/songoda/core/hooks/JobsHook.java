@@ -2,13 +2,14 @@ package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.jobs.JobsHandler;
 import com.songoda.core.hooks.jobs.JobsPlayerHandler;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collections;
+import java.util.List;
 
 public class JobsHook {
 

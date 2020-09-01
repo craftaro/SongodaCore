@@ -179,7 +179,7 @@ public class ChatMessage {
 
                 Object packet;
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), mc_chatMessageType_Chat.get(null), ((Player)sender).getUniqueId());
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), mc_chatMessageType_Chat.get(null), ((Player) sender).getUniqueId());
                 } else {
                     packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)));
                 }

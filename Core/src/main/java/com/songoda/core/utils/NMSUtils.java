@@ -30,7 +30,7 @@ public class NMSUtils {
         }
     }
 
-    public static Method getPrivateMethod(Class<?> c, String methodName, Class<?> ... parameters) throws Exception {
+    public static Method getPrivateMethod(Class<?> c, String methodName, Class<?>... parameters) throws Exception {
         Method m = c.getDeclaredMethod(methodName, parameters);
         m.setAccessible(true);
         return m;

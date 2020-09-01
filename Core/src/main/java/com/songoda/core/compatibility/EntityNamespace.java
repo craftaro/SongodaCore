@@ -1,8 +1,9 @@
 package com.songoda.core.compatibility;
 
+import org.bukkit.entity.EntityType;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.entity.EntityType;
 
 public class EntityNamespace {
 

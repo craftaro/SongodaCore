@@ -54,6 +54,7 @@ public class EconomyManager {
 
     /**
      * Format the given amount to a human-readable string in this currency
+     *
      * @param amt amount to display
      * @return a currency string as formatted by the economy plugin
      */

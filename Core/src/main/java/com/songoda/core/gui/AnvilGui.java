@@ -2,11 +2,9 @@ package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.methods.Clickable;
+import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.anvil.AnvilCore;
 import com.songoda.core.nms.anvil.CustomAnvil;
-import com.songoda.core.nms.NmsManager;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -14,11 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Anvil GUI for text prompts
  *
- * @since 2019-09-15
  * @author jascotty2
+ * @since 2019-09-15
  */
 public class AnvilGui extends Gui {
 
@@ -66,7 +67,7 @@ public class AnvilGui extends Gui {
         return this;
     }
 
-    public AnvilGui setOutputPrompt(String ... str) {
+    public AnvilGui setOutputPrompt(String... str) {
         endPrompt = Arrays.asList(str);
         return this;
     }
@@ -78,7 +79,7 @@ public class AnvilGui extends Gui {
 
     void updateOutputPrompt() {
         final ItemStack in;
-        if(endPrompt != null && (in = cellItems.get(0)) != null) {
+        if (endPrompt != null && (in = cellItems.get(0)) != null) {
             setItem(2, GuiUtils.createButtonItem(in, endPrompt));
         }
     }

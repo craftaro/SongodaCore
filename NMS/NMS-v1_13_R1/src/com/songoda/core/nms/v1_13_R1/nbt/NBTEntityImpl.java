@@ -1,7 +1,11 @@
 package com.songoda.core.nms.v1_13_R1.nbt;
 
 import com.songoda.core.nms.nbt.NBTEntity;
-import net.minecraft.server.v1_13_R1.*;
+import net.minecraft.server.v1_13_R1.BlockPosition;
+import net.minecraft.server.v1_13_R1.Entity;
+import net.minecraft.server.v1_13_R1.EntityTypes;
+import net.minecraft.server.v1_13_R1.MinecraftKey;
+import net.minecraft.server.v1_13_R1.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R1.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;

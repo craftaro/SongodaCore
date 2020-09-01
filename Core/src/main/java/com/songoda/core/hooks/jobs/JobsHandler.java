@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.jobs;
 
 import com.gamingmesh.jobs.Jobs;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

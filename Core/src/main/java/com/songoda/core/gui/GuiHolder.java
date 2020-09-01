@@ -7,9 +7,9 @@ import org.bukkit.inventory.InventoryHolder;
 
 /**
  * Internal class for marking an inventory as a GUI inventory
- * 
- * @since 2019-08-25
+ *
  * @author jascotty2
+ * @since 2019-08-25
  */
 class GuiHolder implements InventoryHolder {
 

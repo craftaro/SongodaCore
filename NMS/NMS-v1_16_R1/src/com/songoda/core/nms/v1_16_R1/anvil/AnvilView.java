@@ -2,27 +2,18 @@ package com.songoda.core.nms.v1_16_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.minecraft.server.v1_16_R1.BlockPosition;
-import net.minecraft.server.v1_16_R1.ChatMessage;
-import net.minecraft.server.v1_16_R1.Container;
-import net.minecraft.server.v1_16_R1.ContainerAccess;
-import net.minecraft.server.v1_16_R1.ContainerAnvil;
-import net.minecraft.server.v1_16_R1.ContainerAnvilAbstract;
-import net.minecraft.server.v1_16_R1.Containers;
-import net.minecraft.server.v1_16_R1.EntityHuman;
-import net.minecraft.server.v1_16_R1.EntityPlayer;
-import net.minecraft.server.v1_16_R1.IInventory;
-import net.minecraft.server.v1_16_R1.PacketPlayOutOpenWindow;
+import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
@@ -31,7 +22,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private String customTitle = "Repairing";
     private int cost = -1;
     private boolean canUse = true;
-    private AnvilTextChange textChange = null; 
+    private AnvilTextChange textChange = null;
 
     // used for setting custom inventory
     static Field mc_ContainerAnvil_repairInventory; // subcontainer with only the result
@@ -64,11 +55,11 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
             mc_Container_title.setAccessible(true);
             mc_Container_windowId = Container.class.getDeclaredField("windowId");
             mc_Container_windowId.setAccessible(true);
-			
-			// remove the final modifier
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(mc_Container_windowId, mc_Container_windowId.getModifiers() & ~Modifier.FINAL);
+
+            // remove the final modifier
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(mc_Container_windowId, mc_Container_windowId.getModifiers() & ~Modifier.FINAL);
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
         }
@@ -79,7 +70,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         this.setTitle(new ChatMessage(customTitle != null ? customTitle : ""));
         this.checkReachable = false;
         this.entity = entity;
-        if(holder != null) {
+        if (holder != null) {
             this.inventory = getBukkitView(entity, holder).getTopInventory();
         } else {
             this.inventory = getBukkitView().getTopInventory();
@@ -90,7 +81,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         try {
             AnvilInventoryCustom craftInventory = new AnvilInventoryCustom(holder,
                     new Location(entity.world.getWorld(), 0, 0, 0),
-                    (IInventory) mc_ContainerAnvil_repairInventory.get(this), 
+                    (IInventory) mc_ContainerAnvil_repairInventory.get(this),
                     (IInventory) mc_ContainerAnvil_resultInventory.get(this), this);
             CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
             mc_ContainerAnvil_bukkitEntity.set(this, view);

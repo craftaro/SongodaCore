@@ -4,8 +4,6 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.DataStoreObject;
 import com.songoda.core.configuration.SimpleDataStore;
 import com.songoda.core.gui.methods.Clickable;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -13,11 +11,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents a GUI screen that can be user-configured
  *
- * @since 2019-09-06
  * @author jascotty2
+ * @since 2019-09-06
  */
 public class CustomizableGui extends Gui {
 

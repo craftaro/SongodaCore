@@ -1,12 +1,13 @@
 package com.songoda.core.hooks;
 
+import org.bukkit.plugin.Plugin;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.bukkit.plugin.Plugin;
 
 public class HookManager<T extends Hook> {
 
@@ -28,7 +29,8 @@ public class HookManager<T extends Hook> {
 
     /**
      * Load all supported plugins.
-	 * @param hookingPlugin plugin to pass to the hook handler
+     *
+     * @param hookingPlugin plugin to pass to the hook handler
      */
     public void load(Plugin hookingPlugin) {
         if (!loaded) {
@@ -53,8 +55,8 @@ public class HookManager<T extends Hook> {
 
     /**
      * Set the default hook to a different plugin, if that plugin exists. <br>
-     * If the plugin is not loaded or supported, 
-     * the previously defined default will be used. 
+     * If the plugin is not loaded or supported,
+     * the previously defined default will be used.
      *
      * @param name name of the plugin to use
      * @return true if the default was set to this plugin
@@ -70,7 +72,7 @@ public class HookManager<T extends Hook> {
 
     /**
      * Set the default hook to a different plugin, if that plugin exists.  <br />
-     * If the plugin is not loaded or supported, 
+     * If the plugin is not loaded or supported,
      * the previously defined default will be used.
      *
      * @param plugin plugin to use

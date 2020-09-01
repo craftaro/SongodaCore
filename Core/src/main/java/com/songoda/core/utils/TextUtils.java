@@ -1,5 +1,7 @@
 package com.songoda.core.utils;
 
+import org.bukkit.ChatColor;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,8 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.bukkit.ChatColor;
 
 public class TextUtils {
 
@@ -37,7 +37,7 @@ public class TextUtils {
      * Convert a string to an invisible colored string that's lore-safe <br />
      * (Safe to use as lore) <br />
      * Note: Do not use semi-colons in this string, or they will be lost when decoding!
-     * 
+     *
      * @param s string to convert
      * @return encoded string
      */
@@ -45,7 +45,8 @@ public class TextUtils {
         if (s == null || s.equals(""))
             return "";
         StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR).append(';').append(ChatColor.COLOR_CHAR).append(c);
+        for (char c : s.toCharArray())
+            hidden.append(ChatColor.COLOR_CHAR).append(';').append(ChatColor.COLOR_CHAR).append(c);
         return hidden.toString();
     }
 
@@ -53,7 +54,7 @@ public class TextUtils {
      * Convert a string to an invisible colored string <br />
      * (Not safe to use as lore) <br />
      * Note: Do not use semi-colons in this string, or they will be lost when decoding!
-     * 
+     *
      * @param s string to convert
      * @return encoded string
      */
@@ -67,7 +68,7 @@ public class TextUtils {
 
     /**
      * Removes color markers used to encode strings as invisible text
-     * 
+     *
      * @param s encoded string
      * @return string with color markers removed
      */
@@ -87,8 +88,8 @@ public class TextUtils {
         //supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
         //supportedCharsets.add(StandardCharsets.UTF_16);
         try {
-        supportedCharsets.add(Charset.forName("windows-1253"));
-        supportedCharsets.add(Charset.forName("ISO-8859-7"));
+            supportedCharsets.add(Charset.forName("windows-1253"));
+            supportedCharsets.add(Charset.forName("ISO-8859-7"));
         } catch (Exception e) {
         } // UnsupportedCharsetException technically can be thrown, but can also be ignored
         supportedCharsets.add(StandardCharsets.US_ASCII);

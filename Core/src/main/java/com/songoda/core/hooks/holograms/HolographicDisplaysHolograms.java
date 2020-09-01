@@ -53,13 +53,13 @@ public class HolographicDisplaysHolograms extends Holograms {
                     || hologram.getZ() != location.getZ()) continue;
             // only update if there is a change to the text
             boolean isChanged = lines.size() != hologram.size();
-            if(!isChanged) {
+            if (!isChanged) {
                 // double-check the lines
-                for(int i = 0; !isChanged && i < lines.size(); ++i) {
+                for (int i = 0; !isChanged && i < lines.size(); ++i) {
                     isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
                 }
             }
-            if(isChanged) {
+            if (isChanged) {
                 hologram.clearLines();
                 for (String line : lines) {
                     hologram.appendTextLine(line);
@@ -71,7 +71,7 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     private void createAt(Location location, List<String> lines) {
-                Hologram hologram = HologramsAPI.createHologram(plugin, location);
+        Hologram hologram = HologramsAPI.createHologram(plugin, location);
         for (String line : lines) {
             hologram.appendTextLine(line);
         }

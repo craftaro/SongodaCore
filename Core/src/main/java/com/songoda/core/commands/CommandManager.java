@@ -2,17 +2,6 @@ package com.songoda.core.commands;
 
 import com.songoda.core.compatibility.ServerProject;
 import com.songoda.core.compatibility.ServerVersion;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,6 +13,18 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CommandManager implements CommandExecutor, TabCompleter {
 
@@ -76,8 +77,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 .forEach(c -> {
                     all.add(c.parent);
                     c.children.values().stream()
-                    .filter(s -> !all.contains(s))
-                    .forEach(s -> all.add(s));
+                            .filter(s -> !all.contains(s))
+                            .forEach(s -> all.add(s));
                 });
         return all;
     }

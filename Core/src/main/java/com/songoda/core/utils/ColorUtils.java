@@ -1,11 +1,10 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.chat.ColorCode;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.songoda.core.chat.ColorCode;
-import org.bukkit.ChatColor;
 
 public class ColorUtils {
 

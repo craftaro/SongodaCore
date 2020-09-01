@@ -66,6 +66,7 @@ public abstract class AbstractCommand {
     }
 
     public static enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
+
     public static enum CommandType {PLAYER_ONLY, CONSOLE_OK}
 }
 

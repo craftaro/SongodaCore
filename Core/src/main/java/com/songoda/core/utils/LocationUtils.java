@@ -8,7 +8,7 @@ public class LocationUtils {
         return location1.getBlockX() == location2.getBlockX() && location1.getBlockY() == location2.getBlockY() && location1.getBlockZ() == location2.getBlockZ();
     }
 
-    public static boolean isInArea(Location l, Location pos1, Location pos2){
+    public static boolean isInArea(Location l, Location pos1, Location pos2) {
         double x1 = Math.min(pos1.getX(), pos2.getX());
         double y1 = Math.min(pos1.getY(), pos2.getY());
         double z1 = Math.min(pos1.getZ(), pos2.getZ());

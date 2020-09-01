@@ -48,8 +48,8 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("NMS: " + ServerProject.getServerVersion() + " " + ServerVersion.getServerVersionString());
         sender.sendMessage("Operating System: " + System.getProperty("os.name"));
         sender.sendMessage("Allocated Memory: " + format.format(Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "Mb");
-        sender.sendMessage("Online Players: " +  Bukkit.getOnlinePlayers().size());
-        if(tpsField != null) {
+        sender.sendMessage("Online Players: " + Bukkit.getOnlinePlayers().size());
+        if (tpsField != null) {
             try {
                 double[] tps = ((double[]) tpsField.get(serverInstance));
 

@@ -1,13 +1,8 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.ClientVersion;
-import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,11 +21,16 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 /**
  * Manages events for GUI screens
  *
- * @since 2019-08-25
  * @author jascotty2
+ * @since 2019-08-25
  */
 public class GuiManager {
 
@@ -72,15 +72,15 @@ public class GuiManager {
      * Create and display a GUI interface for a player
      *
      * @param player player to open the interface for
-     * @param gui GUI to use
+     * @param gui    GUI to use
      */
     public void showGUI(Player player, Gui gui) {
         if (shutdown) {
-            if(plugin.isEnabled()) {
+            if (plugin.isEnabled()) {
                 // recover if reloaded without calling init manually
                 init();
             } else {
-               return; 
+                return;
             }
         } else if (!initialized) {
             init();
@@ -107,7 +107,7 @@ public class GuiManager {
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     player.openInventory(inv);
                     gui.onOpen(this, player);
-                    synchronized(lock) {
+                    synchronized (lock) {
                         openInventories.put(player, gui);
                     }
                 });
@@ -143,7 +143,7 @@ public class GuiManager {
      * Close all active GUIs
      */
     public void closeAll() {
-        synchronized(lock) {
+        synchronized (lock) {
             openInventories.entrySet().stream()
                     .filter(e -> e.getKey().getOpenInventory().getTopInventory().getHolder() instanceof GuiHolder)
                     .collect(Collectors.toList()) // to prevent concurrency exceptions
@@ -169,10 +169,10 @@ public class GuiManager {
             Inventory openInv = event.getInventory();
             Gui gui;
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
-                && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
+                    && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
-                if(event.getRawSlots().stream().filter(slot -> gui.inventory.getSize() > slot).anyMatch(slot -> !gui.unlockedCells.getOrDefault(slot, false))){
+                if (event.getRawSlots().stream().filter(slot -> gui.inventory.getSize() > slot).anyMatch(slot -> !gui.unlockedCells.getOrDefault(slot, false))) {
                     event.setCancelled(true);
                     event.setResult(Result.DENY);
                 }
@@ -196,12 +196,12 @@ public class GuiManager {
                 if (event.getClick() == ClickType.DOUBLE_CLICK) {
                     // always cancel this event if there are matching gui elements, since it tends to do bad things
                     ItemStack clicked = event.getCursor();
-                    if(clicked != null && clicked.getType() != Material.AIR) {
+                    if (clicked != null && clicked.getType() != Material.AIR) {
                         int cell = 0;
-                        for(ItemStack it : gui.inventory.getContents()) {
-                            if(!gui.unlockedCells.getOrDefault(cell++, false) && clicked.isSimilar(it)) {
+                        for (ItemStack it : gui.inventory.getContents()) {
+                            if (!gui.unlockedCells.getOrDefault(cell++, false) && clicked.isSimilar(it)) {
                                 event.setCancelled(true);
-                                if(gui instanceof AnvilGui) {
+                                if (gui instanceof AnvilGui) {
                                     ((AnvilGui) gui).anvil.update();
                                 }
                                 break;
@@ -228,7 +228,7 @@ public class GuiManager {
                         player.playSound(player.getLocation(), gui.getDefaultSound().getSound(), 1F, 1F);
                     } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         event.setCancelled(true);
-                        if(gui instanceof AnvilGui) {
+                        if (gui instanceof AnvilGui) {
                             ((AnvilGui) gui).anvil.update();
                         }
                     }

@@ -1,17 +1,18 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * @since 2019-08-25
  * @author jascotty2
+ * @since 2019-08-25
  */
 public class GuiUtils {
 

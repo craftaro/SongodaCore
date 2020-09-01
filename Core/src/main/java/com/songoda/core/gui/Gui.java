@@ -8,20 +8,13 @@ import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
 import com.songoda.core.gui.events.GuiOpenEvent;
 import com.songoda.core.gui.events.GuiPageEvent;
-import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.gui.methods.Clickable;
-import com.songoda.core.gui.methods.Droppable;
 import com.songoda.core.gui.methods.Closable;
+import com.songoda.core.gui.methods.Droppable;
 import com.songoda.core.gui.methods.Openable;
+import com.songoda.core.gui.methods.Pagable;
 import com.songoda.core.utils.ItemUtils;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -31,11 +24,17 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * TODO: animated buttons
  *
- * @since 2019-08-25
  * @author jascotty2
+ * @since 2019-08-25
  */
 public class Gui {
 
@@ -158,18 +157,18 @@ public class Gui {
                 .collect(Collectors.toList())
                 .forEach(Player::closeInventory);
     }
-	
-	/**
-	 * Close the GUI as if the player closed it normally
-	 */
-	public void close() {
+
+    /**
+     * Close the GUI as if the player closed it normally
+     */
+    public void close() {
         allowClose = true;
         inventory.getViewers().stream()
                 .filter(e -> e instanceof Player)
                 .map(e -> (Player) e)
                 .collect(Collectors.toList())
                 .forEach(Player::closeInventory);
-	}
+    }
 
     @NotNull
     public GuiType getType() {
@@ -682,7 +681,7 @@ public class Gui {
     public void setPage(int page) {
         int lastPage = this.page;
         this.page = Math.max(1, Math.min(pages, page));
-        if(pager != null && this.page != lastPage) {
+        if (pager != null && this.page != lastPage) {
             pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
             // page markers
             updatePageNavigation();
@@ -692,7 +691,7 @@ public class Gui {
     public void changePage(int direction) {
         int lastPage = page;
         this.page = Math.max(1, Math.min(pages, page + direction));
-        if(pager != null && this.page != lastPage) {
+        if (pager != null && this.page != lastPage) {
             pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
             // page markers
             updatePageNavigation();
@@ -735,7 +734,7 @@ public class Gui {
     }
 
     protected void updatePageNavigation() {
-        if(prevPage != null) {
+        if (prevPage != null) {
             if (page > 1) {
                 this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
             } else {
@@ -743,7 +742,7 @@ public class Gui {
                 this.clearActions(prevPageIndex);
             }
         }
-        if(nextPage != null) {
+        if (nextPage != null) {
             if (pages > 1 && page != pages) {
                 this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
             } else {
@@ -804,7 +803,7 @@ public class Gui {
     }
 
     protected static String trimTitle(String title) {
-        if(title == null) {
+        if (title == null) {
             return "";
         } else if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8) && title.length() > 32) {
             return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);

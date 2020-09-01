@@ -1,9 +1,10 @@
 package com.songoda.core.configuration;
 
-import java.util.List;
 import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConfigOptionsAdapter extends FileConfigurationOptions {
 

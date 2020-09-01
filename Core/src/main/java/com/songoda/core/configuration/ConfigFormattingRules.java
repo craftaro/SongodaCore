@@ -42,9 +42,9 @@ public class ConfigFormattingRules {
         final char spaceCharTop, spaceCharBottom;
 
         private CommentStyle(boolean drawBorder, boolean drawSpace,
-                String spacePrefixTop, char spaceCharTop, String spaceSuffixTop,
-                String commentPrefix, String commentSuffix,
-                String spacePrefixBottom, char spaceCharBottom, String spaceSuffixBottom) {
+                             String spacePrefixTop, char spaceCharTop, String spaceSuffixTop,
+                             String commentPrefix, String commentSuffix,
+                             String spacePrefixBottom, char spaceCharBottom, String spaceSuffixBottom) {
             this.drawBorder = drawBorder;
             this.drawSpace = drawSpace;
             this.commentPrefix = commentPrefix;
@@ -68,23 +68,23 @@ public class ConfigFormattingRules {
         }
 
     }
-    
+
     public static CommentStyle parseStyle(List<String> lines) {
-        if(lines == null || lines.size() <= 2) {
+        if (lines == null || lines.size() <= 2) {
             return CommentStyle.SIMPLE;
-        } else if(lines.size() > 2 && lines.get(0).trim().equals("#") && lines.get(lines.size() - 1).trim().equals("#")) {
+        } else if (lines.size() > 2 && lines.get(0).trim().equals("#") && lines.get(lines.size() - 1).trim().equals("#")) {
             return CommentStyle.SPACED;
         }
         boolean hasBorders = lines.size() > 2 && lines.get(0).trim().matches("^##+$") && lines.get(lines.size() - 1).trim().matches("^##+$");
-        if(!hasBorders) {
+        if (!hasBorders) {
             // default return
             return CommentStyle.SIMPLE;
         }
         // now need to figure out if this is blocked or not
-        if(lines.size() > 4 && lines.get(1).trim().matches(("^#"
+        if (lines.size() > 4 && lines.get(1).trim().matches(("^#"
                 + CommentStyle.BLOCKSPACED.spacePrefixTop + CommentStyle.BLOCKSPACED.spaceCharTop + "+"
                 + CommentStyle.BLOCKSPACED.spaceSuffixTop + "#$").replace("|", "\\|"))
-                 && lines.get(1).trim().matches(("^#"
+                && lines.get(1).trim().matches(("^#"
                 + CommentStyle.BLOCKSPACED.spacePrefixTop + CommentStyle.BLOCKSPACED.spaceCharTop + "+"
                 + CommentStyle.BLOCKSPACED.spaceSuffixTop + "#$").replace("|", "\\|"))) {
             return CommentStyle.BLOCKSPACED;
