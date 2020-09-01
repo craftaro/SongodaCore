@@ -91,7 +91,6 @@ public final class PluginHook<T extends Class> {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         for (PluginHook hook : getHooks(type)) {
-            System.out.println("Looking at " + hook.plugin);
             if (pluginManager.isPluginEnabled(hook.plugin)) {
                 Hook handler = (Hook) (plugin != null ? hook.load(plugin) : hook.load());
                 if (handler != null && handler.isEnabled()) {
