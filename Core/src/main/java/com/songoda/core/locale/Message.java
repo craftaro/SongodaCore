@@ -2,14 +2,14 @@ package com.songoda.core.locale;
 
 import com.songoda.core.chat.ChatMessage;
 import com.songoda.core.compatibility.ServerVersion;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-
 import com.songoda.core.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * The Message object. This holds the message to be sent
@@ -19,15 +19,17 @@ import org.bukkit.entity.Player;
 public class Message {
 
     private static boolean canActionBar = false;
+
     static {
         try {
-			Class.forName("net.md_5.bungee.api.ChatMessageType");
+            Class.forName("net.md_5.bungee.api.ChatMessageType");
             Class.forName("net.md_5.bungee.api.chat.TextComponent");
             Player.Spigot.class.getDeclaredMethod("sendMessage", net.md_5.bungee.api.ChatMessageType.class, net.md_5.bungee.api.chat.TextComponent.class);
-			canActionBar = true;
-		} catch (Exception ex) {
+            canActionBar = true;
+        } catch (Exception ex) {
         }
     }
+
     private ChatMessage prefix = null;
     private ChatMessage message;
 
@@ -119,7 +121,7 @@ public class Message {
      * @return the prefixed message
      */
     public String getPrefixedMessage() {
-        return TextUtils.formatText((prefix == null ? "" : this.prefix.toText()) + " " +  this.message.toText());
+        return TextUtils.formatText((prefix == null ? "" : this.prefix.toText()) + " " + this.message.toText());
     }
 
     /**
@@ -159,7 +161,7 @@ public class Message {
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
         final String place = Matcher.quoteReplacement(placeholder);
-        this.message = message.replaceAll("%" + place + "%|\\{" + place +"\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
+        this.message = message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
         return this;
     }
 

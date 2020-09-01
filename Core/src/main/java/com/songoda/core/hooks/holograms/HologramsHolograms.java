@@ -4,11 +4,12 @@ import com.sainttx.holograms.api.Hologram;
 import com.sainttx.holograms.api.HologramPlugin;
 import com.sainttx.holograms.api.line.HologramLine;
 import com.sainttx.holograms.api.line.TextLine;
-import java.util.HashSet;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class HologramsHolograms extends Holograms {
 
@@ -54,7 +55,7 @@ public class HologramsHolograms extends Holograms {
 
     @Override
     public void removeAllHolograms() {
-        for(String id : ourHolograms) {
+        for (String id : ourHolograms) {
             Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
             if (hologram != null) {
                 hologram.despawn();
@@ -72,14 +73,14 @@ public class HologramsHolograms extends Holograms {
             hologram.spawn();
             // only update if there is a change to the text
             boolean isChanged = lines.size() != hologram.getLines().size();
-            if(!isChanged) {
+            if (!isChanged) {
                 // double-check the lines
-                for(int i = 0; !isChanged && i < lines.size(); ++i) {
+                for (int i = 0; !isChanged && i < lines.size(); ++i) {
                     isChanged = !hologram.getLine(i).getRaw().equals(lines.get(i));
                 }
             }
-            if(isChanged) {
-                for(HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
+            if (isChanged) {
+                for (HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
                     hologram.removeLine(line);
                 }
                 for (String line : lines) {
@@ -105,7 +106,7 @@ public class HologramsHolograms extends Holograms {
 
         hologramPlugin.getHologramManager().addActiveHologram(hologram);
 
-        if(!ourHolograms.contains(id))
+        if (!ourHolograms.contains(id))
             ourHolograms.add(id);
     }
 

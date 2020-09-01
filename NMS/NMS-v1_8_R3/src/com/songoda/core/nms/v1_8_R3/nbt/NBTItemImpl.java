@@ -2,7 +2,6 @@ package com.songoda.core.nms.v1_8_R3.nbt;
 
 import com.songoda.core.nms.nbt.NBTItem;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 

@@ -1,6 +1,7 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.configuration.ConfigFormattingRules.CommentStyle;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.stream.Collectors;
 /**
  * A comment for a configuration key
  *
- * @since 2019-08-28
  * @author jascotty2
+ * @since 2019-08-28
  */
 public class Comment {
 
@@ -57,7 +58,7 @@ public class Comment {
     public String toString() {
         return lines.isEmpty() ? "" : lines.stream().collect(Collectors.joining("\n"));
     }
-    
+
     public static Comment loadComment(List<String> lines) {
         CommentStyle style = ConfigFormattingRules.parseStyle(lines);
         int linePad = (style.drawBorder ? 1 : 0) + (style.drawSpace ? 1 : 0);

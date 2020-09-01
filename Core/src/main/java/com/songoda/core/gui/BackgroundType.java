@@ -10,5 +10,5 @@ public enum BackgroundType {
     private BackgroundType() {
         this.key = "minecraft:textures/gui/advancements/backgrounds/" + name().toLowerCase() + ".png";
     }
-    
+
 }

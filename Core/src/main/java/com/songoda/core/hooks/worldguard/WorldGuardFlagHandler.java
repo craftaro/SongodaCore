@@ -11,6 +11,10 @@ import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,13 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 
 /**
  * Hooks for adding a custom WorldGuard flag
- *
+ * <p>
  * Note: Hooks must be added before WG loads!
  */
 public class WorldGuardFlagHandler {
@@ -75,7 +76,7 @@ public class WorldGuardFlagHandler {
      * Attempt to register a worldGuard flag (ALLOW/DENY) <br />
      * Note: This must be called before WorldGuard loads, or it will fail.
      *
-     * @param flag name of the flag to set
+     * @param flag  name of the flag to set
      * @param state default value of the flag
      */
     public static void addHook(String flag, boolean state) {
@@ -139,7 +140,7 @@ public class WorldGuardFlagHandler {
 
             if (legacy_v62) { // SimpleFlagRegistry is NOT in 6.0 or 6.1
                 // register this flag in the registry
-                if(legacy_simpleFlagRegistryClazz == null) {
+                if (legacy_simpleFlagRegistryClazz == null) {
                     legacy_worldGuardPlugin_flagRegistry = getPrivateField(worldGuardPlugin.getClass(), worldGuardPlugin, "flagRegistry");
                     legacy_simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
                     legacy_simpleFlagRegistry_get = legacy_simpleFlagRegistryClazz.getDeclaredMethod("get", String.class);
@@ -212,7 +213,7 @@ public class WorldGuardFlagHandler {
     /**
      * Checks this location to see what this flag is set to
      *
-     * @param loc location to check
+     * @param loc  location to check
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
@@ -240,7 +241,7 @@ public class WorldGuardFlagHandler {
     /**
      * Query all regions that are in or intersect this chunk
      *
-     * @param c chunk to check for regions in
+     * @param c    chunk to check for regions in
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */

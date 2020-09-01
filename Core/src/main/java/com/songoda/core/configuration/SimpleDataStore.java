@@ -1,5 +1,12 @@
 package com.songoda.core.configuration;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -9,19 +16,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Function;
 import java.util.logging.Level;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Used to easily store a set of one data value
  *
  * @param <T> DataObject class that is used to store the data
- * @since 2019-09-06
  * @author jascotty2
+ * @since 2019-09-06
  */
 public class SimpleDataStore<T extends DataStoreObject> {
 

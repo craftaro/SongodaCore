@@ -1,14 +1,16 @@
 package com.songoda.core.compatibility;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Near-Materials for older servers 1.7+
- * @since 2019-08-23
+ *
  * @author jascotty2
+ * @since 2019-08-23
  */
 public enum LegacyMaterialAnalouge {
 
@@ -117,14 +119,14 @@ public enum LegacyMaterialAnalouge {
     ZOGLIN_SPAWN_EGG(ServerVersion.V1_15, "STONE"),
     ZOMBIFIED_PIGLIN_SPAWN_EGG(ServerVersion.V1_15, "STONE"),
 
-	/* 1.15 */
-	BEE_SPAWN_EGG(ServerVersion.V1_15, "PARROT_SPAWN_EGG", ServerVersion.V1_12, "MONSTER_EGG", (byte) 65),
-	BEE_NEST(ServerVersion.V1_15, "BIRCH_LOG", "LOG", (byte) 2),
-	BEEHIVE(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
-	HONEY_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
-	HONEY_BOTTLE(ServerVersion.V1_15, "DRAGON_BREATH", ServerVersion.V1_9, "POTION", (byte) 0),
-	HONEYCOMB(ServerVersion.V1_15, "SUNFLOWER", "DOUBLE_PLANT", (byte) 0),
-	HONEYCOMB_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+    /* 1.15 */
+    BEE_SPAWN_EGG(ServerVersion.V1_15, "PARROT_SPAWN_EGG", ServerVersion.V1_12, "MONSTER_EGG", (byte) 65),
+    BEE_NEST(ServerVersion.V1_15, "BIRCH_LOG", "LOG", (byte) 2),
+    BEEHIVE(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+    HONEY_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
+    HONEY_BOTTLE(ServerVersion.V1_15, "DRAGON_BREATH", ServerVersion.V1_9, "POTION", (byte) 0),
+    HONEYCOMB(ServerVersion.V1_15, "SUNFLOWER", "DOUBLE_PLANT", (byte) 0),
+    HONEYCOMB_BLOCK(ServerVersion.V1_15, "SLIME_BLOCK", ServerVersion.V1_8, "WOOL", (byte) 4),
 
     ACACIA_BOAT(ServerVersion.V1_9, "BOAT"),
     ACACIA_BUTTON(ServerVersion.V1_13, "WOOD_BUTTON"),
@@ -643,24 +645,23 @@ public enum LegacyMaterialAnalouge {
     }
 
     /**
-     *
      * @param versionLessThan AKA, what server version was this material added to minecraft?
-     * @param modernAnalouge post-1.13 material name, if applicable
-     * @param legacyMaterial pre-1.13 material name
-     * @param legacyData data for defining specific legacy items
+     * @param modernAnalouge  post-1.13 material name, if applicable
+     * @param legacyMaterial  pre-1.13 material name
+     * @param legacyData      data for defining specific legacy items
      */
     private LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, Byte legacyData, ServerVersion legacyMinimum, String compatMaterial, Byte compatData) {
         this.versionLessThan = versionLessThan;
         this.modernMaterial = modernAnalouge;
         this.legacyMaterial = legacyMaterial;
         this.legacyData = legacyData;
-        
+
         this.legacyMinimumVersion = legacyMinimum;
         this.compatibleMaterial = compatMaterial;
         this.compatibleData = compatData;
 
         if (ServerVersion.isServerVersionBelow(versionLessThan)) {
-            if(legacyMinimumVersion != null && ServerVersion.isServerVersionBelow(legacyMinimumVersion)) {
+            if (legacyMinimumVersion != null && ServerVersion.isServerVersionBelow(legacyMinimumVersion)) {
                 // fallback material not available, so use its fallback
                 material = Material.getMaterial(compatibleMaterial);
                 data = compatibleData;

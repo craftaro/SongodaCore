@@ -2,20 +2,21 @@ package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.worldguard.WorldGuardFlagHandler;
 import com.songoda.core.hooks.worldguard.WorldGuardRegionHandler;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class WorldGuardHook {
 
     static boolean canHook = false;
 
     static {
-         try {
+        try {
             // if this class exists, we're good to use WG classes
             Class.forName("com.sk89q.worldguard.protection.flags.Flag");
             canHook = true;
@@ -26,12 +27,12 @@ public class WorldGuardHook {
     /**
      * Attempt to register a worldGuard flag (ALLOW/DENY) <br />
      * Note: This must be called before WorldGuard loads, or it will fail.
-     * 
-     * @param flag name of the flag to set
+     *
+     * @param flag  name of the flag to set
      * @param state default value of the flag
      */
     public static void addHook(@NotNull String flag, boolean state) {
-        if(canHook) {
+        if (canHook) {
             WorldGuardFlagHandler.addHook(flag, state);
         }
     }
@@ -49,7 +50,7 @@ public class WorldGuardHook {
     /**
      * Checks this location to see what this flag is set to
      *
-     * @param l location to check
+     * @param l    location to check
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
@@ -61,7 +62,7 @@ public class WorldGuardHook {
     /**
      * Query all regions that are in or intersect this chunk
      *
-     * @param c chunk to check for regions in
+     * @param c    chunk to check for regions in
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
@@ -72,7 +73,7 @@ public class WorldGuardHook {
 
     /**
      * Check to see if the pvp flag is set and is set to ALLOW
-     * 
+     *
      * @param loc Location to check
      * @return false if the pvp flag is not set for this region, or is set to DENY
      */
@@ -102,7 +103,7 @@ public class WorldGuardHook {
 
     /**
      * Check to see if the other-explosion flag is set and is set to ALLOW
-     * 
+     *
      * @param loc Location to check
      * @return false if the other-explosion flag is not set for this region, or is set to DENY
      */
@@ -112,7 +113,7 @@ public class WorldGuardHook {
 
     /**
      * Check to see if the mob-spawning flag is set and is set to ALLOW
-     * 
+     *
      * @param loc Location to check
      * @return false if the mob-spawning flag is not set for this region, or is set to DENY
      */

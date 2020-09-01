@@ -6,21 +6,22 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Edit all configuration files for a specific plugin
  *
- * @since 2019-08-31
  * @author jascotty2
+ * @since 2019-08-31
  */
 public class PluginConfigGui extends SimplePagedGui {
 

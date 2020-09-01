@@ -1,9 +1,5 @@
 package com.songoda.core.input;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +9,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class ChatPrompt implements Listener {
 
@@ -87,6 +88,7 @@ public class ChatPrompt implements Listener {
                 }
                 HandlerList.unregisterAll(listener);
             }
+
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
             public void onCancel(PlayerCommandPreprocessEvent event) {
                 Player player = event.getPlayer();
@@ -94,7 +96,7 @@ public class ChatPrompt implements Listener {
 
                 ChatPrompt.unregister(player);
 
-                if(event.getMessage().toLowerCase().startsWith("/cancel"))
+                if (event.getMessage().toLowerCase().startsWith("/cancel"))
                     event.setCancelled(true);
 
                 if (onCancel != null) {

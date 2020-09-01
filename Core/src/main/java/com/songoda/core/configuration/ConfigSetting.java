@@ -1,9 +1,10 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConfigSetting {
 
@@ -15,13 +16,13 @@ public class ConfigSetting {
         this.key = key;
     }
 
-    public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, String ... comment) {
+    public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, String... comment) {
         this.config = config;
         this.key = key;
         config.setDefault(key, defaultValue, comment);
     }
 
-    public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+    public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         this.config = config;
         this.key = key;
         config.setDefault(key, defaultValue, commentStyle, comment);

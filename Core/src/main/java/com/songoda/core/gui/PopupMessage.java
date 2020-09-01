@@ -6,8 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import java.util.HashSet;
-import java.util.UUID;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -16,6 +14,9 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Instance of a popup message that can be sent to a player <br>
@@ -83,22 +84,22 @@ class PopupMessage {
         return gson.toJson(json);
     }
 
-	protected void grant(final Player pl) {
-		final Advancement adv = getAdvancement();
-		final AdvancementProgress progress = pl.getAdvancementProgress(adv);
+    protected void grant(final Player pl) {
+        final Advancement adv = getAdvancement();
+        final AdvancementProgress progress = pl.getAdvancementProgress(adv);
 
-		if (!progress.isDone())
-			progress.getRemainingCriteria().forEach((crit) -> progress.awardCriteria(crit));
-	}
+        if (!progress.isDone())
+            progress.getRemainingCriteria().forEach((crit) -> progress.awardCriteria(crit));
+    }
 
-	protected void revoke(final Player pl) {
-		final Advancement adv = getAdvancement();
-		final AdvancementProgress prog = pl.getAdvancementProgress(adv);
+    protected void revoke(final Player pl) {
+        final Advancement adv = getAdvancement();
+        final AdvancementProgress prog = pl.getAdvancementProgress(adv);
 
-		if (prog.isDone())
-			prog.getAwardedCriteria().forEach((crit) -> prog.revokeCriteria(crit));
-	}
-    
+        if (prog.isDone())
+            prog.getAwardedCriteria().forEach((crit) -> prog.revokeCriteria(crit));
+    }
+
     protected void add() {
         if (!registeredMessages.contains(id)) {
             registeredMessages.add(id);

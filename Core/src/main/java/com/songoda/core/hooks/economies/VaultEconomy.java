@@ -11,7 +11,7 @@ public class VaultEconomy extends Economy {
     public VaultEconomy() {
         // this returns null if we have Vault with no compatible eco plugin
         RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> v = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if(v != null) {
+        if (v != null) {
             this.vault = v.getProvider();
         } else {
             // whoopsie!
@@ -29,7 +29,7 @@ public class VaultEconomy extends Economy {
         return "Vault";
     }
 
-    @Override 
+    @Override
     public String formatEconomy(double amt) {
         return vault != null ? vault.format(amt) : super.formatEconomy(amt);
     }

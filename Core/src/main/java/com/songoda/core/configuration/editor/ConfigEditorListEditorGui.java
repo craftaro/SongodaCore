@@ -4,16 +4,17 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
 import com.songoda.core.input.ChatPrompt;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Edit a string list
  *
- * @since 2019-08-31
  * @author jascotty2
+ * @since 2019-08-31
  */
 public class ConfigEditorListEditorGui extends SimplePagedGui {
 
@@ -38,14 +39,19 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
             saveChanges = true;
             event.player.closeInventory();
         });
-        this.setButton(1, GuiUtils.createButtonItem(CompatibleMaterial.CHEST, ChatColor.BLUE + "Add Item"), 
+        this.setButton(1, GuiUtils.createButtonItem(CompatibleMaterial.CHEST, ChatColor.BLUE + "Add Item"),
                 (event) -> {
                     event.gui.exit();
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a new value to add:", response -> {
                         values.add(response.getMessage().trim());
                         redraw();
-                    }).setOnClose(() -> {event.manager.showGUI(event.player, this); })
-                      .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
+                    }).setOnClose(() -> {
+                        event.manager.showGUI(event.player, this);
+                    })
+                            .setOnCancel(() -> {
+                                event.player.sendMessage(ChatColor.RED + "Edit canceled");
+                                event.manager.showGUI(event.player, this);
+                            });
                 });
 
         redraw();
@@ -54,9 +60,9 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
     void redraw() {
         page = 1;
         // clear old display
-        if(inventory != null) {
-            for(Integer i : cellItems.keySet().toArray(new Integer[0])) {
-                if(i > 8) {
+        if (inventory != null) {
+            for (Integer i : cellItems.keySet().toArray(new Integer[0])) {
+                if (i > 8) {
                     cellItems.remove(i);
                     conditionalButtons.remove(i);
                 }

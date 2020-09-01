@@ -1,6 +1,5 @@
 package com.songoda.core.nms.v1_16_R2.nbt;
 
-import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTCore;
 import com.songoda.core.nms.nbt.NBTEntity;
 import com.songoda.core.nms.nbt.NBTItem;

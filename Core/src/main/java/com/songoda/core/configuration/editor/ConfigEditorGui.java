@@ -7,13 +7,6 @@ import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
 import com.songoda.core.input.ChatPrompt;
 import com.songoda.core.utils.ItemUtils;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -24,11 +17,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+
 /**
  * Edit a configuration file for a specific plugin
  *
- * @since 2019-08-31
  * @author jascotty2
+ * @since 2019-08-31
  */
 public class ConfigEditorGui extends SimplePagedGui {
 
@@ -72,7 +73,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         this.setUseHeader(true);
         headerBackItem = footerBackItem = GuiUtils.getBorderItem(CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem());
         final String path = node.getCurrentPath();
-        this.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, !path.isEmpty() ? path : file , config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
+        this.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, !path.isEmpty() ? path : file, config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
         this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // compile list of settings
@@ -94,7 +95,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         // now display individual settings
         for (final String settingKey : settings) {
             final Object val = node.get(settingKey);
-            if(val == null) continue;
+            if (val == null) continue;
             else if (val instanceof Boolean) {
                 // toggle switch
                 setButton(index, configItem(CompatibleMaterial.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
@@ -112,7 +113,10 @@ public class ConfigEditorGui extends SimplePagedGui {
                                     event.player.sendMessage(ChatColor.RED + "Error: \"" + response.getMessage().trim() + "\" is not a number!");
                                 }
                             }).setOnClose(() -> event.manager.showGUI(event.player, this))
-                              .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
+                                    .setOnCancel(() -> {
+                                        event.player.sendMessage(ChatColor.RED + "Edit canceled");
+                                        event.manager.showGUI(event.player, this);
+                                    });
                         });
             } else if (isMaterial(val)) {
                 // changing a block
@@ -124,7 +128,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                             paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
                             paged.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
                             int i = 9;
-                            for(CompatibleMaterial mat : CompatibleMaterial.getAllValidItemMaterials()) {
+                            for (CompatibleMaterial mat : CompatibleMaterial.getAllValidItemMaterials()) {
                                 paged.setButton(i++, GuiUtils.createButtonItem(mat, mat.name()), ClickType.LEFT, (matEvent) -> {
                                     setMaterial(event.slot, settingKey, matEvent.clickedItem);
                                     matEvent.player.closeInventory();
@@ -132,7 +136,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                             }
                             event.manager.showGUI(event.player, paged);
                         });
-                
+
             } else if (val instanceof String) {
                 // changing a "string" value (or change to a feather for writing quill)
                 setButton(index, configItem(CompatibleMaterial.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
@@ -142,13 +146,16 @@ public class ConfigEditorGui extends SimplePagedGui {
                                 node.set(settingKey, response.getMessage().trim());
                                 updateValue(event.slot, settingKey);
                             }).setOnClose(() -> event.manager.showGUI(event.player, this))
-                              .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
+                                    .setOnCancel(() -> {
+                                        event.player.sendMessage(ChatColor.RED + "Edit canceled");
+                                        event.manager.showGUI(event.player, this);
+                                    });
                         });
             } else if (val instanceof List) {
                 setButton(index, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
                         (event) -> {
                             event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
-                                if(((ConfigEditorListEditorGui) gui.gui).saveChanges) {
+                                if (((ConfigEditorListEditorGui) gui.gui).saveChanges) {
                                     setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).values);
                                 }
                             }));
@@ -168,7 +175,7 @@ public class ConfigEditorGui extends SimplePagedGui {
 
     protected void updateValue(int clickCell, String path) {
         ItemStack item = inventory.getItem(clickCell);
-        if(item == null || item == AIR) return;
+        if (item == null || item == AIR) return;
         ItemMeta meta = item.getItemMeta();
         Object val = node.get(path);
         if (meta != null && val != null) {
@@ -194,7 +201,7 @@ public class ConfigEditorGui extends SimplePagedGui {
     void toggle(int clickCell, String path) {
         boolean val = !node.getBoolean(path);
         node.set(path, val);
-        if(val) {
+        if (val) {
             setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
         } else {
             setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
@@ -259,9 +266,9 @@ public class ConfigEditorGui extends SimplePagedGui {
     private boolean isNumber(Object value) {
         return value != null && (
                 value instanceof Long
-                || value instanceof Integer
-                || value instanceof Float
-                || value instanceof Double);
+                        || value instanceof Integer
+                        || value instanceof Float
+                        || value instanceof Double);
     }
 
     private boolean isMaterial(Object value) {
@@ -285,7 +292,7 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     protected ItemStack configItem(CompatibleMaterial type, String name, ConfigurationSection node, String path, String value, String def) {
-        if(value == null) value = "";
+        if (value == null) value = "";
         String[] info = null;
         if (configSection_getCommentString != null) {
             try {

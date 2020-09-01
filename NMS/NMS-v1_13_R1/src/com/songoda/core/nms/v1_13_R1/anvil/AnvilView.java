@@ -2,7 +2,13 @@ package com.songoda.core.nms.v1_13_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import net.minecraft.server.v1_13_R1.*;
+import net.minecraft.server.v1_13_R1.BlockPosition;
+import net.minecraft.server.v1_13_R1.ChatMessage;
+import net.minecraft.server.v1_13_R1.ContainerAnvil;
+import net.minecraft.server.v1_13_R1.EntityHuman;
+import net.minecraft.server.v1_13_R1.EntityPlayer;
+import net.minecraft.server.v1_13_R1.IInventory;
+import net.minecraft.server.v1_13_R1.PacketPlayOutOpenWindow;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
@@ -20,7 +26,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private String title = "Repairing";
     private int cost = -1;
     private boolean canUse = true;
-    private AnvilTextChange textChange = null; 
+    private AnvilTextChange textChange = null;
 
     // used for setting custom inventory
     static Field mc_ContainerAnvil_repairInventory; // subcontainer with only the result

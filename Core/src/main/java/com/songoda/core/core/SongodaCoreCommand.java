@@ -3,9 +3,10 @@ package com.songoda.core.core;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
-import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class SongodaCoreCommand extends AbstractCommand {
 
@@ -17,8 +18,8 @@ public class SongodaCoreCommand extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        if(sender instanceof Player) {
-            if(guiManager == null || guiManager.isClosed()) {
+        if (sender instanceof Player) {
+            if (guiManager == null || guiManager.isClosed()) {
                 guiManager = new GuiManager(SongodaCore.getHijackedPlugin());
             }
             guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
@@ -27,7 +28,7 @@ public class SongodaCoreCommand extends AbstractCommand {
         }
         return ReturnType.SUCCESS;
     }
-    
+
     @Override
     public String getPermissionNode() {
         return "songoda.admin";

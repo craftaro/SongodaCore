@@ -1,10 +1,11 @@
 package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.mcmmo.McMMOHandler;
-import java.util.Collection;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 public class McMMOHook {
 

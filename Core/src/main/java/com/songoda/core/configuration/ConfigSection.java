@@ -1,6 +1,11 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,16 +17,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.MemoryConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Configuration for a specific node
  *
- * @since 2019-08-28
  * @author jascotty2
+ * @since 2019-08-28
  */
 public class ConfigSection extends MemoryConfiguration {
 
@@ -80,7 +81,7 @@ public class ConfigSection extends MemoryConfiguration {
     /**
      * Sets the character used to separate configuration nodes. <br>
      * IMPORTANT: Do not change this after loading or adding ConfigurationSections!
-     * 
+     *
      * @param pathChar character to use
      */
     public void setPathSeparator(char pathChar) {
@@ -110,8 +111,8 @@ public class ConfigSection extends MemoryConfiguration {
     /**
      * Create the path required for this node to exist. <br />
      * <b>DO NOT USE THIS IN A SYNCHRONIZED LOCK</b>
-     * 
-     * @param path full path of the node required. Eg, for foo.bar.node, this will create sections for foo and foo.bar
+     *
+     * @param path       full path of the node required. Eg, for foo.bar.node, this will create sections for foo and foo.bar
      * @param useDefault set to true if this is a default value
      */
     protected void createNodePath(@NotNull String path, boolean useDefault) {
@@ -143,7 +144,7 @@ public class ConfigSection extends MemoryConfiguration {
         }
         return section;
     }
-    
+
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
         createNodePath(path, true);
@@ -154,7 +155,7 @@ public class ConfigSection extends MemoryConfiguration {
         }
         return section;
     }
-    
+
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         createNodePath(path, true);
@@ -200,6 +201,7 @@ public class ConfigSection extends MemoryConfiguration {
         }
         return this;
     }
+
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
         return setDefaultComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
@@ -316,31 +318,39 @@ public class ConfigSection extends MemoryConfiguration {
             result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath))
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             e -> e.getValue(),
-                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            (v1, v2) -> {
+                                throw new IllegalStateException();
+                            }, // never going to be merging keys
                             LinkedHashMap::new)));
             result.putAll((Map<String, Object>) root.values.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath))
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             e -> e.getValue(),
-                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            (v1, v2) -> {
+                                throw new IllegalStateException();
+                            }, // never going to be merging keys
                             LinkedHashMap::new)));
         } else {
-           result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
+            result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             e -> e.getValue(),
-                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            (v1, v2) -> {
+                                throw new IllegalStateException();
+                            }, // never going to be merging keys
                             LinkedHashMap::new)));
             result.putAll((Map<String, Object>) root.values.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1), 
+                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             e -> e.getValue(),
-                            (v1, v2) -> { throw new IllegalStateException(); }, // never going to be merging keys
+                            (v1, v2) -> {
+                                throw new IllegalStateException();
+                            }, // never going to be merging keys
                             LinkedHashMap::new)));
         }
         return result;
@@ -442,7 +452,7 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public ConfigSection set(@NotNull String path, @Nullable Object value, String ... comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, String... comment) {
         set(path, value);
         return setComment(path, null, comment);
     }
@@ -454,7 +464,7 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+    public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         set(path, value);
         return setComment(path, commentStyle, comment);
     }
@@ -472,7 +482,7 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, String ... comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, String... comment) {
         addDefault(path, value);
         return setDefaultComment(path, comment);
     }
@@ -484,7 +494,7 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @NotNull
-    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String ... comment) {
+    public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         addDefault(path, value);
         return setDefaultComment(path, commentStyle, comment);
     }
@@ -500,7 +510,7 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createSection(@NotNull String path) {
         createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
-        synchronized(root.lock) {
+        synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
         root.changed = true;
@@ -619,7 +629,7 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public long getLong(@NotNull String path) {
         Object result = get(path);
-        return result instanceof Number ? ((Number) result).longValue(): 0;
+        return result instanceof Number ? ((Number) result).longValue() : 0;
     }
 
     @Override

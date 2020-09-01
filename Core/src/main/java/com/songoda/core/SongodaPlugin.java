@@ -3,13 +3,14 @@ package com.songoda.core;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
-import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * REMINDER: When converting plugins to use this, REMOVE METRICS <br>
@@ -41,7 +42,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     /**
      * Any other plugin configuration files used by the plugin.
-     * 
+     *
      * @return a list of Configs that are used in addition to the main config.
      */
     public abstract List<Config> getExtraConfig();
@@ -73,16 +74,16 @@ public abstract class SongodaPlugin extends JavaPlugin {
         } catch (Throwable t) {
             Bukkit.getLogger().log(Level.SEVERE,
                     "Unexpected error while loading " + getDescription().getName()
-                    + " v" + getDescription().getVersion()
-                    + " c" + SongodaCore.getCoreLibraryVersion()
-                    + ": Disabling plugin!", t);
+                            + " v" + getDescription().getVersion()
+                            + " c" + SongodaCore.getCoreLibraryVersion()
+                            + ": Disabling plugin!", t);
             emergencyStop = true;
         }
     }
 
     @Override
     public final void onEnable() {
-        if(emergencyStop) {
+        if (emergencyStop) {
             setEnabled(false);
             return;
         }
@@ -100,7 +101,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             onPluginEnable();
             // Load Data.
             Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
-            if(emergencyStop) {
+            if (emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 console.sendMessage(" ");
                 return;
@@ -110,9 +111,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
         } catch (Throwable t) {
             Bukkit.getLogger().log(Level.SEVERE,
                     "Unexpected error while loading " + getDescription().getName()
-                    + " v" + getDescription().getVersion()
-                    + " c" + SongodaCore.getCoreLibraryVersion()
-                    + ": Disabling plugin!", t);
+                            + " v" + getDescription().getVersion()
+                            + " c" + SongodaCore.getCoreLibraryVersion()
+                            + ": Disabling plugin!", t);
             emergencyStop();
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             console.sendMessage(" ");
@@ -156,8 +157,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * Set the plugin's locale to a specific language
      *
      * @param localeName locale to use, eg "en_US"
-     * @param reload optionally reload the loaded locale if the locale didn't
-     * change
+     * @param reload     optionally reload the loaded locale if the locale didn't
+     *                   change
      * @return true if the locale exists and was loaded successfully
      */
     public boolean setLocale(String localeName, boolean reload) {

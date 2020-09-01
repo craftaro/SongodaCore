@@ -7,8 +7,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Method;
-
 public class UltimateStacker extends Stacker {
 
     private final com.songoda.ultimatestacker.UltimateStacker plugin;

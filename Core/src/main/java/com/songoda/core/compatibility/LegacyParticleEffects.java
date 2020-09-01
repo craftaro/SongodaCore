@@ -1,5 +1,10 @@
 package com.songoda.core.compatibility;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,15 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 /**
  * Particle effects for servers 1.8 and below
- * @since 2019-08-23
+ *
  * @author jascotty2
+ * @since 2019-08-23
  */
 public class LegacyParticleEffects {
 
@@ -157,19 +159,18 @@ public class LegacyParticleEffects {
     }
 
     /**
-     *
-     * @param l exact location to spawn the particle
-     * @param e particle effect type
-     * @param xx for notes, this is a value 0-1 for the color ([0-24]/24), for
-     * redstone this is the red value 0-1 ([0-255]/255). 
-     * Otherwise this is the distance for particles to fly on the x-axis.
-     * @param yy for redstone this is the green value 0-1 ([0-255]/255)
-     * Otherwise this is the distance for particles to fly on the y-axis.
-     * @param zz for redstone this is the blue value 0-1 ([0-255]/255) 
-     * Otherwise this is the distance for particles to fly on the z-axis.
-     * @param effectSpeed particle effect speed
+     * @param l                 exact location to spawn the particle
+     * @param e                 particle effect type
+     * @param xx                for notes, this is a value 0-1 for the color ([0-24]/24), for
+     *                          redstone this is the red value 0-1 ([0-255]/255).
+     *                          Otherwise this is the distance for particles to fly on the x-axis.
+     * @param yy                for redstone this is the green value 0-1 ([0-255]/255)
+     *                          Otherwise this is the distance for particles to fly on the y-axis.
+     * @param zz                for redstone this is the blue value 0-1 ([0-255]/255)
+     *                          Otherwise this is the distance for particles to fly on the z-axis.
+     * @param effectSpeed       particle effect speed
      * @param amountOfParticles extra particles to spawn (client-side)
-     * @param localOnly list of players to send the packets to, or null for all players
+     * @param localOnly         list of players to send the packets to, or null for all players
      */
     public static void createParticle(Location l, Type e, float xx, float yy, float zz, float effectSpeed, int amountOfParticles, List<Player> localOnly) {
         if (!enabled || e == null || effectSpeed < 0 || amountOfParticles < 0

@@ -1,24 +1,13 @@
 package com.songoda.core;
 
-import com.songoda.core.core.PluginInfo;
-import com.songoda.core.core.LocaleModule;
-import com.songoda.core.core.PluginInfoModule;
-import com.songoda.core.core.SongodaCoreCommand;
-import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.CompatibleMaterial;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.*;
-import java.util.logging.Level;
-
-import com.songoda.core.database.DataManagerAbstract;
+import com.songoda.core.core.LocaleModule;
+import com.songoda.core.core.PluginInfo;
+import com.songoda.core.core.PluginInfoModule;
+import com.songoda.core.core.SongodaCoreCommand;
+import com.songoda.core.core.SongodaCoreDiagCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,21 +25,37 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
+
 public class SongodaCore {
 
     private final static String prefix = "[SongodaCore]";
 
     /**
-     * Whenever we make a major change to the core GUI, updater, 
+     * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
      */
     private final static int coreRevision = 6;
-    
+
     /**
      * This has been added as of Rev 6 <br>
      * This value is automatically filled in by gitlab-ci
      */
-    private final static String coreVersion = "2.4.4";
+    private final static String coreVersion = "2.4.5";
     
     /**
      * This is specific to the website api
@@ -67,7 +72,7 @@ public class SongodaCore {
 
     public static boolean hasShading() {
         // sneaky hack to check the package name since maven tries to re-shade all references to the package string
-        return !SongodaCore.class.getPackage().getName().equals(new String(new char[]{'c','o','m','.','s','o','n','g','o','d','a','.','c','o','r','e'}));
+        return !SongodaCore.class.getPackage().getName().equals(new String(new char[]{'c', 'o', 'm', '.', 's', 'o', 'n', 'g', 'o', 'd', 'a', '.', 'c', 'o', 'r', 'e'}));
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
@@ -79,10 +84,10 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon, String coreVersion) {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             // First: are there any other instances of SongodaCore active?
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
-                if(clazz.getSimpleName().equals("SongodaCore")) {
+                if (clazz.getSimpleName().equals("SongodaCore")) {
                     try {
                         // test to see if we're up to date
                         int otherVersion;
@@ -91,12 +96,12 @@ public class SongodaCore {
                         } catch (Exception ignore) {
                             otherVersion = -1;
                         }
-                        if(otherVersion >= getCoreVersion()) {
+                        if (otherVersion >= getCoreVersion()) {
                             // use the active service
                             // assuming that the other is greater than R6 if we get here ;)
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
 
-                            if(hasShading()) {
+                            if (hasShading()) {
                                 (INSTANCE = new SongodaCore()).piggybackedPlugin = plugin;
                                 INSTANCE.shadingListener = new ShadedEventListener();
                                 Bukkit.getPluginManager().registerEvents(INSTANCE.shadingListener, plugin);
@@ -116,17 +121,17 @@ public class SongodaCore {
                             INSTANCE.register(plugin, pluginID, icon, coreVersion);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
-                            if(!otherPlugins.isEmpty()) {
+                            if (!otherPlugins.isEmpty()) {
                                 Object testSubject = otherPlugins.get(0);
                                 Class otherPluginInfo = testSubject.getClass();
                                 Method otherPluginInfo_getJavaPlugin = otherPluginInfo.getMethod("getJavaPlugin");
                                 Method otherPluginInfo_getSongodaId = otherPluginInfo.getMethod("getSongodaId");
                                 Method otherPluginInfo_getCoreIcon = otherPluginInfo.getMethod("getCoreIcon");
                                 Method otherPluginInfo_getCoreLibraryVersion = otherVersion >= 6 ? otherPluginInfo.getMethod("getCoreLibraryVersion") : null;
-                                for(Object other : otherPlugins) {
+                                for (Object other : otherPlugins) {
                                     INSTANCE.register(
-                                            (JavaPlugin) otherPluginInfo_getJavaPlugin.invoke(other), 
-                                            (int) otherPluginInfo_getSongodaId.invoke(other), 
+                                            (JavaPlugin) otherPluginInfo_getJavaPlugin.invoke(other),
+                                            (int) otherPluginInfo_getSongodaId.invoke(other),
                                             (String) otherPluginInfo_getCoreIcon.invoke(other),
                                             otherPluginInfo_getCoreLibraryVersion != null ? (String) otherPluginInfo_getCoreLibraryVersion.invoke(other) : "?");
                                 }
@@ -163,10 +168,16 @@ public class SongodaCore {
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
         // we aggressevely want to own this command
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 10 * 60 * 1));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 1));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->{CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);}, 20 * 60 * 2));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, ()->registerAllPlugins(), 20 * 60 * 2));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
+            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+        }, 10 * 60 * 1));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
+            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+        }, 20 * 60 * 1));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
+            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+        }, 20 * 60 * 2));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> registerAllPlugins(), 20 * 60 * 2));
     }
 
     /**
@@ -184,6 +195,7 @@ public class SongodaCore {
         commandManager = null;
         loginListener = null;
     }
+
     private ArrayList<BukkitTask> tasks = new ArrayList();
 
     /**
@@ -369,7 +381,7 @@ public class SongodaCore {
         void onEnable(PluginEnableEvent event) {
             // technically shouldn't have online players here, but idk
             if (!via && (via = event.getPlugin().getName().equals("ViaVersion"))) {
-                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p)); 
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p));
             } else if (!proto && (proto = event.getPlugin().getName().equals("ProtocolSupport"))) {
                 Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p));
             }
@@ -385,7 +397,7 @@ public class SongodaCore {
             // don't spam players with update checks
             long now = System.currentTimeMillis();
             Long last = lastCheck.get(player.getUniqueId());
-            if(last != null && now - 10000 < last) return;
+            if (last != null && now - 10000 < last) return;
             lastCheck.put(player.getUniqueId(), now);
             // is this player good to revieve update notices?
             if (!event.getPlayer().isOp() && !player.hasPermission("songoda.updatecheck")) return;

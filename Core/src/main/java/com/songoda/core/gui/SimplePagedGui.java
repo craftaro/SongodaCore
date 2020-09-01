@@ -1,11 +1,8 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import static com.songoda.core.gui.Gui.trimTitle;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.methods.Clickable;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,11 +10,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Paged GUI for when you aren't going to be making too many pages
  *
- * @since 2019-08-31
  * @author jascotty2
+ * @since 2019-08-31
  */
 public class SimplePagedGui extends Gui {
 
@@ -190,7 +190,7 @@ public class SimplePagedGui extends Gui {
         showPage();
 
         // did we need to change the display window size?
-        if(toUpdate != null) {
+        if (toUpdate != null) {
             // whoopsie!
             exit();
             toUpdate.forEach(player -> guiManager.showGUI(player, this));

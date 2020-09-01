@@ -1,8 +1,9 @@
 package com.songoda.core.compatibility;
 
+import org.bukkit.potion.PotionEffectType;
+
 import java.util.HashMap;
 import java.util.Random;
-import org.bukkit.potion.PotionEffectType;
 
 public class LegacyPotionEffects {
 

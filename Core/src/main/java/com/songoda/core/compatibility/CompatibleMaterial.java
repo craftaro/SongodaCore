@@ -5,7 +5,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Items that are compatible with server versions 1.7+
@@ -1356,7 +1360,7 @@ public enum CompatibleMaterial {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
             return CompatibleMaterial.getMaterialFromNewBlock(block);
         } else { // Pre-Flattening
-            if(block != null) {
+            if (block != null) {
                 if (block.getData() != 0) {
                     for (CompatibleMaterial cm : CompatibleMaterial.values()) {
                         if (cm.isValidItem() && !cm.usesCompatibility() && cm.getMaterial() != null && cm.getMaterial().equals(block.getType())) {
@@ -1375,7 +1379,7 @@ public enum CompatibleMaterial {
     /**
      * Lookup a Material by Material and data, corrected for legacy
      *
-     * @param mat material to check
+     * @param mat  material to check
      * @param data data of the block
      * @return LegacyMaterial or null if none found
      */
@@ -1383,7 +1387,7 @@ public enum CompatibleMaterial {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) { // Flattening
             return CompatibleMaterial.getMaterial(mat);
         } else { // Pre-Flattening
-            if(mat != null){
+            if (mat != null) {
                 if (data != 0) {
                     for (CompatibleMaterial cm : CompatibleMaterial.values()) {
                         if (cm.getMaterial() != null

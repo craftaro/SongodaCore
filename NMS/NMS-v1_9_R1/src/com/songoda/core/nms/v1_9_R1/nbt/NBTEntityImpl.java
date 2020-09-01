@@ -1,7 +1,10 @@
 package com.songoda.core.nms.v1_9_R1.nbt;
 
 import com.songoda.core.nms.nbt.NBTEntity;
-import net.minecraft.server.v1_9_R1.*;
+import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityTypes;
+import net.minecraft.server.v1_9_R1.ItemMonsterEgg;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -19,21 +22,21 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     public org.bukkit.entity.Entity spawn(Location location) {
         String entityType = getNBTObject("entity_type").asString();
 
-            Entity spawned = ItemMonsterEgg.spawnCreature( // Changed since 1.14
-                    ((CraftWorld) location.getWorld()).getHandle(),
-                    entityType, // Parameter simplified in 1.10
-                    location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                    CreatureSpawnEvent.SpawnReason.DEFAULT
-            );
+        Entity spawned = ItemMonsterEgg.spawnCreature( // Changed since 1.14
+                ((CraftWorld) location.getWorld()).getHandle(),
+                entityType, // Parameter simplified in 1.10
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                CreatureSpawnEvent.SpawnReason.DEFAULT
+        );
 
-            if (spawned != null) {
-                spawned.f(compound); // This changed from 1.16.1
-                org.bukkit.entity.Entity entity = spawned.getBukkitEntity();
-                spawned.setLocation(location.getX(), location.getY(), location.getZ(),
-                        location.getPitch(), location.getYaw());
-                nmsEntity = spawned;
-                return entity;
-            }
+        if (spawned != null) {
+            spawned.f(compound); // This changed from 1.16.1
+            org.bukkit.entity.Entity entity = spawned.getBukkitEntity();
+            spawned.setLocation(location.getX(), location.getY(), location.getZ(),
+                    location.getPitch(), location.getYaw());
+            nmsEntity = spawned;
+            return entity;
+        }
         return null;
     }
 

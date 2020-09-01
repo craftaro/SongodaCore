@@ -5,7 +5,12 @@ import com.songoda.core.nms.nbt.NBTObject;
 import net.minecraft.server.v1_9_R2.NBTCompressedStreamTools;
 import net.minecraft.server.v1_9_R2.NBTTagCompound;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.UUID;
 
 public abstract class NBTCompoundImpl implements NBTCompound {
@@ -95,7 +100,7 @@ public abstract class NBTCompoundImpl implements NBTCompound {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              ObjectOutputStream dataOutput = new ObjectOutputStream(outputStream)) {
             addExtras();
-            NBTTagCompound compound = (NBTTagCompound)this.compound.clone(); // Changed in 1.12 // Changed in 1.9.4
+            NBTTagCompound compound = (NBTTagCompound) this.compound.clone(); // Changed in 1.12 // Changed in 1.9.4
 
             for (String exclusion : exclusions)
                 compound.remove(exclusion);

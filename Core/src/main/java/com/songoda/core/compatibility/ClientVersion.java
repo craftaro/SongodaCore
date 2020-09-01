@@ -1,10 +1,11 @@
 package com.songoda.core.compatibility;
 
 import com.songoda.core.SongodaCore;
-import java.util.HashMap;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Handy reference for checking a connected client's Minecraft version<br>
@@ -16,7 +17,7 @@ public class ClientVersion {
 
     /**
      * Check to see what client version this player is connected to the server
-     * with. Note that if a player is connecting with a newer client than the server, 
+     * with. Note that if a player is connecting with a newer client than the server,
      * this value will simply be the server version.
      *
      * @param player Player to check
@@ -34,8 +35,8 @@ public class ClientVersion {
      */
     @Deprecated
     public static void onLoginProtocol(Player p) {
-        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), ()-> {
-            if(p.isOnline()) {
+        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), () -> {
+            if (p.isOnline()) {
                 final int version = protocolsupport.api.ProtocolSupportAPI.getProtocolVersion(p).getId();
                 players.put(p.getUniqueId(), protocolToVersion(version));
             }
@@ -47,8 +48,8 @@ public class ClientVersion {
      */
     @Deprecated
     public static void onLoginVia(Player p) {
-        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), ()-> {
-            if(p.isOnline()) {
+        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), () -> {
+            if (p.isOnline()) {
                 final int version = us.myles.ViaVersion.api.Via.getAPI().getPlayerVersion(p.getUniqueId());
                 players.put(p.getUniqueId(), protocolToVersion(version));
             }

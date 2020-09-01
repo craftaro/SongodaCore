@@ -2,7 +2,11 @@ package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
@@ -313,7 +317,7 @@ public class BlockUtils {
      * @param location location of the container
      */
     public static void updateAdjacentComparators(Location location) {
-        if(location == null || location.getWorld() == null) return;
+        if (location == null || location.getWorld() == null) return;
         try {
             // Cache reflection.
             if (clazzCraftWorld == null) {
