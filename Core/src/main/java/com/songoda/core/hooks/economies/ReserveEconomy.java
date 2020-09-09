@@ -26,11 +26,6 @@ public class ReserveEconomy extends Economy {
     }
 
     @Override
-    public String formatEconomy(double amt) {
-        return economyAPI.format(BigDecimal.valueOf(amt));
-    }
-
-    @Override
     public double getBalance(OfflinePlayer player) {
         return economyAPI.getBankHoldings(player.getUniqueId()).doubleValue();
     }
