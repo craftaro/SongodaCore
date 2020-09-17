@@ -30,11 +30,6 @@ public class VaultEconomy extends Economy {
     }
 
     @Override
-    public String formatEconomy(double amt) {
-        return vault != null ? vault.format(amt) : super.formatEconomy(amt);
-    }
-
-    @Override
     public double getBalance(OfflinePlayer player) {
         if (vault == null)
             return 0;

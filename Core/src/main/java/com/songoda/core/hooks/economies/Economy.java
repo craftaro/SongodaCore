@@ -41,15 +41,4 @@ public abstract class Economy implements Hook {
      * @return true if the total amount was added successfully
      */
     public abstract boolean deposit(OfflinePlayer player, double amount);
-
-    /**
-     * Format the given amount to a human-readable string in this currency
-     *
-     * @param amt amount to display
-     * @return a currency string as formatted by the economy plugin
-     */
-    public String formatEconomy(double amt) {
-        DecimalFormat formatter = new DecimalFormat(amt == Math.ceil(amt) ? "#,###" : "#,###.00");
-        return "$" + formatter.format(amt);
-    }
 }

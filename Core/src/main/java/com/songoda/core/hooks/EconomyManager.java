@@ -3,10 +3,14 @@ package com.songoda.core.hooks;
 import com.songoda.core.hooks.economies.Economy;
 import org.bukkit.OfflinePlayer;
 
+import java.text.DecimalFormat;
+
 /**
  * A convenience class for static access to an Economy HookManager
  */
 public class EconomyManager {
+
+    private static String currencySymbol = "$";
 
     private static final HookManager<Economy> manager = new HookManager(Economy.class);
 
@@ -58,8 +62,9 @@ public class EconomyManager {
      * @param amt amount to display
      * @return a currency string as formatted by the economy plugin
      */
-    public static String formatEconomy(double amt) {
-        return manager.isEnabled() ? manager.getCurrentHook().formatEconomy(amt) : String.valueOf(amt);
+    public String formatEconomy(double amt) {
+        DecimalFormat formatter = new DecimalFormat(amt == Math.ceil(amt) ? "#,###" : "#,###.00");
+        return currencySymbol + formatter.format(amt);
     }
 
     /**
@@ -109,5 +114,14 @@ public class EconomyManager {
      */
     public static boolean deposit(OfflinePlayer player, double amount) {
         return manager.isEnabled() && manager.getCurrentHook().deposit(player, amount);
+    }
+
+    /**
+     * Change the curency symbl used in the #formatEconomy method.
+     *
+     * @param currencySymbol the new symbol
+     */
+    public static void setCurrencySymbol(String currencySymbol) {
+        EconomyManager.currencySymbol = currencySymbol;
     }
 }
