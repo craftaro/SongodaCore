@@ -62,7 +62,7 @@ public class EconomyManager {
      * @param amt amount to display
      * @return a currency string as formatted by the economy plugin
      */
-    public String formatEconomy(double amt) {
+    public static String formatEconomy(double amt) {
         DecimalFormat formatter = new DecimalFormat(amt == Math.ceil(amt) ? "#,###" : "#,###.00");
         return currencySymbol + formatter.format(amt);
     }
