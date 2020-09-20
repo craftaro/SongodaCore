@@ -1649,6 +1649,7 @@ public enum CompatibleMaterial {
     public boolean isFuel() {
         // this function is not implemented in some older versions, so we need this here..
         switch (this) {
+            case ACACIA_BOAT:
             case ACACIA_BUTTON:
             case ACACIA_DOOR:
             case ACACIA_FENCE:
@@ -1664,6 +1665,7 @@ public enum CompatibleMaterial {
             case ACACIA_WOOD:
             case BAMBOO:
             case BARREL:
+            case BIRCH_BOAT:
             case BIRCH_BUTTON:
             case BIRCH_DOOR:
             case BIRCH_FENCE:
@@ -1680,21 +1682,28 @@ public enum CompatibleMaterial {
             case BLACK_BANNER:
             case BLACK_CARPET:
             case BLACK_WOOL:
+            case BLAZE_ROD:
             case BLUE_BANNER:
             case BLUE_CARPET:
             case BLUE_WOOL:
             case BOOKSHELF:
+            case BOW:
+            case BOWL:
             case BROWN_BANNER:
             case BROWN_CARPET:
             case BROWN_WOOL:
             case CARTOGRAPHY_TABLE:
+            case CHARCOAL:
             case CHEST:
+            case COAL:
             case COAL_BLOCK:
             case COMPOSTER:
             case CRAFTING_TABLE:
+            case CROSSBOW:
             case CYAN_BANNER:
             case CYAN_CARPET:
             case CYAN_WOOL:
+            case DARK_OAK_BOAT:
             case DARK_OAK_BUTTON:
             case DARK_OAK_DOOR:
             case DARK_OAK_FENCE:
@@ -1711,6 +1720,7 @@ public enum CompatibleMaterial {
             case DAYLIGHT_DETECTOR:
             case DEAD_BUSH:
             case DRIED_KELP_BLOCK:
+            case FISHING_ROD:
             case FLETCHING_TABLE:
             case GRAY_BANNER:
             case GRAY_CARPET:
@@ -1719,6 +1729,7 @@ public enum CompatibleMaterial {
             case GREEN_CARPET:
             case GREEN_WOOL:
             case JUKEBOX:
+            case JUNGLE_BOAT:
             case JUNGLE_BUTTON:
             case JUNGLE_DOOR:
             case JUNGLE_FENCE:
@@ -1733,6 +1744,7 @@ public enum CompatibleMaterial {
             case JUNGLE_TRAPDOOR:
             case JUNGLE_WOOD:
             case LADDER:
+            case LAVA_BUCKET:
             case LECTERN:
             case LIGHT_BLUE_BANNER:
             case LIGHT_BLUE_CARPET:
@@ -1748,6 +1760,7 @@ public enum CompatibleMaterial {
             case MAGENTA_CARPET:
             case MAGENTA_WOOL:
             case NOTE_BLOCK:
+            case OAK_BOAT:
             case OAK_BUTTON:
             case OAK_DOOR:
             case OAK_FENCE:
@@ -1775,6 +1788,7 @@ public enum CompatibleMaterial {
             case RED_WOOL:
             case SCAFFOLDING:
             case SMITHING_TABLE:
+            case SPRUCE_BOAT:
             case SPRUCE_BUTTON:
             case SPRUCE_DOOR:
             case SPRUCE_FENCE:
@@ -1788,6 +1802,7 @@ public enum CompatibleMaterial {
             case SPRUCE_STAIRS:
             case SPRUCE_TRAPDOOR:
             case SPRUCE_WOOD:
+            case STICK:
             case STRIPPED_ACACIA_LOG:
             case STRIPPED_ACACIA_WOOD:
             case STRIPPED_BIRCH_LOG:
@@ -1804,32 +1819,18 @@ public enum CompatibleMaterial {
             case WHITE_BANNER:
             case WHITE_CARPET:
             case WHITE_WOOL:
-            case YELLOW_BANNER:
-            case YELLOW_CARPET:
-            case YELLOW_WOOL:
-            case ACACIA_BOAT:
-            case BIRCH_BOAT:
-            case BLAZE_ROD:
-            case BOW:
-            case BOWL:
-            case CHARCOAL:
-            case COAL:
-            case CROSSBOW:
-            case DARK_OAK_BOAT:
-            case FISHING_ROD:
-            case JUNGLE_BOAT:
-            case LAVA_BUCKET:
-            case OAK_BOAT:
-            case SPRUCE_BOAT:
-            case STICK:
             case WOODEN_AXE:
             case WOODEN_HOE:
             case WOODEN_PICKAXE:
             case WOODEN_SHOVEL:
             case WOODEN_SWORD:
+            case YELLOW_BANNER:
+            case YELLOW_CARPET:
+            case YELLOW_WOOL:
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     /**
@@ -1992,6 +1993,8 @@ public enum CompatibleMaterial {
             case ANVIL:
             case BARREL:
             case BEACON:
+            case BEEHIVE:
+            case BEE_NEST:
             case BELL:
             case BIRCH_BUTTON:
             case BIRCH_DOOR:
@@ -2001,6 +2004,7 @@ public enum CompatibleMaterial {
             case BIRCH_STAIRS:
             case BIRCH_TRAPDOOR:
             case BIRCH_WALL_SIGN:
+            case BLACKSTONE_STAIRS:
             case BLACK_BED:
             case BLACK_SHULKER_BOX:
             case BLAST_FURNACE:
@@ -2022,6 +2026,14 @@ public enum CompatibleMaterial {
             case COMPARATOR:
             case COMPOSTER:
             case CRAFTING_TABLE:
+            case CRIMSON_BUTTON:
+            case CRIMSON_DOOR:
+            case CRIMSON_FENCE:
+            case CRIMSON_FENCE_GATE:
+            case CRIMSON_SIGN:
+            case CRIMSON_STAIRS:
+            case CRIMSON_TRAPDOOR:
+            case CRIMSON_WALL_SIGN:
             case CYAN_BED:
             case CYAN_SHULKER_BOX:
             case DAMAGED_ANVIL:
@@ -2094,6 +2106,9 @@ public enum CompatibleMaterial {
             case PINK_BED:
             case PINK_SHULKER_BOX:
             case POLISHED_ANDESITE_STAIRS:
+            case POLISHED_BLACKSTONE_BRICK_STAIRS:
+            case POLISHED_BLACKSTONE_BUTTON:
+            case POLISHED_BLACKSTONE_STAIRS:
             case POLISHED_DIORITE_STAIRS:
             case POLISHED_GRANITE_STAIRS:
             case POTTED_ACACIA_SAPLING:
@@ -2105,6 +2120,8 @@ public enum CompatibleMaterial {
             case POTTED_BROWN_MUSHROOM:
             case POTTED_CACTUS:
             case POTTED_CORNFLOWER:
+            case POTTED_CRIMSON_FUNGUS:
+            case POTTED_CRIMSON_ROOTS:
             case POTTED_DANDELION:
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
@@ -2119,6 +2136,8 @@ public enum CompatibleMaterial {
             case POTTED_RED_MUSHROOM:
             case POTTED_RED_TULIP:
             case POTTED_SPRUCE_SAPLING:
+            case POTTED_WARPED_FUNGUS:
+            case POTTED_WARPED_ROOTS:
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
             case PRISMARINE_BRICK_STAIRS:
@@ -2129,12 +2148,14 @@ public enum CompatibleMaterial {
             case PURPUR_STAIRS:
             case QUARTZ_STAIRS:
             case REDSTONE_ORE:
+            case REDSTONE_WIRE:
             case RED_BED:
             case RED_NETHER_BRICK_STAIRS:
             case RED_SANDSTONE_STAIRS:
             case RED_SHULKER_BOX:
             case REPEATER:
             case REPEATING_COMMAND_BLOCK:
+            case RESPAWN_ANCHOR:
             case SANDSTONE_STAIRS:
             case SHULKER_BOX:
             case SMITHING_TABLE:
@@ -2142,6 +2163,7 @@ public enum CompatibleMaterial {
             case SMOOTH_QUARTZ_STAIRS:
             case SMOOTH_RED_SANDSTONE_STAIRS:
             case SMOOTH_SANDSTONE_STAIRS:
+            case SOUL_CAMPFIRE:
             case SPRUCE_BUTTON:
             case SPRUCE_DOOR:
             case SPRUCE_FENCE:
@@ -2158,6 +2180,14 @@ public enum CompatibleMaterial {
             case SWEET_BERRY_BUSH:
             case TNT:
             case TRAPPED_CHEST:
+            case WARPED_BUTTON:
+            case WARPED_DOOR:
+            case WARPED_FENCE:
+            case WARPED_FENCE_GATE:
+            case WARPED_SIGN:
+            case WARPED_STAIRS:
+            case WARPED_TRAPDOOR:
+            case WARPED_WALL_SIGN:
             case WHITE_BED:
             case WHITE_SHULKER_BOX:
             case YELLOW_BED:
