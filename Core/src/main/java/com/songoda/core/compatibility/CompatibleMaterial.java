@@ -1834,6 +1834,31 @@ public enum CompatibleMaterial {
     }
 
     /**
+     * Check if the material is air
+     *
+     * @return
+     */
+    public boolean isAir() {
+        switch (this) {
+            case AIR:
+            case CAVE_AIR:
+            case VOID_AIR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check if the material is water
+     *
+     * @return
+     */
+    public boolean isWater() {
+        return this == CompatibleMaterial.WATER;
+    }
+
+    /**
      * Get the EntityType of the monster spawn egg.
      *
      * @return
