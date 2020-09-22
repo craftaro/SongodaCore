@@ -185,6 +185,10 @@ public enum CompatibleBiome {
         return biome == null ? null : lookupMap.get(biome.name());
     }
 
+    public static CompatibleBiome getBiome(String name) {
+        return name == null ? null : lookupMap.get(name.toUpperCase());
+    }
+
     public void setBiome(Chunk chunk) throws InvocationTargetException, IllegalAccessException {
         Object nmsChunk = null;
         Object biomeStorage = null;
