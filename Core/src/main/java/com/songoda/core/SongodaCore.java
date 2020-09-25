@@ -49,13 +49,12 @@ public class SongodaCore {
      * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
      */
-    private final static int coreRevision = 6;
+    private final static int coreRevision = 7;
 
     /**
-     * This has been added as of Rev 6 <br>
-     * This value is automatically filled in by gitlab-ci
+     * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.8";
+    private final static String coreVersion = "2.4.9";
     
     /**
      * This is specific to the website api
