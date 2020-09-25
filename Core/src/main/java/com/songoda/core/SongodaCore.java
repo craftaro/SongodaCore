@@ -52,8 +52,7 @@ public class SongodaCore {
     private final static int coreRevision = 6;
 
     /**
-     * This has been added as of Rev 6 <br>
-     * This value is automatically filled in by gitlab-ci
+     * This has been added as of Rev 6
      */
     private final static String coreVersion = "2.4.8";
     
