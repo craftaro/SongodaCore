@@ -1,6 +1,7 @@
 package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.economies.Economy;
+import com.songoda.core.utils.NumberUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.text.DecimalFormat;
@@ -10,7 +11,7 @@ import java.text.DecimalFormat;
  */
 public class EconomyManager {
 
-    private static String currencySymbol = "$";
+    private static char currencySymbol = '$';
 
     private static final HookManager<Economy> manager = new HookManager(Economy.class);
 
@@ -63,8 +64,7 @@ public class EconomyManager {
      * @return a currency string as formatted by the economy plugin
      */
     public static String formatEconomy(double amt) {
-        DecimalFormat formatter = new DecimalFormat(amt == Math.ceil(amt) ? "#,###" : "#,###.00");
-        return currencySymbol + formatter.format(amt);
+        return NumberUtils.formatEconomy(currencySymbol, amt);
     }
 
     /**
@@ -122,6 +122,15 @@ public class EconomyManager {
      * @param currencySymbol the new symbol
      */
     public static void setCurrencySymbol(String currencySymbol) {
+        EconomyManager.currencySymbol = currencySymbol.charAt(0);
+    }
+
+    /**
+     * Change the curency symbl used in the #formatEconomy method.
+     *
+     * @param currencySymbol the new symbol
+     */
+    public static void setCurrencySymbol(char currencySymbol) {
         EconomyManager.currencySymbol = currencySymbol;
     }
 }
