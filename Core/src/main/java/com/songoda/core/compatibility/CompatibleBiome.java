@@ -126,7 +126,7 @@ public enum CompatibleBiome {
             if (biome.isCompatible())
                 compatibleBiomes.add(biome);
 
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             Class<?> classBiomeBase = NMSUtils.getNMSClass("BiomeBase"),
                     classCraftChunk = NMSUtils.getCraftClass("CraftChunk"),
                     classCraftBlock = NMSUtils.getCraftClass("block.CraftBlock"),
@@ -193,7 +193,7 @@ public enum CompatibleBiome {
         Object nmsChunk = null;
         Object biomeStorage = null;
         Object biomeBase = null;
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             nmsChunk = methodGetHandle.invoke(chunk);
             biomeStorage = methodGetBiomeIndex.invoke(nmsChunk);
             if (isAbove1_16_R1) {
@@ -208,14 +208,14 @@ public enum CompatibleBiome {
         int chunkZ = chunk.getZ();
         for (int x = chunkX << 4; x < (chunkX << 4) + 16; x++) {
             for (int z = chunkZ << 4; z < (chunkZ << 4) + 16; z++) {
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
                     for (int y = 0; y < world.getMaxHeight(); ++y)
                         methodSetBiome.invoke(biomeStorage, x >> 2, y >> 2, z >> 2, biomeBase);
                 else
                     chunk.getWorld().setBiome(x, z, getBiome());
             }
         }
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
             methodMarkDirty.invoke(nmsChunk);
     }
 
