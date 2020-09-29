@@ -143,6 +143,11 @@ public abstract class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public Set<String> getKeys(String tag) {
+        return compound.getCompound(tag).c();
+    }
+
+    @Override
     public byte[] serialize(String... exclusions) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              ObjectOutputStream dataOutput = new ObjectOutputStream(outputStream)) {

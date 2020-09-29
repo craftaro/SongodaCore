@@ -47,6 +47,8 @@ public interface NBTCompound {
 
     Set<String> getKeys();
 
+    Set<String> getKeys(String tag);
+
     byte[] serialize(String... exclusions);
 
     void deSerialize(byte[] serialized);
