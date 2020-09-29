@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class NBTCompoundImpl implements NBTCompound {
@@ -93,6 +94,51 @@ public abstract class NBTCompoundImpl implements NBTCompound {
     @Override
     public NBTObject getNBTObject(String tag) {
         return new NBTObjectImpl(compound, tag);
+    }
+
+    @Override
+    public String getString(String tag) {
+        return getNBTObject(tag).asString();
+    }
+
+    @Override
+    public boolean getBoolean(String tag) {
+        return getNBTObject(tag).asBoolean();
+    }
+
+    @Override
+    public int getInt(String tag) {
+        return getNBTObject(tag).asInt();
+    }
+
+    @Override
+    public double getDouble(String tag) {
+        return getNBTObject(tag).asDouble();
+    }
+
+    @Override
+    public long getLong(String tag) {
+        return getNBTObject(tag).asLong();
+    }
+
+    @Override
+    public short getShort(String tag) {
+        return getNBTObject(tag).asShort();
+    }
+
+    @Override
+    public byte getByte(String tag) {
+        return getNBTObject(tag).asByte();
+    }
+
+    @Override
+    public int[] getIntArray(String tag) {
+        return getNBTObject(tag).asIntArray();
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        return compound.getKeys();
     }
 
     @Override

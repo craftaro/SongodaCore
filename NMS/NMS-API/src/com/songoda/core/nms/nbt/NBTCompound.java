@@ -1,5 +1,6 @@
 package com.songoda.core.nms.nbt;
 
+import java.util.Set;
 import java.util.UUID;
 
 public interface NBTCompound {
@@ -27,6 +28,24 @@ public interface NBTCompound {
     boolean has(String tag);
 
     NBTObject getNBTObject(String tag);
+
+    String getString(String tag);
+
+    boolean getBoolean(String tag);
+
+    int getInt(String tag);
+
+    double getDouble(String tag);
+
+    long getLong(String tag);
+
+    short getShort(String tag);
+
+    byte getByte(String tag);
+
+    int[] getIntArray(String tag);
+
+    Set<String> getKeys();
 
     byte[] serialize(String... exclusions);
 
