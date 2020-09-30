@@ -25,6 +25,8 @@ public interface NBTCompound {
 
     NBTCompound remove(String tag);
 
+    NBTCompound addNewCompound(String tag);
+
     boolean has(String tag);
 
     NBTObject getNBTObject(String tag);
