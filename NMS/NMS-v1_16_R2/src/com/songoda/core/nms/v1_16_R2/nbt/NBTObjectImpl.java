@@ -57,12 +57,12 @@ public class NBTObjectImpl implements NBTObject {
     }
 
     @Override
-    public Set<String> getKeys() {
-        return compound.getKeys();
+    public NBTCompound asCompound() {
+        return new NBTCompoundImpl(compound.getCompound(tag));
     }
 
     @Override
-    public NBTCompound getCompound(String tag) {
-        return new NBTCompoundImpl(compound.getCompound(tag));
+    public Set<String> getKeys() {
+        return compound.getKeys();
     }
 }

@@ -62,7 +62,7 @@ public class NBTObjectImpl implements NBTObject {
     }
 
     @Override
-    public NBTCompound getCompound(String tag) {
+    public NBTCompound asCompound() {
         return new NBTCompoundImpl(compound.getCompound(tag));
     }
 }

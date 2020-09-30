@@ -138,6 +138,11 @@ public class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound getCompound(String tag) {
+        return getNBTObject(tag).asCompound();
+    }
+
+    @Override
     public Set<String> getKeys() {
         return compound.c();
     }
