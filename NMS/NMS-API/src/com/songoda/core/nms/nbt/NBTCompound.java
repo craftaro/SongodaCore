@@ -45,6 +45,8 @@ public interface NBTCompound {
 
     int[] getIntArray(String tag);
 
+    NBTCompound getCompound(String tag);
+
     Set<String> getKeys();
 
     Set<String> getKeys(String tag);

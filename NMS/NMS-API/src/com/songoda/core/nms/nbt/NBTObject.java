@@ -22,5 +22,5 @@ public interface NBTObject {
 
     Set<String> getKeys();
 
-    NBTCompound getCompound(String tag);
+    NBTCompound asCompound();
 }
