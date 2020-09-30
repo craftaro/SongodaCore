@@ -1,5 +1,7 @@
 package com.songoda.core.nms.nbt;
 
+import java.util.Set;
+
 public interface NBTObject {
 
     String asString();
@@ -17,4 +19,8 @@ public interface NBTObject {
     byte asByte();
 
     int[] asIntArray();
+
+    Set<String> getKeys();
+
+    NBTCompound getCompound(String tag);
 }
