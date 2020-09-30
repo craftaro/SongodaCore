@@ -2,7 +2,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore-Modules</artifactId>
-    <version>2.4.15</version>
+    <version>2.4.16</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
@@ -44,11 +44,11 @@
     <repositories>
         <repository>
             <id>private</id>
-            <url>https://repo.songoda.com/artifactory/private/</url>
+            <url>https://repo.songoda.com/repository/private/</url>
         </repository>
         <repository>
             <id>public</id>
-            <url>https://repo.songoda.com/artifactory/public/</url>
+            <url>https://repo.songoda.com/repository/public/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
