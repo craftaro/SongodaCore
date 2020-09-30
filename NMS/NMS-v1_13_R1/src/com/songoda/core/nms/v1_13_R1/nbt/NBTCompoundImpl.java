@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class NBTCompoundImpl implements NBTCompound {
+public class NBTCompoundImpl implements NBTCompound {
 
     protected NBTTagCompound compound;
 
@@ -143,7 +143,7 @@ public abstract class NBTCompoundImpl implements NBTCompound {
 
     @Override
     public Set<String> getKeys(String tag) {
-        return compound.getCompound(tag).getKeys();
+        return getNBTObject(tag).getKeys();
     }
 
     @Override
@@ -173,6 +173,11 @@ public abstract class NBTCompoundImpl implements NBTCompound {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void addExtras() {
+        // None
     }
 
 }

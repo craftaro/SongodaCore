@@ -1,7 +1,10 @@
 package com.songoda.core.nms.v1_15_R1.nbt;
 
+import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTObject;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
+
+import java.util.Set;
 
 public class NBTObjectImpl implements NBTObject {
 
@@ -53,4 +56,13 @@ public class NBTObjectImpl implements NBTObject {
         return compound.getIntArray(tag);
     }
 
+    @Override
+    public Set<String> getKeys() {
+        return compound.getKeys();
+    }
+
+    @Override
+    public NBTCompound getCompound(String tag) {
+        return new NBTCompoundImpl(compound.getCompound(tag));
+    }
 }
