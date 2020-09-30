@@ -88,6 +88,13 @@ public class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound addNewCompound(String tag) {
+        NBTTagCompound newCompound = new NBTTagCompound();
+        compound.set(tag, newCompound);
+        return new NBTCompoundImpl(newCompound);
+    }
+
+    @Override
     public boolean has(String tag) {
         return compound.hasKey(tag);
     }
