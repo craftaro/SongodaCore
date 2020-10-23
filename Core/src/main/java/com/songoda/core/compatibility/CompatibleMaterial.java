@@ -1834,6 +1834,162 @@ public enum CompatibleMaterial {
     }
 
     /**
+     * Get the result of putting this item
+     * into a furnace.
+     *
+     * return
+     */
+    public CompatibleMaterial getBurnResult() {
+        switch (this) {
+            case PORKCHOP:
+                return COOKED_PORKCHOP;
+            case BEEF:
+                return COOKED_BEEF;
+            case CHICKEN:
+                return COOKED_CHICKEN;
+            case COD:
+                return COOKED_COD;
+            case SALMON:
+                return COOKED_SALMON;
+            case POTATO:
+                return BAKED_POTATO;
+            case MUTTON:
+                return COOKED_MUTTON;
+            case RABBIT:
+                return COOKED_RABBIT;
+            case KELP:
+                return DRIED_KELP;
+            case IRON_ORE:
+                return IRON_INGOT;
+            case GOLD_ORE:
+                return GOLD_INGOT;
+            case DIAMOND_ORE:
+                return DIAMOND;
+            case LAPIS_ORE:
+                return LAPIS_LAZULI;
+            case REDSTONE_ORE:
+                return REDSTONE;
+            case COAL_ORE:
+                return COAL;
+            case EMERALD_ORE:
+                return EMERALD;
+            case NETHER_QUARTZ_ORE:
+                return QUARTZ;
+            case SAND:
+            case RED_SAND:
+                return GLASS;
+            case COBBLESTONE:
+                return STONE;
+            case SANDSTONE:
+                return SMOOTH_SANDSTONE;
+            case RED_SANDSTONE:
+                return SMOOTH_RED_SANDSTONE;
+            case STONE:
+                return SMOOTH_STONE;
+            case QUARTZ_BLOCK:
+                return SMOOTH_QUARTZ;
+            case CLAY_BALL:
+                return BRICK;
+            case NETHERRACK:
+                return NETHER_BRICK;
+            case CLAY:
+                return BRICKS;
+            case STONE_BRICKS:
+                return CRACKED_STONE_BRICKS;
+            case WHITE_TERRACOTTA:
+                return WHITE_GLAZED_TERRACOTTA;
+            case ORANGE_TERRACOTTA:
+                return ORANGE_GLAZED_TERRACOTTA;
+            case MAGENTA_TERRACOTTA:
+                return MAGENTA_GLAZED_TERRACOTTA;
+            case LIGHT_BLUE_TERRACOTTA:
+                return LIGHT_BLUE_GLAZED_TERRACOTTA;
+            case YELLOW_TERRACOTTA:
+                return YELLOW_GLAZED_TERRACOTTA;
+            case LIME_TERRACOTTA:
+                return LIME_GLAZED_TERRACOTTA;
+            case PINK_TERRACOTTA:
+                return PINK_GLAZED_TERRACOTTA;
+            case GRAY_TERRACOTTA:
+                return GRAY_GLAZED_TERRACOTTA;
+            case LIGHT_GRAY_TERRACOTTA:
+                return LIGHT_GRAY_GLAZED_TERRACOTTA;
+            case CYAN_TERRACOTTA:
+                return CYAN_GLAZED_TERRACOTTA;
+            case PURPLE_TERRACOTTA:
+                return PURPLE_GLAZED_TERRACOTTA;
+            case BLUE_TERRACOTTA:
+                return BLUE_GLAZED_TERRACOTTA;
+            case BROWN_TERRACOTTA:
+                return BROWN_GLAZED_TERRACOTTA;
+            case GREEN_TERRACOTTA:
+                return GREEN_GLAZED_TERRACOTTA;
+            case RED_TERRACOTTA:
+                return RED_GLAZED_TERRACOTTA;
+            case BLACK_TERRACOTTA:
+                return BLACK_GLAZED_TERRACOTTA;
+            case IRON_SWORD:
+            case IRON_PICKAXE:
+            case IRON_AXE:
+            case IRON_SHOVEL:
+            case IRON_HOE:
+            case IRON_HELMET:
+            case IRON_CHESTPLATE:
+            case IRON_LEGGINGS:
+            case IRON_BOOTS:
+            case IRON_HORSE_ARMOR:
+            case CHAINMAIL_HELMET:
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_LEGGINGS:
+            case CHAINMAIL_BOOTS:
+                return IRON_NUGGET;
+            case GOLDEN_SWORD:
+            case GOLDEN_PICKAXE:
+            case GOLDEN_AXE:
+            case GOLDEN_SHOVEL:
+            case GOLDEN_HOE:
+            case GOLDEN_HELMET:
+            case GOLDEN_CHESTPLATE:
+            case GOLDEN_LEGGINGS:
+            case GOLDEN_BOOTS:
+            case GOLDEN_HORSE_ARMOR:
+                return GOLD_NUGGET;
+            case CACTUS:
+                return GREEN_DYE;
+            case SEA_PICKLE:
+                return LIME_DYE;
+            case OAK_LOG:
+            case BIRCH_LOG:
+            case ACACIA_LOG:
+            case DARK_OAK_LOG:
+            case JUNGLE_LOG:
+            case SPRUCE_LOG:
+            case STRIPPED_ACACIA_LOG:
+            case STRIPPED_BIRCH_LOG:
+            case STRIPPED_DARK_OAK_LOG:
+            case STRIPPED_JUNGLE_LOG:
+            case STRIPPED_OAK_LOG:
+            case STRIPPED_SPRUCE_LOG:
+            case ACACIA_WOOD:
+            case BIRCH_WOOD:
+            case JUNGLE_WOOD:
+            case OAK_WOOD:
+            case SPRUCE_WOOD:
+            case STRIPPED_ACACIA_WOOD:
+            case STRIPPED_BIRCH_WOOD:
+            case STRIPPED_DARK_OAK_WOOD:
+            case STRIPPED_JUNGLE_WOOD:
+            case STRIPPED_OAK_WOOD:
+            case STRIPPED_SPRUCE_WOOD:
+                return CHARCOAL;
+            case CHORUS_FRUIT:
+                return POPPED_CHORUS_FRUIT;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Check if the material is air
      *
      * @return
