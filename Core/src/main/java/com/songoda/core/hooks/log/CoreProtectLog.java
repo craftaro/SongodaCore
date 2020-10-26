@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 public class CoreProtectLog extends Log {
 
     private CoreProtectAPI api;
-    private boolean useDeprecatedMethod = ServerVersion.isServerVersionBelow(ServerVersion.V1_12);
+    private boolean useDeprecatedMethod = ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12);
 
     public CoreProtectLog() {
         this.api = CoreProtect.getInstance().getAPI();
