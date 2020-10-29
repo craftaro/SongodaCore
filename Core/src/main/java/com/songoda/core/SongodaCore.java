@@ -54,7 +54,7 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.18";
+    private final static String coreVersion = "2.4.19";
     
     /**
      * This is specific to the website api
