@@ -134,6 +134,21 @@ public class ItemUtils {
         return item;
     }
 
+    public static boolean hasEnoughDurability(ItemStack tool, int requiredAmount) {
+        if (tool.getType().getMaxDurability() <= 1)
+            return true;
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+            if (!tool.hasItemMeta() || !(tool.getItemMeta() instanceof Damageable))
+                return true;
+
+            Damageable damageable = (Damageable) tool.getItemMeta();
+            int durabilityRemaining = tool.getType().getMaxDurability() - damageable.getDamage();
+            return durabilityRemaining > requiredAmount;
+        } else {
+            return tool.getDurability() + requiredAmount <= tool.getType().getMaxDurability();
+        }
+    }
+
     static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
     static Class mc_ItemStack = NMSUtils.getNMSClass("ItemStack");
     static Class mc_NBTTagCompound = NMSUtils.getNMSClass("NBTTagCompound");
