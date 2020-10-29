@@ -2,9 +2,13 @@ package com.songoda.core.compatibility;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -1371,6 +1375,38 @@ public enum CompatibleMaterial {
                     }
                 }
                 return CompatibleMaterial.getMaterialFromNewBlock(block);
+            }
+        }
+        return null;
+    }
+
+    private static Method methodGetBlockData;
+    static {
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            try {
+                methodGetBlockData = FallingBlock.class.getDeclaredMethod("getBlockData");
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Lookup a Material by FallingBlock, corrected for legacy
+     *
+     * @param block falling block to check
+     *
+     * @return LegacyMaterial or null if none found
+     */
+    public static CompatibleMaterial getMaterial(FallingBlock block) {
+        if (block == null) return null;
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+            return getMaterial(block.getBlockData().getMaterial());
+        } else {
+            try {
+                return getMaterial(block.getMaterial(), (byte) methodGetBlockData.invoke(block));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
         return null;
