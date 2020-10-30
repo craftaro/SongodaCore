@@ -1548,6 +1548,34 @@ public enum CompatibleMaterial {
         return mat != null ? new ItemStack(mat) : null;
     }
 
+    private static Method methodSetData;
+    static {
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            try {
+                methodSetData = Block.class.getDeclaredMethod("setData", byte.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Apply the current material to a block.
+     *
+     * @param block the block to apply the material to.
+     */
+    public void applyToBlock(Block block) {
+        if (block == null) return;
+            block.setType(material);
+        if (data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            try {
+                methodSetData.invoke(block, data);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Check to see if an item matches this specific material type
      *
