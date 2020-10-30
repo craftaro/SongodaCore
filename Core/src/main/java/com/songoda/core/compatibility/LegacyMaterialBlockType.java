@@ -45,6 +45,7 @@ public enum LegacyMaterialBlockType {
     WATER("STATIONARY_WATER"),
     WHEAT("CROPS");
     final String blockMaterialName;
+    final byte blockData;
     final String alternateBlockMaterialName;
     final Material blockMaterial, alternateBlockMaterial;
     final boolean requiresData; // some blocks require data to render properly (double blocks)
@@ -54,7 +55,7 @@ public enum LegacyMaterialBlockType {
     static {
         for (LegacyMaterialBlockType t : values()) {
             lookupTable.put(t.name(), t);
-            reverseLookupTable.put(t.blockMaterialName, t);
+            reverseLookupTable.put(t.blockMaterialName + ":" + t.blockData, t);
             if (t.alternateBlockMaterialName != null) {
                 reverseLookupTable.put(t.alternateBlockMaterialName, t);
             }
@@ -62,23 +63,28 @@ public enum LegacyMaterialBlockType {
     }
 
     private LegacyMaterialBlockType(String blockMaterial) {
-        this(blockMaterial, null, false);
+        this(blockMaterial, (byte)-1, null,false);
     }
 
     private LegacyMaterialBlockType(String blockMaterial, boolean requiresData) {
-        this(blockMaterial, null, requiresData);
+        this(blockMaterial, (byte)-1, null, requiresData);
+    }
+
+    private LegacyMaterialBlockType(String blockMaterial, byte data, boolean requiresData) {
+        this(blockMaterial, data, null, requiresData);
     }
 
     private LegacyMaterialBlockType(String blockMaterial, String alternateMaterial) {
-        this(blockMaterial, alternateMaterial, false);
+        this(blockMaterial, (byte)-1, alternateMaterial, false);
     }
 
-    private LegacyMaterialBlockType(String blockMaterial, String alternateMaterial, boolean requiresData) {
+    private LegacyMaterialBlockType(String blockMaterial, byte data, String alternateMaterial, boolean requiresData) {
         this.blockMaterialName = blockMaterial;
         this.alternateBlockMaterialName = alternateMaterial;
         this.requiresData = requiresData;
         this.blockMaterial = Material.getMaterial(blockMaterialName);
         this.alternateBlockMaterial = Material.getMaterial(alternateBlockMaterialName);
+        this.blockData = data;
     }
 
     public String getBlockMaterialName() {
@@ -105,8 +111,12 @@ public enum LegacyMaterialBlockType {
         return lookupTable.get(lookup);
     }
 
+    public static LegacyMaterialBlockType getFromLegacy(String lookup, byte data) {
+        return reverseLookupTable.get(lookup + ":" + data);
+    }
+
     public static LegacyMaterialBlockType getFromLegacy(String lookup) {
-        return reverseLookupTable.get(lookup);
+        return getFromLegacy(lookup, (byte)-1);
     }
 
 }
