@@ -14,6 +14,13 @@ import java.util.Map;
  */
 public enum LegacyMaterialBlockType {
 
+    OAK_LEAVES("LEAVES", (byte)8, true),
+    SPRUCE_LEAVES("LEAVES", (byte)9, true),
+    BIRCH_LEAVES("LEAVES", (byte)10, true),
+    JUNGLE_LEAVES("LEAVES", (byte)11, true),
+    ACACIA_LEAVES("LEAVES_2", (byte)8, true),
+    DARK_OAK_LEAVES("LEAVES_2", (byte)9, true),
+
     ACACIA_DOOR("ACACIA_DOOR", true),
     BED("BED_BLOCK", true),
     BIRCH_DOOR("BIRCH_DOOR", true),
