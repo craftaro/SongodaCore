@@ -2,7 +2,6 @@ package com.songoda.core.compatibility;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
@@ -1336,7 +1335,14 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Material mat) {
-        return mat == null ? null : lookupMap.get(mat.name());
+        if (mat == null)
+            return null;
+        if (useLegacy) {
+            CompatibleMaterial compatibleMaterial = lookupMap.get(mat.name() + ":0");
+            if (compatibleMaterial != null)
+                return compatibleMaterial;
+        }
+        return lookupMap.get(mat.name());
     }
 
     /**
@@ -1381,6 +1387,7 @@ public enum CompatibleMaterial {
     }
 
     private static Method methodGetBlockData;
+
     static {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
             try {
@@ -1395,7 +1402,6 @@ public enum CompatibleMaterial {
      * Lookup a Material by FallingBlock, corrected for legacy
      *
      * @param block falling block to check
-     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(FallingBlock block) {
@@ -1446,12 +1452,13 @@ public enum CompatibleMaterial {
         }
         Material mat = block.getType();
         if (useLegacy) {
-            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name());
+            LegacyMaterialBlockType legacyBlock = LegacyMaterialBlockType.getFromLegacy(mat.name(), block.getData());
             if (legacyBlock != null) {
                 return lookupMap.get(legacyBlock.name());
             }
         }
-        return lookupMap.get(mat.name());
+        CompatibleMaterial withData = lookupMap.get(mat.name() + ":" + block.getData());
+        return withData == null ? lookupMap.get(mat.name()) : withData;
     }
 
     /**
@@ -1900,7 +1907,7 @@ public enum CompatibleMaterial {
     /**
      * Get the result of putting this item
      * into a furnace.
-     *
+     * <p>
      * return
      */
     public CompatibleMaterial getBurnResult() {
