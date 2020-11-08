@@ -1574,7 +1574,7 @@ public enum CompatibleMaterial {
     public void applyToBlock(Block block) {
         if (block == null) return;
             block.setType(material);
-        if (data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+        if (data != null && data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
             try {
                 methodSetData.invoke(block, data);
             } catch (IllegalAccessException | InvocationTargetException e) {
