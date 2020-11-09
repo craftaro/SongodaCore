@@ -59,7 +59,7 @@ public class MainCommand extends AbstractCommand {
             sender.sendMessage(header);
         } else {
             new ChatMessage().fromText(String.format("#ff8080&l%s &8» &7Version %s Created with <3 by #ec4e74&l&oS#fa5b65&l&oo#ff6c55&l&on#ff7f44&l&og#ff9432&l&oo#ffaa1e&l&od#f4c009&l&oa",
-                    plugin.getDescription().getName(), plugin.getDescription().getVersion()))
+                    plugin.getDescription().getName(), plugin.getDescription().getVersion()), true)
                     .sendTo(sender);
         }
 
