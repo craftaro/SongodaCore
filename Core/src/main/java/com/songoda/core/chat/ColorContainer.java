@@ -15,9 +15,9 @@ public class ColorContainer {
         this.hexCode = null;
     }
 
-    public ColorContainer(String hexCode) {
+    public ColorContainer(String hexCode, boolean noHex) {
         this.hexCode = hexCode;
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_16)) {
+        if (noHex || ServerVersion.isServerVersionBelow(ServerVersion.V1_16)) {
             this.colorCode = getColor();
             this.hexCode = null;
         }

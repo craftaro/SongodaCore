@@ -31,6 +31,10 @@ public class ChatMessage {
     }
 
     public ChatMessage fromText(String text) {
+        return fromText(text, false);
+    }
+
+    public ChatMessage fromText(String text, boolean noHex) {
         Pattern pattern = Pattern.compile("(.*?)(?!&(o|m|n|l|k))(?=(\\&(1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|r|#)|$)|"
                 + "#([a-f]|[A-F]|[0-9]){6})", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
@@ -44,7 +48,7 @@ public class ChatMessage {
                 colorChar = text.substring(matcher.start() - 1, matcher.start()).charAt(0);
             if (colorChar != '-') {
                 if (colorChar == '#') {
-                    color = new ColorContainer(match1.substring(0, 6));
+                    color = new ColorContainer(match1.substring(0, 6), noHex);
                     match1 = match1.substring(5);
                 } else if (colorChar == '&')
                     color = new ColorContainer(ColorCode.getByChar(match1.charAt(0)));
@@ -69,13 +73,17 @@ public class ChatMessage {
     }
 
     public String toText() {
+        return toText(false);
+    }
+
+    public String toText(boolean noHex) {
         StringBuilder text = new StringBuilder();
         for (JsonObject object : textList) {
             if (object.has("color")) {
                 String color = object.get("color").getAsString();
                 text.append("&");
                 if (color.length() == 7) {
-                    text.append(new ColorContainer(color).getColor().getCode());
+                    text.append(new ColorContainer(color, noHex).getColor().getCode());
                 } else {
                     text.append(ColorCode.valueOf(color.toUpperCase()).getCode());
                 }
@@ -191,7 +199,7 @@ public class ChatMessage {
                 enabled = false;
             }
         } else {
-            sender.sendMessage(TextUtils.formatText((prefix == null ? "" : prefix.toText() + " ") + toText()));
+            sender.sendMessage(TextUtils.formatText((prefix == null ? "" : prefix.toText(true) + " ") + toText(true)));
         }
     }
 
