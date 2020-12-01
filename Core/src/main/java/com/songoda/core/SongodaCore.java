@@ -8,6 +8,7 @@ import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
+import com.songoda.core.core.SongodaCoreShowGuiKeysCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,8 +55,8 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.23";
-    
+    private final static String coreVersion = "2.4.24";
+
     /**
      * This is specific to the website api
      */
@@ -163,10 +164,11 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommand(new SongodaCoreDiagCommand());
+                .addSubCommand(new SongodaCoreDiagCommand())
+                .addSubCommand(new SongodaCoreShowGuiKeysCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
-        // we aggressevely want to own this command
+        // we aggressively want to own this command
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
             CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
         }, 10 * 60 * 1));
