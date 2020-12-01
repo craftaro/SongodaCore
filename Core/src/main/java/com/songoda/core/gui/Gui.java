@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -278,7 +280,7 @@ public class Gui {
     }
 
     @NotNull
-    public Gui setDefaultItem(ItemStack item) {
+    public Gui setDefaultItem(@Nullable ItemStack item) {
         blankItem = item;
         return this;
     }
@@ -317,10 +319,18 @@ public class Gui {
     @NotNull
     public Gui setItem(int row, int col, @Nullable ItemStack item) {
         final int cell = col + row * inventoryType.columns;
-        cellItems.put(cell, item);
-        if (inventory != null && cell >= 0 && cell < inventory.getSize()) {
-            inventory.setItem(cell, item);
-        }
+        return setItem(cell, item);
+    }
+
+    @NotNull
+    public Gui mirrorFill(int row, int col, boolean mirrorRow, boolean mirrorCol, ItemStack item) {
+        setItem(row, col, item);
+        if (mirrorRow)
+            setItem(rows - row - 1, col, item);
+        if (mirrorCol)
+            setItem(row, 8 - col, item);
+        if (mirrorRow && mirrorCol)
+            setItem(rows - row - 1, 8 - col, item);
         return this;
     }
 
@@ -336,11 +346,7 @@ public class Gui {
     @NotNull
     public Gui highlightItem(int row, int col) {
         final int cell = col + row * inventoryType.columns;
-        ItemStack item = cellItems.get(cell);
-        if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, ItemUtils.addGlow(item));
-        }
-        return this;
+        return highlightItem(cell);
     }
 
     @NotNull
@@ -355,11 +361,7 @@ public class Gui {
     @NotNull
     public Gui removeHighlight(int row, int col) {
         final int cell = col + row * inventoryType.columns;
-        ItemStack item = cellItems.get(cell);
-        if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, ItemUtils.removeGlow(item));
-        }
-        return this;
+        return removeHighlight(cell);
     }
 
     @NotNull
@@ -411,11 +413,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int cell, @Nullable String name, @NotNull String... lore) {
-        ItemStack item = cellItems.get(cell);
-        if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, GuiUtils.updateItem(item, name, lore));
-        }
-        return this;
+        return updateItem(cell, name, Arrays.asList(lore));
     }
 
     @NotNull
@@ -427,7 +425,7 @@ public class Gui {
     public Gui updateItem(int cell, @NotNull String name, @Nullable List<String> lore) {
         ItemStack item = cellItems.get(cell);
         if (item != null && item.getType() != Material.AIR) {
-            setItem(cell, GuiUtils.updateItem(item, title, lore));
+            setItem(cell, GuiUtils.updateItem(item, name, lore));
         }
         return this;
     }
@@ -554,9 +552,7 @@ public class Gui {
 
     @NotNull
     public Gui clearActions(int row, int col) {
-        final int cell = col + row * inventoryType.columns;
-        conditionalButtons.remove(cell);
-        return this;
+        return clearActions(col + row * inventoryType.columns);
     }
 
     @NotNull
@@ -590,10 +586,7 @@ public class Gui {
     }
 
     protected void setConditional(int cell, @Nullable ClickType type, @Nullable Clickable action) {
-        Map<ClickType, Clickable> conditionals = conditionalButtons.get(cell);
-        if (conditionals == null) {
-            conditionalButtons.put(cell, conditionals = new HashMap());
-        }
+        Map<ClickType, Clickable> conditionals = conditionalButtons.computeIfAbsent(cell, k -> new HashMap());
         conditionals.put(type, action);
     }
 
@@ -643,12 +636,7 @@ public class Gui {
 
     @NotNull
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
-        nextPageIndex = col + row * inventoryType.columns;
-        nextPage = item;
-        if (page < pages) {
-            setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
-        }
-        return this;
+        return setNextPage(col + row * inventoryType.columns, item);
     }
 
     @NotNull
@@ -663,12 +651,7 @@ public class Gui {
 
     @NotNull
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
-        prevPageIndex = col + row * inventoryType.columns;
-        prevPage = item;
-        if (page > 1) {
-            setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
-        }
-        return this;
+        return setPrevPage(col + row * inventoryType.columns, item);
     }
 
     public void setPages(int pages) {
@@ -767,6 +750,7 @@ public class Gui {
             final ItemStack item = cellItems.get(i);
             inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
+
 
         return inventory;
     }
