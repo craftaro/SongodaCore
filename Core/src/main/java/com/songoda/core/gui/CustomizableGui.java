@@ -25,6 +25,7 @@ import java.util.Map;
 public class CustomizableGui extends Gui {
 
     private static boolean showGuiKeys = false;
+    private int activationCount = 0;
 
     private static final Map<String, CustomContent> loadedGuis = new HashMap<>();
     private final CustomContent customContent;
@@ -58,6 +59,7 @@ public class CustomizableGui extends Gui {
                         "https://wiki.songoda.com/Gui");
                 config.saveChanges();
             }
+
 
             if (!config.isConfigurationSection("disabled")) {
                 config.setDefault("disabled", Arrays.asList("example3", "example4", "example5"),
@@ -98,6 +100,15 @@ public class CustomizableGui extends Gui {
         } else {
             customContent = loadedGuis.get(guiKey);
         }
+        setPrivateDefaultAction(event -> {
+            if (event.clickType == ClickType.SHIFT_RIGHT)
+                activationCount ++;
+            if (activationCount >= 8 && event.player.hasPermission("songoda.admin")) {
+                showGuiKeys = !showGuiKeys;
+                activationCount = 0;
+                event.player.sendMessage("Gui keys " + (showGuiKeys ? "enabled" : "disabled") + ".");
+            }
+        });
 
         if (customContent.isButtonCustomized("__DEFAULT__"))
             blankItem = GuiUtils.getBorderItem(customContent.getCustomizedButton("__DEFAULT__").item);
@@ -509,11 +520,6 @@ public class CustomizableGui extends Gui {
         List<String> newLore = new ArrayList<>(Collections.singletonList("Key: " + key));
         newLore.addAll(lore);
         return newLore;
-    }
-
-    public static boolean toggleShowGuiKeys() {
-        showGuiKeys = !showGuiKeys;
-        return showGuiKeys;
     }
 
     private class CustomButton {

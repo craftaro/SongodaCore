@@ -8,7 +8,6 @@ import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
-import com.songoda.core.core.SongodaCoreShowGuiKeysCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +17,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -55,7 +53,7 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.24";
+    private final static String coreVersion = "2.4.25";
 
     /**
      * This is specific to the website api
@@ -164,8 +162,7 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommand(new SongodaCoreDiagCommand())
-                .addSubCommand(new SongodaCoreShowGuiKeysCommand());
+                .addSubCommand(new SongodaCoreDiagCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
         // we aggressively want to own this command
@@ -178,7 +175,6 @@ public class SongodaCore {
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
             CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
         }, 20 * 60 * 2));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> registerAllPlugins(), 20 * 60 * 2));
     }
 
     /**
@@ -198,75 +194,6 @@ public class SongodaCore {
     }
 
     private ArrayList<BukkitTask> tasks = new ArrayList();
-
-    /**
-     * Register plugins that may not have been updated yet
-     */
-    private void registerAllPlugins() {
-        PluginManager pm = Bukkit.getPluginManager();
-        String p;
-        if (!isRegistered(p = "EpicAnchors") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 31, CompatibleMaterial.END_PORTAL_FRAME.name());
-        }
-        if (!isRegistered(p = "EpicBosses") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 19, CompatibleMaterial.ZOMBIE_SPAWN_EGG.name());
-        }
-        if (!isRegistered(p = "EpicEnchants") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 67, CompatibleMaterial.DIAMOND_SWORD.name());
-        }
-        if (!isRegistered(p = "EpicFarming") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 21, CompatibleMaterial.WHEAT.name());
-        }
-        if (!isRegistered(p = "EpicFurnaces") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 22, CompatibleMaterial.FURNACE.name());
-        }
-        if (!isRegistered(p = "EpicHeads") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 26, CompatibleMaterial.PLAYER_HEAD.name());
-        }
-        if (!isRegistered(p = "EpicHoppers") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 15, CompatibleMaterial.HOPPER.name());
-        }
-        if (!isRegistered(p = "EpicLevels") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 44, CompatibleMaterial.NETHER_STAR.name());
-        }
-        if (!isRegistered(p = "EpicSpawners") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 13, CompatibleMaterial.SPAWNER.name());
-        }
-        if (!isRegistered(p = "EpicVouchers") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 25, CompatibleMaterial.EMERALD.name());
-        }
-        if (!isRegistered(p = "FabledSkyBlock") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 17, CompatibleMaterial.GRASS_BLOCK.name());
-        }
-        if (!isRegistered(p = "UltimateCatcher") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 51, CompatibleMaterial.EGG.name());
-        }
-        if (!isRegistered(p = "UltimateClaims") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 65, CompatibleMaterial.CHEST.name());
-        }
-        if (!isRegistered(p = "UltimateFishing") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 59, CompatibleMaterial.COD.name());
-        }
-        if (!isRegistered(p = "UltimateKits") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 14, CompatibleMaterial.BEACON.name());
-        }
-        if (!isRegistered(p = "UltimateModeration") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 29, CompatibleMaterial.DIAMOND_CHESTPLATE.name());
-        }
-        if (!isRegistered(p = "UltimateRepairing") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 20, CompatibleMaterial.ANVIL.name());
-        }
-        if (!isRegistered(p = "UltimateStacker") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 16, CompatibleMaterial.IRON_INGOT.name());
-        }
-        if (!isRegistered(p = "UltimateTimber") && pm.isPluginEnabled(p)) {
-            register((JavaPlugin) pm.getPlugin(p), 18, CompatibleMaterial.IRON_AXE.name());
-        }
-    }
-
-    private void register(JavaPlugin plugin, int pluginID, String icon) {
-        register(plugin, pluginID, icon, "?");
-    }
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
