@@ -59,6 +59,7 @@ public class Gui {
     protected GuiManager guiManager;
     protected boolean open = false;
     protected Clickable defaultClicker = null;
+    protected Clickable privateDefaultClicker = null;
     protected Openable opener = null;
     protected Closable closer = null;
     protected Droppable dropper = null;
@@ -276,6 +277,12 @@ public class Gui {
     @NotNull
     public Gui setDefaultAction(@Nullable Clickable action) {
         defaultClicker = action;
+        return this;
+    }
+
+    @NotNull
+    protected Gui setPrivateDefaultAction(@Nullable Clickable action) {
+        privateDefaultClicker = action;
         return this;
     }
 
@@ -624,6 +631,12 @@ public class Gui {
         return this;
     }
 
+    public void reset() {
+        if (inventory != null)
+            inventory.clear();
+        setActionForRange(0, 53, null);
+    }
+
     @NotNull
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
         nextPageIndex = cell;
@@ -811,6 +824,10 @@ public class Gui {
             if (defaultClicker != null) {
                 // this is a default action, not a triggered action
                 defaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
+            }
+            if (privateDefaultClicker != null) {
+                // this is a private default action, not a triggered action
+                privateDefaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
             }
             return false;
         }

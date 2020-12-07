@@ -53,7 +53,7 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.24";
+    private final static String coreVersion = "2.4.25";
 
     /**
      * This is specific to the website api
@@ -162,8 +162,7 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommand(new SongodaCoreDiagCommand())
-                .addSubCommand(new SongodaCoreShowGuiKeysCommand());
+                .addSubCommand(new SongodaCoreDiagCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
         // we aggressively want to own this command
