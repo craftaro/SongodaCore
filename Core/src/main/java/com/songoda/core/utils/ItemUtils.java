@@ -121,6 +121,12 @@ public class ItemUtils {
     public static ItemStack addDamage(ItemStack item, int damage) {
         if (item == null) {
             return null;
+        } else if (
+            ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
+                ? item.getItemMeta().spigot().isUnbreakable()
+                : item.getItemMeta().isUnbreakable()
+        ) {
+            return item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
             ItemMeta meta = item.getItemMeta();
