@@ -72,6 +72,10 @@ public class CustomizableGui extends Gui {
             loadedGuis.put(guiKey, customContent);
             this.customContent = customContent;
 
+            int rows = config.getInt("overrides.__ROWS__", -1);
+            if (rows != -1)
+                customContent.setRows(rows);
+
             for (ConfigSection section : config.getSections("overrides")) {
                 if (section.contains("row") || section.contains("col")
                         || section.contains("mirrorrow") || section.contains("mirrorcol")) {
@@ -115,6 +119,12 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
+    public Gui setRows(int rows) {
+        int customRows = customContent.getRows();
+        return super.setRows(customRows != -1 ? customRows : rows);
+    }
+
+    @NotNull
     protected Inventory generateInventory(@NotNull GuiManager manager) {
         applyCustomItems();
         return super.generateInventory(manager);
@@ -132,7 +142,6 @@ public class CustomizableGui extends Gui {
         for (CustomButton customButton : customContent.getCustomButtons().values())
             if (!(customButton instanceof MirrorFill))
                 applyCustomItem(customButton);
-
     }
 
     private void applyCustomItem(CustomButton customButton) {
@@ -625,6 +634,8 @@ public class CustomizableGui extends Gui {
         private final Map<String, CustomButton> customButtons = new HashMap<>();
         private final List<String> disabledButtons = new ArrayList<>();
 
+        private int rows = -1;
+
         public CustomContent(String guiKey) {
             this.guiKey = guiKey;
         }
@@ -679,6 +690,14 @@ public class CustomizableGui extends Gui {
 
         public boolean isButtonDisabled(String button) {
             return disabledButtons.contains(button);
+        }
+
+        public int getRows() {
+            return rows;
+        }
+
+        public void setRows(int rows) {
+            this.rows = rows;
         }
     }
 }

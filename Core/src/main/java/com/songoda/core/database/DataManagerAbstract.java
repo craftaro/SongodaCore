@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,7 +19,6 @@ public class DataManagerAbstract {
     protected final Plugin plugin;
 
     private static Map<String, LinkedList<Runnable>> queues = new HashMap<>();
-    private static Map<String, LinkedList<PreparedStatement>> queuedStatements = new HashMap<>();
 
     public DataManagerAbstract(DatabaseConnector databaseConnector, Plugin plugin) {
         this.databaseConnector = databaseConnector;
@@ -78,29 +76,6 @@ public class DataManagerAbstract {
      */
     public void sync(Runnable runnable) {
         Bukkit.getScheduler().runTask(this.plugin, runnable);
-    }
-
-    /**
-     * Queue PreparedStatements to be executed in a single database connection.
-     *
-     * @param statement statement to queue.
-     * @param queueKey the queue key to add the statement to.
-     * @param delay the delay between each queue execution.
-     */
-    public void queueAsync(PreparedStatement statement, String queueKey, long delay) {
-        if (queues.get(queueKey) == null || queues.get(queueKey).isEmpty())
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                databaseConnector.connect(connection -> {
-                    List<PreparedStatement> queue = queuedStatements.get(queueKey);
-                    for (PreparedStatement stmt : queue)
-                        stmt.executeBatch();
-                    connection.commit();
-                    queue.clear();
-                });
-            }, delay);
-
-        List<PreparedStatement> queue = queuedStatements.computeIfAbsent(queueKey, t -> new LinkedList<>());
-        queue.add(statement);
     }
 
     /**
