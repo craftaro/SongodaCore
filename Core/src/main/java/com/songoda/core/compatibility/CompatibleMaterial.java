@@ -1250,10 +1250,18 @@ public enum CompatibleMaterial {
      * @return an item that resembles this material for the current server version
      */
     public ItemStack getItem() {
+        return getItem(1);
+    }
+
+    /**
+     * @param amount the amount to return
+     * @return an item that resembles this material for the current server version
+     */
+    public ItemStack getItem(int amount) {
         if (usesCompatibility()) {
             return compatibleMaterial.getItem();
         }
-        return data != null ? new ItemStack(material, 1, data) : new ItemStack(material);
+        return data != null ? new ItemStack(material, amount, data) : new ItemStack(material);
     }
 
     /**
