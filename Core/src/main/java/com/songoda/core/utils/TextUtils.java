@@ -32,6 +32,33 @@ public class TextUtils {
         return list.stream().map(TextUtils::formatText).collect(Collectors.toList());
     }
 
+    public static List<String> wrap(String line) {
+        return wrap(null, line);
+    }
+
+    public static List<String> wrap(String color, String line) {
+        if (color != null)
+            color = "&" + color;
+        else
+            color = "";
+
+        List<String> lore = new ArrayList<>();
+        int lastIndex = 0;
+        for (int n = 0; n < line.length(); n++) {
+            if (n - lastIndex < 25)
+                continue;
+
+            if (line.charAt(n) == ' ') {
+                lore.add(TextUtils.formatText(color + TextUtils.formatText(line.substring(lastIndex, n))));
+                lastIndex = n;
+            }
+        }
+
+        if (lastIndex - line.length() < 25)
+            lore.add(TextUtils.formatText(color + TextUtils.formatText(line.substring(lastIndex))));
+        return lore;
+    }
+
 
     /**
      * Convert a string to an invisible colored string that's lore-safe <br />
