@@ -52,6 +52,7 @@ public class Gui {
     protected final Map<Integer, Map<ClickType, Clickable>> conditionalButtons = new HashMap<>();
     protected ItemStack blankItem = GuiUtils.getBorderGlassItem();
     protected int nextPageIndex = -1, prevPageIndex = -1;
+    protected ItemStack nextPageItem, prevPageItem;
     protected ItemStack nextPage, prevPage;
     protected Gui parent = null;
     protected static ItemStack AIR = new ItemStack(Material.AIR);
@@ -639,6 +640,7 @@ public class Gui {
 
     @NotNull
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
+        nextPageItem = cellItems.get(cell);
         nextPageIndex = cell;
         nextPage = item;
         if (page < pages) {
@@ -654,6 +656,7 @@ public class Gui {
 
     @NotNull
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
+        prevPageItem = cellItems.get(cell);
         prevPageIndex = cell;
         prevPage = item;
         if (page > 1) {
@@ -734,7 +737,7 @@ public class Gui {
             if (page > 1) {
                 this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
             } else {
-                this.setItem(prevPageIndex, null);
+                this.setItem(prevPageIndex, prevPageItem);
                 this.clearActions(prevPageIndex);
             }
         }
@@ -742,7 +745,7 @@ public class Gui {
             if (pages > 1 && page != pages) {
                 this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
             } else {
-                this.setItem(nextPageIndex, null);
+                this.setItem(nextPageIndex, nextPageItem);
                 this.clearActions(nextPageIndex);
             }
         }
