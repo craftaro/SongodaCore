@@ -636,6 +636,7 @@ public class Gui {
         if (inventory != null)
             inventory.clear();
         setActionForRange(0, 53, null);
+        update();
     }
 
     @NotNull
