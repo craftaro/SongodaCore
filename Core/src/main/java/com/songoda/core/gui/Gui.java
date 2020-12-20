@@ -857,8 +857,7 @@ public class Gui {
             return;
         }
         boolean showParent = open && parent != null;
-        if (open && closer != null) {
-            open = !inventory.getViewers().isEmpty();
+        if (closer != null) {
             closer.onClose(new GuiCloseEvent(manager, this, player));
         }
         if (showParent) {
