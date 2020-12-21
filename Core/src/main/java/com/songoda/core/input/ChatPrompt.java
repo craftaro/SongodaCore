@@ -19,25 +19,25 @@ public class ChatPrompt implements Listener {
 
     private static final List<UUID> registered = new ArrayList<>();
 
+    private final Plugin plugin;
     private final ChatConfirmHandler handler;
+    private int taskId;
     private OnClose onClose = null;
     private OnCancel onCancel = null;
     private Listener listener;
 
-    private ChatPrompt(Player player, ChatConfirmHandler hander) {
+    private ChatPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
+        this.plugin = plugin;
         this.handler = hander;
         registered.add(player.getUniqueId());
     }
 
     public static ChatPrompt showPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
-        ChatPrompt prompt = new ChatPrompt(player, hander);
-        prompt.startListener(plugin);
-        player.closeInventory();
-        return prompt;
+        return showPrompt(plugin, player, null, hander);
     }
 
     public static ChatPrompt showPrompt(Plugin plugin, Player player, String message, ChatConfirmHandler hander) {
-        ChatPrompt prompt = new ChatPrompt(player, hander);
+        ChatPrompt prompt = new ChatPrompt(plugin, player, hander);
         prompt.startListener(plugin);
         player.closeInventory();
         if (message != null)
@@ -60,6 +60,18 @@ public class ChatPrompt implements Listener {
 
     public ChatPrompt setOnCancel(OnCancel onCancel) {
         this.onCancel = onCancel;
+        return this;
+    }
+
+    public ChatPrompt setTimeOut(Player player, long ticks) {
+        taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            if (onClose != null) {
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                        onClose.onClose(), 0L);
+            }
+            HandlerList.unregisterAll(listener);
+            player.sendMessage("Your action has timed out.");
+        }, ticks);
         return this;
     }
 
@@ -87,6 +99,7 @@ public class ChatPrompt implements Listener {
                             onClose.onClose(), 0L);
                 }
                 HandlerList.unregisterAll(listener);
+                Bukkit.getScheduler().cancelTask(taskId);
             }
 
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
@@ -107,6 +120,7 @@ public class ChatPrompt implements Listener {
                             onClose.onClose(), 0L);
                 }
                 HandlerList.unregisterAll(listener);
+                Bukkit.getScheduler().cancelTask(taskId);
             }
         };
 

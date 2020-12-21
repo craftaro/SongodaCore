@@ -20,6 +20,16 @@ public class PlayerUtils {
 
     static Random random = new Random();
 
+    public static void sendMessages(Player player, String... messages) {
+        for (String message : messages)
+            player.sendMessage(message);
+    }
+
+    public static void sendMessages(Player player, List<String> messages) {
+        for (String message : messages)
+            player.sendMessage(message);
+    }
+
     /**
      * Get a list of all of the players that this player can "see"
      *

@@ -7,6 +7,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,4 +70,35 @@ public class ItemSerializer {
         return null;
     }
 
+    /**
+     * Deserialize a byte array into an ItemStack.
+     * @param data Data to deserialize.
+     * @return Deserialized ItemStack.
+     */
+    public static ItemStack deserializeItem(byte[] data) {
+        ItemStack item = null;
+        try (BukkitObjectInputStream stream = new BukkitObjectInputStream(new ByteArrayInputStream(data))) {
+            item = (ItemStack) stream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return item;
+    }
+
+    /**
+     * Serialize an ItemStack into a byte array.
+     * @param item Item to serialize.
+     * @return Serialized data.
+     */
+    public static byte[] serializeItem(ItemStack item) {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); BukkitObjectOutputStream bukkitStream = new BukkitObjectOutputStream(stream)) {
+            bukkitStream.writeObject(item);
+            return stream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
