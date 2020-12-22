@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CustomizableGui extends Gui {
 
@@ -92,7 +93,7 @@ public class CustomizableGui extends Gui {
                                 section.isSet("lore") ? section.getStringList("lore") : null,
                                 section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
                 } else {
-                    customContent.addButton(section.getNodeKey(), section.getInt("position", -1),
+                    customContent.addButton(section.getNodeKey(), section.getString("position", "-1"),
                             section.getString("title", null),
                             section.isSet("lore") ? section.getStringList("lore") : null,
                             section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
@@ -153,7 +154,8 @@ public class CustomizableGui extends Gui {
             else
                 setItem(customButton.key, customButton.row, customButton.col, customButton.createItem());
         else
-            setItem(customButton.key, customButton.position, customButton.createItem());
+            for (Integer position : customButton.positions)
+            setItem(customButton.key, position, customButton.createItem());
     }
 
     @NotNull
@@ -167,14 +169,17 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui setItem(@NotNull String key, int cell, @Nullable ItemStack item) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         applyShowGuiKeys(key, item);
         if (customContent.isButtonCustomized(key)) {
             CustomButton btn = customContent.getCustomizedButton(key);
-            cell = btn.applyPosition(cell);
+            cells = btn.applyPosition(cell);
             btn.applyItem(item);
         }
-        return setItem(cell, item);
+        for (int c : cells)
+            setItem(c, item);
+        return this;
     }
 
     @NotNull
@@ -204,11 +209,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui highlightItem(@NotNull String key, int cell) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return highlightItem(cell);
+        for (int c : cells)
+            highlightItem(c);
+        return this;
     }
 
     @NotNull
@@ -220,11 +228,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui removeHighlight(@NotNull String key, int cell) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return removeHighlight(cell);
+        for (int c : cells)
+            removeHighlight(c);
+        return this;
     }
 
     @NotNull
@@ -242,11 +253,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItemLore(@NotNull String key, int cell, @NotNull String... lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItemLore(cell, lore);
+        for (int c : cells)
+            updateItemLore(c, lore);
+        return this;
     }
 
     @NotNull
@@ -257,11 +271,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItemLore(@NotNull String key, int cell, @Nullable List<String> lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItemLore(cell, lore);
+        for (int c : cells)
+            updateItemLore(c, lore);
+        return this;
     }
 
     @NotNull
@@ -272,11 +289,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItemName(@NotNull String key, int cell, @Nullable String name) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItemName(cell, name);
+        for (int c : cells)
+            updateItemName(c, name);
+        return this;
     }
 
 
@@ -300,12 +320,15 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItem(@NotNull String key, int cell, @NotNull String name, @Nullable List<String> lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         lore = applyShowGuiKeys(key, lore);
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItem(cell, name, lore);
+        for (int c : cells)
+            updateItem(c, name, lore);
+        return this;
     }
 
     @NotNull
@@ -316,11 +339,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItem(@NotNull String key, int cell, @NotNull ItemStack itemTo, @Nullable String title, @NotNull String... lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItem(cell, itemTo, title, lore);
+        for (int c : cells)
+            updateItem(c, itemTo, title, lore);
+        return this;
     }
 
     @NotNull
@@ -331,11 +357,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItem(@NotNull String key, int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable String... lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItem(key, cell, itemTo, title, lore);
+        for (int c : cells)
+            updateItem(key, c, itemTo, title, lore);
+        return this;
     }
 
     @NotNull
@@ -346,11 +375,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItem(@NotNull String key, int cell, @NotNull ItemStack itemTo, @Nullable String title, @Nullable List<String> lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItem(key, cell, itemTo, title, lore);
+        for (int c : cells)
+            updateItem(key, c, itemTo, title, lore);
+        return this;
     }
 
     @NotNull
@@ -361,11 +393,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui updateItem(@NotNull String key, int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return updateItem(key, cell, itemTo, title, lore);
+        for (int c : cells)
+            updateItem(key, c, itemTo, title, lore);
+        return this;
     }
 
     @NotNull
@@ -398,11 +433,14 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui clearActions(@NotNull String key, int cell) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        return clearActions(cell);
+        for (int c : cells)
+            clearActions(c);
+        return this;
     }
 
     @NotNull
@@ -413,16 +451,19 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui setButton(@NotNull String key, int cell, ItemStack item, @Nullable Clickable action) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         applyShowGuiKeys(key, item);
         if (customContent.isButtonCustomized(key)) {
             CustomButton btn = customContent.getCustomizedButton(key);
-            cell = btn.applyPosition(cell);
+            cells = btn.applyPosition(cell);
             btn.applyItem(item);
         }
 
-        setItem(cell, item);
-        setConditional(cell, null, action);
+        for (int c : cells) {
+            setItem(c, item);
+            setConditional(c, null, action);
+        }
         return this;
     }
 
@@ -434,15 +475,18 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui setButton(@NotNull String key, int cell, @Nullable ItemStack item, @Nullable ClickType type, @Nullable Clickable action) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return this;
         applyShowGuiKeys(key, item);
         if (customContent.isButtonCustomized(key)) {
             CustomButton btn = customContent.getCustomizedButton(key);
-            cell = btn.applyPosition(cell);
+            cells = btn.applyPosition(cell);
             btn.applyItem(item);
         }
 
-        return setButton(cell, item, type, action);
+        for (int c : cells)
+            setButton(c, item, type, action);
+        return this;
     }
 
     @NotNull
@@ -452,11 +496,13 @@ public class CustomizableGui extends Gui {
     }
 
     protected void setConditional(@NotNull String key, int cell, @Nullable ClickType type, @Nullable Clickable action) {
+        List<Integer> cells = Collections.singletonList(cell);
         if (customContent.isButtonDisabled(key)) return;
         if (customContent.isButtonCustomized(key))
-            cell = customContent.getCustomizedButton(key).applyPosition(cell);
+            cells = customContent.getCustomizedButton(key).applyPosition(cell);
 
-        setConditional(cell, type, action);
+        for (int c : cells)
+            setConditional(c, type, action);
     }
 
 
@@ -478,14 +524,17 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
+        List<Integer> cells = Collections.singletonList(cell);
         applyShowGuiKeys("__NEXT__", item);
         if (customContent.isButtonCustomized("__NEXT__")) {
             CustomButton btn = customContent.getCustomizedButton("__NEXT__");
-            cell = btn.applyPosition(cell);
+            cells = btn.applyPosition(cell);
             btn.applyItem(item);
         }
 
-        return super.setNextPage(cell, item);
+        for (int c : cells)
+            return super.setNextPage(c, item);
+        return this;
     }
 
     @NotNull
@@ -496,14 +545,17 @@ public class CustomizableGui extends Gui {
 
     @NotNull
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
+        List<Integer> cells = Collections.singletonList(cell);
         applyShowGuiKeys("__PREV__", item);
         if (customContent.isButtonCustomized("__PREV__")) {
             CustomButton btn = customContent.getCustomizedButton("__PREV__");
-            cell = btn.applyPosition(cell);
+            cells = btn.applyPosition(cell);
             btn.applyItem(item);
         }
 
-        return super.setPrevPage(cell, item);
+        for (int c : cells)
+            super.setPrevPage(c, item);
+        return this;
     }
 
     @NotNull
@@ -535,7 +587,7 @@ public class CustomizableGui extends Gui {
 
         private final String key;
 
-        private final int position;
+        private final List<Integer> positions;
         private final int row;
         private final int col;
 
@@ -544,9 +596,9 @@ public class CustomizableGui extends Gui {
 
         private final CompatibleMaterial item;
 
-        public CustomButton(String key, int position, String title, List<String> lore, CompatibleMaterial item) {
+        public CustomButton(String key, List<Integer> positions, String title, List<String> lore, CompatibleMaterial item) {
             this.key = key;
-            this.position = position;
+            this.positions = positions;
             this.row = -1;
             this.col = -1;
             this.item = item;
@@ -556,7 +608,7 @@ public class CustomizableGui extends Gui {
 
         public CustomButton(String key, int row, int col, String title, List<String> lore, CompatibleMaterial item) {
             this.key = key;
-            this.position = -1;
+            this.positions = null;
             this.row = row;
             this.col = col;
             this.item = item;
@@ -592,10 +644,10 @@ public class CustomizableGui extends Gui {
             item.setItemMeta(meta);
         }
 
-        public int applyPosition(int cell) {
+        public List<Integer> applyPosition(int cell) {
             if (row != -1 && col != -1)
-                return col + row * inventoryType.columns;
-            return position == -1 ? cell : position;
+                return Collections.singletonList(col + row * inventoryType.columns);
+            return positions == null ? Collections.singletonList(cell) : positions;
         }
 
         public int applyPositionRow(int row) {
@@ -656,8 +708,11 @@ public class CustomizableGui extends Gui {
             return Collections.unmodifiableMap(customButtons);
         }
 
-        public void addButton(String key, int position, String title, List<String> lore, CompatibleMaterial item) {
-            CustomButton customButton = new CustomButton(key, position, title, lore, item);
+        public void addButton(String key, String position, String title, List<String> lore, CompatibleMaterial item) {
+            List<Integer> positions = Arrays.stream(position.split(","))
+                    .map(Integer::parseInt).collect(Collectors.toList());
+
+            CustomButton customButton = new CustomButton(key, positions, title, lore, item);
             if (key.startsWith("custom_"))
                 customButtons.put(key, customButton);
             else
