@@ -8,6 +8,7 @@ import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.nms.NmsManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -121,6 +122,10 @@ public class ItemUtils {
     public static ItemStack addDamage(ItemStack item, int damage) {
         if (item == null) {
             return null;
+        } else if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
+                        ? NmsManager.getNbt().of(item).has("Unbreakable")
+                        : item.getItemMeta().isUnbreakable()) {
+            return item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
             ItemMeta meta = item.getItemMeta();
