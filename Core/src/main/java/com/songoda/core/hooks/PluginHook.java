@@ -44,6 +44,7 @@ public final class PluginHook<T extends Class> {
     public static final PluginHook PROTECTION_LANDS = new PluginHook(Protection.class, "Lands", LandsProtection.class);
     public static final PluginHook PROTECTION_REDPROTECT = new PluginHook(Protection.class, "RedProtect", RedProtectProtection.class);
     public static final PluginHook PROTECTION_ULTIMATECLAIMS = new PluginHook(Protection.class, "UltimateClaims", UltimateClaimsProtection.class);
+    public static final PluginHook PROTECTION_TOWNY = new PluginHook(Protection.class, "Towny", TownyProtection.class);
 
     /******* Start Manager stuff *******/
 

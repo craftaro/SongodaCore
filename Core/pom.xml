@@ -360,6 +360,13 @@
             <groupId>com.songoda</groupId>
             <artifactId>UltimateClaims</artifactId>
             <version>1.3.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.palmergames</groupId>
+            <artifactId>Towny</artifactId>
+            <version>0.96.5.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- End Plugin Hooks -->
