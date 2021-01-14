@@ -10,15 +10,11 @@ import com.songoda.core.hooks.holograms.HologramsHolograms;
 import com.songoda.core.hooks.holograms.HolographicDisplaysHolograms;
 import com.songoda.core.hooks.log.CoreProtectLog;
 import com.songoda.core.hooks.log.Log;
-import com.songoda.core.hooks.protection.GriefPreventionProtection;
-import com.songoda.core.hooks.protection.LandsProtection;
-import com.songoda.core.hooks.protection.Protection;
-import com.songoda.core.hooks.protection.RedProtectProtection;
+import com.songoda.core.hooks.protection.*;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
 import com.songoda.core.hooks.stackers.UltimateStacker;
 import com.songoda.core.hooks.stackers.WildStacker;
-import com.songoda.ultimateclaims.UltimateClaims;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -47,7 +43,7 @@ public final class PluginHook<T extends Class> {
     public static final PluginHook PROTECTION_GRIEFPREVENTION = new PluginHook(Protection.class, "GriefPrevention", GriefPreventionProtection.class);
     public static final PluginHook PROTECTION_LANDS = new PluginHook(Protection.class, "Lands", LandsProtection.class);
     public static final PluginHook PROTECTION_REDPROTECT = new PluginHook(Protection.class, "RedProtect", RedProtectProtection.class);
-    public static final PluginHook PROTECTION_ULTIMATECLAIMS = new PluginHook(Protection.class, "UltimateClaims", UltimateClaims.class);
+    public static final PluginHook PROTECTION_ULTIMATECLAIMS = new PluginHook(Protection.class, "UltimateClaims", UltimateClaimsProtection.class);
 
     /******* Start Manager stuff *******/
 
