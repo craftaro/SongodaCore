@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.protection;
 
 import com.songoda.ultimateclaims.UltimateClaims;
+import com.songoda.ultimateclaims.claim.Claim;
 import com.songoda.ultimateclaims.member.ClaimPerm;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,17 +18,26 @@ public class UltimateClaimsProtection extends Protection {
 
     @Override
     public boolean canPlace(Player player, Location location) {
-        return instance.getClaimManager().getClaim(location.getChunk()).playerHasPerms(player, ClaimPerm.PLACE);
+        return hasPerms(player, location, ClaimPerm.PLACE);
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        return instance.getClaimManager().getClaim(location.getChunk()).playerHasPerms(player, ClaimPerm.BREAK);
+        return hasPerms(player, location, ClaimPerm.BREAK);
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return instance.getClaimManager().getClaim(location.getChunk()).playerHasPerms(player, ClaimPerm.INTERACT);
+        return hasPerms(player, location, ClaimPerm.INTERACT);
+    }
+
+    private boolean hasPerms(Player player, Location location, ClaimPerm claimPerm) {
+        Claim claim = instance.getClaimManager().getClaim(location.getChunk());
+        if (claim == null) {
+            return true;
+        }
+
+        return claim.playerHasPerms(player, claimPerm);
     }
 
     @Override
