@@ -2631,6 +2631,9 @@ public enum CompatibleMaterial {
     }
 
     /**
+     * Note: If using this on a legacy server without #getBlockMaterial
+     * you may run into issues.
+     *
      * @return true if this is a block that has a growth state
      */
     public boolean isCrop() {
@@ -2648,8 +2651,73 @@ public enum CompatibleMaterial {
             case SUGAR_CANE:
             case WHEAT:
                 return true;
+            default:
+                return false;
         }
-        return false;
+    }
+
+    /**
+     * @return the yield of this crop.
+     */
+    public CompatibleMaterial getCropYield() {
+        switch (this) {
+            case BEETROOTS:
+                return BEETROOT;
+            case CACTUS:
+                return CACTUS;
+            case CARROTS:
+                return CARROT;
+            case CHORUS_FLOWER:
+                return CHORUS_PLANT;
+            case KELP:
+                return KELP;
+            case MELON_STEM:
+                return MELON;
+            case NETHER_WART:
+                return NETHER_WART;
+            case POTATOES:
+                return POTATO;
+            case PUMPKIN_STEM:
+                return PUMPKIN;
+            case SUGAR_CANE:
+                return SUGAR_CANE;
+            case WHEAT:
+                return WHEAT;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * @return the seed of this crop.
+     */
+    public CompatibleMaterial getCropSeed() {
+        switch (this) {
+            case BEETROOTS:
+                return BEETROOT_SEEDS;
+            case CACTUS:
+                return CACTUS;
+            case CARROTS:
+                return CARROT;
+            case CHORUS_PLANT:
+                return CHORUS_FLOWER;
+            case KELP:
+                return KELP;
+            case MELON_STEM:
+                return MELON_SEEDS;
+            case NETHER_WART:
+                return NETHER_WART;
+            case POTATOES:
+                return POTATO;
+            case PUMPKIN_STEM:
+                return PUMPKIN_SEEDS;
+            case SUGAR_CANE:
+                return SUGAR_CANE;
+            case WHEAT:
+                return WHEAT_SEEDS;
+            default:
+                return null;
+        }
     }
 
     public static CompatibleMaterial getSpawnEgg(EntityType type) {
