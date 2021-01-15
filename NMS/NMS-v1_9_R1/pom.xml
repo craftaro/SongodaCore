@@ -13,16 +13,10 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!--dependency>
-            <groupId>com.destroystokyo.papermc</groupId>
-            <artifactId>paper</artifactId>
-            <version>1.8.8</version>
-            <scope>provided</scope>
-        </dependency-->
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.9.2-R0.1-20190912.192509-1</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.9.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

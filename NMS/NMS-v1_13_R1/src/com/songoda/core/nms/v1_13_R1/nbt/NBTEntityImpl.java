@@ -59,7 +59,7 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
 
     @Override
     public void addExtras() {
-        MinecraftKey key = EntityTypes.REGISTRY.b(nmsEntity.getEntityType());
+        MinecraftKey key = EntityTypes.REGISTRY.b(nmsEntity.P()); // Changed in 1.13
         if (key != null)
             compound.setString("entity_type", key.toString()); // Changed in 1.13
     }

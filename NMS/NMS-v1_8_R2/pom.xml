@@ -14,9 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.8.3-R0.1-20190912.192032-1</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

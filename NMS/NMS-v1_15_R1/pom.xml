@@ -14,9 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.destroystokyo.papermc</groupId>
-            <artifactId>paper</artifactId>
-            <version>1.15.1</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.15</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
