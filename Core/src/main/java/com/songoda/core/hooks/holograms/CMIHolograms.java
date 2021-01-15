@@ -20,7 +20,7 @@ public class CMIHolograms extends Holograms {
     CMI cmi;
     HologramManager cmiHologramManager;
     HashSet<String> ourHolograms = new HashSet();
-    Method cmi_CMIHologram_getLines;
+    Method cmi_CMIHologram_getLines, getLines;
 
     {
         try {
@@ -89,15 +89,15 @@ public class CMIHolograms extends Holograms {
         if (holo != null) {
             // only update if there is a change to the text
             List<String> holoLines;
-            if (cmi_CMIHologram_getLines != null) {
-                try {
+            try {
+                if (cmi_CMIHologram_getLines != null) {
                     holoLines = Arrays.asList((String[]) cmi_CMIHologram_getLines.invoke(holo));
-                } catch (Exception ex) {
-                    Logger.getLogger(CMIHolograms.class.getName()).log(Level.SEVERE, "CMI Hologram error!", ex);
-                    holoLines = Collections.EMPTY_LIST;
+                } else {
+                    holoLines = (List<String>) cmi_CMIHologram_getLines.invoke(holo);
                 }
-            } else {
-                holoLines = holo.getLines();
+            } catch (Exception ex) {
+                Logger.getLogger(CMIHolograms.class.getName()).log(Level.SEVERE, "CMI Hologram error!", ex);
+                holoLines = Collections.EMPTY_LIST;
             }
             boolean isChanged = lines.size() != holoLines.size();
             if (!isChanged) {
