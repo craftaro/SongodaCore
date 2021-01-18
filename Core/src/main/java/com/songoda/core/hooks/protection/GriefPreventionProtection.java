@@ -18,17 +18,29 @@ public class GriefPreventionProtection extends Protection {
 
     @Override
     public boolean canPlace(Player player, Location location) {
-        return getClaim(location).allowBuild(player, location.getBlock().getType()) == null;
+        Claim claim = getClaim(location);
+        if (claim == null) {
+            return true;
+        }
+        return claim.allowBuild(player, location.getBlock().getType()) == null;
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        return getClaim(location).allowBreak(player, location.getBlock().getType()) == null;
+        Claim claim = getClaim(location);
+        if (claim == null) {
+            return true;
+        }
+        return claim.allowBreak(player, location.getBlock().getType()) == null;
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return getClaim(location).allowContainers(player) == null;
+        Claim claim = getClaim(location);
+        if (claim == null) {
+            return true;
+        }
+        return claim.allowContainers(player) == null;
     }
 
     private Claim getClaim(Location location) {
