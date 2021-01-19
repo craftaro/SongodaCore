@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.songoda</groupId>
         <artifactId>SongodaCore-Modules</artifactId>
-        <version>2.4.37</version>
+        <version>2.4.38</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -366,6 +366,12 @@
             <groupId>com.palmergames</groupId>
             <artifactId>Towny</artifactId>
             <version>0.96.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>bentobox</artifactId>
+            <version>1.15.5</version>
             <scope>provided</scope>
         </dependency>
 
