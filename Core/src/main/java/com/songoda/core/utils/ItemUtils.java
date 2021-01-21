@@ -7,6 +7,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.nms.NmsManager;
 import org.apache.commons.lang.StringUtils;
@@ -120,21 +121,38 @@ public class ItemUtils {
     }
 
     public static ItemStack addDamage(ItemStack item, int damage) {
-        if (item == null) {
+        return addDamage(null, item, damage);
+    }
+
+    public static ItemStack addDamage(Player player, ItemStack item, int damage) {
+        if (item == null)
             return null;
-        } else if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
-                        ? NmsManager.getNbt().of(item).has("Unbreakable")
-                        : item.getItemMeta().isUnbreakable()) {
+
+        int maxDurability = item.getType().getMaxDurability();
+        int durability;
+
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
+                ? NmsManager.getNbt().of(item).has("Unbreakable")
+                : item.getItemMeta().isUnbreakable()) {
             return item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof Damageable) {
-                ((Damageable) meta).setDamage(((Damageable) meta).getDamage() + damage);
+                Damageable damageable = ((Damageable) meta);
+                damageable.setDamage(((Damageable) meta).getDamage() + damage);
                 item.setItemMeta(meta);
+                durability = damageable.getDamage();
+            } else {
+                return item;
             }
         } else {
             item.setDurability((short) Math.max(0, item.getDurability() + damage));
+            durability = item.getDurability();
+        }
+        if (durability >= maxDurability && player != null) {
+            player.getInventory().removeItem(item);
+            CompatibleSound.ENTITY_ITEM_BREAK.play(player);
         }
         return item;
     }
