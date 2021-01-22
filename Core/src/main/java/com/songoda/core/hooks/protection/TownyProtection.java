@@ -23,7 +23,7 @@ public class TownyProtection extends Protection {
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.ITEM_USE);
+        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.SWITCH);
     }
 
     @Override
