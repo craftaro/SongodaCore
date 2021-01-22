@@ -214,7 +214,10 @@ public class PlayerUtils {
 
             if (index == -1 || index == perm.length()) continue;
 
-            final int number = Integer.parseInt(perm.substring(perm.lastIndexOf('.') + 1));
+            String numStr = perm.substring(perm.lastIndexOf('.') + 1);
+            if (numStr.equals("*")) return def;
+
+            final int number = Integer.parseInt(numStr);
 
             if (number >= highest) {
                 highest = number;
