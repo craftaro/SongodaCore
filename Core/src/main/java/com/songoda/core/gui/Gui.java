@@ -635,7 +635,9 @@ public class Gui {
     public void reset() {
         if (inventory != null)
             inventory.clear();
+
         setActionForRange(0, 53, null);
+        cellItems.clear();
         update();
     }
 
@@ -793,9 +795,9 @@ public class Gui {
     }
 
     public void update() {
-        if (inventory == null) {
+        if (inventory == null)
             return;
-        }
+
         final int cells = rows * inventoryType.columns;
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
@@ -813,7 +815,7 @@ public class Gui {
     }
 
     protected boolean onClickOutside(@NotNull GuiManager manager, @NotNull Player player, @NotNull InventoryClickEvent event) {
-        return dropper != null ? dropper.onDrop(new GuiDropItemEvent(manager, this, player, event)) : true;
+        return dropper == null || dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
     }
 
     protected boolean onClick(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory inventory, @NotNull InventoryClickEvent event) {
