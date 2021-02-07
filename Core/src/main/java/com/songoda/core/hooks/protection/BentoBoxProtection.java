@@ -59,6 +59,6 @@ public class BentoBoxProtection extends Protection {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return islandsManager != null;
     }
 }
