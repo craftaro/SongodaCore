@@ -17,19 +17,20 @@ import java.util.logging.Logger;
 
 public class CMIHolograms extends Holograms {
 
-    CMI cmi;
-    HologramManager cmiHologramManager;
-    HashSet<String> ourHolograms = new HashSet();
-    Method cmi_CMIHologram_getLines, getLines;
+    private static CMI cmi;
+    private static HologramManager cmiHologramManager;
+    private static HashSet<String> ourHolograms = new HashSet();
+    private static Method cmi_CMIHologram_getLines;
+    private static boolean useOldMethod;
 
-    {
+    static {
         try {
-            // test if we need to watch if the lines is an array
-            if (CMIHologram.class.getDeclaredField("lines").getDeclaringClass() == String[].class) {
-                cmi_CMIHologram_getLines = CMIHologram.class.getMethod("getLines");
-            }
-        } catch (Exception ex) {
+            useOldMethod = CMIHologram.class.getDeclaredField("lines").getDeclaringClass() == String[].class;
+            cmi_CMIHologram_getLines = CMIHologram.class.getMethod("getLines");
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
+
     }
 
     public CMIHolograms(Plugin plugin) {
@@ -90,7 +91,7 @@ public class CMIHolograms extends Holograms {
             // only update if there is a change to the text
             List<String> holoLines;
             try {
-                if (cmi_CMIHologram_getLines != null) {
+                if (useOldMethod) {
                     holoLines = Arrays.asList((String[]) cmi_CMIHologram_getLines.invoke(holo));
                 } else {
                     holoLines = (List<String>) cmi_CMIHologram_getLines.invoke(holo);
