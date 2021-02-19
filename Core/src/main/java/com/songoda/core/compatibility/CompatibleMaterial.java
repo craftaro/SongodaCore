@@ -1464,9 +1464,10 @@ public enum CompatibleMaterial {
             if (legacyBlock != null) {
                 return lookupMap.get(legacyBlock.name());
             }
+            CompatibleMaterial withData = lookupMap.get(mat.name() + ":" + block.getData());
+            return withData == null ? lookupMap.get(mat.name()) : withData;
         }
-        CompatibleMaterial withData = lookupMap.get(mat.name() + ":" + block.getData());
-        return withData == null ? lookupMap.get(mat.name()) : withData;
+        return lookupMap.get(mat.name());
     }
 
     /**
