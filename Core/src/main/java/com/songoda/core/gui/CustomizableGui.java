@@ -1,6 +1,7 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSection;
 import com.songoda.core.gui.methods.Clickable;
@@ -624,7 +625,8 @@ public class CustomizableGui extends Gui {
         public boolean applyItem(ItemStack item) {
             if (item == null) return false;
             item.setType(this.item.getMaterial());
-            item.setDurability(this.item.getData());
+            if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_13))
+                item.setDurability(this.item.getData());
             applyMeta(item);
             return true;
         }
