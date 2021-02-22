@@ -141,8 +141,13 @@ public enum CompatibleBiome {
                 methodGetBiomeIndex = classChunk.getMethod("getBiomeIndex");
                 methodSetBiome = classBiomeStorage.getMethod("setBiome", int.class, int.class, int.class, classBiomeBase);
 
-
-                fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
+                try {
+                    // If 1.16.5
+                    fieldStorageRegistry = classBiomeStorage.getDeclaredField("registry");
+                } catch (NoSuchFieldException e) {
+                    // If less than 1.16.5
+                    fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
+                }
                 fieldStorageRegistry.setAccessible(true);
             } catch (NoSuchMethodException | NoSuchFieldException e) {
                 e.printStackTrace();
