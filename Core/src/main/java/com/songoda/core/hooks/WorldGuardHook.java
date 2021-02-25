@@ -92,6 +92,16 @@ public class WorldGuardHook {
     }
 
     /**
+     * Check to see if the build flag is set and is set to ALLOW
+     *
+     * @param loc Location to check
+     * @return false if the build flag is not set for this region, or is set to DENY
+     */
+    public static boolean isBuildAllowed(@NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "build"), Boolean.TRUE);
+    }
+
+    /**
      * Check to see if the use flag is set and is set to ALLOW
      *
      * @param loc Location to check
