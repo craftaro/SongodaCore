@@ -1,8 +1,11 @@
 package com.songoda.core.hooks.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -14,6 +17,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -217,9 +221,13 @@ public class WorldGuardFlagHandler {
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Location loc, String flag) {
+    public static Boolean getBooleanFlag(Location loc, String flag, Player... optionalPlayer) {
         if (!wgPlugin) {
             return null;
+        }
+        LocalPlayer player = null;
+        if(optionalPlayer.length == 1) {
+        	player = WorldGuardPlugin.inst().wrapPlayer(optionalPlayer[0]);
         }
         Object flagObj = getFlag(flag);
 
@@ -232,7 +240,7 @@ public class WorldGuardFlagHandler {
         if (flagObj instanceof StateFlag) {
             RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
             //return query.testState(BukkitAdapter.adapt(loc), (RegionAssociable) null, (StateFlag) flagObj);
-            State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(null, (StateFlag) flagObj);
+            State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(player, (StateFlag) flagObj);
             return result != null ? result == State.ALLOW : null;
         }
         return null;
