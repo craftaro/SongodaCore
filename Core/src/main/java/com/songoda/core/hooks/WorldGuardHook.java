@@ -4,6 +4,7 @@ import com.songoda.core.hooks.worldguard.WorldGuardFlagHandler;
 import com.songoda.core.hooks.worldguard.WorldGuardRegionHandler;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,8 +98,8 @@ public class WorldGuardHook {
      * @param loc Location to check
      * @return false if the build flag is not set for this region, or is set to DENY
      */
-    public static boolean isBuildAllowed(@NotNull Location loc) {
-        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "build"), Boolean.TRUE);
+    public static boolean isBuildAllowed(@NotNull Player player, @NotNull Location loc) {
+        return canHook && Objects.equals(WorldGuardFlagHandler.getBooleanFlag(loc, "build", player), Boolean.TRUE);
     }
 
     /**
