@@ -9,6 +9,8 @@ import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -20,6 +22,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -48,7 +51,7 @@ public class SongodaCore {
      * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
      */
-    private final static int coreRevision = 7;
+    private final static int coreRevision = 8;
 
     /**
      * This has been added as of Rev 6
@@ -82,6 +85,7 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon, String coreVersion) {
+        boolean showAds = false;
         if (INSTANCE == null) {
             // First: are there any other instances of SongodaCore active?
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
@@ -104,6 +108,7 @@ public class SongodaCore {
                                 INSTANCE.shadingListener = new ShadedEventListener();
                                 Bukkit.getPluginManager().registerEvents(INSTANCE.shadingListener, plugin);
                             }
+                            return;
                         } else {
                             // we are newer than the registered service: steal all of its registrations
                             // grab the old core's registrations
@@ -116,7 +121,8 @@ public class SongodaCore {
                             // register ourselves as the SongodaCore service!
                             INSTANCE = new SongodaCore(plugin);
                             INSTANCE.init();
-                            INSTANCE.register(plugin, pluginID, icon, coreVersion);
+                            PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
+                            Bukkit.getScheduler().runTaskLater(plugin, p -> runAds(info), 100L);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
                             if (!otherPlugins.isEmpty()) {
@@ -144,9 +150,12 @@ public class SongodaCore {
             // register ourselves as the SongodaCore service!
             INSTANCE = new SongodaCore(plugin);
             INSTANCE.init();
+            showAds = true;
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        INSTANCE.register(plugin, pluginID, icon, coreVersion);
+        PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
+        if (showAds)
+            Bukkit.getScheduler().runTaskLater(plugin, p -> runAds(info), 100L);
     }
 
     SongodaCore() {
@@ -193,15 +202,38 @@ public class SongodaCore {
         loginListener = null;
     }
 
+    private static void runAds(PluginInfo pluginInfo) {
+        if (registeredPlugins.stream().noneMatch(p -> p.getJavaPlugin().getName().toLowerCase().contains("ultimate")))
+            return;
+
+        JSONObject json = pluginInfo.getJson();
+        JSONArray ads = (JSONArray) json.get("ads");
+
+        if (ads == null || ads.isEmpty())
+            return;
+
+        ConsoleCommandSender console = Bukkit.getConsoleSender();
+        console.sendMessage(String.format("%s---------------------- %sSongoda+ ads %s----------------------", ChatColor.GRAY.toString(),
+                ChatColor.LIGHT_PURPLE.toString(), ChatColor.GRAY.toString()));
+        for (Object o : ads) {
+            JSONObject ad = (JSONObject) o;
+            console.sendMessage(String.format("%s" + ad.get("patron") + " - " + ad.get("link")
+                    + " - " + ad.get("descr"), ChatColor.DARK_PURPLE));
+        }
+        console.sendMessage(String.format("%s---------- %sPut your ad here patreon.songoda.com %s----------", ChatColor.GRAY.toString(),
+                ChatColor.LIGHT_PURPLE.toString(), ChatColor.GRAY.toString()));
+    }
+
     private ArrayList<BukkitTask> tasks = new ArrayList();
 
-    private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
+    private PluginInfo register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
+        return info;
     }
 
     private void update(PluginInfo plugin) {
