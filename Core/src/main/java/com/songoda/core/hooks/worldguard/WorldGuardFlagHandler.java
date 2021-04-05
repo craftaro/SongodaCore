@@ -214,6 +214,10 @@ public class WorldGuardFlagHandler {
         return flagObj;
     }
 
+    public static Boolean getBooleanFlag(Location loc, String flag) {
+        return getBooleanFlag(loc, flag, null);
+    }
+
     /**
      * Checks this location to see what this flag is set to
      *
@@ -221,14 +225,13 @@ public class WorldGuardFlagHandler {
      * @param flag ALLOW/DENY flag to check
      * @return flag state, or null if undefined
      */
-    public static Boolean getBooleanFlag(Location loc, String flag, Player... optionalPlayer) {
+    public static Boolean getBooleanFlag(Location loc, String flag, Player optionalPlayer) {
         if (!wgPlugin) {
             return null;
         }
-        LocalPlayer player = null;
-        if(optionalPlayer.length == 1) {
-        	player = WorldGuardPlugin.inst().wrapPlayer(optionalPlayer[0]);
-        }
+
+        LocalPlayer player = optionalPlayer != null ? WorldGuardPlugin.inst().wrapPlayer(optionalPlayer) : null;
+
         Object flagObj = getFlag(flag);
 
         // There's a different way to get this in the old version
@@ -239,7 +242,6 @@ public class WorldGuardFlagHandler {
         // so, what's up?
         if (flagObj instanceof StateFlag) {
             RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-            //return query.testState(BukkitAdapter.adapt(loc), (RegionAssociable) null, (StateFlag) flagObj);
             State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(player, (StateFlag) flagObj);
             return result != null ? result == State.ALLOW : null;
         }
