@@ -64,7 +64,6 @@ public class TextUtils {
         return lore;
     }
 
-
     /**
      * Convert a string to an invisible colored string that's lore-safe <br />
      * (Safe to use as lore) <br />
@@ -111,7 +110,7 @@ public class TextUtils {
         return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
     }
 
-    protected static final List<Charset> supportedCharsets = new ArrayList();
+    protected static final List<Charset> supportedCharsets = new ArrayList<>();
 
     static {
         supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
@@ -122,20 +121,22 @@ public class TextUtils {
         try {
             supportedCharsets.add(Charset.forName("windows-1253"));
             supportedCharsets.add(Charset.forName("ISO-8859-7"));
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         } // UnsupportedCharsetException technically can be thrown, but can also be ignored
         supportedCharsets.add(StandardCharsets.US_ASCII);
     }
 
     public static Charset detectCharset(File f, Charset def) {
         byte[] buffer = new byte[2048];
-        int read = -1;
+        int read;
+
         // read the first 2kb of the file and test the file's encoding
         try (FileInputStream input = new FileInputStream(f)) {
             read = input.read(buffer);
         } catch (Exception ex) {
             return null;
         }
+
         return read != -1 ? detectCharset(buffer, read, def) : def;
     }
 
@@ -172,6 +173,7 @@ public class TextUtils {
                 return charset;
             }
         }
+
         return def;
     }
 
