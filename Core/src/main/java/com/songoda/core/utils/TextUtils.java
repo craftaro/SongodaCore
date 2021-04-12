@@ -6,9 +6,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TextUtils {
+    private static final List<Charset> supportedCharsets = new ArrayList<>();
+
+    static {
+        supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
+        supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
+//        supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
+//        supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
+//        supportedCharsets.add(StandardCharsets.UTF_16);
+
+        try {
+            supportedCharsets.add(Charset.forName("windows-1253"));
+            supportedCharsets.add(Charset.forName("ISO-8859-7"));
+        } catch (Exception ignore) {    // UnsupportedCharsetException technically can be thrown, but can also be ignored
+        }
+
+        supportedCharsets.add(StandardCharsets.US_ASCII);
+    }
 
     public static String formatText(String text) {
         return formatText(text, false);
@@ -64,7 +82,6 @@ public class TextUtils {
         return lore;
     }
 
-
     /**
      * Convert a string to an invisible colored string that's lore-safe <br />
      * (Safe to use as lore) <br />
@@ -111,78 +128,78 @@ public class TextUtils {
         return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
     }
 
-    protected static final List<Charset> supportedCharsets = new ArrayList();
-
-    static {
-        supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
-        supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
-        //supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
-        //supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
-        //supportedCharsets.add(StandardCharsets.UTF_16);
-        try {
-            supportedCharsets.add(Charset.forName("windows-1253"));
-            supportedCharsets.add(Charset.forName("ISO-8859-7"));
-        } catch (Exception e) {
-        } // UnsupportedCharsetException technically can be thrown, but can also be ignored
-        supportedCharsets.add(StandardCharsets.US_ASCII);
-    }
-
     public static Charset detectCharset(File f, Charset def) {
         byte[] buffer = new byte[2048];
-        int read = -1;
-        // read the first 2kb of the file and test the file's encoding
+        int len;
+
+        // Read the first 2KiB of the file and test the file's encoding
         try (FileInputStream input = new FileInputStream(f)) {
-            read = input.read(buffer);
+            len = input.read(buffer);
         } catch (Exception ex) {
             return null;
         }
-        return read != -1 ? detectCharset(buffer, read, def) : def;
+
+        return len != -1 ? detectCharset(buffer, len, def) : def;
     }
 
     public static Charset detectCharset(BufferedInputStream reader, Charset def) {
         byte[] buffer = new byte[2048];
-        int read;
+        int len;
+
+        // Read the first 2KiB of the file and test the file's encoding
         try {
             reader.mark(2048);
-            read = reader.read(buffer);
+            len = reader.read(buffer);
             reader.reset();
         } catch (Exception ex) {
             return null;
         }
-        return read != -1 ? detectCharset(buffer, read, def) : def;
+
+        return len != -1 ? detectCharset(buffer, len, def) : def;
     }
 
     public static Charset detectCharset(byte[] data, int len, Charset def) {
         // check the file header
         if (len > 4) {
-            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) {
+            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) { // FF FE 00 00 is UTF-32LE
                 return StandardCharsets.UTF_16LE;
-                // FF FE 00 00 is UTF-32LE
-            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {
+            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {  // 00 00 FE FF is UTF-32BE
                 return StandardCharsets.UTF_16BE;
-                // 00 00 FE FF is UTF-32BE
             } else if (data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { // UTF-8 with BOM, same sig as ISO-8859-1
                 return StandardCharsets.UTF_8;
             }
         }
 
-        // iterate through sets to test, and return the first that is ok
+        // Look for last Whitespace Character and ignore potentially broken words/multi-byte characters
+        int newLen = len;
+        for (; newLen > 0; --newLen) {
+            if (Character.isWhitespace(data[newLen - 1])) break;
+        }
+
+        // Buffer got too small? => checking whole buffer
+        if (len > 512 && newLen < 512) {
+            newLen = len;
+        }
+
+        ByteBuffer bBuff = ByteBuffer.wrap(data, 0, newLen).asReadOnlyBuffer();
+
+        // Check through a list of charsets and return the first one that could decode the buffer
         for (Charset charset : supportedCharsets) {
-            if (charset != null && isCharset(data, len, charset)) {
+            if (charset != null && isCharset(bBuff, charset)) {
                 return charset;
             }
+
+            bBuff.rewind();
         }
+
         return def;
     }
 
-    public static boolean isCharset(byte[] data, int len, Charset charset) {
-        try {
-            CharsetDecoder decoder = charset.newDecoder();
-            decoder.reset();
-            decoder.decode(ByteBuffer.wrap(data));
-            return true;
-        } catch (CharacterCodingException e) {
-        }
-        return false;
+    public static boolean isCharset(ByteBuffer data, Charset charset) {
+        CharsetDecoder decoder = charset.newDecoder();
+        decoder.onMalformedInput(CodingErrorAction.REPORT);
+        decoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+
+        return decoder.decode(data, CharBuffer.allocate(data.capacity()), true).isUnderflow();
     }
 }
