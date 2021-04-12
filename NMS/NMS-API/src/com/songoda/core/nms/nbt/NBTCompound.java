@@ -21,6 +21,8 @@ public interface NBTCompound {
 
     NBTCompound set(String tag, int[] i);
 
+    NBTCompound set(String tag, byte[] b);
+
     NBTCompound set(String tag, UUID u);
 
     NBTCompound remove(String tag);
@@ -44,6 +46,8 @@ public interface NBTCompound {
     byte getByte(String tag);
 
     int[] getIntArray(String tag);
+
+    byte[] getByteArray(String tag);
 
     NBTCompound getCompound(String tag);
 

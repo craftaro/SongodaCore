@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
 
-    private net.minecraft.server.v1_8_R1.ItemStack nmsItem;
+    private final net.minecraft.server.v1_8_R1.ItemStack nmsItem;
 
     public NBTItemImpl(net.minecraft.server.v1_8_R1.ItemStack nmsItem) {
         super(nmsItem != null && nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound());
