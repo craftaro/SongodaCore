@@ -20,6 +20,8 @@ public interface NBTObject {
 
     int[] asIntArray();
 
+    byte[] asByteArray();
+
     Set<String> getKeys();
 
     NBTCompound asCompound();

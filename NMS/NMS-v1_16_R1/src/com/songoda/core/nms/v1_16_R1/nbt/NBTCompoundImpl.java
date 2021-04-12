@@ -75,6 +75,12 @@ public class NBTCompoundImpl implements NBTCompound {
     }
 
     @Override
+    public NBTCompound set(String tag, byte[] b) {
+        compound.setByteArray(tag, b);
+        return this;
+    }
+
+    @Override
     public NBTCompound set(String tag, UUID u) {
         compound.a(tag, u);
         return this;
@@ -134,6 +140,11 @@ public class NBTCompoundImpl implements NBTCompound {
     @Override
     public int[] getIntArray(String tag) {
         return getNBTObject(tag).asIntArray();
+    }
+
+    @Override
+    public byte[] getByteArray(String tag) {
+        return new byte[0];
     }
 
     @Override

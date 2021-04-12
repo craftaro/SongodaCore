@@ -57,6 +57,11 @@ public class NBTObjectImpl implements NBTObject {
     }
 
     @Override
+    public byte[] asByteArray() {
+        return compound.getByteArray(tag);
+    }
+
+    @Override
     public NBTCompound asCompound() {
         return new NBTCompoundImpl(compound.getCompound(tag));
     }

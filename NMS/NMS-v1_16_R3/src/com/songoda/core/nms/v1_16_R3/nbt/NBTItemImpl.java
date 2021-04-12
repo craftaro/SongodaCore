@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
 
-    private net.minecraft.server.v1_16_R3.ItemStack nmsItem;
+    private final net.minecraft.server.v1_16_R3.ItemStack nmsItem;
 
     public NBTItemImpl(net.minecraft.server.v1_16_R3.ItemStack nmsItem) {
         super(nmsItem != null && nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound());
@@ -26,29 +26,6 @@ public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
         } else {
             return CraftItemStack.asBukkitCopy(nmsItem);
         }
-    }
-
-
-    @Override
-    public byte[] serialize(String... exclusions) {
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); BukkitObjectOutputStream bukkitStream = new BukkitObjectOutputStream(stream)) {
-            bukkitStream.writeObject(nmsItem);
-            return stream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public void deSerialize(byte[] serialized) {
-        try (BukkitObjectInputStream stream = new BukkitObjectInputStream(
-                new ByteArrayInputStream(serialized))) {
-            nmsItem = (net.minecraft.server.v1_16_R3.ItemStack) stream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.songoda.core.nms.v1_8_R3.nbt;
 
+import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTEntity;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityTypes;
@@ -63,6 +64,17 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     public org.bukkit.entity.Entity reSpawn(Location location) {
         nmsEntity.dead = true;
         return spawn(location);
+    }
+
+    @Override
+    public NBTCompound set(String tag, byte[] b) {
+        compound.setByteArray(tag, b);
+        return this;
+    }
+
+    @Override
+    public byte[] getByteArray(String tag) {
+        return new byte[0];
     }
 
     @Override
