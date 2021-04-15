@@ -56,7 +56,7 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.51";
+    private final static String coreVersion = "2.4.52";
 
     /**
      * This is specific to the website api
@@ -122,7 +122,7 @@ public class SongodaCore {
                             INSTANCE = new SongodaCore(plugin);
                             INSTANCE.init();
                             PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
-                            Bukkit.getScheduler().runTaskLater(plugin, p -> runAds(info), 100L);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> runAds(info), 100L);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
                             if (!otherPlugins.isEmpty()) {
@@ -155,7 +155,7 @@ public class SongodaCore {
         }
         PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
         if (showAds)
-            Bukkit.getScheduler().runTaskLater(plugin, p -> runAds(info), 100L);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> runAds(info), 100L);
     }
 
     SongodaCore() {
