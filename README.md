@@ -18,7 +18,7 @@ Maven Information
 <dependency>
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore</artifactId>
-    <version>2.4.52</version>
+    <version>2.4.53</version>
     <scope>provided</scope>
 </dependency>
  ```
@@ -37,6 +37,6 @@ repositories {
  * Artifact:
 ```groovy
 dependencies {
-    compileOnly 'com.songoda:SongodaCore:2.4.52'
+    compileOnly 'com.songoda:SongodaCore:2.4.53'
 }
 ```
