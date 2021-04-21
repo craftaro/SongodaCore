@@ -5,7 +5,10 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class HolographicDisplaysHolograms extends Holograms {
 
@@ -46,28 +49,45 @@ public class HolographicDisplaysHolograms extends Holograms {
 
     @Override
     public void updateHologram(Location location, List<String> lines) {
-        location = fixLocation(location);
-        for (Hologram hologram : HologramsAPI.getHolograms(plugin)) {
-            if (hologram.getX() != location.getX()
-                    || hologram.getY() != location.getY()
-                    || hologram.getZ() != location.getZ()) continue;
-            // only update if there is a change to the text
-            boolean isChanged = lines.size() != hologram.size();
-            if (!isChanged) {
-                // double-check the lines
-                for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                    isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
+        bulkUpdateHolograms(Collections.singletonMap(location, lines));
+    }
+
+    @Override
+    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
+        Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
+
+        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
+            Location location = fixLocation(entry.getKey());
+            List<String> lines = entry.getValue();
+
+            for (Hologram hologram : holograms) {
+                if (hologram.getX() != location.getX()
+                        || hologram.getY() != location.getY()
+                        || hologram.getZ() != location.getZ()) continue;
+
+                // only update if there is a change to the text
+                boolean isChanged = lines.size() != hologram.size();
+
+                if (!isChanged) {
+                    // double-check the lines
+                    for (int i = 0; !isChanged && i < lines.size(); ++i) {
+                        isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
+                    }
                 }
-            }
-            if (isChanged) {
-                hologram.clearLines();
-                for (String line : lines) {
-                    hologram.appendTextLine(line);
+
+                if (isChanged) {
+                    hologram.clearLines();
+
+                    for (String line : lines) {
+                        hologram.appendTextLine(line);
+                    }
                 }
+
+                return;
             }
-            return;
+
+            createAt(location, lines);
         }
-        createAt(location, lines);
     }
 
     private void createAt(Location location, List<String> lines) {
@@ -79,7 +99,6 @@ public class HolographicDisplaysHolograms extends Holograms {
 
     @Override
     public void removeAllHolograms() {
-        HologramsAPI.getHolograms(plugin).stream().forEach(x -> x.delete());
+        HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
     }
-
 }

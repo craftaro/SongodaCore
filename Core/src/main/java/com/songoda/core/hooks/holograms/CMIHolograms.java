@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,6 @@ public class CMIHolograms extends Holograms {
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
         }
-
     }
 
     public CMIHolograms(Plugin plugin) {
@@ -116,6 +116,13 @@ public class CMIHolograms extends Holograms {
         createAt(location, lines);
     }
 
+    @Override
+    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
+        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
+            updateHologram(entry.getKey(), entry.getValue());
+        }
+    }
+
     private String locStr(Location loc) {
         return String.format("%s-%d-%d-%d", loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
@@ -133,5 +140,4 @@ public class CMIHolograms extends Holograms {
             ourHolograms.add(id);
         }
     }
-
 }

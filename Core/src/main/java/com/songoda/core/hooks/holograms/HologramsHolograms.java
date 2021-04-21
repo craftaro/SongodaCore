@@ -10,11 +10,12 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class HologramsHolograms extends Holograms {
 
     HologramPlugin hologramPlugin;
-    HashSet<String> ourHolograms = new HashSet();
+    HashSet<String> ourHolograms = new HashSet<>();
 
     public HologramsHolograms(Plugin plugin) {
         super(plugin);
@@ -69,16 +70,20 @@ public class HologramsHolograms extends Holograms {
     public void updateHologram(Location location, List<String> lines) {
         location = fixLocation(location);
         Hologram hologram = hologramPlugin.getHologramManager().getHologram(locStr(location));
+
         if (hologram != null) {
             hologram.spawn();
+
             // only update if there is a change to the text
             boolean isChanged = lines.size() != hologram.getLines().size();
+
             if (!isChanged) {
                 // double-check the lines
                 for (int i = 0; !isChanged && i < lines.size(); ++i) {
                     isChanged = !hologram.getLine(i).getRaw().equals(lines.get(i));
                 }
             }
+
             if (isChanged) {
                 for (HologramLine line : hologram.getLines().toArray(new HologramLine[0])) {
                     hologram.removeLine(line);
@@ -87,9 +92,18 @@ public class HologramsHolograms extends Holograms {
                     hologram.addLine(new TextLine(hologram, line));
                 }
             }
+
             return;
         }
+
         createAt(location, lines);
+    }
+
+    @Override
+    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
+        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
+            updateHologram(entry.getKey(), entry.getValue());
+        }
     }
 
     private String locStr(Location loc) {
@@ -97,7 +111,6 @@ public class HologramsHolograms extends Holograms {
     }
 
     private void createAt(Location location, List<String> lines) {
-
         final String id = locStr(location);
         Hologram hologram = new Hologram(id, location);
         for (String line : lines) {
@@ -109,5 +122,4 @@ public class HologramsHolograms extends Holograms {
         if (!ourHolograms.contains(id))
             ourHolograms.add(id);
     }
-
 }
