@@ -20,7 +20,7 @@ public class CMIHolograms extends Holograms {
 
     private static CMI cmi;
     private static HologramManager cmiHologramManager;
-    private static HashSet<String> ourHolograms = new HashSet();
+    private static HashSet<String> ourHolograms = new HashSet<>();
     private static Method cmi_CMIHologram_getLines;
     private static boolean useOldMethod;
 
@@ -98,7 +98,7 @@ public class CMIHolograms extends Holograms {
                 }
             } catch (Exception ex) {
                 Logger.getLogger(CMIHolograms.class.getName()).log(Level.SEVERE, "CMI Hologram error!", ex);
-                holoLines = Collections.EMPTY_LIST;
+                holoLines = Collections.emptyList();
             }
             boolean isChanged = lines.size() != holoLines.size();
             if (!isChanged) {
@@ -128,7 +128,6 @@ public class CMIHolograms extends Holograms {
     }
 
     private void createAt(Location location, List<String> lines) {
-
         final String id = locStr(location);
         CMIHologram holo = new CMIHologram(id, location);
         holo.setLines(lines);
@@ -136,8 +135,6 @@ public class CMIHolograms extends Holograms {
         cmiHologramManager.addHologram(holo);
         holo.update();
 
-        if (!ourHolograms.contains(id)) {
-            ourHolograms.add(id);
-        }
+        ourHolograms.add(id);
     }
 }

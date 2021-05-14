@@ -2,6 +2,7 @@ package com.songoda.core.hooks.holograms;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
@@ -56,6 +57,7 @@ public class HolographicDisplaysHolograms extends Holograms {
     public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
         Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
 
+        outerFor:
         for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
             Location location = fixLocation(entry.getKey());
             List<String> lines = entry.getValue();
@@ -71,7 +73,8 @@ public class HolographicDisplaysHolograms extends Holograms {
                 if (!isChanged) {
                     // double-check the lines
                     for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                        isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
+                        isChanged = !(hologram.getLine(i) instanceof TextLine) ||
+                                !((TextLine) hologram.getLine(i)).getText().equals(lines.get(i));
                     }
                 }
 
@@ -83,7 +86,7 @@ public class HolographicDisplaysHolograms extends Holograms {
                     }
                 }
 
-                return;
+                continue outerFor;
             }
 
             createAt(location, lines);
