@@ -202,4 +202,9 @@ public class NBTCompoundImpl implements NBTCompound {
         // None
     }
 
+    @Override
+    public String toString() {
+        return compound.toString();
+    }
+
 }
