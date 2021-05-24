@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,11 +68,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public List<String> getSubCommands(String command) {
         SimpleNestedCommand nested = command == null ? null : commands.get(command.toLowerCase());
-        return nested == null ? Collections.EMPTY_LIST : nested.children.keySet().stream().collect(Collectors.toList());
+        return nested == null ? Collections.emptyList() : new ArrayList<>(nested.children.keySet());
     }
 
     public Set<AbstractCommand> getAllCommands() {
-        HashSet<AbstractCommand> all = new HashSet();
+        HashSet<AbstractCommand> all = new HashSet<>();
         commands.values().stream()
                 .filter(c -> c.parent != null && !all.contains(c.parent))
                 .forEach(c -> {
@@ -90,7 +91,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public SimpleNestedCommand registerCommandDynamically(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
-        abstractCommand.getCommands().stream().forEach(cmd -> {
+        abstractCommand.getCommands().forEach(cmd -> {
             CommandManager.registerCommandDynamically(plugin, cmd, this, this);
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
@@ -106,7 +107,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public SimpleNestedCommand addCommand(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
-        abstractCommand.getCommands().stream().forEach(cmd -> {
+        abstractCommand.getCommands().forEach(cmd -> {
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
             if (pcmd != null) {
@@ -284,7 +285,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private List<String> fetchList(AbstractCommand abstractCommand, String[] args, CommandSender sender) {
