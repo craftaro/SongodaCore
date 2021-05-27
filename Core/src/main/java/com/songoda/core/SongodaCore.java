@@ -85,7 +85,6 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon, String coreVersion) {
-        boolean showAds = false;
         if (INSTANCE == null) {
             // First: are there any other instances of SongodaCore active?
             for (Class<?> clazz : Bukkit.getServicesManager().getKnownServices()) {
@@ -121,8 +120,6 @@ public class SongodaCore {
                             // register ourselves as the SongodaCore service!
                             INSTANCE = new SongodaCore(plugin);
                             INSTANCE.init();
-                            PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> runAds(info), 100L);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
                             if (!otherPlugins.isEmpty()) {
@@ -150,12 +147,8 @@ public class SongodaCore {
             // register ourselves as the SongodaCore service!
             INSTANCE = new SongodaCore(plugin);
             INSTANCE.init();
-            showAds = true;
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
-        PluginInfo info = INSTANCE.register(plugin, pluginID, icon, coreVersion);
-        if (showAds)
-            Bukkit.getScheduler().runTaskLater(plugin, () -> runAds(info), 100L);
     }
 
     SongodaCore() {
@@ -200,28 +193,6 @@ public class SongodaCore {
         registeredPlugins.clear();
         commandManager = null;
         loginListener = null;
-    }
-
-    private static void runAds(PluginInfo pluginInfo) {
-        if (registeredPlugins.stream().noneMatch(p -> p.getJavaPlugin().getName().toLowerCase().contains("ultimate")))
-            return;
-
-        JSONObject json = pluginInfo.getJson();
-        JSONArray ads = (JSONArray) json.get("ads");
-
-        if (ads == null || ads.isEmpty())
-            return;
-
-        ConsoleCommandSender console = Bukkit.getConsoleSender();
-        console.sendMessage(String.format("%s---------------------- %sSongoda+ ads %s----------------------", ChatColor.GRAY.toString(),
-                ChatColor.LIGHT_PURPLE.toString(), ChatColor.GRAY.toString()));
-        for (Object o : ads) {
-            JSONObject ad = (JSONObject) o;
-            console.sendMessage(String.format("%s" + ad.get("patron") + " - " + ad.get("link")
-                    + " - " + ad.get("descr"), ChatColor.DARK_PURPLE));
-        }
-        console.sendMessage(String.format("%s---------- %sPut your ad here patreon.songoda.com %s----------", ChatColor.GRAY.toString(),
-                ChatColor.LIGHT_PURPLE.toString(), ChatColor.GRAY.toString()));
     }
 
     private ArrayList<BukkitTask> tasks = new ArrayList();
