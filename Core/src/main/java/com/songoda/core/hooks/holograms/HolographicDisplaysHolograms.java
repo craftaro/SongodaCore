@@ -57,7 +57,6 @@ public class HolographicDisplaysHolograms extends Holograms {
     public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
         Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
 
-        outerFor:
         for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
             Location location = fixLocation(entry.getKey());
             List<String> lines = entry.getValue();
@@ -73,8 +72,7 @@ public class HolographicDisplaysHolograms extends Holograms {
                 if (!isChanged) {
                     // double-check the lines
                     for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                        isChanged = !(hologram.getLine(i) instanceof TextLine) ||
-                                !((TextLine) hologram.getLine(i)).getText().equals(lines.get(i));
+                        isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
                     }
                 }
 
@@ -86,7 +84,7 @@ public class HolographicDisplaysHolograms extends Holograms {
                     }
                 }
 
-                continue outerFor;
+                return;
             }
 
             createAt(location, lines);
