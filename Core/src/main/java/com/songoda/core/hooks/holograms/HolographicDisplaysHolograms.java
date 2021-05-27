@@ -2,6 +2,7 @@ package com.songoda.core.hooks.holograms;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
