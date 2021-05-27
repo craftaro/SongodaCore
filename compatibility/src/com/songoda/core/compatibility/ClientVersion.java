@@ -1,8 +1,8 @@
 package com.songoda.core.compatibility;
 
-import com.songoda.core.SongodaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -34,8 +34,8 @@ public class ClientVersion {
      * Do Not Use: This is handled by SongodaCore.
      */
     @Deprecated
-    public static void onLoginProtocol(Player p) {
-        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), () -> {
+    public static void onLoginProtocol(Player p, JavaPlugin plugin) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (p.isOnline()) {
                 final int version = protocolsupport.api.ProtocolSupportAPI.getProtocolVersion(p).getId();
                 players.put(p.getUniqueId(), protocolToVersion(version));
@@ -47,8 +47,8 @@ public class ClientVersion {
      * Do Not Use: This is handled by SongodaCore.
      */
     @Deprecated
-    public static void onLoginVia(Player p) {
-        Bukkit.getScheduler().runTaskLater(SongodaCore.getHijackedPlugin(), () -> {
+    public static void onLoginVia(Player p, JavaPlugin plugin) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (p.isOnline()) {
                 final int version = us.myles.ViaVersion.api.Via.getAPI().getPlayerVersion(p.getUniqueId());
                 players.put(p.getUniqueId(), protocolToVersion(version));
@@ -94,6 +94,9 @@ public class ClientVersion {
                 return ServerVersion.V1_15;
             case 735:
             case 736:
+            case 751:
+            case 753:
+            case 754:
                 return ServerVersion.V1_16;
         }
         return version > 498 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;

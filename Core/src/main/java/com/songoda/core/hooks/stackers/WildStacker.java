@@ -68,7 +68,7 @@ public class WildStacker extends Stacker {
     }
 
     @Override
-    public int minimumEntityStack(EntityType type) {
+    public int getMinStackSize(EntityType type) {
         int min = plugin.getConfig().getInt("entities.minimum-limits." + type.name(), -1);
         if (min == -1) {
             min = plugin.getConfig().getInt("entities.minimum-limits.all", -1);

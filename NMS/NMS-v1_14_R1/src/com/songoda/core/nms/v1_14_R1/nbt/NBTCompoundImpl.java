@@ -201,4 +201,9 @@ public class NBTCompoundImpl implements NBTCompound {
     public void addExtras() {
         // None
     }
+
+    @Override
+    public String toString() {
+        return compound.toString();
+    }
 }

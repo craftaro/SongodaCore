@@ -197,8 +197,13 @@ public class NBTCompoundImpl implements NBTCompound {
         }
     }
 
-    @Override
+        @Override
     public void addExtras() {
         // None
+    }
+
+    @Override
+    public String toString() {
+        return compound.toString();
     }
 }

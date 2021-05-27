@@ -1,6 +1,7 @@
 package com.songoda.core.hooks.stackers;
 
 import com.songoda.ultimatestacker.stackable.entity.EntityStack;
+import com.songoda.ultimatestacker.stackable.entity.EntityStackManager;
 import com.songoda.ultimatestacker.utils.Methods;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -64,11 +65,11 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void add(LivingEntity entity, int amount) {
-        plugin.getEntityStackManager().getStack(entity).createDuplicates(amount);
+        plugin.getEntityStackManager().addStack(entity, amount);
     }
 
     @Override
-    public int minimumEntityStack(EntityType type) {
+    public int getMinStackSize(EntityType type) {
         return ((Plugin) plugin).getConfig().getInt("Entities.Min Stack Amount");
     }
 }

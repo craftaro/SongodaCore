@@ -75,7 +75,7 @@ public class StackMob extends Stacker {
     }
 
     @Override
-    public int minimumEntityStack(EntityType type) {
+    public int getMinStackSize(EntityType type) {
         return 0;
     }
 

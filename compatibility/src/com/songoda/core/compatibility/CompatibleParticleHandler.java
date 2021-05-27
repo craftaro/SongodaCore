@@ -105,7 +105,7 @@ public class CompatibleParticleHandler {
         final boolean compatibilityMode;
         final LegacyParticleEffects.Type compatibleEffect;
         final Object particle;
-        final static Map<String, ParticleType> map = new HashMap();
+        final static Map<String, ParticleType> map = new HashMap<>();
 
         static {
             for (ParticleType t : values()) {
@@ -218,16 +218,24 @@ public class CompatibleParticleHandler {
     }
 
     public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticles(type, location, count, offsetX, offsetY, offsetZ, extra, null);
+    }
+
+    public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, Player receiver) {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
             for (int i = 0; i < count; i++) {
                 float xx = (float) (offsetX * (Math.random() - Math.random()));
                 float yy = (float) (offsetY * (Math.random() - Math.random()));
                 float zz = (float) (offsetZ * (Math.random() - Math.random()));
                 Location at = location.clone().add(xx, yy, zz);
-                LegacyParticleEffects.createParticle(at, type.compatibleEffect, 0F, 0F, 0F, (float) extra, 0, null);
+                LegacyParticleEffects.createParticle(at, type.compatibleEffect, 0F, 0F, 0F, (float) extra, 0, receiver != null ? Collections.singletonList(receiver) : null);
             }
         } else {
-            location.getWorld().spawnParticle((Particle) type.particle, location, count, offsetX, offsetY, offsetZ, extra);
+            if (receiver == null) {
+                location.getWorld().spawnParticle((Particle) type.particle, location, count, offsetX, offsetY, offsetZ, extra);
+            } else {
+                receiver.spawnParticle((Particle) type.particle, location, count, offsetX, offsetY, offsetZ, extra);
+            }
         }
     }
 
@@ -296,5 +304,4 @@ public class CompatibleParticleHandler {
         w.playEffect(l, Effect.SMOKE, BlockFace.NORTH);
         w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_WEST);
     }
-
 }
