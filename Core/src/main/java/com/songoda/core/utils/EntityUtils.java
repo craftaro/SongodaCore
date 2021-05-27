@@ -1,11 +1,18 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class EntityUtils {
 
@@ -77,4 +84,33 @@ public class EntityUtils {
         return false;
     }
 
+    public static List<CompatibleMaterial> getSpawnBlocks(EntityType type) {
+        switch (type.name()) {
+            case "PIG":
+            case "SHEEP":
+            case "CHICKEN":
+            case "COW":
+            case "RABBIT":
+            case "LLAMA":
+            case "HORSE":
+            case "CAT":
+                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.GRASS_BLOCK));
+            case "MUSHROOM_COW":
+                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.MYCELIUM));
+            case "SQUID":
+            case "ELDER_GUARDIAN":
+            case "COD":
+            case "SALMON":
+            case "PUFFERFISH":
+            case "TROPICAL_FISH":
+                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.WATER));
+            case "OCELOT":
+                return new ArrayList<>(Arrays.asList(CompatibleMaterial.GRASS_BLOCK,
+                        CompatibleMaterial.JUNGLE_LEAVES, CompatibleMaterial.ACACIA_LEAVES,
+                        CompatibleMaterial.BIRCH_LEAVES, CompatibleMaterial.DARK_OAK_LEAVES,
+                        CompatibleMaterial.OAK_LEAVES, CompatibleMaterial.SPRUCE_LEAVES));
+            default:
+                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.AIR));
+        }
+    }
 }

@@ -315,18 +315,18 @@ public class SongodaCore {
 
         ShadedEventListener() {
             if ((via = Bukkit.getPluginManager().isPluginEnabled("ViaVersion"))) {
-                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p));
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p, getHijackedPlugin()));
             } else if ((proto = Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport"))) {
-                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p));
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p, getHijackedPlugin()));
             }
         }
 
         @EventHandler
         void onLogin(PlayerLoginEvent event) {
             if (via) {
-                ClientVersion.onLoginVia(event.getPlayer());
+                ClientVersion.onLoginVia(event.getPlayer(), getHijackedPlugin());
             } else if (proto) {
-                ClientVersion.onLoginProtocol(event.getPlayer());
+                ClientVersion.onLoginProtocol(event.getPlayer(), getHijackedPlugin());
             }
         }
 
@@ -341,9 +341,9 @@ public class SongodaCore {
         void onEnable(PluginEnableEvent event) {
             // technically shouldn't have online players here, but idk
             if (!via && (via = event.getPlugin().getName().equals("ViaVersion"))) {
-                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p));
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p, getHijackedPlugin()));
             } else if (!proto && (proto = event.getPlugin().getName().equals("ProtocolSupport"))) {
-                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p));
+                Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p,  getHijackedPlugin()));
             }
         }
     }
