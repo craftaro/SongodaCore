@@ -35,40 +35,52 @@ public class ChatMessage {
     }
 
     public ChatMessage fromText(String text, boolean noHex) {
-        Pattern pattern = Pattern.compile("(.*?)(?!&(o|m|n|l|k))(?=(\\&(1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|r|#)|$)|"
-                + "#([a-f]|[A-F]|[0-9]){6})", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("(.*?)(?!&([omnlk]))(?=(&([123456789abcdefr#])|$)|#([a-f]|[A-F]|[0-9]){6})",
+                Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
+
         while (matcher.find()) {
             ColorContainer color = null;
             String match1 = matcher.group(1);
+
             if (matcher.groupCount() == 0 || match1.length() == 0) continue;
+
             char colorChar = '-';
-            int charPos = matcher.start() - 1;
-            if (charPos != -1)
+
+            if (matcher.start() != 0)
                 colorChar = text.substring(matcher.start() - 1, matcher.start()).charAt(0);
+
             if (colorChar != '-') {
                 if (colorChar == '#') {
                     color = new ColorContainer(match1.substring(0, 6), noHex);
                     match1 = match1.substring(5);
-                } else if (colorChar == '&')
-                    color = new ColorContainer(ColorCode.getByChar(match1.charAt(0)));
+                } else if (colorChar == '&') {
+                    color = new ColorContainer(ColorCode.getByChar(Character.toLowerCase(match1.charAt(0))));
+                }
             }
-            Pattern subPattern = Pattern.compile("(.*?)(?=\\&(o|m|n|l|k)|$)");
+
+            Pattern subPattern = Pattern.compile("(.*?)(?=&([omnlk])|$)");
             Matcher subMatcher = subPattern.matcher(match1);
 
             List<ColorCode> stackedCodes = new ArrayList<>();
             while (subMatcher.find()) {
                 String match2 = subMatcher.group(1);
                 if (match2.length() == 0) continue;
-                ColorCode code = ColorCode.getByChar(match2.charAt(0));
+
+                ColorCode code = ColorCode.getByChar(Character.toLowerCase(match2.charAt(0)));
+
                 if (code != null && code != ColorCode.RESET)
                     stackedCodes.add(code);
+
                 if (color != null)
                     match2 = match2.substring(1);
+
                 if (match2.length() == 0) continue;
+
                 addMessage(match2, color, stackedCodes);
             }
         }
+
         return this;
     }
 
@@ -241,7 +253,6 @@ public class ChatMessage {
                 } else {
                     mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent);
                 }
-
             } catch (Throwable ex) {
                 Bukkit.getLogger().log(Level.WARNING, "Problem preparing raw chat packets (disabling further packets)", ex);
                 enabled = false;

@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A convenience class for static access to a Holograms HookManager
@@ -75,5 +76,10 @@ public class HologramManager {
     public static void updateHologram(Location location, List<String> lines) {
         if (manager.isEnabled())
             manager.getCurrentHook().updateHologram(location, lines);
+    }
+
+    public static void bulkUpdateHolograms(Map<Location, List<String>> holograms) {
+        if (manager.isEnabled())
+            manager.getCurrentHook().bulkUpdateHolograms(holograms);
     }
 }

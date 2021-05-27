@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Holograms implements Hook {
 
@@ -54,6 +55,8 @@ public abstract class Holograms implements Hook {
     }
 
     public abstract void updateHologram(Location location, List<String> lines);
+
+    public abstract void bulkUpdateHolograms(Map<Location, List<String>> hologramData);
 
     public abstract void removeAllHolograms();
 }
