@@ -1,6 +1,5 @@
 package com.songoda.core.compatibility;
 
-import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -127,13 +126,14 @@ public enum CompatibleBiome {
                 compatibleBiomes.add(biome);
 
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
-            Class<?> classBiomeBase = NMSUtils.getNMSClass("BiomeBase"),
-                    classCraftChunk = NMSUtils.getCraftClass("CraftChunk"),
-                    classCraftBlock = NMSUtils.getCraftClass("block.CraftBlock"),
-                    classChunk = NMSUtils.getNMSClass("Chunk"),
-                    classBiomeStorage = NMSUtils.getNMSClass("BiomeStorage"),
-                    classIRegistry = NMSUtils.getNMSClass("IRegistry");
             try {
+            Class<?> classBiomeBase = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".BiomeBase"),
+                    classCraftChunk = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".CraftChunk"),
+                    classCraftBlock = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".block.CraftBlock"),
+                    classChunk = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".Chunk"),
+                    classBiomeStorage = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".BiomeStorage"),
+                    classIRegistry = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".IRegistry");
+
                 methodBiomeToBiomeBase = isAbove1_16_R1 ? classCraftBlock.getMethod("biomeToBiomeBase", classIRegistry, Biome.class)
                         : classCraftBlock.getMethod("biomeToBiomeBase", Biome.class);
                 methodGetHandle = classCraftChunk.getMethod("getHandle");
@@ -149,7 +149,7 @@ public enum CompatibleBiome {
                     fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
                 }
                 fieldStorageRegistry.setAccessible(true);
-            } catch (NoSuchMethodException | NoSuchFieldException e) {
+            } catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

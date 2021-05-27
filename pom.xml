@@ -8,6 +8,7 @@
 
     <modules>
         <module>Core</module>
+        <module>Compatibility</module>
         <module>NMS/NMS-API</module>
         <module>NMS/NMS-v1_8_R1</module>
         <module>NMS/NMS-v1_8_R2</module>

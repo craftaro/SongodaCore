@@ -1,6 +1,5 @@
 package com.songoda.core.compatibility;
 
-import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -115,10 +114,10 @@ public enum CompatibleHand {
 
         if (cb_CraftPlayer == null) {
             try {
-                cb_CraftPlayer = NMSUtils.getCraftClass("entity.CraftPlayer");
-                Class<?> mc_EntityLiving = NMSUtils.getNMSClass("EntityLiving");
-                Class<?> cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
-                Class<?> mc_ItemStack = NMSUtils.getNMSClass("ItemStack");
+                cb_CraftPlayer = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".entity.CraftPlayer");
+                Class<?> mc_EntityLiving = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".EntityLiving");
+                Class<?> cb_ItemStack = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".inventory.CraftItemStack");
+                Class<?> mc_ItemStack = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".ItemStack");
                 getHandle = cb_CraftPlayer.getMethod("getHandle");
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
                     playBreak = mc_EntityLiving.getDeclaredMethod("a", mc_ItemStack, int.class); //Consistent from 1.16-1.13
@@ -126,7 +125,7 @@ public enum CompatibleHand {
                     playBreak = mc_EntityLiving.getDeclaredMethod("b", mc_ItemStack); //Consistent from 1.12-1.8
                 playBreak.setAccessible(true);
                 asNMSCopy = cb_ItemStack.getDeclaredMethod("asNMSCopy", ItemStack.class);
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
