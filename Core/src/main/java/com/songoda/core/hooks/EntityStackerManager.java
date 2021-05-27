@@ -1,6 +1,7 @@
 package com.songoda.core.hooks;
 
 import com.songoda.core.hooks.stackers.Stacker;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -66,5 +67,9 @@ public class EntityStackerManager {
     public static void add(LivingEntity entity, int amount) {
         if (manager.isEnabled())
             manager.getCurrentHook().add(entity, amount);
+    }
+
+    public static int getMinStackSize(EntityType type) {
+        return manager.isEnabled() ? manager.getCurrentHook().getMinStackSize(type) : 1;
     }
 }
