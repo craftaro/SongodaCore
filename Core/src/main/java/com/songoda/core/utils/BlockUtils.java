@@ -309,7 +309,7 @@ public class BlockUtils {
     }
 
     private static Class<?> clazzCraftWorld, clazzCraftBlock, clazzBlockPosition;
-    private static Method getHandle, updateAdjacentComparators, getNMSBlock;
+    private static Method getHandle, updateAdjacentComparators, craftBlock_getNMS, nmsBlockData_getBlock;
 
     /**
      * Manually trigger the updateAdjacentComparators method for containers
@@ -331,8 +331,10 @@ public class BlockUtils {
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 updateAdjacentComparators = clazzWorld.getMethod("updateAdjacentComparators", clazzBlockPosition, clazzBlock);
-                getNMSBlock = clazzCraftBlock.getDeclaredMethod("getNMSBlock");
-                getNMSBlock.setAccessible(true);
+
+                craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
+                Class<?> clazzBlockData = Class.forName("net.minecraft.server." + ver + ".BlockBase$BlockData");
+                nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
             }
 
             // invoke and cast objects.
@@ -344,7 +346,7 @@ public class BlockUtils {
             updateAdjacentComparators
                     .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
                                     .newInstance(location.getX(), location.getY(), location.getZ()),
-                            getNMSBlock.invoke(craftBlock));
+                            nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
 
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();

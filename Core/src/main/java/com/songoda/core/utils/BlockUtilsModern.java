@@ -74,10 +74,13 @@ public class BlockUtilsModern {
         }
     }
 
-    private static Class<?> clazzCraftWorld, clazzCraftBlock,
-            clazzLeverBlock, clazzButtonBlock, clazzPressurePlateBlock;
-    private static Method craftWorld_getHandle, craftBlock_getNMSBlock, craftBlock_getPostition, craftBlockData_getState,
-            nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours;
+    private static Class<?> clazzCraftWorld;
+    private static Class<?> clazzCraftBlock;
+    private static Class<?> clazzLeverBlock;
+    private static Class<?> clazzButtonBlock;
+    private static Class<?> clazzPressurePlateBlock;
+    private static Method craftWorld_getHandle, craftBlock_getNMS, craftBlock_getPostition, craftBlockData_getState,
+            nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours, nmsBlockData_getBlock;
 
     static {
         try {
@@ -89,9 +92,11 @@ public class BlockUtilsModern {
             //clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
 
             craftWorld_getHandle = clazzCraftWorld.getMethod("getHandle");
-            craftBlock_getNMSBlock = clazzCraftBlock.getDeclaredMethod("getNMSBlock");
-            craftBlock_getNMSBlock.setAccessible(true);
             craftBlock_getPostition = clazzCraftBlock.getDeclaredMethod("getPosition");
+
+            craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
+            Class<?> clazzBlockData = Class.forName("net.minecraft.server." + ver + ".BlockBase$BlockData");
+            nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
 
             Class<?> clazzCraftBlockData = Class.forName("org.bukkit.craftbukkit." + ver + ".block.data.CraftBlockData");
             craftBlockData_getState = clazzCraftBlockData.getDeclaredMethod("getState");
@@ -131,7 +136,7 @@ public class BlockUtilsModern {
             Object cworld = clazzCraftWorld.cast(block.getWorld());
             Object mworld = craftWorld_getHandle.invoke(cworld);
             Object cblock = clazzCraftBlock.cast(block);
-            Object mblock = craftBlock_getNMSBlock.invoke(cblock);
+            Object mblock = nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(cblock));
             Object mpos = craftBlock_getPostition.invoke(cblock);
 
             //System.out.println(mblock.getClass());
