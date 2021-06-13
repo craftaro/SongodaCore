@@ -10,9 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -304,11 +306,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public static void registerCommandDynamically(Plugin plugin, String command, CommandExecutor executor, TabCompleter tabManager) {
         try {
+
             // Retrieve the SimpleCommandMap from the server
-            Class<?> classCraftServer = Bukkit.getServer().getClass();
-            Field fieldCommandMap = classCraftServer.getDeclaredField("commandMap");
-            fieldCommandMap.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) fieldCommandMap.get(Bukkit.getServer());
+            Class<?> clazzCraftServer = Bukkit.getServer().getClass();
+            Object craftServer = clazzCraftServer.cast(Bukkit.getServer());
+            SimpleCommandMap commandMap = (SimpleCommandMap) craftServer.getClass()
+                    .getDeclaredMethod("getCommandMap").invoke(craftServer);
 
             // Construct a new Command object
             Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
@@ -340,4 +343,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         }
     }
+
+    /*
+    private class DCommand extends PluginCommand {
+
+        protected DCommand(@NotNull String name, @NotNull Plugin owner) {
+            super(name, owner);
+        }
+    } */
 }

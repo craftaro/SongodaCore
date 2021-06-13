@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class CompatibleParticleHandler {
 
     public static enum ParticleType {
-        EXPLOSION_NORMAL(),
+        EXPLOSION_NORMAL,
         EXPLOSION_LARGE,
         EXPLOSION_HUGE,
         FIREWORKS_SPARK,
@@ -100,6 +100,25 @@ public class CompatibleParticleHandler {
         REVERSE_PORTAL(ServerVersion.V1_16, "DRIP_WATER"),
         WHITE_ASH(ServerVersion.V1_16, "DRIP_WATER"),
         /// End 1.16 ///
+        // ToDo: Someone needs to make better compatible fall backs.
+        LIGHT(ServerVersion.V1_17, "DRIP_WATER"),
+        DUST_COLOR_TRANSITION(ServerVersion.V1_17, "DRIP_WATER"),
+        VIBRATION(ServerVersion.V1_17, "DRIP_WATER"),
+        FALLING_SPORE_BLOSSOM(ServerVersion.V1_17, "DRIP_WATER"),
+        SPORE_BLOSSOM_AIR(ServerVersion.V1_17, "DRIP_WATER"),
+        SMALL_FLAME(ServerVersion.V1_17, "DRIP_WATER"),
+        SNOWFLAKE(ServerVersion.V1_17, "DRIP_WATER"),
+        DRIPPING_DRIPSTONE_LAVA(ServerVersion.V1_17, "DRIP_WATER"),
+        FALLING_DRIPSTONE_LAVA(ServerVersion.V1_17, "DRIP_WATER"),
+        DRIPPING_DRIPSTONE_WATER(ServerVersion.V1_17, "DRIP_WATER"),
+        FALLING_DRIPSTONE_WATER(ServerVersion.V1_17, "DRIP_WATER"),
+        GLOW_SQUID_INK(ServerVersion.V1_17, "DRIP_WATER"),
+        GLOW(ServerVersion.V1_17, "DRIP_WATER"),
+        WAX_ON(ServerVersion.V1_17, "DRIP_WATER"),
+        WAX_OFF(ServerVersion.V1_17, "DRIP_WATER"),
+        ELECTRIC_SPARK(ServerVersion.V1_17, "DRIP_WATER"),
+        SCRAPE(ServerVersion.V1_17, "DRIP_WATER"),
+        /// End 1.17 ///
         ;
 
         final boolean compatibilityMode;

@@ -1,9 +1,6 @@
 package com.songoda.core.compatibility;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,57 +95,5 @@ public enum CompatibleHand {
             player.setItemInHand(item);
         else
             player.getInventory().setItemInOffHand(item);
-    }
-
-    private static Class<?> cb_CraftPlayer;
-    private static Method getHandle, playBreak, asNMSCopy;
-
-    /**
-     * Damage the selected item
-     *
-     * @param player the player who's item you want to damage
-     * @param damage the amount of damage to apply to the item
-     */
-    public void damageItem(Player player, short damage) {
-        if (player.getGameMode() == GameMode.CREATIVE) return;
-
-        if (cb_CraftPlayer == null) {
-            try {
-                cb_CraftPlayer = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".entity.CraftPlayer");
-                Class<?> mc_EntityLiving = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".EntityLiving");
-                Class<?> cb_ItemStack = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".inventory.CraftItemStack");
-                Class<?> mc_ItemStack = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".ItemStack");
-                getHandle = cb_CraftPlayer.getMethod("getHandle");
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
-                    playBreak = mc_EntityLiving.getDeclaredMethod("a", mc_ItemStack, int.class); //Consistent from 1.16-1.13
-                else
-                    playBreak = mc_EntityLiving.getDeclaredMethod("b", mc_ItemStack); //Consistent from 1.12-1.8
-                playBreak.setAccessible(true);
-                asNMSCopy = cb_ItemStack.getDeclaredMethod("asNMSCopy", ItemStack.class);
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ItemStack item = getItem(player);
-
-        short newDurability = (short) (item.getDurability() + damage);
-
-        if (newDurability >= item.getType().getMaxDurability()) {
-            PlayerItemBreakEvent breakEvent = new PlayerItemBreakEvent(player, item);
-            Bukkit.getServer().getPluginManager().callEvent(breakEvent);
-            try {
-                if (playBreak.getParameterCount() == 2)
-                    playBreak.invoke(getHandle.invoke(cb_CraftPlayer.cast(player)), asNMSCopy.invoke(null, item), 1);
-                else
-                    playBreak.invoke(getHandle.invoke(cb_CraftPlayer.cast(player)), asNMSCopy.invoke(item));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            setItem(player, null);
-            return;
-        }
-
-        item.setDurability(newDurability);
     }
 }

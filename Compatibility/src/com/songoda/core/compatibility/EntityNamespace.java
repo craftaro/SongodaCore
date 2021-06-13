@@ -45,7 +45,6 @@ public class EntityNamespace {
             put("witherboss", "wither");
             put("mushroomcow", "mooshroom");
             put("snowman", "snow_golem");
-            put("snowman", "snow_golem");
             put("ozelot", "ocelot");
             put("villagergolem", "iron_golem");
             put("villager_golem", "iron_golem");

@@ -17,12 +17,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SSpawner {
 
-    private static final WorldCore worldCore = NmsManager.getWorld();
-
+    protected final com.songoda.core.nms.world.SSpawner sSpawner;
     protected final Location location;
 
     public SSpawner(Location location) {
         this.location = location;
+        this.sSpawner = NmsManager.getWorld().getSpawner(location);
     }
 
     public SSpawner(CreatureSpawner spawner) {
@@ -60,7 +60,7 @@ public class SSpawner {
         int amountSpawned = 0;
         while (spawnCountUsed-- > 0) {
             EntityType type = types[ThreadLocalRandom.current().nextInt(types.length)];
-            LivingEntity entity = worldCore.getSpawner(location).spawnEntity(type, particle, spawned, canSpawnOn);
+            LivingEntity entity = sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
             if (entity != null) {
                 // If this entity is indeed stackable then spawn a single stack with the desired stack size.
                 if (useStackPlugin && amountToSpawn >= EntityStackerManager.getMinStackSize(type)) {
@@ -72,5 +72,9 @@ public class SSpawner {
             }
         }
         return amountSpawned;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }
