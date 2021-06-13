@@ -37,7 +37,7 @@ public enum ClassMapping {
 
     CRAFT_BLOCK("block", "CraftBlock"),
     CRAFT_BLOCK_DATA("block.data", "CraftBlockData"),
-    CRAFT_CHUNK("craftChunk"),
+    CRAFT_CHUNK("CraftChunk"),
     CRAFT_ENTITY("entity", "CraftEntity"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld");
