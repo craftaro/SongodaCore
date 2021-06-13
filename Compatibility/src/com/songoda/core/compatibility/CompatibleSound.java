@@ -166,7 +166,7 @@ public enum CompatibleSound {
     BLOCK_SPORE_BLOSSOM_HIT(ServerVersion.V1_17, v(null, true)),
     BLOCK_SPORE_BLOSSOM_PLACE(ServerVersion.V1_17, v(null, true)),
     BLOCK_SPORE_BLOSSOM_STEP(ServerVersion.V1_17, v(null, true)),
-    BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES(ServerVersion.V1_17, v("ITEM_SWEET_BERRIES_PICK_FROM_BUSH")),
+    BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES(ServerVersion.V1_17, v(null, true)), // "ITEM_SWEET_BERRIES_PICK_FROM_BUSH"
     BLOCK_TUFF_BREAK(ServerVersion.V1_17, v(null, true)),
     BLOCK_TUFF_FALL(ServerVersion.V1_17, v(null, true)),
     BLOCK_TUFF_HIT(ServerVersion.V1_17, v(null, true)),
