@@ -1,5 +1,6 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
@@ -321,19 +322,17 @@ public class BlockUtils {
         try {
             // Cache reflection.
             if (clazzCraftWorld == null) {
-                String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
-                String ver = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
-                clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
-                clazzCraftBlock = Class.forName("org.bukkit.craftbukkit." + ver + ".block.CraftBlock");
-                clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
-                Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
-                Class<?> clazzBlock = Class.forName("net.minecraft.server." + ver + ".Block");
+                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+                clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
+                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
+                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 updateAdjacentComparators = clazzWorld.getMethod("updateAdjacentComparators", clazzBlockPosition, clazzBlock);
 
                 craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
-                Class<?> clazzBlockData = Class.forName("net.minecraft.server." + ver + ".BlockBase$BlockData");
+                Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
                 nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
             }
 
@@ -374,14 +373,13 @@ public class BlockUtils {
         try {
             // Cache reflection
             if (clazzIBlockData == null) {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-                clazzIBlockData = Class.forName("net.minecraft.server." + ver + ".IBlockData");
-                clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
-                clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
-                clazzBlocks = Class.forName("net.minecraft.server." + ver + ".Blocks");
-                Class<?> clazzBlock = Class.forName("net.minecraft.server." + ver + ".Block");
-                Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
-                Class<?> clazzChunk = Class.forName("net.minecraft.server." + ver + ".Chunk");
+                clazzIBlockData = ClassMapping.I_BLOCK_DATA.getClazz();
+                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
+                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+                clazzBlocks = ClassMapping.BLOCKS.getClazz();
+                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
+                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+                Class<?> clazzChunk = ClassMapping.CHUNK.getClazz();
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 getChunkAt = clazzWorld.getMethod("getChunkAt", int.class, int.class);

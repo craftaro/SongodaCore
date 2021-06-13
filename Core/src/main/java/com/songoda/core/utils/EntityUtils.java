@@ -1,8 +1,7 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
+import com.songoda.core.compatibility.ClassMapping;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
@@ -24,12 +23,11 @@ public class EntityUtils {
 
     static {
         try {
-            String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-            clazzEntityInsentient = Class.forName("net.minecraft.server." + ver + ".EntityInsentient");
-            clazzEntity = Class.forName("net.minecraft.server." + ver + ".Entity");
-            clazzCraftEntity = Class.forName("org.bukkit.craftbukkit." + ver + ".entity.CraftEntity");
+            clazzEntityInsentient = ClassMapping.ENTITY_INSENTIENT.getClazz();
+            clazzEntity = ClassMapping.ENTITY.getClazz();
+            clazzCraftEntity = ClassMapping.CRAFT_ENTITY.getClazz();
             methodGetHandle = clazzCraftEntity.getDeclaredMethod("getHandle");
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 

@@ -164,14 +164,14 @@ public class WorldGuardFlagHandler {
 
     private static Object getPrivateField(Class<?> c, Object handle, String fieldName) throws Exception {
         Field field = c.getDeclaredField(fieldName);
-        field.setAccessible(true);
+        field.setAccessible(true); // This should be okay since it only runs on older versions.
         return field.get(handle);
     }
 
     private static void setStaticField(Field field, Object value) throws Exception {
-        field.setAccessible(true);
+        field.setAccessible(true); // This should be okay since it only runs on older versions.
         Field modifier = Field.class.getDeclaredField("modifiers");
-        modifier.setAccessible(true);
+        modifier.setAccessible(true); // This should be okay since it only runs on older versions.
         modifier.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         field.set(null, value);
     }

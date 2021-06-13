@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.utils.TextUtils;
+import net.minecraft.network.chat.IChatBaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +26,7 @@ import java.util.regex.Pattern;
 public class ChatMessage {
 
     private static final Gson gson = new GsonBuilder().create();
-    private List<JsonObject> textList = new ArrayList<>();
+    private final List<JsonObject> textList = new ArrayList<>();
 
     public void clear() {
         textList.clear();
@@ -234,21 +236,21 @@ public class ChatMessage {
                 Class<?> cb_craftPlayerClazz, mc_entityPlayerClazz, mc_playerConnectionClazz, mc_PacketInterface,
                         mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
 
-                cb_craftPlayerClazz = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
+                cb_craftPlayerClazz = ClassMapping.CRAFT_PLAYER.getClazz();
                 cb_craftPlayer_getHandle = cb_craftPlayerClazz.getDeclaredMethod("getHandle");
-                mc_entityPlayerClazz = Class.forName("net.minecraft.server." + version + ".EntityPlayer");
-                mc_entityPlayer_playerConnection = mc_entityPlayerClazz.getDeclaredField("playerConnection");
-                mc_playerConnectionClazz = Class.forName("net.minecraft.server." + version + ".PlayerConnection");
-                mc_PacketInterface = Class.forName("net.minecraft.server." + version + ".Packet");
+                mc_entityPlayerClazz = ClassMapping.ENTITY_PLAYER.getClazz();
+                mc_entityPlayer_playerConnection = mc_entityPlayerClazz.getDeclaredField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "b" : "playerConnection");
+                mc_playerConnectionClazz = ClassMapping.PLAYER_CONNECTION.getClazz();
+                mc_PacketInterface = ClassMapping.PACKET.getClazz();
                 mc_playerConnection_sendPacket = mc_playerConnectionClazz.getDeclaredMethod("sendPacket", mc_PacketInterface);
-                mc_IChatBaseComponent = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent");
-                mc_IChatBaseComponent_ChatSerializer = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer");
+                mc_IChatBaseComponent = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz();
+                mc_IChatBaseComponent_ChatSerializer = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz("ChatSerializer");
                 mc_IChatBaseComponent_ChatSerializer_a = mc_IChatBaseComponent_ChatSerializer.getMethod("a", String.class);
-                mc_PacketPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
+                mc_PacketPlayOutChat = ClassMapping.PACKET_PLAY_OUT_CHAT.getClazz();
 
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    mc_ChatMessageType = Class.forName("net.minecraft.server." + version + ".ChatMessageType");
-                    mc_chatMessageType_Chat = mc_ChatMessageType.getField("CHAT");
+                    mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
+                    mc_chatMessageType_Chat = mc_ChatMessageType.getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "a" : "CHAT");
                     mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, mc_ChatMessageType, UUID.class);
                 } else {
                     mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent);

@@ -1,5 +1,6 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -86,27 +87,25 @@ public class BlockUtilsModern {
         try {
             // Cache reflection.
 
-            String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-            clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
-            clazzCraftBlock = Class.forName("org.bukkit.craftbukkit." + ver + ".block.CraftBlock");
-            //clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
+            clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+            clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
 
             craftWorld_getHandle = clazzCraftWorld.getMethod("getHandle");
             craftBlock_getPostition = clazzCraftBlock.getDeclaredMethod("getPosition");
 
             craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
-            Class<?> clazzBlockData = Class.forName("net.minecraft.server." + ver + ".BlockBase$BlockData");
+            Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
             nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
 
-            Class<?> clazzCraftBlockData = Class.forName("org.bukkit.craftbukkit." + ver + ".block.data.CraftBlockData");
+            Class<?> clazzCraftBlockData = ClassMapping.CRAFT_BLOCK_DATA.getClazz();
             craftBlockData_getState = clazzCraftBlockData.getDeclaredMethod("getState");
 
-            Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
-            Class<?> clazzBlockState = Class.forName("net.minecraft.server." + ver + ".IBlockData");
-            Class<?> clazzBlockPos = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
-            clazzLeverBlock = Class.forName("net.minecraft.server." + ver + ".BlockLever");
-            clazzButtonBlock = Class.forName("net.minecraft.server." + ver + ".BlockButtonAbstract");
-            clazzPressurePlateBlock = Class.forName("net.minecraft.server." + ver + ".BlockPressurePlateAbstract");
+            Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+            Class<?> clazzBlockState = ClassMapping.I_BLOCK_DATA.getClazz();
+            Class<?> clazzBlockPos = ClassMapping.BLOCK_POSITION.getClazz();
+            clazzLeverBlock = ClassMapping.BLOCK_LEVER.getClazz();
+            clazzButtonBlock = ClassMapping.BLOCK_BUTTON_ABSTRACT.getClazz();
+            clazzPressurePlateBlock = ClassMapping.BLOCK_PRESSURE_PLATE_ABSTRACT.getClazz();
 
             // nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours
             nmsLever_updateNeighbours = clazzLeverBlock.getDeclaredMethod(ServerVersion.isServerVersionAbove(ServerVersion.V1_13)
