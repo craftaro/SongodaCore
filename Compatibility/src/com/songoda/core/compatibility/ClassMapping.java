@@ -23,6 +23,7 @@ public enum ClassMapping {
     ITEM_STACK("world.item", "ItemStack"),
     LEVEL_ENTITY_GETTER("level.entity", "LevelEntityGetter"),
     MINECRAFT_SERVER("server", "MinecraftServer"),
+    NBT_COMPRESSED_STREAM_TOOLS("nbt", "NBTCompressedStreamTools"),
     NBT_TAG_COMPOUND("nbt", "NBTTagCompound"),
     NBT_TAG_LIST("nbt", "NBTTagList"),
     NBT_BASE("nbt", "NBTBase"),
