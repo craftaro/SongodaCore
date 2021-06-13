@@ -13,6 +13,7 @@ public enum ClassMapping {
     BLOCK_POSITION("core", "BlockPosition"),
     CHAT_MESSAGE_TYPE("network.chat", "ChatMessageType"),
     CHUNK("world.level.chunk", "Chunk"),
+    ENCHANTMENT_MANAGER("world.item.enchantment", "EnchantmentManager"),
     ENTITY("world.entity", "Entity"),
     ENTITY_INSENTIENT("world.entity", "EntityInsentient"),
     ENTITY_PLAYER("server.level", "EntityPlayer"),
@@ -40,6 +41,7 @@ public enum ClassMapping {
     CRAFT_BLOCK_DATA("block.data", "CraftBlockData"),
     CRAFT_CHUNK("CraftChunk"),
     CRAFT_ENTITY("entity", "CraftEntity"),
+    CRAFT_ITEM_STACK("inventory", "CraftItemStack"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld");
 
