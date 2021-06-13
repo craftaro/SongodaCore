@@ -2,7 +2,6 @@ package com.songoda.core.nms.v1_17_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import jdk.internal.misc.Unsafe;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.network.chat.ChatMessage;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
