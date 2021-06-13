@@ -51,12 +51,12 @@ public class SongodaCore {
      * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
      */
-    private final static int coreRevision = 8;
+    private final static int coreRevision = 9;
 
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.4.57";
+    private final static String coreVersion = "2.4.59";
 
     /**
      * This is specific to the website api
@@ -120,6 +120,7 @@ public class SongodaCore {
                             // register ourselves as the SongodaCore service!
                             INSTANCE = new SongodaCore(plugin);
                             INSTANCE.init();
+                            INSTANCE.register(plugin, pluginID, icon, coreVersion);
                             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
                             // we need (JavaPlugin plugin, int pluginID, String icon) for our object
                             if (!otherPlugins.isEmpty()) {
@@ -149,6 +150,7 @@ public class SongodaCore {
             INSTANCE.init();
             Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, plugin, ServicePriority.Normal);
         }
+        INSTANCE.register(plugin, pluginID, icon, coreVersion);
     }
 
     SongodaCore() {
@@ -197,14 +199,13 @@ public class SongodaCore {
 
     private ArrayList<BukkitTask> tasks = new ArrayList();
 
-    private PluginInfo register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
+    private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
-        return info;
     }
 
     private void update(PluginInfo plugin) {

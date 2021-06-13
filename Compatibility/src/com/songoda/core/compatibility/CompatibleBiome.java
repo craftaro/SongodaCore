@@ -25,6 +25,10 @@ import java.util.Set;
  */
 public enum CompatibleBiome {
 
+    /* 1.17 */
+    DRIPSTONE_CAVES(ServerVersion.V1_17),
+    LUSH_CAVES(ServerVersion.V1_17),
+
     /* 1.16 */
     SOUL_SAND_VALLEY(ServerVersion.V1_16),
     CRIMSON_FOREST(ServerVersion.V1_16),
@@ -127,12 +131,12 @@ public enum CompatibleBiome {
 
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             try {
-            Class<?> classBiomeBase = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".BiomeBase"),
-                    classCraftChunk = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".CraftChunk"),
-                    classCraftBlock = Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + ".block.CraftBlock"),
-                    classChunk = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".Chunk"),
-                    classBiomeStorage = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".BiomeStorage"),
-                    classIRegistry = Class.forName("net.minecraft.server." + ServerVersion.getServerVersionString() + ".IRegistry");
+            Class<?> classBiomeBase = ClassMapping.BIOME_BASE.getClazz(),
+                    classCraftChunk = ClassMapping.CRAFT_CHUNK.getClazz(),
+                    classCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz(),
+                    classChunk = ClassMapping.CHUNK.getClazz(),
+                    classBiomeStorage = ClassMapping.BIOME_STORAGE.getClazz(),
+                    classIRegistry = ClassMapping.I_REGISTRY.getClazz();
 
                 methodBiomeToBiomeBase = isAbove1_16_R1 ? classCraftBlock.getMethod("biomeToBiomeBase", classIRegistry, Biome.class)
                         : classCraftBlock.getMethod("biomeToBiomeBase", Biome.class);
@@ -149,7 +153,7 @@ public enum CompatibleBiome {
                     fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
                 }
                 fieldStorageRegistry.setAccessible(true);
-            } catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException e) {
+            } catch (NoSuchMethodException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
         }

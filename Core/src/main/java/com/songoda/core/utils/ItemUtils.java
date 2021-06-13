@@ -7,9 +7,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.nms.NmsManager;
+import com.songoda.core.compatibility.ClassMapping;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -120,43 +119,6 @@ public class ItemUtils {
         return clone;
     }
 
-    public static ItemStack addDamage(ItemStack item, int damage) {
-        return addDamage(null, item, damage);
-    }
-
-    public static ItemStack addDamage(Player player, ItemStack item, int damage) {
-        if (item == null)
-            return null;
-
-        int maxDurability = item.getType().getMaxDurability();
-        int durability;
-
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
-                ? NmsManager.getNbt().of(item).has("Unbreakable")
-                : item.getItemMeta().isUnbreakable()) {
-            return item;
-        } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-            // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
-            ItemMeta meta = item.getItemMeta();
-            if (meta instanceof Damageable) {
-                Damageable damageable = ((Damageable) meta);
-                damageable.setDamage(((Damageable) meta).getDamage() + damage);
-                item.setItemMeta(meta);
-                durability = damageable.getDamage();
-            } else {
-                return item;
-            }
-        } else {
-            item.setDurability((short) Math.max(0, item.getDurability() + damage));
-            durability = item.getDurability();
-        }
-        if (durability >= maxDurability && player != null) {
-            player.getInventory().removeItem(item);
-            CompatibleSound.ENTITY_ITEM_BREAK.play(player);
-        }
-        return item;
-    }
-
     public static boolean hasEnoughDurability(ItemStack tool, int requiredAmount) {
         if (tool.getType().getMaxDurability() <= 1)
             return true;
@@ -173,10 +135,10 @@ public class ItemUtils {
     }
 
     static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
-    static Class mc_ItemStack = NMSUtils.getNMSClass("ItemStack");
-    static Class mc_NBTTagCompound = NMSUtils.getNMSClass("NBTTagCompound");
-    static Class mc_NBTTagList = NMSUtils.getNMSClass("NBTTagList");
-    static Class mc_NBTBase = NMSUtils.getNMSClass("NBTBase");
+    static Class mc_ItemStack = ClassMapping.ITEM_STACK.getClazz();
+    static Class mc_NBTTagCompound = ClassMapping.NBT_TAG_COMPOUND.getClazz();
+    static Class mc_NBTTagList = ClassMapping.NBT_TAG_LIST.getClazz();
+    static Class mc_NBTBase = ClassMapping.NBT_BASE.getClazz();
     static Method mc_ItemStack_getTag;
     static Method mc_ItemStack_setTag;
     static Method mc_NBTTagCompound_set;
@@ -292,7 +254,7 @@ public class ItemUtils {
         return item;
     }
 
-    private static Class mc_Item = NMSUtils.getNMSClass("Item");
+    private static Class<?> mc_Item = ClassMapping.ITEM.getClazz();
     private static Method mc_Item_getItem;
     private static Field mc_Item_maxStackSize;
 
@@ -348,15 +310,22 @@ public class ItemUtils {
     }
 
     public static ItemStack getCustomHead(String texture) {
+        return getCustomHead(null, texture);
+    }
+
+    public static ItemStack getCustomHead(String signature, String texture) {
         ItemStack skullItem = CompatibleMaterial.PLAYER_HEAD.getItem();
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8))
             return skullItem;
-        }
+
         SkullMeta sm = (SkullMeta) skullItem.getItemMeta();
         GameProfile gm;
         if (texture.endsWith("=")) {
             gm = new GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "CustomHead");
-            gm.getProperties().put("textures", new Property("texture", texture.replaceAll("=", "")));
+            if (signature == null)
+                gm.getProperties().put("textures", new Property("texture", texture.replaceAll("=", "")));
+            else
+                gm.getProperties().put("textures", new Property("textures", texture, signature));
         } else {
             gm = new GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "CustomHead");
             byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"http://textures.minecraft.net/texture/%s\"}}}", texture).getBytes());

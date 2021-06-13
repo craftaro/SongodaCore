@@ -1,23 +1,13 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.ClassMapping;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class NMSUtils {
-
-    public static Class<?> getNMSClass(String className) {
-        try {
-            String fullName = "net.minecraft.server." + ServerVersion.getServerVersionString() + "." + className;
-            Class<?> clazz = Class.forName(fullName);
-            return clazz;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public static Class<?> getCraftClass(String className) {
         try {
@@ -65,14 +55,7 @@ public class NMSUtils {
 
     public static void setField(Object object, String fieldName, Object fieldValue, boolean declared) {
         try {
-            Field field;
-
-            if (declared) {
-                field = object.getClass().getDeclaredField(fieldName);
-            } else {
-                field = object.getClass().getField(fieldName);
-            }
-
+            Field field = declared ? object.getClass().getDeclaredField(fieldName) : object.getClass().getField(fieldName);
             field.setAccessible(true);
             field.set(object, fieldValue);
         } catch (Exception e) {
@@ -84,7 +67,7 @@ public class NMSUtils {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
+            playerConnection.getClass().getMethod("sendPacket", ClassMapping.PACKET.getClazz()).invoke(playerConnection, packet);
         } catch (Exception e) {
             e.printStackTrace();
         }

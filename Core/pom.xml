@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.songoda</groupId>
         <artifactId>SongodaCore-Modules</artifactId>
-        <version>2.4.57</version>
+        <version>2.4.59</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -34,23 +34,6 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <doclint>none</doclint>
-                    <source>1.8</source>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -119,7 +102,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.16.5</version>
+            <version>1.17</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -239,6 +222,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-NMS-v1_16_R3</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SongodaCore-NMS-v1_17_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>

@@ -1,5 +1,6 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
@@ -309,7 +310,7 @@ public class BlockUtils {
     }
 
     private static Class<?> clazzCraftWorld, clazzCraftBlock, clazzBlockPosition;
-    private static Method getHandle, updateAdjacentComparators, getNMSBlock;
+    private static Method getHandle, updateAdjacentComparators, craftBlock_getNMS, nmsBlockData_getBlock;
 
     /**
      * Manually trigger the updateAdjacentComparators method for containers
@@ -321,18 +322,18 @@ public class BlockUtils {
         try {
             // Cache reflection.
             if (clazzCraftWorld == null) {
-                String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
-                String ver = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
-                clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
-                clazzCraftBlock = Class.forName("org.bukkit.craftbukkit." + ver + ".block.CraftBlock");
-                clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
-                Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
-                Class<?> clazzBlock = Class.forName("net.minecraft.server." + ver + ".Block");
+                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+                clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
+                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
+                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 updateAdjacentComparators = clazzWorld.getMethod("updateAdjacentComparators", clazzBlockPosition, clazzBlock);
-                getNMSBlock = clazzCraftBlock.getDeclaredMethod("getNMSBlock");
-                getNMSBlock.setAccessible(true);
+
+                craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
+                Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
+                nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
             }
 
             // invoke and cast objects.
@@ -344,7 +345,7 @@ public class BlockUtils {
             updateAdjacentComparators
                     .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
                                     .newInstance(location.getX(), location.getY(), location.getZ()),
-                            getNMSBlock.invoke(craftBlock));
+                            nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
 
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -372,14 +373,13 @@ public class BlockUtils {
         try {
             // Cache reflection
             if (clazzIBlockData == null) {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-                clazzIBlockData = Class.forName("net.minecraft.server." + ver + ".IBlockData");
-                clazzBlockPosition = Class.forName("net.minecraft.server." + ver + ".BlockPosition");
-                clazzCraftWorld = Class.forName("org.bukkit.craftbukkit." + ver + ".CraftWorld");
-                clazzBlocks = Class.forName("net.minecraft.server." + ver + ".Blocks");
-                Class<?> clazzBlock = Class.forName("net.minecraft.server." + ver + ".Block");
-                Class<?> clazzWorld = Class.forName("net.minecraft.server." + ver + ".World");
-                Class<?> clazzChunk = Class.forName("net.minecraft.server." + ver + ".Chunk");
+                clazzIBlockData = ClassMapping.I_BLOCK_DATA.getClazz();
+                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
+                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+                clazzBlocks = ClassMapping.BLOCKS.getClazz();
+                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
+                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+                Class<?> clazzChunk = ClassMapping.CHUNK.getClazz();
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
                 getChunkAt = clazzWorld.getMethod("getChunkAt", int.class, int.class);

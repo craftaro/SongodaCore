@@ -4,7 +4,7 @@ import com.songoda.core.SongodaCore;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.compatibility.ServerProject;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.utils.NMSUtils;
+import com.songoda.core.compatibility.ClassMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -24,7 +24,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         super(false, "diag");
 
         try {
-            serverInstance = NMSUtils.getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
+            serverInstance = ClassMapping.MINECRAFT_SERVER.getClazz().getMethod("getServer").invoke(null);
             tpsField = serverInstance.getClass().getField("recentTps");
         } catch (NoSuchFieldException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException e) {
