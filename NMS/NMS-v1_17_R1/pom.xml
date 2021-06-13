@@ -7,6 +7,13 @@
         <relativePath>../../</relativePath>
     </parent>
 
+    <properties>
+        <java.version>1.16</java.version>
+        <java.release>16</java.release>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <artifactId>SongodaCore-NMS-v1_17_R1</artifactId>
 
     <modelVersion>4.0.0</modelVersion>
