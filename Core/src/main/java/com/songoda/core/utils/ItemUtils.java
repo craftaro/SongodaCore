@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,6 +76,43 @@ public class ItemUtils {
         });
 
         return titleCase.toString().trim();
+    }
+
+    private static Method methodAsBukkitCopy, methodAsNMSCopy, methodA;
+
+    static  {
+        try {
+            Class<?> clazzEnchantmentManager = ClassMapping.ENCHANTMENT_MANAGER.getClazz();
+            Class<?> clazzItemStack = ClassMapping.ITEM_STACK.getClazz();
+            Class<?> clazzCraftItemStack = ClassMapping.CRAFT_ITEM_STACK.getClazz();
+
+            methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
+            methodAsNMSCopy = clazzCraftItemStack.getMethod("asNMSCopy", ItemStack.class);
+
+            if (ServerVersion.isServerVersion(ServerVersion.V1_8))
+                methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
+            else
+                methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ItemStack applyRandomEnchants(ItemStack item, int level) {
+        try {
+            Object nmsItemStack = methodAsNMSCopy.invoke(null, item);
+
+            if (ServerVersion.isServerVersion(ServerVersion.V1_8))
+                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level);
+            else
+                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level, false);
+
+            item = (ItemStack) methodAsBukkitCopy.invoke(null, nmsItemStack);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     public static String itemStackArrayToBase64(ItemStack[] items) {
