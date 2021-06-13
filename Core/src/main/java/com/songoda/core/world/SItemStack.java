@@ -1,5 +1,6 @@
 package com.songoda.core.world;
 
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.nms.NmsManager;
@@ -17,6 +18,11 @@ public class SItemStack {
 
     public SItemStack(ItemStack item) {
         this.item = item;
+        this.sItem = NmsManager.getWorld().getItemStack(item);
+    }
+
+    public SItemStack(CompatibleHand hand, Player player) {
+        this.item = hand.getItem(player);
         this.sItem = NmsManager.getWorld().getItemStack(item);
     }
 
