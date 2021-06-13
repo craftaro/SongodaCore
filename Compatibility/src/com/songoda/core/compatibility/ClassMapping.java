@@ -4,7 +4,7 @@ public enum ClassMapping {
 
     BIOME_BASE("world.level.biome", "BiomeBase"),
     BIOME_STORAGE("world.level.chunk", "BiomeStorage"),
-    BLOCK("level.block", "BlockPosition"),
+    BLOCK("world.level.block", "Block"),
     BLOCK_BASE("world.level.block.state", "BlockBase"),
     BLOCK_BUTTON_ABSTRACT("world.level.block", "BlockButtonAbstract"),
     BLOCK_PRESSURE_PLATE_ABSTRACT("world.level.block", "BlockPressurePlateAbstract"),
