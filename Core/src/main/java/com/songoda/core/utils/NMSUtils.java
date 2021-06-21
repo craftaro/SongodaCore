@@ -1,7 +1,7 @@
 package com.songoda.core.utils;
 
-import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.compatibility.ClassMapping;
+import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -66,7 +66,7 @@ public class NMSUtils {
     public static void sendPacket(Player player, Object packet) {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
-            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
+            Object playerConnection = handle.getClass().getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "b" : "playerConnection").get(handle);
             playerConnection.getClass().getMethod("sendPacket", ClassMapping.PACKET.getClazz()).invoke(playerConnection, packet);
         } catch (Exception e) {
             e.printStackTrace();
