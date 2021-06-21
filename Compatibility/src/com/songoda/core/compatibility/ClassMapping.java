@@ -13,6 +13,7 @@ public enum ClassMapping {
     BLOCK_POSITION("core", "BlockPosition"),
     CHAT_MESSAGE_TYPE("network.chat", "ChatMessageType"),
     CHUNK("world.level.chunk", "Chunk"),
+    CLIENTBOUND_INITIALIZE_BORDER_PACKET("network.protocol.game", "ClientboundInitializeBorderPacket"), // Added in 1.17
     ENCHANTMENT_MANAGER("world.item.enchantment", "EnchantmentManager"),
     ENTITY("world.entity", "Entity"),
     ENTITY_INSENTIENT("world.entity", "EntityInsentient"),

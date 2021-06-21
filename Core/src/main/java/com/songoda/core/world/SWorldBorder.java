@@ -1,8 +1,9 @@
 package com.songoda.core.world;
 
-import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.compatibility.ClassMapping;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.utils.NMSUtils;
+import net.minecraft.world.level.border.WorldBorder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -11,27 +12,34 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class SWorldBorder {
-    
+
     private static Class<?> packetPlayOutWorldBorderEnumClass;
     private static Class<?> worldBorderClass;
     private static Class<?> craftWorldClass;
     private static Constructor<?> packetPlayOutWorldBorderConstructor;
 
+    private static Constructor<?> clientboundInitializeBorderPacketConstructor;
+
     static {
         try {
-            Class<?> packetPlayOutWorldBorder = ClassMapping.PACKET_PLAY_OUT_WORLD_BORDER.getClazz();
+            worldBorderClass = ClassMapping.WORLD_BORDER.getClazz();
+            craftWorldClass = NMSUtils.getCraftClass("CraftWorld");
 
-            if(packetPlayOutWorldBorder != null) {
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11))
-                    packetPlayOutWorldBorderEnumClass = packetPlayOutWorldBorder.getDeclaredClasses()[0];
-                else
-                    packetPlayOutWorldBorderEnumClass = packetPlayOutWorldBorder.getDeclaredClasses()[1];
-                
-                worldBorderClass = ClassMapping.WORLD_BORDER.getClazz();
-                craftWorldClass = NMSUtils.getCraftClass("CraftWorld");
-    
-                packetPlayOutWorldBorderConstructor = packetPlayOutWorldBorder.getConstructor(worldBorderClass,
-                        packetPlayOutWorldBorderEnumClass);
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)) {
+                Class<?> clientboundInitializeBorderPacketClass = ClassMapping.CLIENTBOUND_INITIALIZE_BORDER_PACKET.getClazz();
+                clientboundInitializeBorderPacketConstructor = clientboundInitializeBorderPacketClass.getConstructor(worldBorderClass);
+            } else {
+                Class<?> packetPlayOutWorldBorder = ClassMapping.PACKET_PLAY_OUT_WORLD_BORDER.getClazz();
+
+                if (packetPlayOutWorldBorder != null) {
+                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11))
+                        packetPlayOutWorldBorderEnumClass = packetPlayOutWorldBorder.getDeclaredClasses()[0];
+                    else
+                        packetPlayOutWorldBorderEnumClass = packetPlayOutWorldBorder.getDeclaredClasses()[1];
+
+                    packetPlayOutWorldBorderConstructor = packetPlayOutWorldBorder.getConstructor(worldBorderClass,
+                            packetPlayOutWorldBorderEnumClass);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +68,7 @@ public class SWorldBorder {
 
             Method setWarningTime = worldBorder.getClass().getMethod("setWarningTime", int.class);
             setWarningTime.invoke(worldBorder, 0);
-            
+
             Method setWarningDistance = worldBorder.getClass().getMethod("setWarningDistance", int.class);
             setWarningDistance.invoke(worldBorder, 0);
 
@@ -68,15 +76,20 @@ public class SWorldBorder {
                     double.class, long.class);
 
             if (color == Color.Green) {
-                transitionSizeBetween.invoke(worldBorder, size - 0.1D, size, 20000000L);
+                transitionSizeBetween.invoke(worldBorder, size - 0.1D, size, Long.MAX_VALUE);
             } else if (color == Color.Red) {
-                transitionSizeBetween.invoke(worldBorder, size, size - 1.0D, 20000000L);
+                transitionSizeBetween.invoke(worldBorder, size, size - 1.0D, Long.MAX_VALUE);
             }
 
-            @SuppressWarnings({"unchecked", "rawtypes"})
-            Object packet = packetPlayOutWorldBorderConstructor.newInstance(worldBorder,
-                    Enum.valueOf((Class<Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
-            NMSUtils.sendPacket(player, packet);
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)) {
+                Object packet = clientboundInitializeBorderPacketConstructor.newInstance(worldBorder);
+                NMSUtils.sendPacket(player, packet);
+            } else {
+                @SuppressWarnings({"unchecked", "rawtypes"})
+                Object packet = packetPlayOutWorldBorderConstructor.newInstance(worldBorder,
+                        Enum.valueOf((Class<Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
+                NMSUtils.sendPacket(player, packet);
+            }
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
         }
