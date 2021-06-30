@@ -678,7 +678,7 @@ public enum CompatibleMaterial {
     GRANITE_WALL,
     GRASS("LONG_GRASS", (byte) 1),
     GRASS_BLOCK("GRASS"),
-    DIRT_PATH("GRASS_PATH"),
+    GRASS_PATH("GRASS_PATH"),
     GRAVEL,
     GRAY_BANNER("BANNER", (byte) 8),
     GRAY_BED("BED", (byte) 7),
@@ -1351,7 +1351,7 @@ public enum CompatibleMaterial {
         this.legacy = legacyMaterial;
         this.legacyData = legacyData == null ? 0 : legacyData;
         this.legacyRequiresData = legacyData != null;
-        this.compatibleMaterial =   LegacyMaterialAnalouge.lookupAnalouge(modern);
+        this.compatibleMaterial = LegacyMaterialAnalouge.lookupAnalouge(modern);
 
         if (compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan)) {
             // server older than this item: use a proxy
