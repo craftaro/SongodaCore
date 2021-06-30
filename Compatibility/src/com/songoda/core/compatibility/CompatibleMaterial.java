@@ -678,7 +678,7 @@ public enum CompatibleMaterial {
     GRANITE_WALL,
     GRASS("LONG_GRASS", (byte) 1),
     GRASS_BLOCK("GRASS"),
-    GRASS_PATH("GRASS_PATH"),
+    DIRT_PATH("GRASS_PATH"),
     GRAVEL,
     GRAY_BANNER("BANNER", (byte) 8),
     GRAY_BED("BED", (byte) 7),
