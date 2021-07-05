@@ -23,9 +23,9 @@ import java.util.Set;
 public enum CompatibleMaterial {
 	/*
      TODO: add another handler for getBlockItem() for materials and fallback materials
-    
+
      Legacy has some values not used in modern, eg:
-    
+
      DIODE_BLOCK_OFF(93, Diode.class),
      DIODE_BLOCK_ON(94, Diode.class),
      SPRUCE_DOOR_ITEM(427),
@@ -193,6 +193,7 @@ public enum CompatibleMaterial {
     BLACKSTONE(),
     BLACKSTONE_STAIRS(),
     BLACKSTONE_WALL(),
+    BLACKSTONE_SLAB(),
     BLASTSTONE_SLAB(),
     CHAIN(),
     CHISELED_NETHER_BRICKS(),
