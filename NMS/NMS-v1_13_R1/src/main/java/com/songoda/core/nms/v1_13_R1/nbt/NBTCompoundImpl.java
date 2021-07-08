@@ -206,5 +206,4 @@ public class NBTCompoundImpl implements NBTCompound {
     public String toString() {
         return compound.toString();
     }
-
 }

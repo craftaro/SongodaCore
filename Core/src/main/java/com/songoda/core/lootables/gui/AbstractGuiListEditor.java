@@ -4,8 +4,8 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.AnvilGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
-import com.songoda.core.utils.TextUtils;
 import com.songoda.core.lootables.loot.Loot;
+import com.songoda.core.utils.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,7 @@ public abstract class AbstractGuiListEditor extends Gui {
     protected final Loot loot;
     private final Gui returnGui;
 
-    public AbstractGuiListEditor(Loot loot ,Gui returnGui) {
+    public AbstractGuiListEditor(Loot loot, Gui returnGui) {
         super(1, returnGui);
         this.returnGui = returnGui;
         this.loot = loot;
@@ -27,19 +27,19 @@ public abstract class AbstractGuiListEditor extends Gui {
     public void paint() {
         List<String> lore = getData() == null ? new ArrayList<>() : getData();
         setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                TextUtils.formatText("&cBack")),
+                        TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
         setButton(6, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                TextUtils.formatText("&cBack")),
+                        TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
         setButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                TextUtils.formatText("&aAdd new line")),
+                        TextUtils.formatText("&aAdd new line")),
                 (event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setAction((e -> {
@@ -62,7 +62,7 @@ public abstract class AbstractGuiListEditor extends Gui {
                         : TextUtils.formatText(lore)));
 
         setButton(5, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                TextUtils.formatText("&cRemove the last line")),
+                        TextUtils.formatText("&cRemove the last line")),
                 (event -> {
                     lore.remove(lore.size() - 1);
                     updateData(lore);

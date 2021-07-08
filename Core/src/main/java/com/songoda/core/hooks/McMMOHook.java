@@ -227,5 +227,4 @@ public class McMMOHook {
     public static boolean isBleeding(LivingEntity victim) {
         return canHook ? McMMOHandler.isBleeding(victim) : false;
     }
-
 }

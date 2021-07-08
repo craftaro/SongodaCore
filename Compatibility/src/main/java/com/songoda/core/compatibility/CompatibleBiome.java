@@ -131,12 +131,12 @@ public enum CompatibleBiome {
 
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             try {
-            Class<?> classBiomeBase = ClassMapping.BIOME_BASE.getClazz(),
-                    classCraftChunk = ClassMapping.CRAFT_CHUNK.getClazz(),
-                    classCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz(),
-                    classChunk = ClassMapping.CHUNK.getClazz(),
-                    classBiomeStorage = ClassMapping.BIOME_STORAGE.getClazz(),
-                    classIRegistry = ClassMapping.I_REGISTRY.getClazz();
+                Class<?> classBiomeBase = ClassMapping.BIOME_BASE.getClazz(),
+                        classCraftChunk = ClassMapping.CRAFT_CHUNK.getClazz(),
+                        classCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz(),
+                        classChunk = ClassMapping.CHUNK.getClazz(),
+                        classBiomeStorage = ClassMapping.BIOME_STORAGE.getClazz(),
+                        classIRegistry = ClassMapping.I_REGISTRY.getClazz();
 
                 methodBiomeToBiomeBase = isAbove1_16_R1 ? classCraftBlock.getMethod("biomeToBiomeBase", classIRegistry, Biome.class)
                         : classCraftBlock.getMethod("biomeToBiomeBase", Biome.class);
@@ -188,7 +188,6 @@ public enum CompatibleBiome {
     public static Set<CompatibleBiome> getCompatibleBiomes() {
         return compatibleBiomes;
     }
-
 
     public static CompatibleBiome getBiome(Biome biome) {
         return biome == null ? null : lookupMap.get(biome.name());
@@ -252,6 +251,5 @@ public enum CompatibleBiome {
             this.version = version;
             this.biome = biome;
         }
-
     }
 }

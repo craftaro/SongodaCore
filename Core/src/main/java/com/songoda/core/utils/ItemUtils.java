@@ -5,10 +5,10 @@ package com.songoda.core.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.compatibility.ClassMapping;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -80,7 +80,7 @@ public class ItemUtils {
 
     private static Method methodAsBukkitCopy, methodAsNMSCopy, methodA;
 
-    static  {
+    static {
         try {
             Class<?> clazzEnchantmentManager = ClassMapping.ENCHANTMENT_MANAGER.getClazz();
             Class<?> clazzItemStack = ClassMapping.ITEM_STACK.getClazz();
@@ -93,7 +93,6 @@ public class ItemUtils {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
             else
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);
-
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -149,6 +148,7 @@ public class ItemUtils {
      *
      * @param item item to copy
      * @param qty  amount the new ItemStack should have
+     *
      * @return a copy of the original item
      */
     public static ItemStack getAsCopy(ItemStack item, int qty) {
@@ -212,11 +212,12 @@ public class ItemUtils {
      * Tested working 1.8-1.14
      *
      * @param item itemstack to create a glowing copy of
+     *
      * @return copy of item with a blank enchantment nbt tag
      */
     public static ItemStack addGlow(ItemStack item) {
         // from 1.11 up, fake enchantments don't work without more steps
-        // creating a new Enchantment involves some very involved reflection, 
+        // creating a new Enchantment involves some very involved reflection,
         // as the namespace is the same but until 1.12 requires an int, but versions after require a String
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
             item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
@@ -267,6 +268,7 @@ public class ItemUtils {
      * Remove all enchantments, including hidden enchantments
      *
      * @param item item to clear enchants from
+     *
      * @return copy of the item without any enchantment tag
      */
     public static ItemStack removeGlow(ItemStack item) {
@@ -403,7 +405,6 @@ public class ItemUtils {
             Iterator<Property> iterator = ((GameProfile) cb_CraftPlayer_getProfile.invoke(craftPlayer)).getProperties().get("textures").iterator();
 
             return iterator.hasNext() ? iterator.next().getValue() : null;
-
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
@@ -462,6 +463,7 @@ public class ItemUtils {
      *
      * @param is1 first item to compare
      * @param is2 item to compare against
+     *
      * @return true if both items are of the same material
      */
     public static boolean isSimilarMaterial(ItemStack is1, ItemStack is2) {
@@ -478,6 +480,7 @@ public class ItemUtils {
      *
      * @param inventory inventory to check
      * @param item      item to check against
+     *
      * @return true if a free slot or single receiver slot is available
      */
     public static boolean canMove(Inventory inventory, ItemStack item) {
@@ -506,6 +509,7 @@ public class ItemUtils {
      *
      * @param contents inventory to check
      * @param item     item to check against
+     *
      * @return true if a free slot or single receiver slot is available
      */
     public static boolean canMove(ItemStack[] contents, ItemStack item) {
@@ -535,6 +539,7 @@ public class ItemUtils {
      * @param inventory inventory to check
      * @param item      item to check against
      * @param reserved  which slot should be reserved
+     *
      * @return true if a free slot or single receiver slot is available
      */
     public static boolean canMoveReserved(Inventory inventory, ItemStack item, int reserved) {
@@ -566,6 +571,7 @@ public class ItemUtils {
      * @param contents inventory to check
      * @param item     item to check against
      * @param reserved which slot should be reserved
+     *
      * @return true if a free slot or single receiver slot is available
      */
     public static boolean canMoveReserved(ItemStack[] contents, ItemStack item, int reserved) {
@@ -595,6 +601,7 @@ public class ItemUtils {
      * @param amountToAdd how many of this item to attempt to add
      * @param inventory   a list that represents the inventory
      * @param maxSize     maximum number of different items this container can hold
+     *
      * @return how many items were added
      */
     public static int addAny(ItemStack item, int amountToAdd, List<ItemStack> inventory, int maxSize) {
@@ -609,6 +616,7 @@ public class ItemUtils {
      * @param inventory   a list that represents the inventory
      * @param maxSize     maximum number of different items this container can hold
      * @param reserved    slot to reserve - will not fill this slot
+     *
      * @return how many items were added
      */
     public static int addAny(ItemStack item, int amountToAdd, List<ItemStack> inventory, int maxSize, int reserved) {
@@ -651,6 +659,7 @@ public class ItemUtils {
      * @param inventory     a list that represents the inventory
      * @param containerSize maximum number of different items this container can
      *                      hold
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, List<ItemStack> inventory, int containerSize) {
@@ -668,6 +677,7 @@ public class ItemUtils {
      * @param containerSize maximum number of different items this container can
      *                      hold
      * @param reserved      slot to reserve - will not fill this slot
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, List<ItemStack> inventory, int containerSize, int reserved) {
@@ -685,6 +695,7 @@ public class ItemUtils {
      * @param inventory     a list that represents the inventory
      * @param containerSize maximum number of different items this container can
      * @param reserved      slot to reserve - will not fill this slot hold
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, int amount, List<ItemStack> inventory, int containerSize, int reserved) {
@@ -701,6 +712,7 @@ public class ItemUtils {
      *                        hold
      * @param reserved        slot to reserve - will not fill this slot
      * @param inventorySource Material of the container
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, int amount, List<ItemStack> inventory, int containerSize, int reserved, Material inventorySource) {
@@ -732,7 +744,6 @@ public class ItemUtils {
                     } else {
                         check[3] = true;
                     }
-
                 }
                 case "SMOKER":
                 case "BLAST_FURNACE":
@@ -749,7 +760,6 @@ public class ItemUtils {
                     } else {
                         check[0] = true;
                     }
-
                 }
             }
         }
@@ -824,6 +834,7 @@ public class ItemUtils {
      * @param item        item to add
      * @param amountToAdd how many of this item to attempt to add
      * @param inventory   a list that represents the inventory
+     *
      * @return how many items were added
      */
     public static int addAny(ItemStack item, int amountToAdd, Inventory inventory) {
@@ -858,6 +869,7 @@ public class ItemUtils {
      *
      * @param item      item to add
      * @param inventory a list that represents the inventory hold
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, Inventory inventory) {
@@ -874,6 +886,7 @@ public class ItemUtils {
      * @param amount    how many of this item should be added
      * @param inventory a list that represents the inventory
      * @param reserved  slot to reserve - will not fill this slot
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, int amount, Inventory inventory, int reserved) {
@@ -888,6 +901,7 @@ public class ItemUtils {
      * @param inventory       a list that represents the inventory
      * @param reserved        slot to reserve - will not fill this slot
      * @param inventorySource Material of the container
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, int amount, Inventory inventory, int reserved, Material inventorySource) {
@@ -920,7 +934,6 @@ public class ItemUtils {
                     } else {
                         check[3] = true;
                     }
-
                 }
                 case "SMOKER":
                 case "BLAST_FURNACE":
@@ -937,7 +950,6 @@ public class ItemUtils {
                     } else {
                         check[0] = true;
                     }
-
                 }
             }
         }
@@ -1043,6 +1055,7 @@ public class ItemUtils {
      * @param inventory     a list that represents the inventory
      * @param containerSize maximum number of different items this container can
      *                      hold
+     *
      * @return true if the item was added
      */
     public static boolean addItem(ItemStack item, int amount, List<ItemStack> inventory, int containerSize) {

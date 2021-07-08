@@ -8,5 +8,4 @@ public interface NBTEntity extends NBTCompound {
     Entity spawn(Location location);
 
     Entity reSpawn(Location location);
-
 }

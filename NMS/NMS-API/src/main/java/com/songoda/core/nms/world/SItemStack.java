@@ -9,5 +9,4 @@ public interface SItemStack {
     Random random = new Random();
 
     void breakItem(Player player, int amount);
-
 }

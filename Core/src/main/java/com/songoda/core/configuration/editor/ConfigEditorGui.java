@@ -109,10 +109,10 @@ public class ConfigEditorGui extends SimplePagedGui {
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + settingKey + ":", response -> {
-                                if (!setNumber(event.slot, settingKey, response.getMessage().trim())) {
-                                    event.player.sendMessage(ChatColor.RED + "Error: \"" + response.getMessage().trim() + "\" is not a number!");
-                                }
-                            }).setOnClose(() -> event.manager.showGUI(event.player, this))
+                                        if (!setNumber(event.slot, settingKey, response.getMessage().trim())) {
+                                            event.player.sendMessage(ChatColor.RED + "Error: \"" + response.getMessage().trim() + "\" is not a number!");
+                                        }
+                                    }).setOnClose(() -> event.manager.showGUI(event.player, this))
                                     .setOnCancel(() -> {
                                         event.player.sendMessage(ChatColor.RED + "Edit canceled");
                                         event.manager.showGUI(event.player, this);
@@ -136,16 +136,15 @@ public class ConfigEditorGui extends SimplePagedGui {
                             }
                             event.manager.showGUI(event.player, paged);
                         });
-
             } else if (val instanceof String) {
                 // changing a "string" value (or change to a feather for writing quill)
                 setButton(index, configItem(CompatibleMaterial.STRING, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + settingKey + ":", response -> {
-                                node.set(settingKey, response.getMessage().trim());
-                                updateValue(event.slot, settingKey);
-                            }).setOnClose(() -> event.manager.showGUI(event.player, this))
+                                        node.set(settingKey, response.getMessage().trim());
+                                        updateValue(event.slot, settingKey);
+                                    }).setOnClose(() -> event.manager.showGUI(event.player, this))
                                     .setOnCancel(() -> {
                                         event.player.sendMessage(ChatColor.RED + "Edit canceled");
                                         event.manager.showGUI(event.player, this);
@@ -166,7 +165,6 @@ public class ConfigEditorGui extends SimplePagedGui {
 
             ++index;
         }
-
     }
 
     public ConfigurationSection getCurrentNode() {

@@ -95,5 +95,4 @@ public class PluginConfigGui extends SimplePagedGui {
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue())));
         }
     }
-
 }

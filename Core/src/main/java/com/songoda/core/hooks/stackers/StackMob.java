@@ -78,5 +78,4 @@ public class StackMob extends Stacker {
     public int getMinStackSize(EntityType type) {
         return 0;
     }
-
 }

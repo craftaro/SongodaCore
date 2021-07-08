@@ -67,7 +67,7 @@ public class SSpawnerImpl implements SSpawner {
             if (!canSpawn(entityInsentient, spot, canSpawnOn))
                 continue;
 
-            entityInsentient.prepare(damageScaler,null);
+            entityInsentient.prepare(damageScaler, null);
 
             LivingEntity craftEntity = (LivingEntity) entity.getBukkitEntity();
 

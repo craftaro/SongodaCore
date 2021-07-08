@@ -157,5 +157,4 @@ public class ChatPrompt implements Listener {
             return message;
         }
     }
-
 }

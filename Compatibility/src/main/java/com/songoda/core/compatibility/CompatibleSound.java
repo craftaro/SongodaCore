@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
  */
 public enum CompatibleSound {
 
-    // some of these values are missing an API value.. 
+    // some of these values are missing an API value..
     // would using the raw strings be better?
     // 1.8 list:
     // https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/mapping-and-modding-tutorials/2213619-1-8-all-playsound-sound-arguments
@@ -1267,7 +1267,6 @@ public enum CompatibleSound {
                     return;
                 }
             }
-
         } catch (Exception e) {
             System.out.println("ERROR loading " + name());
             for (Version v : versions) {
@@ -1412,6 +1411,5 @@ public enum CompatibleSound {
             this.sound = sound;
             this.compatibilityMode = compatibility;
         }
-
     }
 }

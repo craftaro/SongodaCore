@@ -3,7 +3,6 @@ package com.songoda.core.world;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.utils.NMSUtils;
-import net.minecraft.world.level.border.WorldBorder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -98,6 +97,5 @@ public class SWorldBorder {
     public enum Color {
 
         Blue, Green, Red
-
     }
 }

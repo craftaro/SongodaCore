@@ -4,7 +4,6 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.hooks.EntityStackerManager;
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.world.SpawnedEntity;
-import com.songoda.core.nms.world.WorldCore;
 import com.songoda.core.utils.EntityUtils;
 import org.bukkit.Location;
 import org.bukkit.block.CreatureSpawner;
@@ -29,15 +28,13 @@ public class SSpawner {
         this(spawner.getLocation());
     }
 
-
     public int spawn(int amountToSpawn, EntityType... types) {
         return spawn(amountToSpawn, "EXPLOSION_NORMAL", null, null, types);
     }
 
-
     /**
      * Spawn the spawner.
-     *
+     * <p>
      * If you want support for stackers you will need to load them
      * on your plugins enable.
      *

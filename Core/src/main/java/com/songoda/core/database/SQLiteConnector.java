@@ -57,5 +57,4 @@ public class SQLiteConnector implements DatabaseConnector {
             ex.printStackTrace();
         }
     }
-
 }

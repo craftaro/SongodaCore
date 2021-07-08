@@ -12,5 +12,4 @@ public interface NBTCore {
     NBTEntity of(Entity entity);
 
     NBTEntity newEntity();
-
 }

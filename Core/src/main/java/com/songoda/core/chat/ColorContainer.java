@@ -3,7 +3,7 @@ package com.songoda.core.chat;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.utils.ColorUtils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ColorContainer {
 

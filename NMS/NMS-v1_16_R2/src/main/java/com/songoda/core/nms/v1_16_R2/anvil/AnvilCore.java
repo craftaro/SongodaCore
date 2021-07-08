@@ -19,5 +19,4 @@ public class AnvilCore implements com.songoda.core.nms.anvil.AnvilCore {
         EntityPlayer p = ((CraftPlayer) player).getHandle();
         return new AnvilView(p.nextContainerCounter(), p, holder);
     }
-
 }

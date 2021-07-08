@@ -51,5 +51,4 @@ public class MySQLConnector implements DatabaseConnector {
             ex.printStackTrace();
         }
     }
-
 }

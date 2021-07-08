@@ -14,12 +14,12 @@ import java.util.Map;
  */
 public enum LegacyMaterialBlockType {
 
-    OAK_LEAVES("LEAVES", (byte)8, true),
-    SPRUCE_LEAVES("LEAVES", (byte)9, true),
-    BIRCH_LEAVES("LEAVES", (byte)10, true),
-    JUNGLE_LEAVES("LEAVES", (byte)11, true),
-    ACACIA_LEAVES("LEAVES_2", (byte)8, true),
-    DARK_OAK_LEAVES("LEAVES_2", (byte)9, true),
+    OAK_LEAVES("LEAVES", (byte) 8, true),
+    SPRUCE_LEAVES("LEAVES", (byte) 9, true),
+    BIRCH_LEAVES("LEAVES", (byte) 10, true),
+    JUNGLE_LEAVES("LEAVES", (byte) 11, true),
+    ACACIA_LEAVES("LEAVES_2", (byte) 8, true),
+    DARK_OAK_LEAVES("LEAVES_2", (byte) 9, true),
 
     ACACIA_DOOR("ACACIA_DOOR", true),
     BED("BED_BLOCK", true),
@@ -70,11 +70,11 @@ public enum LegacyMaterialBlockType {
     }
 
     private LegacyMaterialBlockType(String blockMaterial) {
-        this(blockMaterial, (byte)-1, null,false);
+        this(blockMaterial, (byte) -1, null, false);
     }
 
     private LegacyMaterialBlockType(String blockMaterial, boolean requiresData) {
-        this(blockMaterial, (byte)-1, null, requiresData);
+        this(blockMaterial, (byte) -1, null, requiresData);
     }
 
     private LegacyMaterialBlockType(String blockMaterial, byte data, boolean requiresData) {
@@ -82,7 +82,7 @@ public enum LegacyMaterialBlockType {
     }
 
     private LegacyMaterialBlockType(String blockMaterial, String alternateMaterial) {
-        this(blockMaterial, (byte)-1, alternateMaterial, false);
+        this(blockMaterial, (byte) -1, alternateMaterial, false);
     }
 
     private LegacyMaterialBlockType(String blockMaterial, byte data, String alternateMaterial, boolean requiresData) {
@@ -123,7 +123,6 @@ public enum LegacyMaterialBlockType {
     }
 
     public static LegacyMaterialBlockType getFromLegacy(String lookup) {
-        return getFromLegacy(lookup, (byte)-1);
+        return getFromLegacy(lookup, (byte) -1);
     }
-
 }

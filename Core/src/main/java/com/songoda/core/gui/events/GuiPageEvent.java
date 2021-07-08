@@ -16,5 +16,4 @@ public class GuiPageEvent {
         this.lastPage = lastPage;
         this.page = page;
     }
-
 }

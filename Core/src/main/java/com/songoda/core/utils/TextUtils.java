@@ -88,6 +88,7 @@ public class TextUtils {
      * Note: Do not use semi-colons in this string, or they will be lost when decoding!
      *
      * @param s string to convert
+     *
      * @return encoded string
      */
     public static String convertToInvisibleLoreString(String s) {
@@ -105,6 +106,7 @@ public class TextUtils {
      * Note: Do not use semi-colons in this string, or they will be lost when decoding!
      *
      * @param s string to convert
+     *
      * @return encoded string
      */
     public static String convertToInvisibleString(String s) {
@@ -119,6 +121,7 @@ public class TextUtils {
      * Removes color markers used to encode strings as invisible text
      *
      * @param s encoded string
+     *
      * @return string with color markers removed
      */
     public static String convertFromInvisibleString(String s) {

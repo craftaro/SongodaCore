@@ -21,6 +21,7 @@ public class ClientVersion {
      * this value will simply be the server version.
      *
      * @param player Player to check
+     *
      * @return ServerVersion that matches this player's Minecraft version
      */
     public static ServerVersion getClientVersion(Player player) {

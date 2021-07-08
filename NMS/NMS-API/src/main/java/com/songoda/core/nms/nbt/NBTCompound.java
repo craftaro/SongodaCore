@@ -60,5 +60,4 @@ public interface NBTCompound {
     void deSerialize(byte[] serialized);
 
     void addExtras();
-
 }

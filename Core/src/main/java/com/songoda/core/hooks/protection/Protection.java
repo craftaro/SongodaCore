@@ -18,5 +18,4 @@ public abstract class Protection implements Hook {
     public abstract boolean canBreak(Player player, Location location);
 
     public abstract boolean canInteract(Player player, Location location);
-
 }

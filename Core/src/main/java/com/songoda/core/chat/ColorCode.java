@@ -50,7 +50,6 @@ public enum ColorCode {
             ColorCode color = var0[i];
             BY_CHAR.put(color.code, color);
         }
-
     }
 
     public static ColorCode getByChar(char code) {

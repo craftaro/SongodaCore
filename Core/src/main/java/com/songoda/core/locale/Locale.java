@@ -7,7 +7,16 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -55,6 +64,7 @@ public class Locale {
      *
      * @param plugin plugin to load from
      * @param name   name of the default locale, eg "en_US"
+     *
      * @return returns the loaded Locale, or null if there was an error
      */
     public static Locale loadDefaultLocale(JavaPlugin plugin, String name) {
@@ -67,6 +77,7 @@ public class Locale {
      *
      * @param plugin plugin to load from
      * @param name   name of the locale, eg "en_US"
+     *
      * @return returns the loaded Locale, or null if there was an error
      */
     public static Locale loadLocale(JavaPlugin plugin, String name) {
@@ -85,6 +96,7 @@ public class Locale {
      * Load all locales from this plugin's locale directory
      *
      * @param plugin plugin to load from
+     *
      * @return returns the loaded Locales
      */
     public static List<Locale> loadAllLocales(JavaPlugin plugin) {
@@ -130,6 +142,7 @@ public class Locale {
      * @param plugin   plugin owning the locale file
      * @param locale   the specific locale file to save
      * @param fileName where to save the file
+     *
      * @return true if the operation was successful, false otherwise
      */
     public static boolean saveDefaultLocale(JavaPlugin plugin, String locale, String fileName) {
@@ -142,6 +155,7 @@ public class Locale {
      * @param plugin   plugin owning the locale file
      * @param in       file to save
      * @param fileName the name of the file to save
+     *
      * @return true if the operation was successful, false otherwise
      */
     public static boolean saveLocale(Plugin plugin, InputStream in, String fileName) {
@@ -369,6 +383,7 @@ public class Locale {
      * Supply the Message object with the plugins prefix.
      *
      * @param message message to be applied
+     *
      * @return applied message
      */
     private Message supplyPrefix(Message message) {
@@ -379,6 +394,7 @@ public class Locale {
      * Create a new unsaved Message
      *
      * @param message the message to create
+     *
      * @return the created message
      */
     public Message newMessage(String message) {
@@ -389,6 +405,7 @@ public class Locale {
      * Get a message set for a specific node.
      *
      * @param node the node to get
+     *
      * @return the message for the specified node
      */
     public Message getMessage(String node) {
@@ -403,6 +420,7 @@ public class Locale {
      *
      * @param node         the node to get
      * @param defaultValue the default value given that a value for the node was not found
+     *
      * @return the message for the specified node. Default if none found
      */
     public Message getMessageOrDefault(String node, String defaultValue) {

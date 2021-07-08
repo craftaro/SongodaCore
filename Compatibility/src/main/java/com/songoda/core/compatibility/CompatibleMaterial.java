@@ -1407,6 +1407,7 @@ public enum CompatibleMaterial {
 
     /**
      * @param amount the amount to return
+     *
      * @return an item that resembles this material for the current server version
      */
     public ItemStack getItem(int amount) {
@@ -1469,6 +1470,7 @@ public enum CompatibleMaterial {
      * modern material by that name.
      *
      * @param name item to lookup
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(String name) {
@@ -1482,6 +1484,7 @@ public enum CompatibleMaterial {
      *
      * @param name item to lookup
      * @param def  default item if this is not a valid material
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(String name, CompatibleMaterial def) {
@@ -1492,6 +1495,7 @@ public enum CompatibleMaterial {
      * Lookup a Material by bukkit material.
      *
      * @param mat item to lookup
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Material mat) {
@@ -1509,6 +1513,7 @@ public enum CompatibleMaterial {
      * Lookup a Material by Itemstack.
      *
      * @param item item to lookup
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(ItemStack item) {
@@ -1524,6 +1529,7 @@ public enum CompatibleMaterial {
      * Lookup a Material by Block, corrected for legacy
      *
      * @param block block to check
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Block block) {
@@ -1562,6 +1568,7 @@ public enum CompatibleMaterial {
      * Lookup a Material by FallingBlock, corrected for legacy
      *
      * @param block falling block to check
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(FallingBlock block) {
@@ -1583,6 +1590,7 @@ public enum CompatibleMaterial {
      *
      * @param mat  material to check
      * @param data data of the block
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Material mat, byte data) {
@@ -1628,6 +1636,7 @@ public enum CompatibleMaterial {
      * modern material by that name.
      *
      * @param name item to lookup
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getBlockMaterial(String name) {
@@ -1649,6 +1658,7 @@ public enum CompatibleMaterial {
      *
      * @param name item to lookup
      * @param def  default item if this is not a valid material
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getBlockMaterial(String name, CompatibleMaterial def) {
@@ -1667,6 +1677,7 @@ public enum CompatibleMaterial {
      * Lookup a Block Material by bukkit material.
      *
      * @param mat item to lookup
+     *
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getBlockMaterial(Material mat) {
@@ -1702,6 +1713,7 @@ public enum CompatibleMaterial {
      * modern material by that name.
      *
      * @param name item to lookup
+     *
      * @return ItemStack for this material, or null if none found
      */
     public static ItemStack getItem(String name) {
@@ -1717,6 +1729,7 @@ public enum CompatibleMaterial {
     }
 
     private static Method methodSetData;
+
     static {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
             try {
@@ -1734,7 +1747,7 @@ public enum CompatibleMaterial {
      */
     public void applyToBlock(Block block) {
         if (block == null) return;
-            block.setType(material);
+        block.setType(material);
         if (data != null && data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
             try {
                 methodSetData.invoke(block, data);
@@ -1748,6 +1761,7 @@ public enum CompatibleMaterial {
      * Check to see if an item matches this specific material type
      *
      * @param item Item to check
+     *
      * @return true if material of the ItemStack matches this item, corrected for legacy data
      */
     public boolean matches(ItemStack item) {

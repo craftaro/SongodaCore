@@ -467,7 +467,6 @@ public class McMMOHandler {
                     return false;
                 }
                 return (boolean) mcmmo_SkillUtils_activationSuccessful.invoke(null, secondaryDouble, player, skillLevel, activationChance);
-
             } catch (Exception ex1) {
                 Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex1);
             }
@@ -511,5 +510,4 @@ public class McMMOHandler {
         }
         return 0;
     }
-
 }

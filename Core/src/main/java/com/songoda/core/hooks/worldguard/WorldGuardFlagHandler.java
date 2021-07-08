@@ -1,7 +1,6 @@
 package com.songoda.core.hooks.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
@@ -105,7 +104,7 @@ public class WorldGuardFlagHandler {
                 Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             } else {
                 flags.put(flag, wgFlag);
-                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[]{((Flag) wgFlag).getName(), wgFlag.getClass().getSimpleName()});
+                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[] {((Flag) wgFlag).getName(), wgFlag.getClass().getSimpleName()});
             }
         }
     }
@@ -124,7 +123,7 @@ public class WorldGuardFlagHandler {
             if (wgFlag != null) {
                 // we already have one
                 flags.put(flag, wgFlag);
-                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[]{wgFlag.getName(), wgFlag.getClass().getSimpleName()});
+                Bukkit.getServer().getLogger().log(Level.WARNING, "Loaded existing {1} {0}", new Object[] {wgFlag.getName(), wgFlag.getClass().getSimpleName()});
                 return;
             }
 
@@ -223,6 +222,7 @@ public class WorldGuardFlagHandler {
      *
      * @param loc  location to check
      * @param flag ALLOW/DENY flag to check
+     *
      * @return flag state, or null if undefined
      */
     public static Boolean getBooleanFlag(Location loc, String flag, Player optionalPlayer) {
@@ -253,6 +253,7 @@ public class WorldGuardFlagHandler {
      *
      * @param c    chunk to check for regions in
      * @param flag ALLOW/DENY flag to check
+     *
      * @return flag state, or null if undefined
      */
     public static Boolean getBooleanFlag(Chunk c, String flag) {
@@ -346,7 +347,6 @@ public class WorldGuardFlagHandler {
                 return null;
             }
             return result == State.ALLOW;
-
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
         }
@@ -405,7 +405,6 @@ public class WorldGuardFlagHandler {
                 return null;
             }
             return result == State.ALLOW;
-
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
         }

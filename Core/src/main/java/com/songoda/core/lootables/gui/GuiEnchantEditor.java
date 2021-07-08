@@ -6,7 +6,6 @@ import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.lootables.loot.Loot;
 import com.songoda.core.utils.TextUtils;
-import com.songoda.core.lootables.loot.Loot;
 import org.bukkit.enchantments.Enchantment;
 
 import java.util.ArrayList;
@@ -32,19 +31,19 @@ public class GuiEnchantEditor extends Gui {
     public void paint() {
         Map<String, Integer> lore = loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(loot.getEnchants());
         setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                TextUtils.formatText("&cBack")),
+                        TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
         setButton(6, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                TextUtils.formatText("&cBack")),
+                        TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
         setButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                TextUtils.formatText("&aAdd new line")),
+                        TextUtils.formatText("&aAdd new line")),
                 (event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setAction((e -> {
@@ -84,9 +83,9 @@ public class GuiEnchantEditor extends Gui {
                         ? TextUtils.formatText(Collections.singletonList("&cNo enchantments set..."))
                         : TextUtils.formatText(enchantments)));
 
-            String lastFinal = last;
+        String lastFinal = last;
         setButton(5, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                TextUtils.formatText("&cRemove the last line")),
+                        TextUtils.formatText("&cRemove the last line")),
                 (event -> {
                     lore.remove(lastFinal);
                     loot.setEnchants(lore);

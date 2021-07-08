@@ -50,5 +50,4 @@ public enum ServerProject {
     public static boolean isServer(ServerProject... versions) {
         return ArrayUtils.contains(versions, serverProject);
     }
-
 }

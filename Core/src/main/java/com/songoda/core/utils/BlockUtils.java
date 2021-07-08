@@ -3,7 +3,6 @@ package com.songoda.core.utils;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,6 +61,7 @@ public class BlockUtils {
      * Interact with this block to either update redstone or open doors
      *
      * @param b block to update
+     *
      * @return if this block's state was updated
      */
     public static boolean tryInteract(Block b) {
@@ -185,7 +185,7 @@ public class BlockUtils {
 //                default:
 //                    return;
 //            }
-//            
+//
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
         }
@@ -245,6 +245,7 @@ public class BlockUtils {
      * Get the double door for the given block
      *
      * @param block
+     *
      * @return
      */
     public static Block getDoubleDoor(Block block) {
@@ -346,7 +347,6 @@ public class BlockUtils {
                     .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
                                     .newInstance(location.getX(), location.getY(), location.getZ()),
                             nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
-
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
@@ -421,6 +421,7 @@ public class BlockUtils {
      * Checks if a crop is at its max growth stage
      *
      * @param block The crop block to check
+     *
      * @return true if the block is a crop and at its max growth stage
      */
     public static boolean isCropFullyGrown(Block block) {
@@ -442,6 +443,7 @@ public class BlockUtils {
      * Gets the max growth stage for the given block
      *
      * @param block The crop block to check
+     *
      * @return The max growth stage of the given crop type, or -1 if not a crop
      */
     public static int getMaxGrowthStage(Block block) {
@@ -463,6 +465,7 @@ public class BlockUtils {
      * Gets the max growth stage for the given material
      *
      * @param material The material of the crop
+     *
      * @return The max growth stage of the given crop type
      */
     public static int getMaxGrowthStage(Material material) {
@@ -550,6 +553,7 @@ public class BlockUtils {
      * Check to see if this material does not impede player/mob movement at all.
      *
      * @param m material to check
+     *
      * @return true if this material doesn't have a solid hitbox
      */
     public static boolean canPassThrough(Material m) {
@@ -735,6 +739,7 @@ public class BlockUtils {
      * This includes blocks like slabs and stairs
      *
      * @param m material to check
+     *
      * @return true if this is a block that can be walked though or up
      */
     public static boolean canWalkTo(Material m) {

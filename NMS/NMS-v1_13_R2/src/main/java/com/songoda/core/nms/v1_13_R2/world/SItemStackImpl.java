@@ -29,7 +29,7 @@ public class SItemStackImpl implements SItemStack {
             Vec3D vec3d1 = new Vec3D(((double) this.random.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
             vec3d1 = vec3d1.a(-entityPlayer.pitch * 0.017453292F);
             vec3d1 = vec3d1.b(-entityPlayer.yaw * 0.017453292F);
-            vec3d1 = vec3d1.add(entityPlayer.locX, entityPlayer.locY + (double)entityPlayer.getHeadHeight(), entityPlayer.locZ);
+            vec3d1 = vec3d1.add(entityPlayer.locX, entityPlayer.locY + (double) entityPlayer.getHeadHeight(), entityPlayer.locZ);
             entityPlayer.world.addParticle(new ParticleParamItem(Particles.C, CraftItemStack.asNMSCopy(item)), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
         }
     }

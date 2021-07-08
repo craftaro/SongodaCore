@@ -4,11 +4,11 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.AnvilGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
-import com.songoda.core.utils.TextUtils;
 import com.songoda.core.lootables.loot.Loot;
 import com.songoda.core.lootables.loot.LootBuilder;
 import com.songoda.core.lootables.loot.LootManager;
 import com.songoda.core.lootables.loot.Lootable;
+import com.songoda.core.utils.TextUtils;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 

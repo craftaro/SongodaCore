@@ -59,6 +59,7 @@ public class HookManager<T extends Hook> {
      * the previously defined default will be used.
      *
      * @param name name of the plugin to use
+     *
      * @return true if the default was set to this plugin
      */
     public boolean setPreferredHook(String name) {
@@ -76,6 +77,7 @@ public class HookManager<T extends Hook> {
      * the previously defined default will be used.
      *
      * @param plugin plugin to use
+     *
      * @return true if the default was set to this plugin
      */
     public boolean setPreferredHook(PluginHook plugin) {
@@ -91,6 +93,7 @@ public class HookManager<T extends Hook> {
      * Try to grab the handler for this specific plugin hook.
      *
      * @param name plugin to use
+     *
      * @return returns null if plugin is not enabled
      */
     public T getHook(String name) {
@@ -106,6 +109,7 @@ public class HookManager<T extends Hook> {
      * Try to grab the handler for this specific plugin hook.
      *
      * @param hook plugin to use
+     *
      * @return returns null if plugin is not enabled
      */
     public T getHook(PluginHook hook) {
@@ -147,6 +151,7 @@ public class HookManager<T extends Hook> {
      * Check to see if a specific plugin hook is enabled.
      *
      * @param name plugin to check
+     *
      * @return true if this plugin is supported and loaded
      */
     public boolean isEnabled(String name) {
@@ -157,6 +162,7 @@ public class HookManager<T extends Hook> {
      * Check to see if a specific plugin hook is enabled.
      *
      * @param hook plugin to check
+     *
      * @return true if this plugin is supported and loaded
      */
     public boolean isEnabled(PluginHook hook) {
@@ -180,5 +186,4 @@ public class HookManager<T extends Hook> {
     public String getName() {
         return defaultHook != null ? defaultHook.getName() : null;
     }
-
 }

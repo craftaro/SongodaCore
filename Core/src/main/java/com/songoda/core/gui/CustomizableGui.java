@@ -48,8 +48,8 @@ public class CustomizableGui extends Gui {
 
             if (!config.isConfigurationSection("overrides")) {
                 config.setDefault("overrides.example.item", CompatibleMaterial.STONE.name(),
-                        "This is the icon material you would like to replace",
-                        "the current material with.")
+                                "This is the icon material you would like to replace",
+                                "the current material with.")
                         .setDefault("overrides.example.position", 5,
                                 "This is the current position of the icon you would like to move.",
                                 "The number represents the cell the icon currently resides in.")
@@ -57,11 +57,10 @@ public class CustomizableGui extends Gui {
                                 "This is just an example and does not override to any items",
                                 "in this GUI.")
                         .setDefaultComment("overrides",
-                        "For information on how to apply overrides please visit",
-                        "https://wiki.songoda.com/Gui");
+                                "For information on how to apply overrides please visit",
+                                "https://wiki.songoda.com/Gui");
                 config.saveChanges();
             }
-
 
             if (!config.isConfigurationSection("disabled")) {
                 config.setDefault("disabled", Arrays.asList("example3", "example4", "example5"),
@@ -108,7 +107,7 @@ public class CustomizableGui extends Gui {
         }
         setPrivateDefaultAction(event -> {
             if (event.clickType == ClickType.SHIFT_RIGHT)
-                activationCount ++;
+                activationCount++;
             if (activationCount >= 8 && event.player.hasPermission("songoda.admin")) {
                 showGuiKeys = !showGuiKeys;
                 activationCount = 0;
@@ -156,7 +155,7 @@ public class CustomizableGui extends Gui {
                 setItem(customButton.key, customButton.row, customButton.col, customButton.createItem());
         else
             for (Integer position : customButton.positions)
-            setItem(customButton.key, position, customButton.createItem());
+                setItem(customButton.key, position, customButton.createItem());
     }
 
     @NotNull
@@ -299,7 +298,6 @@ public class CustomizableGui extends Gui {
             updateItemName(c, name);
         return this;
     }
-
 
     @NotNull
     public Gui updateItem(@NotNull String key, int row, int col, @Nullable String name, @NotNull String... lore) {
@@ -506,7 +504,6 @@ public class CustomizableGui extends Gui {
             setConditional(c, type, action);
     }
 
-
     public Gui setNextPage(ItemStack item) {
         applyShowGuiKeys("__NEXT__", item);
         if (customContent.isButtonCustomized("__NEXT__"))
@@ -616,7 +613,6 @@ public class CustomizableGui extends Gui {
             this.title = title;
             this.lore = lore;
         }
-
 
         public String getKey() {
             return key;

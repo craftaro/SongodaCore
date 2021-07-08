@@ -204,5 +204,4 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         entity.initMenu(entity.bV);
         //entity.bV.addSlotListener(entity.cX);
     }
-
 }

@@ -31,7 +31,6 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

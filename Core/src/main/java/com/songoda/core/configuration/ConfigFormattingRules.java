@@ -66,7 +66,6 @@ public class ConfigFormattingRules {
             this.spaceCharTop = this.spaceCharBottom = ' ';
             this.spaceSuffixTop = this.spaceSuffixBottom = "";
         }
-
     }
 
     public static CommentStyle parseStyle(List<String> lines) {

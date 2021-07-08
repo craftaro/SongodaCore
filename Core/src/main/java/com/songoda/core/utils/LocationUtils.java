@@ -21,5 +21,4 @@ public class LocationUtils {
                 l.getY() >= y1 && l.getY() <= y2 &&
                 l.getZ() >= z1 && l.getZ() <= z2;
     }
-
 }

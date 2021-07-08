@@ -46,7 +46,6 @@ public class SWorldImpl implements SWorld {
                 if (bukkitEntity instanceof LivingEntity && bukkitEntity.isValid()) {
                     list.add((LivingEntity) bukkitEntity);
                 }
-
             });
         } catch (IllegalAccessException e) {
             e.printStackTrace();

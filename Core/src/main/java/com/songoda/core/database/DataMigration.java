@@ -19,5 +19,4 @@ public abstract class DataMigration {
     public int getRevision() {
         return this.revision;
     }
-
 }

@@ -198,5 +198,4 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         // Add the slot listener
         entity.activeContainer.addSlotListener(entity);
     }
-
 }

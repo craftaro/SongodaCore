@@ -100,5 +100,4 @@ public class DataMigrationManager {
     private String getMigrationsTableName() {
         return this.dataManagerAbstract.getTablePrefix() + "migrations";
     }
-
 }

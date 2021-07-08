@@ -769,7 +769,6 @@ public class Gui {
             inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
         }
 
-
         return inventory;
     }
 

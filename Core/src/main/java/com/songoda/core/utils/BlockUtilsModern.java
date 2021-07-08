@@ -2,7 +2,6 @@ package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -151,13 +150,13 @@ public class BlockUtilsModern {
             } else {
                 System.out.println("Unknown redstone: " + mblock.getClass().getName());
             }
-//			
+//
 //			if(mblock instanceof net.minecraft.server.v1_15_R1.BlockLever) {
 //				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockLever.class.getDeclaredMethod("e", net.minecraft.server.v1_15_R1.IBlockData.class, net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
 //				updateNeighbours.setAccessible(true);
 //				// IBlockData = block state after being powered
-//				
-//				updateNeighbours.invoke(mblock, 
+//
+//				updateNeighbours.invoke(mblock,
 //						((org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData) block.getBlockData()).getState(),
 //						mworld,
 //						mpos);
@@ -165,8 +164,8 @@ public class BlockUtilsModern {
 //				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockButtonAbstract.class.getDeclaredMethod("f", net.minecraft.server.v1_15_R1.IBlockData.class, net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
 //				updateNeighbours.setAccessible(true);
 //				// IBlockData = block state after being powered
-//				
-//				updateNeighbours.invoke(mblock, 
+//
+//				updateNeighbours.invoke(mblock,
 //						((org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData) block.getBlockData()).getState(),
 //						mworld,
 //						mpos);
@@ -174,8 +173,8 @@ public class BlockUtilsModern {
 //				Method updateNeighbours = net.minecraft.server.v1_15_R1.BlockPressurePlateAbstract.class.getDeclaredMethod("a", net.minecraft.server.v1_15_R1.World.class, net.minecraft.server.v1_15_R1.BlockPosition.class);
 //				updateNeighbours.setAccessible(true);
 //				// IBlockData = block state after being powered
-//				
-//				updateNeighbours.invoke(mblock, 
+//
+//				updateNeighbours.invoke(mblock,
 //						mworld,
 //						mpos);
 //			}

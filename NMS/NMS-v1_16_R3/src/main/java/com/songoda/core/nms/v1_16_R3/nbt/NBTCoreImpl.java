@@ -33,5 +33,4 @@ public class NBTCoreImpl implements NBTCore {
     public NBTEntity newEntity() {
         return new NBTEntityImpl(new NBTTagCompound(), null);
     }
-
 }

@@ -16,5 +16,4 @@ public class AnvilCore implements com.songoda.core.nms.anvil.AnvilCore {
     public CustomAnvil createAnvil(Player player, InventoryHolder holder) {
         return new AnvilView(((CraftPlayer) player).getHandle(), holder);
     }
-
 }

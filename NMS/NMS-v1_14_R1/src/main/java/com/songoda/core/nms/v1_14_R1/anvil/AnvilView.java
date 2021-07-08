@@ -2,7 +2,17 @@ package com.songoda.core.nms.v1_14_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import net.minecraft.server.v1_14_R1.*;
+import net.minecraft.server.v1_14_R1.BlockPosition;
+import net.minecraft.server.v1_14_R1.ChatMessage;
+import net.minecraft.server.v1_14_R1.Container;
+import net.minecraft.server.v1_14_R1.ContainerAccess;
+import net.minecraft.server.v1_14_R1.ContainerAnvil;
+import net.minecraft.server.v1_14_R1.ContainerProperty;
+import net.minecraft.server.v1_14_R1.Containers;
+import net.minecraft.server.v1_14_R1.EntityHuman;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
+import net.minecraft.server.v1_14_R1.IInventory;
+import net.minecraft.server.v1_14_R1.PacketPlayOutOpenWindow;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
@@ -248,5 +258,4 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         // Add the slot listener
         entity.activeContainer.addSlotListener(entity);
     }
-
 }

@@ -32,5 +32,4 @@ public abstract class Stacker implements Hook {
     public abstract void add(LivingEntity entity, int amount);
 
     public abstract int getMinStackSize(EntityType type);
-
 }

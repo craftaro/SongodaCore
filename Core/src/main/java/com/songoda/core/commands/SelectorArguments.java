@@ -30,6 +30,7 @@ public class SelectorArguments {
      *
      * @param sender   CommandBlock or Player running the command
      * @param argument argument with the selector to parse
+     *
      * @return SelectorArguments Object for grabbing the list of entities, or null if the selector is invalid
      */
     @Nullable

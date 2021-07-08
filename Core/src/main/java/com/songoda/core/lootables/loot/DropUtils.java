@@ -37,7 +37,7 @@ public class DropUtils {
                 commands.add(drop.getCommand());
 
             if (drop.getXp() != 0)
-            xp.add(drop.getXp());
+                xp.add(drop.getXp());
         }
 
         event.getDrops().clear();
@@ -65,5 +65,4 @@ public class DropUtils {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
     }
-
 }
