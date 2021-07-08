@@ -1,9 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore-Modules</artifactId>
     <version>2.5.7</version>
-    <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
     <properties>
@@ -35,15 +38,25 @@
         <module>NMS/NMS-v1_17_R1</module>
     </modules>
 
+    <issueManagement>
+        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
+        <system>Jira Service Desk</system>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/songoda/SongodaCore</url>
+        <connection>scm:git:git:github.com/songoda/SongodaCore.git</connection>
+    </scm>
+
     <build>
-        <sourceDirectory>src</sourceDirectory>
-        <defaultGoal>clean install</defaultGoal>
         <finalName>${project.artifactId}-${project.version}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
+
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -53,31 +66,41 @@
             </plugin>
         </plugins>
     </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <repositories>
         <repository>
-            <id>public</id>
+            <id>songoda-public</id>
             <url>https://repo.songoda.com/repository/public/</url>
         </repository>
+
         <repository>
-            <id>spigot-repo</id>
+            <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+
         <repository>
             <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <url>https://jitpack.io/</url>
         </repository>
+
         <repository>
             <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
     </repositories>
-    <!-- Global dependencies -->
+
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17</version>
-            <scope>provided</scope>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
         </dependency>
     </dependencies>
 </project>
