@@ -26,7 +26,6 @@ public class TimeUtils {
         return sb.toString().trim();
     }
 
-
     public static long parseTime(String input) {
         long result = 0;
         StringBuilder number = new StringBuilder();

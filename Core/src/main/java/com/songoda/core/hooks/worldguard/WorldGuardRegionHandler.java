@@ -206,7 +206,6 @@ public class WorldGuardRegionHandler {
         regions.removeAll(parentNames);
 
         return regions;
-
     }
 
     private static List<String> getRegionNamesLegacy(Location loc) {

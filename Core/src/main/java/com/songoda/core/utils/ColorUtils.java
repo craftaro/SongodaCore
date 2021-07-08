@@ -51,7 +51,6 @@ public class ColorUtils {
         public B getBlue() {
             return blue;
         }
-
     }
 
     public static ColorCode fromRGB(int r, int g, int b) {
@@ -64,5 +63,4 @@ public class ColorUtils {
         });
         return closest.firstEntry().getValue();
     }
-
 }

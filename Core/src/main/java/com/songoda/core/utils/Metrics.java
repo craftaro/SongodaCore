@@ -45,8 +45,8 @@ public class Metrics {
         if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
             // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
             final String defaultPackage = new String(
-                    new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't'});
-            final String examplePackage = new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
+                    new byte[] {'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't'});
+            final String examplePackage = new String(new byte[] {'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
             // We want to make sure nobody just copy & pastes the example and use the wrong package names
             if (Metrics.class.getPackage().getName().equals(defaultPackage) || Metrics.class.getPackage().getName().equals(examplePackage)) {
                 throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
@@ -316,6 +316,7 @@ public class Metrics {
      *
      * @param plugin Any plugin. It's just used to get a logger instance.
      * @param data   The data to send.
+     *
      * @throws Exception If the request failed.
      */
     private static void sendData(Plugin plugin, JSONObject data) throws Exception {
@@ -367,7 +368,9 @@ public class Metrics {
      * Gzips the given String.
      *
      * @param str The string to gzip.
+     *
      * @return The gzipped String.
+     *
      * @throws IOException If the compression failed.
      */
     private static byte[] compress(final String str) throws IOException {
@@ -421,7 +424,6 @@ public class Metrics {
         }
 
         protected abstract JSONObject getChartData() throws Exception;
-
     }
 
     /**
@@ -577,7 +579,6 @@ public class Metrics {
             data.put("value", value);
             return data;
         }
-
     }
 
     /**
@@ -622,7 +623,6 @@ public class Metrics {
             data.put("values", values);
             return data;
         }
-
     }
 
     /**
@@ -660,7 +660,6 @@ public class Metrics {
             data.put("values", values);
             return data;
         }
-
     }
 
     /**
@@ -710,5 +709,4 @@ public class Metrics {
             return data;
         }
     }
-
 }

@@ -21,5 +21,4 @@ public class SimpleNestedCommand {
         Stream.of(commands).forEach(command -> command.getCommands().forEach(cmd -> children.put(cmd.toLowerCase(), command)));
         return this;
     }
-
 }

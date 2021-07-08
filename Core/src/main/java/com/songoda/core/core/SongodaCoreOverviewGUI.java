@@ -25,26 +25,26 @@ final class SongodaCoreOverviewGUI extends Gui {
             final PluginInfo plugin = plugins.get(i);
             if (plugin.hasUpdate()) {
                 setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
-                        ChatColor.GOLD + plugin.getJavaPlugin().getName(),
-                        ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
-                        ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
-                        "",
-                        "Change log:",
-                        plugin.getChangeLog(),
-                        "",
-                        ChatColor.GOLD + "Click for the marketplace page link.",
-                        ChatColor.GOLD + "Right Click to edit plugin settings."
+                                ChatColor.GOLD + plugin.getJavaPlugin().getName(),
+                                ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
+                                ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
+                                "",
+                                "Change log:",
+                                plugin.getChangeLog(),
+                                "",
+                                ChatColor.GOLD + "Click for the marketplace page link.",
+                                ChatColor.GOLD + "Right Click to edit plugin settings."
                         ),
                         ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
                 setAction(i, ClickType.RIGHT, (event) -> event.manager.showGUI(event.player, new PluginConfigGui(plugin.getJavaPlugin(), event.gui)));
                 highlightItem(i);
             } else {
                 setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
-                        ChatColor.GOLD + plugin.getJavaPlugin().getName(),
-                        ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
-                        "",
-                        ChatColor.GOLD + "Click for the marketplace page link.",
-                        ChatColor.GOLD + "Right Click to edit plugin settings."
+                                ChatColor.GOLD + plugin.getJavaPlugin().getName(),
+                                ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
+                                "",
+                                ChatColor.GOLD + "Click for the marketplace page link.",
+                                ChatColor.GOLD + "Right Click to edit plugin settings."
                         ),
                         ClickType.LEFT, (event) -> event.player.sendMessage(plugin.getMarketplaceLink()));
                 setAction(i, ClickType.RIGHT, (event) -> event.manager.showGUI(event.player, new PluginConfigGui(plugin.getJavaPlugin(), event.gui)));

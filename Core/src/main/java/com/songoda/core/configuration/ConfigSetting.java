@@ -129,5 +129,4 @@ public class ConfigSetting {
 
         return mat != null ? mat : def;
     }
-
 }

@@ -27,7 +27,7 @@ public class Eval {
     public double parse() {
         nextChar();
         double x = parseExpression();
-        if (pos < toParse.length()) throw new RuntimeException(warningMessage + "Unexpected: " + (char)ch);
+        if (pos < toParse.length()) throw new RuntimeException(warningMessage + "Unexpected: " + (char) ch);
         return x;
     }
 
@@ -39,8 +39,8 @@ public class Eval {
 
     private double parseExpression() {
         double x = parseTerm();
-        for (;;) {
-            if      (eat('+')) x += parseTerm(); // addition
+        for (; ; ) {
+            if (eat('+')) x += parseTerm(); // addition
             else if (eat('-')) x -= parseTerm(); // subtraction
             else return x;
         }
@@ -48,8 +48,8 @@ public class Eval {
 
     private double parseTerm() {
         double x = parseFactor();
-        for (;;) {
-            if      (eat('*')) x *= parseFactor(); // multiplication
+        for (; ; ) {
+            if (eat('*')) x *= parseFactor(); // multiplication
             else if (eat('/')) x /= parseFactor(); // division
             else return x;
         }
@@ -77,7 +77,7 @@ public class Eval {
             else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
             else throw new RuntimeException(warningMessage + "Unknown function: " + func);
         } else {
-            throw new RuntimeException(warningMessage + "Unexpected: " + (char)ch);
+            throw new RuntimeException(warningMessage + "Unexpected: " + (char) ch);
         }
 
         if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation

@@ -17,5 +17,4 @@ public enum GuiType {
         this.rows = rows;
         this.columns = columns;
     }
-
 }

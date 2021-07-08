@@ -182,6 +182,5 @@ class PopupMessage {
         public String getKey() {
             return key;
         }
-
     }
 }

@@ -185,7 +185,6 @@ public class ReflectionUtils {
                     return super.visitFile(file, attrs);
                 }
             });
-
         }
 
         return packageClasses;
@@ -234,7 +233,6 @@ public class ReflectionUtils {
             if (sourceJar == null && packageURL == null) {
                 throw new IOException("Cannot open resource '" + packageName + "'");
             }
-
         }
 
         if (sourceJar == null && packageURL == null) {
@@ -302,7 +300,7 @@ public class ReflectionUtils {
             URI uri = new URI(packageURL.toString());
             File folder = new File(uri.getPath());
             // won't work with path which contains blank (%20)
-            // File folder = new File(packageURL.getFile()); 
+            // File folder = new File(packageURL.getFile());
             File[] contenuti = folder.listFiles();
             // in case of multiple sub-classes, keep track of what classes have been searched
             ArrayList<String> loaded = new ArrayList<String>();

@@ -140,7 +140,6 @@ public class LootManager {
                         addLootable(lootable);
 
                     reader.close();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -164,7 +163,6 @@ public class LootManager {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     gson.toJson(lootable, writer);
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

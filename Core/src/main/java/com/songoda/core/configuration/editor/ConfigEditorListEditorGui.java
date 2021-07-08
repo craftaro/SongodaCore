@@ -43,11 +43,11 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
                 (event) -> {
                     event.gui.exit();
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a new value to add:", response -> {
-                        values.add(response.getMessage().trim());
-                        redraw();
-                    }).setOnClose(() -> {
-                        event.manager.showGUI(event.player, this);
-                    })
+                                values.add(response.getMessage().trim());
+                                redraw();
+                            }).setOnClose(() -> {
+                                event.manager.showGUI(event.player, this);
+                            })
                             .setOnCancel(() -> {
                                 event.player.sendMessage(ChatColor.RED + "Edit canceled");
                                 event.manager.showGUI(event.player, this);
@@ -81,5 +81,4 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         // update display
         update();
     }
-
 }

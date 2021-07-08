@@ -15,5 +15,4 @@ public abstract class GuiEvent {
         this.gui = gui;
         this.player = player;
     }
-
 }

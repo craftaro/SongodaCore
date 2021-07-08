@@ -161,7 +161,6 @@ public class Loot {
         this.enchants = enchants;
     }
 
-
     public void setEnchantChances(Map<String, Double> enchants) {
         this.enchantChances = enchants;
     }

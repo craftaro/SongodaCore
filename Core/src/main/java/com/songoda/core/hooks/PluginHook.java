@@ -10,7 +10,12 @@ import com.songoda.core.hooks.holograms.HologramsHolograms;
 import com.songoda.core.hooks.holograms.HolographicDisplaysHolograms;
 import com.songoda.core.hooks.log.CoreProtectLog;
 import com.songoda.core.hooks.log.Log;
-import com.songoda.core.hooks.protection.*;
+import com.songoda.core.hooks.protection.BentoBoxProtection;
+import com.songoda.core.hooks.protection.GriefPreventionProtection;
+import com.songoda.core.hooks.protection.LandsProtection;
+import com.songoda.core.hooks.protection.Protection;
+import com.songoda.core.hooks.protection.RedProtectProtection;
+import com.songoda.core.hooks.protection.UltimateClaimsProtection;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
 import com.songoda.core.hooks.stackers.UltimateStacker;
@@ -86,6 +91,7 @@ public final class PluginHook<T extends Class> {
      * @param type       Generic hook type for this plugin
      * @param pluginName Plugin name
      * @param handler    Specific class that will handle this plugin, if enabled.
+     *
      * @return instance of the PluginHook that was added
      */
     public static <T extends Class> PluginHook addHook(T type, String pluginName, Class handler) {

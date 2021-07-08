@@ -88,5 +88,4 @@ public class LogManager {
         if (manager.isEnabled())
             manager.getCurrentHook().logInteraction(player, location);
     }
-
 }

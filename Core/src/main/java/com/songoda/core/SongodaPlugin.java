@@ -159,6 +159,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @param localeName locale to use, eg "en_US"
      * @param reload     optionally reload the loaded locale if the locale didn't
      *                   change
+     *
      * @return true if the locale exists and was loaded successfully
      */
     public boolean setLocale(String localeName, boolean reload) {

@@ -4,8 +4,6 @@ import com.songoda.core.hooks.economies.Economy;
 import com.songoda.core.utils.NumberUtils;
 import org.bukkit.OfflinePlayer;
 
-import java.text.DecimalFormat;
-
 /**
  * A convenience class for static access to an Economy HookManager
  */
@@ -61,6 +59,7 @@ public class EconomyManager {
      * Format the given amount to a human-readable string in this currency
      *
      * @param amt amount to display
+     *
      * @return a currency string as formatted by the economy plugin
      */
     public static String formatEconomy(double amt) {
@@ -71,13 +70,13 @@ public class EconomyManager {
      * Get the players available balance
      *
      * @param player player
+     *
      * @return the amount of available balance
      */
     public static double getBalance(OfflinePlayer player) {
         if (!manager.isEnabled())
             return 0;
         return manager.getCurrentHook().getBalance(player);
-
     }
 
     /**
@@ -86,6 +85,7 @@ public class EconomyManager {
      *
      * @param player player to check
      * @param cost   minimum amount this player should have
+     *
      * @return true if this player can have this amount withdrawn
      */
     public static boolean hasBalance(OfflinePlayer player, double cost) {
@@ -98,6 +98,7 @@ public class EconomyManager {
      *
      * @param player player to check
      * @param cost   amount to remove from this player
+     *
      * @return true if the total amount was withdrawn successfully
      */
     public static boolean withdrawBalance(OfflinePlayer player, double cost) {
@@ -110,6 +111,7 @@ public class EconomyManager {
      *
      * @param player player to check
      * @param amount amount to add to this player
+     *
      * @return true if the total amount was added successfully
      */
     public static boolean deposit(OfflinePlayer player, double amount) {

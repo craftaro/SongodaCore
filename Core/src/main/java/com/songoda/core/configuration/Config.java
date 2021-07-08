@@ -14,7 +14,19 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -43,7 +55,7 @@ public class Config extends ConfigSection {
     Serialization notes:
     // implements ConfigurationSerializable:
     //public Map<String, Object> serialize();
-    
+
     // Class must contain one of:
     // public static Object deserialize(@NotNull Map<String, ?> args);
     // public static valueOf(Map<String, ?> args);
@@ -155,6 +167,7 @@ public class Config extends ConfigSection {
      * Set the Charset that will be used to save this config
      *
      * @param defaultCharset Charset to use
+     *
      * @return this class
      */
     public Config setDefaultCharset(Charset defaultCharset) {
@@ -194,6 +207,7 @@ public class Config extends ConfigSection {
      * All saves are done asynchronously, so this should not impact server performance.
      *
      * @param autosave set to true if autosaving is enabled.
+     *
      * @return this class
      */
     @NotNull
@@ -211,6 +225,7 @@ public class Config extends ConfigSection {
      * If the configuration is changed within this period, the timer is not reset.
      *
      * @param autosaveInterval time in seconds
+     *
      * @return this class
      */
     @NotNull
@@ -230,6 +245,7 @@ public class Config extends ConfigSection {
      * as a default setting.
      *
      * @param autoremove Remove settings that don't exist as defaults
+     *
      * @return this class
      */
     @NotNull
@@ -513,7 +529,6 @@ public class Config extends ConfigSection {
             }
         } catch (IOException ex) {
         }
-
     }
 
     public void deleteNonDefaultSettings() {

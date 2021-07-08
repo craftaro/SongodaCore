@@ -48,5 +48,4 @@ public class SongodaCoreCommand extends AbstractCommand {
     protected List<String> onTab(CommandSender sender, String... args) {
         return null;
     }
-
 }

@@ -21,6 +21,7 @@ import java.util.logging.Level;
  * Used to easily store a set of one data value
  *
  * @param <T> DataObject class that is used to store the data
+ *
  * @author jascotty2
  * @since 2019-09-06
  */
@@ -67,7 +68,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
 
     /**
      * @return a directly-modifiable instance of the data mapping for this
-     * storage
+     *         storage
      */
     public Map<Object, T> getData() {
         return data;
@@ -78,8 +79,9 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * if this map contains no mapping for the key.
      *
      * @param key key whose mapping is to be retrieved from this storage
+     *
      * @return the value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     @Nullable
     public T get(Object key) {
@@ -90,8 +92,9 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * Removes the mapping for the specified key from this storage if present.
      *
      * @param key key whose mapping is to be removed from this storage
+     *
      * @return the previous value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     @Nullable
     public T remove(@NotNull Object key) {
@@ -107,8 +110,9 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * Removes the mapping for the specified key from this storage if present.
      *
      * @param value value whose mapping is to be removed from this storage
+     *
      * @return the previous value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     @Nullable
     public T remove(@NotNull T value) {
@@ -128,8 +132,9 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * a mapping for the key, the old value is replaced.
      *
      * @param value value to be added
+     *
      * @return the previous value associated with <tt>value.getKey()</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>value.getKey()</tt>.
+     *         <tt>null</tt> if there was no mapping for <tt>value.getKey()</tt>.
      */
     @Nullable
     public T add(@NotNull T value) {

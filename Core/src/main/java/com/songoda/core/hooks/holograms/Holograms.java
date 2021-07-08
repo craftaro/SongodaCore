@@ -31,6 +31,7 @@ public abstract class Holograms implements Hook {
      * Center and offset this location
      *
      * @param location location to offset
+     *
      * @return copy-safe location with the applied offset.
      */
     protected final Location fixLocation(Location location) {

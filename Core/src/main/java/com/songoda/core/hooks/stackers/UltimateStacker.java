@@ -1,7 +1,6 @@
 package com.songoda.core.hooks.stackers;
 
 import com.songoda.ultimatestacker.stackable.entity.EntityStack;
-import com.songoda.ultimatestacker.stackable.entity.EntityStackManager;
 import com.songoda.ultimatestacker.utils.Methods;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;

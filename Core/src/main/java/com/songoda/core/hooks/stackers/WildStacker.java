@@ -75,5 +75,4 @@ public class WildStacker extends Stacker {
         }
         return min == -1 ? 0 : min;
     }
-
 }

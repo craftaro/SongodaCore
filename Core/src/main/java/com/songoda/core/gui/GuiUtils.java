@@ -47,6 +47,7 @@ public class GuiUtils {
      * Get a lore value that will display fine on clients using auto gui scaling
      *
      * @param lines lines to format
+     *
      * @return newline and length-corrected item lore
      */
     public static List<String> getSafeLore(List<String> lines) {

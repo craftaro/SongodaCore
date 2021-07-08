@@ -25,5 +25,4 @@ public class GuiClickEvent extends GuiEvent {
         this.clickType = event.getClick();
         this.event = event;
     }
-
 }

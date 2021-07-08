@@ -36,6 +36,7 @@ public class PlayerUtils {
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
      *                     start with this
+     *
      * @return list of player names that are "visible" to the player
      */
     public static List<String> getVisiblePlayerNames(CommandSender sender, String startingWith) {
@@ -55,6 +56,7 @@ public class PlayerUtils {
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
      *                     start with this
+     *
      * @return list of player names that are "visible" to the player
      */
     public static List<String> getVisiblePlayerDisplayNames(CommandSender sender, String startingWith) {
@@ -74,6 +76,7 @@ public class PlayerUtils {
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
      *                     start with this
+     *
      * @return list of players that are "visible" to the player
      */
     public static List<Player> getVisiblePlayers(CommandSender sender, String startingWith) {
@@ -92,6 +95,7 @@ public class PlayerUtils {
      *
      * @param us         Ourselves / who is requesting the list. Will not return this player.
      * @param startsWith All names returned must start with this input string
+     *
      * @return List of matching player IGN
      */
     public static List<String> getAllPlayers(CommandSender us, String startsWith) {
@@ -107,6 +111,7 @@ public class PlayerUtils {
      *
      * @param us         Ourselves / who is requesting the list. Will not return this player.
      * @param startsWith All names returned must start with this input string
+     *
      * @return List of matching player display names
      */
     public static List<String> getAllPlayersDisplay(CommandSender us, String startsWith) {
@@ -122,6 +127,7 @@ public class PlayerUtils {
      * Also checks player display names if there is not an exact match.
      *
      * @param player player to search for
+     *
      * @return Player that closest matches the input name, or null if none found
      */
     public static Player findPlayer(String player) {

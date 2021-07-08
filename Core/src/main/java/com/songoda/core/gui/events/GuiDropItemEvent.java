@@ -18,5 +18,4 @@ public class GuiDropItemEvent extends GuiEvent {
         this.clickType = event.getClick();
         this.event = event;
     }
-
 }

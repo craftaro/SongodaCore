@@ -1,6 +1,5 @@
 package com.songoda.core.lootables.loot;
 
-
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.lootables.loot.objects.EnchantChance;
 import org.bukkit.entity.EntityType;
@@ -35,7 +34,7 @@ public final class LootBuilder {
     public LootBuilder addEnchants(Tuple... tuples) {
         Map<String, Integer> enchants = new HashMap<>();
         for (Tuple tuple : tuples)
-            enchants.put((String)tuple.getKey(), (int)tuple.getValue());
+            enchants.put((String) tuple.getKey(), (int) tuple.getValue());
         this.loot.setEnchants(enchants);
         return this;
     }
@@ -118,7 +117,7 @@ public final class LootBuilder {
         this.loot.setRequireCharged(require);
         return this;
     }
-    
+
     public Loot build() {
         return this.loot;
     }

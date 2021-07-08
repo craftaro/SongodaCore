@@ -157,6 +157,7 @@ public class Message {
      *
      * @param placeholder the placeholder to replace
      * @param replacement the replacement object
+     *
      * @return the modified Message
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
