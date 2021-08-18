@@ -36,6 +36,9 @@ public class SItemStack {
         if (item == null)
             return null;
 
+        if (item.getItemMeta() == null)
+            return item;
+
         int maxDurability = item.getType().getMaxDurability();
         int durability;
 
