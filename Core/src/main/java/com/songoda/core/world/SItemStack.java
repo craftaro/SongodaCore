@@ -35,10 +35,10 @@ public class SItemStack {
     public ItemStack addDamage(Player player, int damage) {
         if (item == null)
             return null;
-        
-        if(item.getItemMeta() == null)
+
+        if (item.getItemMeta() == null)
             return item;
-        
+
         int maxDurability = item.getType().getMaxDurability();
         int durability;
 
