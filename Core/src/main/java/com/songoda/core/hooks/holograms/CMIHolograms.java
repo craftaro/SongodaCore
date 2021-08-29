@@ -53,7 +53,7 @@ public class CMIHolograms extends Holograms {
 
     @Override
     protected double defaultHeightOffset() {
-        return 0.5;
+        return 1;
     }
 
     @Override
