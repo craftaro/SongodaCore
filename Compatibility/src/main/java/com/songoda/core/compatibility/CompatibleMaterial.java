@@ -187,6 +187,9 @@ public enum CompatibleMaterial {
     YELLOW_CANDLE(),
     YELLOW_CANDLE_CAKE(),
 
+    /* 1.16.2 */
+    PIGLIN_BRUTE_SPAWN_EGG(),
+
     /* 1.16 */
     ANCIENT_DEBRIS(),
     BASALT(),
