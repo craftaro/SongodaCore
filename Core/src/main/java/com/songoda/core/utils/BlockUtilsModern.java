@@ -1,5 +1,6 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Effect;
@@ -137,7 +138,6 @@ public class BlockUtilsModern {
             Object mblock = nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(cblock));
             Object mpos = craftBlock_getPostition.invoke(cblock);
 
-            //System.out.println(mblock.getClass());
             // now for testing stuff
             if (clazzLeverBlock.isAssignableFrom(mblock.getClass())) {
                 final Object mstate = craftBlockData_getState.invoke(block.getBlockData());
@@ -148,7 +148,7 @@ public class BlockUtilsModern {
             } else if (clazzPressurePlateBlock.isAssignableFrom(mblock.getClass())) {
                 nmsPlate_updateNeighbours.invoke(mblock, mworld, mpos);
             } else {
-                System.out.println("Unknown redstone: " + mblock.getClass().getName());
+                SongodaCore.getLogger().warning("Unknown redstone: " + mblock.getClass().getName());
             }
 //
 //			if(mblock instanceof net.minecraft.server.v1_15_R1.BlockLever) {

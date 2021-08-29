@@ -5,6 +5,7 @@ import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.nms.NmsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,15 +27,22 @@ public class SItemStack {
         this.sItem = NmsManager.getWorld().getItemStack(item);
     }
 
+    public ItemStack addDamage(Player player, int damage) {
+        return addDamage(player, damage, false);
+    }
+
     /**
      * Damage the selected item
      *
      * @param player the player who's item you want to damage
      * @param damage the amount of damage to apply to the item
      */
-    public ItemStack addDamage(Player player, int damage) {
+    public ItemStack addDamage(Player player, int damage, boolean respectVanillaUnbreakingEnchantments) {
         if (item == null)
             return null;
+
+        if (item.getItemMeta() == null)
+            return item;
 
         int maxDurability = item.getType().getMaxDurability();
         int durability;
@@ -48,6 +56,11 @@ public class SItemStack {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof Damageable) {
                 Damageable damageable = ((Damageable) meta);
+
+                if (respectVanillaUnbreakingEnchantments) {
+                    damage = shouldApplyDamage(meta.getEnchantLevel(Enchantment.DURABILITY), damage);
+                }
+
                 damageable.setDamage(((Damageable) meta).getDamage() + damage);
                 item.setItemMeta(meta);
                 durability = damageable.getDamage();
@@ -55,6 +68,10 @@ public class SItemStack {
                 return item;
             }
         } else {
+            if (respectVanillaUnbreakingEnchantments) {
+                damage = shouldApplyDamage(item.getEnchantmentLevel(Enchantment.DURABILITY), damage);
+            }
+
             item.setDurability((short) Math.max(0, item.getDurability() + damage));
             durability = item.getDurability();
         }
@@ -77,5 +94,23 @@ public class SItemStack {
 
     public ItemStack getItem() {
         return item;
+    }
+
+    private static int shouldApplyDamage(int unbreakingEnchantLevel, int damageAmount) {
+        int result = 0;
+
+        for (int i = 0; i < damageAmount; ++i) {
+            if (shouldApplyDamage(unbreakingEnchantLevel)) {
+                ++result;
+            }
+        }
+
+        return result;
+    }
+
+    private static boolean shouldApplyDamage(int unbreakingEnchantLevel) {
+        if (unbreakingEnchantLevel <= 0) return true;
+
+        return Math.random() <= 1.0 / (unbreakingEnchantLevel + 1);
     }
 }

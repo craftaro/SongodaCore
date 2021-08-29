@@ -1237,7 +1237,7 @@ public enum CompatibleSound {
             }
         }
         if (DEBUG && find == null) {
-            System.out.println("Sound for " + name() + " Not found!");
+            System.err.println("Sound for " + name() + " not found!");
         }
         sound = find;
         compatibilityMode = find == null;
@@ -1253,7 +1253,7 @@ public enum CompatibleSound {
                 sound = Sound.valueOf(name());
             }
         } catch (Exception e) {
-            System.out.println("ERROR loading " + name());
+            System.err.println("ERROR loading " + name());
             e.printStackTrace();
         }
     }
@@ -1268,9 +1268,9 @@ public enum CompatibleSound {
                 }
             }
         } catch (Exception e) {
-            System.out.println("ERROR loading " + name());
+            System.err.println("ERROR loading " + name());
             for (Version v : versions) {
-                System.out.println(v.version + " - " + v.sound);
+                System.err.println(v.version + " - " + v.sound);
             }
             e.printStackTrace();
         }
@@ -1303,9 +1303,9 @@ public enum CompatibleSound {
                 compatibilityMode = false;
             }
         } catch (Exception e) {
-            System.out.println("ERROR loading " + name() + " (" + minVersion);
+            System.err.println("ERROR loading " + name() + " (" + minVersion);
             for (Version v : versions) {
-                System.out.println(v.version + " - " + v.sound);
+                System.err.println(v.version + " - " + v.sound);
             }
             e.printStackTrace();
         }

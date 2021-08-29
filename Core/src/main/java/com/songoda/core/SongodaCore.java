@@ -39,10 +39,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SongodaCore {
-
-    private final static String prefix = "[SongodaCore]";
+    private final static Logger logger = Logger.getLogger("SongodaCore");
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -53,7 +53,7 @@ public class SongodaCore {
     /**
      * This has been added as of Rev 6
      */
-    private final static String coreVersion = "2.5.8";
+    private final static String coreVersion = "2.5.9";
 
     /**
      * This is specific to the website api
@@ -197,7 +197,7 @@ public class SongodaCore {
     private ArrayList<BukkitTask> tasks = new ArrayList();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
-        System.out.println(getPrefix() + "Hooked " + plugin.getName() + ".");
+        logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
@@ -240,9 +240,9 @@ public class SongodaCore {
             }
         } catch (IOException e) {
             final String er = e.getMessage();
-            System.out.println("Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
+            logger.log(Level.FINE, "Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
         } catch (ParseException e) {
-            System.out.println("Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
+            logger.log(Level.FINE, "Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
         }
     }
 
@@ -263,7 +263,11 @@ public class SongodaCore {
     }
 
     public static String getPrefix() {
-        return prefix + " ";
+        return "[SongodaCore] ";
+    }
+
+    public static Logger getLogger() {
+        return logger;
     }
 
     public static boolean isRegistered(String plugin) {

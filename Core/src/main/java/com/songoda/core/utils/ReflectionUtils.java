@@ -1,5 +1,7 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.SongodaCore;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -152,7 +155,7 @@ public class ReflectionUtils {
                                 Class<?> loadedClazz = Class.forName(name.substring(0, name.lastIndexOf('.')).replace('/', '.'));
                                 packageClasses.add(loadedClazz);
                             } catch (ClassNotFoundException e1) {
-                                System.err.println("class not found: " + e1.getMessage());
+                                SongodaCore.getLogger().log(Level.FINE, "class not found: " + e1.getMessage());
                             }
                         }
                     }
@@ -179,7 +182,7 @@ public class ReflectionUtils {
 
                             packageClasses.add(loadedClazz);
                         } catch (ClassNotFoundException e) {
-                            System.err.println("class not found: " + e.getMessage());
+                            SongodaCore.getLogger().log(Level.FINE, "class not found: " + e.getMessage());
                         }
                     }
                     return super.visitFile(file, attrs);
