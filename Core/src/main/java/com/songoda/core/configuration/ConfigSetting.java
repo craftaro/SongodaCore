@@ -1,10 +1,12 @@
 package com.songoda.core.configuration;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class ConfigSetting {
 
@@ -111,7 +113,7 @@ public class ConfigSetting {
         CompatibleMaterial mat = CompatibleMaterial.getMaterial(config.getString(key));
 
         if (mat == null) {
-            System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
+            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
         }
 
         return mat != null ? mat : CompatibleMaterial.STONE;
@@ -124,7 +126,7 @@ public class ConfigSetting {
         CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
 
         if (mat == null) {
-            System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
+            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
         }
 
         return mat != null ? mat : def;

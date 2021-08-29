@@ -1,5 +1,6 @@
 package com.songoda.core.database;
 
+import com.songoda.core.SongodaCore;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +17,7 @@ public class MySQLConnector implements DatabaseConnector {
     public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL) {
         this.plugin = plugin;
 
-        System.out.println("connecting to " + hostname + " : " + port);
+        plugin.getLogger().info("connecting to " + hostname + " : " + port);
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
