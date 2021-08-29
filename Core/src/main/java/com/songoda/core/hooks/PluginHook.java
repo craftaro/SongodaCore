@@ -15,6 +15,7 @@ import com.songoda.core.hooks.protection.GriefPreventionProtection;
 import com.songoda.core.hooks.protection.LandsProtection;
 import com.songoda.core.hooks.protection.Protection;
 import com.songoda.core.hooks.protection.RedProtectProtection;
+import com.songoda.core.hooks.protection.ResidenceProtection;
 import com.songoda.core.hooks.protection.UltimateClaimsProtection;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
@@ -50,6 +51,7 @@ public final class PluginHook<T extends Class> {
     public static final PluginHook PROTECTION_REDPROTECT = new PluginHook(Protection.class, "RedProtect", RedProtectProtection.class);
     public static final PluginHook PROTECTION_ULTIMATECLAIMS = new PluginHook(Protection.class, "UltimateClaims", UltimateClaimsProtection.class);
     public static final PluginHook PROTECTION_BENTOBOX = new PluginHook(Protection.class, "BentoBox", BentoBoxProtection.class);
+    public static final PluginHook PROTECTION_RESIDENCE = new PluginHook(Protection.class, "Residence", ResidenceProtection.class);
 
     /******* Start Manager stuff *******/
 
