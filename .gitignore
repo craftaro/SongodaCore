@@ -2,8 +2,6 @@
 # JetBrains IDEs
 ##
 /.idea/
-
-# Don't exclude files that might not be related to the IDE
 *.iml
 /*/*.iml
 /NMS/*/*.iml
@@ -11,7 +9,6 @@
 ##
 # Maven
 ##
-# Don't exclude a 'target' package by accident
 /target/
 /*/target/
 /NMS/*/target/
