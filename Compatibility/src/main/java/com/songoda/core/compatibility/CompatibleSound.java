@@ -13,9 +13,6 @@ import org.bukkit.entity.Player;
  * sounds were renamed. New sounds have been added by different versions, as
  * well. The intent of this class is to provide either the correct sound or a
  * near equivalent for the current server.
- *
- * @author jascotty2
- * @since 2019-08-25
  */
 public enum CompatibleSound {
     // some of these values are missing an API value..

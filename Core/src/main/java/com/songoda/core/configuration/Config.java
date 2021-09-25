@@ -45,9 +45,6 @@ import java.util.stream.Collectors;
 
 /**
  * Configuration settings for a plugin
- *
- * @author jascotty2
- * @since 2019-08-28
  */
 public class Config extends ConfigSection {
     /*

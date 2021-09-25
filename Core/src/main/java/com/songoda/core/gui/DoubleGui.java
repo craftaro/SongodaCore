@@ -24,9 +24,6 @@ import java.util.Map;
  * TODO: does not restore inventory if server crashes while player inventory is open
  * Method to fix: save inv + ender slot to file, store paper in ender inv with name of cache file, check for paper item in slot when loading
  * Or just manually manage all inventories in a file and remove when restored
- *
- * @author jascotty2
- * @since 2019-08-25
  */
 public class DoubleGui extends Gui {
     protected boolean startStashed = true;

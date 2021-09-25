@@ -16,9 +16,6 @@ import java.util.Set;
 
 /**
  * Items that are compatible with server versions 1.7+
- *
- * @author jascotty2
- * @since 2019-08-23
  */
 public enum CompatibleMaterial {
     /*

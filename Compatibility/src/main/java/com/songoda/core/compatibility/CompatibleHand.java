@@ -11,9 +11,6 @@ import java.util.Map;
 
 /**
  * Get which hand is being used.
- *
- * @author Brianna
- * @since 2020-03-24
  */
 public enum CompatibleHand {
     MAIN_HAND, OFF_HAND;

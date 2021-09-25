@@ -21,9 +21,6 @@ import java.util.logging.Level;
  * Used to easily store a set of one data value
  *
  * @param <T> DataObject class that is used to store the data
- *
- * @author jascotty2
- * @since 2019-09-06
  */
 public class SimpleDataStore<T extends DataStoreObject> {
     protected final Plugin plugin;

@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 /**
  * A comment for a configuration key
- *
- * @author jascotty2
- * @since 2019-08-28
  */
 public class Comment {
     final List<String> lines = new ArrayList();

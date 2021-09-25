@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
 
 /**
  * Configuration for a specific node
- *
- * @author jascotty2
- * @since 2019-08-28
  */
 public class ConfigSection extends MemoryConfiguration {
     final String fullPath, nodeKey;

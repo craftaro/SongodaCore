@@ -33,9 +33,6 @@ import java.util.stream.Collectors;
 
 /**
  * TODO: animated buttons
- *
- * @author jascotty2
- * @since 2019-08-25
  */
 public class Gui {
     protected Inventory inventory;

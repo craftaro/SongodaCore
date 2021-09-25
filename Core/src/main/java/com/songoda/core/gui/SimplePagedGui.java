@@ -15,9 +15,6 @@ import java.util.Map;
 
 /**
  * Paged GUI for when you aren't going to be making too many pages
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class SimplePagedGui extends Gui {
     protected boolean useHeader;

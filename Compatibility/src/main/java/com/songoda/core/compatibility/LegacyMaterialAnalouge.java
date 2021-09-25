@@ -8,9 +8,6 @@ import java.util.Map;
 
 /**
  * Near-Materials for older servers 1.7+
- *
- * @author jascotty2
- * @since 2019-08-23
  */
 public enum LegacyMaterialAnalouge {
     /* 1.17 */

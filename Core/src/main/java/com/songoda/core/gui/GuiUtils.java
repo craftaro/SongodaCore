@@ -10,10 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author jascotty2
- * @since 2019-08-25
- */
 public class GuiUtils {
     public static ItemStack getBorderGlassItem() {
         ItemStack glass = CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE.getItem();

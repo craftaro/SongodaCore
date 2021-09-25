@@ -30,11 +30,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Assists in the utilization of localization files. <br>
- * Created to be used by the Songoda Team. <br>
- * Updated 2019-09-01 to support UTF encoded lang files - jascotty2
- *
- * @author Brianna O'Keefe - Songoda
+ * Assists in the utilization of localization files.
  */
 public class Locale {
     private static final Pattern OLD_NODE_PATTERN = Pattern.compile("^([^ ]+)\\s*=\\s*\"?(.*?)\"?$");

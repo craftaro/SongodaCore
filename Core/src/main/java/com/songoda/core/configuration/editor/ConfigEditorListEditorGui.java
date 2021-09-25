@@ -12,9 +12,6 @@ import java.util.List;
 
 /**
  * Edit a string list
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class ConfigEditorListEditorGui extends SimplePagedGui {
     final ConfigEditorGui current;

@@ -15,9 +15,6 @@ import java.util.logging.Logger;
 
 /**
  * Particle effects for servers 1.8 and below
- *
- * @author jascotty2
- * @since 2019-08-23
  */
 public class LegacyParticleEffects {
     public static enum Type {

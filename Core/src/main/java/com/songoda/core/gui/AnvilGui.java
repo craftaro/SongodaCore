@@ -17,9 +17,6 @@ import java.util.List;
 
 /**
  * Anvil GUI for text prompts
- *
- * @author jascotty2
- * @since 2019-09-15
  */
 public class AnvilGui extends Gui {
     final Player player;

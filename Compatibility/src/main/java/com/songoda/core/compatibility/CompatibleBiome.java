@@ -19,9 +19,6 @@ import java.util.Set;
 
 /**
  * Biomes that are compatible with server versions 1.7+
- *
- * @author Brianna
- * @since 2020-03-27
  */
 public enum CompatibleBiome {
     /* 1.17 */

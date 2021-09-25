@@ -27,9 +27,6 @@ import java.util.logging.Level;
 
 /**
  * Edit a configuration file for a specific plugin
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class ConfigEditorGui extends SimplePagedGui {
     final JavaPlugin plugin;

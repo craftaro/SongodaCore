@@ -19,9 +19,6 @@ import java.util.Map;
 
 /**
  * Edit all configuration files for a specific plugin
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class PluginConfigGui extends SimplePagedGui {
     final JavaPlugin plugin;

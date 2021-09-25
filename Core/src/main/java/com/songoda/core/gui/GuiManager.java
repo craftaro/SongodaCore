@@ -28,9 +28,6 @@ import java.util.stream.Collectors;
 
 /**
  * Manages events for GUI screens
- *
- * @author jascotty2
- * @since 2019-08-25
  */
 public class GuiManager {
     final Plugin plugin;

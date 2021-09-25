@@ -8,9 +8,6 @@ import java.util.Map;
 /**
  * Starting in Minecraft 1.13, separate materials for blocks and items were
  * phased out. This provides a translation for those values.
- *
- * @author jascotty2
- * @since 2019-09-12
  */
 public enum LegacyMaterialBlockType {
     OAK_LEAVES("LEAVES", (byte) 8, true),

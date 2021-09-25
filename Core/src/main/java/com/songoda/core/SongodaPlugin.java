@@ -17,8 +17,6 @@ import java.util.logging.Level;
 /**
  * REMINDER: When converting plugins to use this, REMOVE METRICS <br>
  * Must not have two instances of Metrics enabled!
- *
- * @author jascotty2
  */
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
