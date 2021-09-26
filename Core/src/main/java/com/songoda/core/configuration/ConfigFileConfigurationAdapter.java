@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ConfigFileConfigurationAdapter extends FileConfiguration {
     final Config config;
@@ -38,7 +37,7 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
 
     @Override
     protected String buildHeader() {
-        return "#" + config.getHeader().stream().collect(Collectors.joining("\n#"));
+        return "#" + String.join("\n#", config.getHeader());
     }
 
     @Override

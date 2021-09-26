@@ -135,7 +135,7 @@ public class SimplePagedGui extends Gui {
 
         // calculate pages here
         rowsPerPage = useHeader ? 4 : 5;
-        maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
+        maxCellSlot = this.cellItems.keySet().stream().max(Integer::compare).orElse(0) + 1;
         int maxRows = (int) Math.ceil(maxCellSlot / 9.);
         pages = (int) Math.max(1, Math.ceil(maxRows / (double) rowsPerPage));
         this.setRows(maxRows + (useHeader ? 1 : 0));
@@ -217,7 +217,7 @@ public class SimplePagedGui extends Gui {
             // footer row
             conditionals = conditionalButtons.get(cell - (rows * 9));
         } else {
-            int cellIndex = page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9));
+            int cellIndex = page == 1 ? cell : cell + (page - 1) * rowsPerPage * 9;
             conditionals = conditionalButtons.get(cellIndex);
         }
 

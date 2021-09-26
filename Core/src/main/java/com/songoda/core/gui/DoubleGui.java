@@ -28,7 +28,7 @@ import java.util.Map;
 public class DoubleGui extends Gui {
     protected boolean startStashed = true;
     protected int playerRows = 4;
-    protected Map<Player, ItemStack[]> stash = new HashMap();
+    protected Map<Player, ItemStack[]> stash = new HashMap<>();
 
     public DoubleGui() {
         super(GuiType.STANDARD);
@@ -244,7 +244,7 @@ public class DoubleGui extends Gui {
     }
 
     public DoubleGui clearPlayerActions(int cell) {
-        conditionalButtons.remove(cell = invOffset(cell));
+        conditionalButtons.remove(invOffset(cell));
         return this;
     }
 
@@ -301,7 +301,7 @@ public class DoubleGui extends Gui {
             return false;
         }
 
-        event.setCancelled(!unlockedCells.entrySet().stream().anyMatch(e -> offsetCell == e.getKey() && e.getValue()));
+        event.setCancelled(unlockedCells.entrySet().stream().noneMatch(e -> offsetCell == e.getKey() && e.getValue()));
 
         return true;
     }

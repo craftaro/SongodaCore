@@ -59,7 +59,7 @@ public class GuiEnchantEditor extends Gui {
                         AnvilGui gui1 = new AnvilGui(event.player, this);
                         gui1.setAction((ee -> {
                             lore.put(gui.getInputText().toUpperCase().trim(), Integer.parseInt(gui1.getInputText().trim()));
-                            loot.setEnchants(lore.isEmpty() ? null : lore);
+                            loot.setEnchants(lore);
                             ee.player.closeInventory();
                             paint();
                         }));

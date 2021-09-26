@@ -21,8 +21,4 @@ public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
 
         return CraftItemStack.asBukkitCopy(nmsItem);
     }
-
-    @Override
-    public void addExtras() {
-    }
 }

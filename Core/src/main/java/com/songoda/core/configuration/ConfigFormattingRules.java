@@ -8,7 +8,7 @@ public class ConfigFormattingRules {
     CommentStyle rootCommentStyle = CommentStyle.BLOCKSPACED;
     CommentStyle mainCategoryCommentStyle = CommentStyle.SPACED;
 
-    public static enum CommentStyle {
+    public enum CommentStyle {
         /**
          * # Comment
          */
@@ -39,10 +39,10 @@ public class ConfigFormattingRules {
         final String commentSuffix, spaceSuffixTop, spaceSuffixBottom;
         final char spaceCharTop, spaceCharBottom;
 
-        private CommentStyle(boolean drawBorder, boolean drawSpace,
-                             String spacePrefixTop, char spaceCharTop, String spaceSuffixTop,
-                             String commentPrefix, String commentSuffix,
-                             String spacePrefixBottom, char spaceCharBottom, String spaceSuffixBottom) {
+        CommentStyle(boolean drawBorder, boolean drawSpace,
+                     String spacePrefixTop, char spaceCharTop, String spaceSuffixTop,
+                     String commentPrefix, String commentSuffix,
+                     String spacePrefixBottom, char spaceCharBottom, String spaceSuffixBottom) {
             this.drawBorder = drawBorder;
             this.drawSpace = drawSpace;
             this.commentPrefix = commentPrefix;
@@ -55,7 +55,7 @@ public class ConfigFormattingRules {
             this.spaceCharBottom = spaceCharBottom;
         }
 
-        private CommentStyle(boolean drawBorder, boolean drawSpace, String commentPrefix, String commentSuffix) {
+        CommentStyle(boolean drawBorder, boolean drawSpace, String commentPrefix, String commentSuffix) {
             this.drawBorder = drawBorder;
             this.drawSpace = drawSpace;
             this.commentPrefix = commentPrefix;
@@ -71,11 +71,11 @@ public class ConfigFormattingRules {
             return CommentStyle.SIMPLE;
         }
 
-        if (lines.size() > 2 && lines.get(0).trim().equals("#") && lines.get(lines.size() - 1).trim().equals("#")) {
+        if (lines.get(0).trim().equals("#") && lines.get(lines.size() - 1).trim().equals("#")) {
             return CommentStyle.SPACED;
         }
 
-        boolean hasBorders = lines.size() > 2 && lines.get(0).trim().matches("^##+$") && lines.get(lines.size() - 1).trim().matches("^##+$");
+        boolean hasBorders = lines.get(0).trim().matches("^##+$") && lines.get(lines.size() - 1).trim().matches("^##+$");
         if (!hasBorders) {
             // default return
             return CommentStyle.SIMPLE;

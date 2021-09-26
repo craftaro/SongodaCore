@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -390,7 +389,7 @@ public class Config extends ConfigSection {
             return headerComment.getLines();
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public Config clearConfig(boolean clearDefaults) {
@@ -459,10 +458,10 @@ public class Config extends ConfigSection {
     }
 
     public void loadFromString(@NotNull String contents) throws InvalidConfigurationException {
-        Map input;
+        Map<?, ?> input;
 
         try {
-            input = (Map) this.yaml.load(contents);
+            input = this.yaml.load(contents);
         } catch (YAMLException e2) {
             throw new InvalidConfigurationException(e2);
         } catch (ClassCastException e3) {
@@ -485,7 +484,7 @@ public class Config extends ConfigSection {
             Object value = entry.getValue();
 
             if (value instanceof Map) {
-                this.convertMapsToSections((Map) value, section.createSection(key));
+                this.convertMapsToSections((Map<?, ?>) value, section.createSection(key));
                 continue;
             }
 
@@ -503,8 +502,8 @@ public class Config extends ConfigSection {
         boolean insideScalar = false;
         boolean firstNode = true;
         int index = 0;
-        LinkedList<String> currentPath = new LinkedList();
-        ArrayList<String> commentBlock = new ArrayList();
+        LinkedList<String> currentPath = new LinkedList<>();
+        ArrayList<String> commentBlock = new ArrayList<>();
 
         try {
             while ((line = in.readLine()) != null) {
@@ -558,6 +557,7 @@ public class Config extends ConfigSection {
                 commentBlock.clear();
             }
         } catch (IOException ex) {
+            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, "Error parsing config comment", ex);
         }
     }
 
@@ -642,9 +642,9 @@ public class Config extends ConfigSection {
         }
 
         String data = this.saveToString();
-        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), defaultCharset)) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), defaultCharset)) {
             writer.write(data);
-        } catch (IOException e) {
+        } catch (IOException ex) {
             return false;
         }
 
@@ -689,7 +689,7 @@ public class Config extends ConfigSection {
         return "";
     }
 
-    protected final Pattern yamlNode = Pattern.compile("^( *)([^:\\{\\}\\[\\],&\\*#\\?\\|\\-<>=!%@`]+):(.*)$");
+    protected final Pattern yamlNode = Pattern.compile("^( *)([^:{}\\[\\],&*#?|\\-<>=!%@`]+):(.*)$");
 
     protected void writeComments(String data, Writer out) throws IOException {
         // line-by-line apply line spacing formatting and comments per-node
@@ -700,7 +700,7 @@ public class Config extends ConfigSection {
         boolean firstNode = true;
         int index = 0;
 
-        LinkedList<String> currentPath = new LinkedList();
+        LinkedList<String> currentPath = new LinkedList<>();
         while ((line = in.readLine()) != null) {
             // ignore comments and empty lines (there shouldn't be any, but just in case)
             if (line.trim().startsWith("#") || line.isEmpty()) {

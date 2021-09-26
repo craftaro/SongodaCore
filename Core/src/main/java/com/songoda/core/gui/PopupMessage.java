@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 class PopupMessage {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final HashSet<UUID> registeredMessages = new HashSet();
+    private static final HashSet<UUID> registeredMessages = new HashSet<>();
 
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
@@ -92,7 +92,9 @@ class PopupMessage {
         final AdvancementProgress progress = pl.getAdvancementProgress(adv);
 
         if (!progress.isDone()) {
-            progress.getRemainingCriteria().forEach((crit) -> progress.awardCriteria(crit));
+            for (String s : progress.getRemainingCriteria()) {
+                progress.awardCriteria(s);
+            }
         }
     }
 
@@ -101,7 +103,9 @@ class PopupMessage {
         final AdvancementProgress prog = pl.getAdvancementProgress(adv);
 
         if (prog.isDone()) {
-            prog.getAwardedCriteria().forEach((crit) -> prog.revokeCriteria(crit));
+            for (String s : prog.getAwardedCriteria()) {
+                prog.revokeCriteria(s);
+            }
         }
     }
 
@@ -128,19 +132,19 @@ class PopupMessage {
         return Bukkit.getAdvancement(key);
     }
 
-    public static enum FrameType {
+    public enum FrameType {
         TASK,
         CHALLENGE,
         GOAL;
 
         final String id;
 
-        private FrameType() {
+        FrameType() {
             id = name().toLowerCase();
         }
     }
 
-    public static enum TriggerType {
+    public enum TriggerType {
         ARBITRARY_PLAYER_TICK(ServerVersion.V1_13, "TICK"),
         BRED_ANIMALS,
         BREWED_POTION,
@@ -175,13 +179,13 @@ class PopupMessage {
         final String compatible;
         final String key;
 
-        private TriggerType() {
+        TriggerType() {
             this.minVersion = ServerVersion.UNKNOWN;
             this.compatible = "";
             this.key = "minecraft:" + name().toLowerCase();
         }
 
-        private TriggerType(ServerVersion minVersion, String compatible) {
+        TriggerType(ServerVersion minVersion, String compatible) {
             this.minVersion = minVersion;
             this.compatible = compatible;
             this.key = "minecraft:" + (ServerVersion.isServerVersionAtLeast(minVersion) ? name() : compatible).toLowerCase();

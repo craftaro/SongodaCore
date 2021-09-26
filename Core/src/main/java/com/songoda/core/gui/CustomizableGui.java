@@ -898,11 +898,11 @@ public class CustomizableGui extends Gui {
         }
 
         public int applyPositionRow(int row) {
-            return row == -1 ? row : row;
+            return row;
         }
 
         public int applyPositionCol(int col) {
-            return col == -1 ? col : col;
+            return col;
         }
     }
 

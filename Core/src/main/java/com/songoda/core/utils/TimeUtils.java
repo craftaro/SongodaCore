@@ -3,6 +3,9 @@ package com.songoda.core.utils;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtils {
+    /**
+     * @param time In milliseconds
+     */
     public static String makeReadable(Long time) {
         if (time == null) {
             return "";

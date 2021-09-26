@@ -53,6 +53,7 @@ public class SSpawnerImpl implements SSpawner {
 
             Entity entity = ChunkRegionLoader.a(compound, world, x, y, z, false);
 
+            assert entity != null;
             BlockPosition position = entity.getChunkCoordinates();
             DifficultyDamageScaler damageScaler = world.D(position);
 

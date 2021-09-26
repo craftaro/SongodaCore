@@ -33,7 +33,7 @@ public class SItemStack {
     /**
      * Damage the selected item
      *
-     * @param player the player who's item you want to damage
+     * @param player the player whose item you want to damage
      * @param damage the amount of damage to apply to the item
      */
     public ItemStack addDamage(Player player, int damage, boolean respectVanillaUnbreakingEnchantments) {

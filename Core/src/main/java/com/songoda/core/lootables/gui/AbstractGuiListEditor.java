@@ -48,7 +48,7 @@ public abstract class AbstractGuiListEditor extends Gui {
                         String validated = validate(gui.getInputText());
                         if (validated != null) {
                             lore.add(validated);
-                            updateData(lore.isEmpty() ? null : lore);
+                            updateData(lore);
                             e.player.closeInventory();
                             paint();
                         }

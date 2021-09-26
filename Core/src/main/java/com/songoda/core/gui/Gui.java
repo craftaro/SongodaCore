@@ -96,12 +96,12 @@ public class Gui {
     @NotNull
     public List<Player> getPlayers() {
         if (inventory == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return inventory.getViewers().stream()
-                .filter(e -> e instanceof Player)
-                .map(e -> (Player) e)
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -158,8 +158,8 @@ public class Gui {
         open = false;
 
         inventory.getViewers().stream()
-                .filter(e -> e instanceof Player)
-                .map(e -> (Player) e)
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
                 .collect(Collectors.toList())
                 .forEach(Player::closeInventory);
     }
@@ -171,8 +171,8 @@ public class Gui {
         allowClose = true;
 
         inventory.getViewers().stream()
-                .filter(e -> e instanceof Player)
-                .map(e -> (Player) e)
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
                 .collect(Collectors.toList())
                 .forEach(Player::closeInventory);
     }
@@ -660,7 +660,7 @@ public class Gui {
     }
 
     protected void setConditional(int cell, @Nullable ClickType type, @Nullable Clickable action) {
-        Map<ClickType, Clickable> conditionals = conditionalButtons.computeIfAbsent(cell, k -> new HashMap());
+        Map<ClickType, Clickable> conditionals = conditionalButtons.computeIfAbsent(cell, k -> new HashMap<>());
         conditionals.put(type, action);
     }
 

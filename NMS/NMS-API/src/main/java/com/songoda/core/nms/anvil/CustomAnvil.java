@@ -8,43 +8,43 @@ import org.bukkit.inventory.ItemStack;
  * NMS interface for creating an anvil view for a single player
  */
 public interface CustomAnvil {
-    public void setLevelCost(int cost);
+    void setLevelCost(int cost);
 
-    public int getLevelCost();
+    int getLevelCost();
 
-    public void setCanUse(boolean bool);
+    void setCanUse(boolean bool);
 
-    public String getCustomTitle();
+    String getCustomTitle();
 
-    public void setCustomTitle(String title);
+    void setCustomTitle(String title);
 
-    public String getRenameText();
+    String getRenameText();
 
-    public void setRenameText(String text);
+    void setRenameText(String text);
 
-    public void setOnChange(AnvilTextChange handler);
+    void setOnChange(AnvilTextChange handler);
 
-    public ItemStack getLeftInput();
+    ItemStack getLeftInput();
 
-    public ItemStack getRightInput();
+    ItemStack getRightInput();
 
-    public ItemStack getOutput();
+    ItemStack getOutput();
 
-    public void setLeftInput(ItemStack item);
+    void setLeftInput(ItemStack item);
 
-    public void setRightInput(ItemStack item);
+    void setRightInput(ItemStack item);
 
-    public void setOutput(ItemStack item);
+    void setOutput(ItemStack item);
 
-    public Inventory getInventory();
+    Inventory getInventory();
 
     /**
      * Open this anvil for the provided player
      */
-    public void open();
+    void open();
 
     /**
-     * Force a redraw of the output
+     * Forces a re-draw of the output
      */
-    public void update();
+    void update();
 }

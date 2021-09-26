@@ -53,7 +53,7 @@ public class GuiUtils {
      */
     public static List<String> getSafeLore(List<String> lines) {
         // fix newlines
-        ArrayList<String> newLore = new ArrayList();
+        ArrayList<String> newLore = new ArrayList<>();
 
         for (String l : lines) {
             for (String l2 : l.split("\n")) {
@@ -108,7 +108,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -129,7 +129,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -148,7 +148,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -167,7 +167,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -188,7 +188,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -207,7 +207,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -227,7 +227,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -249,7 +249,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -269,7 +269,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -289,7 +289,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -310,7 +310,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -330,7 +330,7 @@ public class GuiUtils {
                 meta.setDisplayName(safe.get(0));
                 meta.setLore(safe.subList(1, safe.size()));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -348,7 +348,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -375,7 +375,7 @@ public class GuiUtils {
             if (lore != null && lore.length != 0) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -391,7 +391,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -413,7 +413,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -435,7 +435,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -453,7 +453,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -475,7 +475,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);
@@ -497,7 +497,7 @@ public class GuiUtils {
             if (lore != null) {
                 meta.setLore(getSafeLore(lore));
             } else {
-                meta.setLore(Collections.EMPTY_LIST);
+                meta.setLore(Collections.emptyList());
             }
 
             item.setItemMeta(meta);

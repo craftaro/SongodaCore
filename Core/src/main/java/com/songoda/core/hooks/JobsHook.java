@@ -40,7 +40,7 @@ public class JobsHook {
             return JobsHandler.getJobs();
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public static double getBoostExp(Player player, String job) {
@@ -166,7 +166,7 @@ public class JobsHook {
             return jPlayer.getJobs();
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public static void eatItem(Player player, ItemStack item) {

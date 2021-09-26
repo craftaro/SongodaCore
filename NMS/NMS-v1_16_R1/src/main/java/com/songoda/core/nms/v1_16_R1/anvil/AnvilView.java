@@ -31,7 +31,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     private String customTitle = "Repairing";
     private int cost = -1;
     private boolean canUse = true;
-    private AnvilTextChange textChange = null;
+    private AnvilTextChange textChange;
 
     // used for setting custom inventory
     static Field mc_ContainerAnvil_repairInventory; // subcontainer with only the result
@@ -85,9 +85,10 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
         if (holder != null) {
             this.inventory = getBukkitView(entity, holder).getTopInventory();
-        } else {
-            this.inventory = getBukkitView().getTopInventory();
+            return;
         }
+
+        this.inventory = getBukkitView().getTopInventory();
     }
 
     public CraftInventoryView getBukkitView(EntityHuman player, InventoryHolder holder) {

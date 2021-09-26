@@ -88,7 +88,7 @@ public class McMMOHandler {
             return;
         }
 
-        ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<BlockState> blockStates = blocks.stream().map(Block::getState).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.MINING);
     }
 
@@ -102,7 +102,7 @@ public class McMMOHandler {
             return;
         }
 
-        ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<BlockState> blockStates = blocks.stream().map(Block::getState).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.EXCAVATION);
     }
 
@@ -116,7 +116,7 @@ public class McMMOHandler {
             return;
         }
 
-        ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<BlockState> blockStates = blocks.stream().map(Block::getState).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.HERBALISM);
     }
 
@@ -130,7 +130,7 @@ public class McMMOHandler {
             return;
         }
 
-        ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<BlockState> blockStates = blocks.stream().map(Block::getState).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.WOODCUTTING);
     }
 

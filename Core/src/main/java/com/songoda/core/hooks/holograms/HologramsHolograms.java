@@ -126,8 +126,6 @@ public class HologramsHolograms extends Holograms {
 
         hologramPlugin.getHologramManager().addActiveHologram(hologram);
 
-        if (!ourHolograms.contains(id)) {
-            ourHolograms.add(id);
-        }
+        ourHolograms.add(id);
     }
 }

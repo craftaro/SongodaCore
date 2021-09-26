@@ -32,16 +32,16 @@ public class ReserveEconomy extends Economy {
 
     @Override
     public boolean hasBalance(OfflinePlayer player, double cost) {
-        return economyAPI.hasHoldings(player.getUniqueId(), new BigDecimal(cost));
+        return economyAPI.hasHoldings(player.getUniqueId(), BigDecimal.valueOf(cost));
     }
 
     @Override
     public boolean withdrawBalance(OfflinePlayer player, double cost) {
-        return economyAPI.removeHoldings(player.getUniqueId(), new BigDecimal(cost));
+        return economyAPI.removeHoldings(player.getUniqueId(), BigDecimal.valueOf(cost));
     }
 
     @Override
     public boolean deposit(OfflinePlayer player, double amount) {
-        return economyAPI.addHoldings(player.getUniqueId(), new BigDecimal(amount));
+        return economyAPI.addHoldings(player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 }

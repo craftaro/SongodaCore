@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * Particle effects for servers 1.8 and below
  */
 public class LegacyParticleEffects {
-    public static enum Type {
+    public enum Type {
         EXPLOSION_NORMAL("explode"),
         EXPLOSION_LARGE("largeexplode"),
         EXPLOSION_HUGE("hugeexplosion"),
@@ -69,19 +69,19 @@ public class LegacyParticleEffects {
         public final ServerVersion minVersion;
         public final ServerVersion maxVersion;
 
-        private Type(String name) {
+        Type(String name) {
             this.name = name;
             this.minVersion = ServerVersion.UNKNOWN;
             this.maxVersion = null;
         }
 
-        private Type(String name, ServerVersion minVersion) {
+        Type(String name, ServerVersion minVersion) {
             this.name = name;
             this.minVersion = minVersion;
             this.maxVersion = null;
         }
 
-        private Type(String name, ServerVersion minVersion, ServerVersion maxVersion) {
+        Type(String name, ServerVersion minVersion, ServerVersion maxVersion) {
             this.name = name;
             this.minVersion = minVersion;
             this.maxVersion = maxVersion;
@@ -99,15 +99,15 @@ public class LegacyParticleEffects {
 
     private static final String version = getNMSVersion();
     private static boolean enabled = true;
-    private static Class mc_packetPlayOutWorldParticlesClazz;
-    private static Class cb_craftPlayerClazz;
+    private static Class<?> mc_packetPlayOutWorldParticlesClazz;
+    private static Class<?> cb_craftPlayerClazz;
     private static Method cb_craftPlayer_getHandle;
-    private static Class mc_entityPlayerClazz;
-    private static Class mc_playerConnectionClazz;
+    private static Class<?> mc_entityPlayerClazz;
+    private static Class<?> mc_playerConnectionClazz;
     private static Field mc_entityPlayer_playerConnection;
-    private static Class mc_PacketInterface;
+    private static Class<?> mc_PacketInterface;
     private static Method mc_playerConnection_sendPacket;
-    private static Class mc_EnumParticle;
+    private static Class<?> mc_EnumParticle;
     private static Method mc_EnumParticle_valueOf;
 
     static {
@@ -158,7 +158,7 @@ public class LegacyParticleEffects {
      * @param e                 particle effect type
      * @param xx                for notes, this is a value 0-1 for the color ([0-24]/24), for
      *                          redstone this is the red value 0-1 ([0-255]/255).
-     *                          Otherwise this is the distance for particles to fly on the x-axis.
+     *                          Otherwise, this is the distance for particles to fly on the x-axis.
      * @param yy                for redstone this is the green value 0-1 ([0-255]/255)
      *                          Otherwise this is the distance for particles to fly on the y-axis.
      * @param zz                for redstone this is the blue value 0-1 ([0-255]/255)

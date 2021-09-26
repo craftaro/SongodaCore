@@ -160,7 +160,7 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
         }
 
         this.spawner.e.b(spawnerFieldP)
-                .ifPresent((mobspawnerdata) -> this.spawner.setSpawnData(world, bPos, mobspawnerdata));
+                .ifPresent((mobSpawnerData) -> this.spawner.setSpawnData(world, bPos, mobSpawnerData));
         this.spawner.a(world, getBlockPosition(), 1);
     }
 

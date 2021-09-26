@@ -48,6 +48,7 @@ public class SSpawnerImpl implements SSpawner {
 
         short spawnRange = 4;
         for (int i = 0; i < 50; i++) {
+            assert spawnerLocation.getWorld() != null;
             WorldServer world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
 
             Random random = world.getRandom();
@@ -56,7 +57,7 @@ public class SSpawnerImpl implements SSpawner {
             double z = spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
 
             Optional<Entity> optionalEntity = EntityTypes.a(compound, world);
-            if (!optionalEntity.isPresent()) continue;
+            if (optionalEntity.isEmpty()) continue;
 
             Entity entity = optionalEntity.get();
             entity.setPosition(x, y, z);

@@ -7,7 +7,6 @@ import net.minecraft.server.v1_8_R1.NBTTagCompound;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -194,7 +193,7 @@ public class NBTCompoundImpl implements NBTCompound {
     public void deSerialize(byte[] serialized) {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(serialized);
              ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
-            compound = NBTCompressedStreamTools.a((InputStream) dataInput);
+            compound = NBTCompressedStreamTools.a(dataInput);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

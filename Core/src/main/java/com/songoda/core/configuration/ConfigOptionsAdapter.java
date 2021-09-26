@@ -34,7 +34,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     @NotNull
     @Override
     public ConfigOptionsAdapter pathSeparator(char value) {
-        ((Config) config.root).setPathSeparator(value);
+        (config.root).setPathSeparator(value);
         return this;
     }
 
@@ -61,12 +61,12 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     }
 
     public int indent() {
-        return ((Config) config.root).getIndent();
+        return config.root.getIndent();
     }
 
     @NotNull
     public ConfigOptionsAdapter indent(int value) {
-        ((Config) config.root).setIndent(value);
+        config.root.setIndent(value);
         return this;
     }
 }

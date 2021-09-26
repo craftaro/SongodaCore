@@ -34,7 +34,7 @@ public class SWorldImpl implements SWorld {
 
     @Override
     public List<LivingEntity> getLivingEntities() {
-        List<LivingEntity> list = new ArrayList();
+        List<LivingEntity> list = new ArrayList<>();
         try {
 
             WorldServer worldServer = ((CraftWorld) world).getHandle();

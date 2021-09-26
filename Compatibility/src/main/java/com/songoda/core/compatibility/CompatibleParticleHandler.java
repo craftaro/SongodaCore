@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class CompatibleParticleHandler {
-    public static enum ParticleType {
+    public enum ParticleType {
         EXPLOSION_NORMAL,
         EXPLOSION_LARGE,
         EXPLOSION_HUGE,
@@ -131,7 +131,7 @@ public class CompatibleParticleHandler {
             }
         }
 
-        private ParticleType() {
+        ParticleType() {
             if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
                 this.compatibilityMode = true;
                 this.particle = null;
@@ -151,7 +151,7 @@ public class CompatibleParticleHandler {
             }
         }
 
-        private ParticleType(ServerVersion minVersion, String compatible) {
+        ParticleType(ServerVersion minVersion, String compatible) {
             // Particle class doesn't exist in 1.8
             if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
                 this.compatibilityMode = true;

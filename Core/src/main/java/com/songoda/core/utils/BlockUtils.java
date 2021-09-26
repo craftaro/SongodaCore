@@ -173,7 +173,7 @@ public class BlockUtils {
             legacySetBlockData.invoke(lever, (byte) (lever.getData() ^ 0x8));
             lever.getState().update();
             //lever.getWorld().playEffect(lever.getLocation(), Effect.CLICK1, 0);
-            // now we need to update the redstone around it..
+            // now we need to update the redstone around it...
 //            int data = lever.getData() & ~0x8;
 //            Block attached;
 //            switch(data) {
@@ -752,9 +752,9 @@ public class BlockUtils {
             case "WALL_BANNER":
             case "BEETROOT_BLOCK":
                 return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     /**
@@ -763,7 +763,7 @@ public class BlockUtils {
      *
      * @param m material to check
      *
-     * @return true if this is a block that can be walked though or up
+     * @return true if this is a block that can be walked through or up
      */
     public static boolean canWalkTo(Material m) {
         switch (m.name()) {
@@ -1086,8 +1086,8 @@ public class BlockUtils {
             case "STONE_SLAB2":
             case "BEETROOT_BLOCK":
                 return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 }

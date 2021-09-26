@@ -29,7 +29,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         this.setUseHeader(true);
         this.setItem(4, current.configItem(CompatibleMaterial.FILLED_MAP, key, current.getCurrentNode(), key, null));
         this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
-        this.values = new ArrayList(val);
+        this.values = new ArrayList<>(val);
 
         this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.LAVA_BUCKET, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
         this.setButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE, ChatColor.GREEN + "Save"), (event) -> {
@@ -42,9 +42,8 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a new value to add:", response -> {
                                 values.add(response.getMessage().trim());
                                 redraw();
-                            }).setOnClose(() -> {
-                                event.manager.showGUI(event.player, this);
                             })
+                            .setOnClose(() -> event.manager.showGUI(event.player, this))
                             .setOnCancel(() -> {
                                 event.player.sendMessage(ChatColor.RED + "Edit canceled");
                                 event.manager.showGUI(event.player, this);

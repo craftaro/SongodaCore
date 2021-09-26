@@ -27,6 +27,8 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
 
         Optional<EntityTypes<?>> optionalEntity = EntityTypes.a(entityType);
         if (optionalEntity.isPresent()) {
+            assert location.getWorld() != null;
+
             Entity spawned = optionalEntity.get().spawnCreature(
                     ((CraftWorld) location.getWorld()).getHandle(),
                     compound,

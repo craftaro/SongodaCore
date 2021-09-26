@@ -146,7 +146,7 @@ public class WorldGuardHook {
      */
     @NotNull
     public static List<String> getRegionNames(@NotNull Location loc) {
-        return canHook ? WorldGuardRegionHandler.getRegionNames(loc) : Collections.EMPTY_LIST;
+        return canHook ? WorldGuardRegionHandler.getRegionNames(loc) : Collections.emptyList();
     }
 
     /**
@@ -156,6 +156,6 @@ public class WorldGuardHook {
      */
     @NotNull
     public static List<String> getRegionNames(@NotNull Chunk c) {
-        return canHook ? WorldGuardRegionHandler.getRegionNames(c) : Collections.EMPTY_LIST;
+        return canHook ? WorldGuardRegionHandler.getRegionNames(c) : Collections.emptyList();
     }
 }

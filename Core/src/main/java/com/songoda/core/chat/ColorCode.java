@@ -42,11 +42,7 @@ public enum ColorCode {
     }
 
     static {
-        ColorCode[] var0 = values();
-        int l = var0.length;
-
-        for (int i = 0; i < l; ++i) {
-            ColorCode color = var0[i];
+        for (ColorCode color : values()) {
             BY_CHAR.put(color.code, color);
         }
     }

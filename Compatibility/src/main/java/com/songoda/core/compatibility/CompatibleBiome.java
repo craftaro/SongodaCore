@@ -110,7 +110,7 @@ public enum CompatibleBiome {
     private static final boolean isAbove1_16_R1 = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)
             && !ServerVersion.getServerVersionString().equals("v1_16_R1");
 
-    private static final Map<String, CompatibleBiome> lookupMap = new HashMap();
+    private static final Map<String, CompatibleBiome> lookupMap = new HashMap<>();
     private static final Set<CompatibleBiome> compatibleBiomes = new HashSet<>();
     private final Deque<Version> versions = new ArrayDeque<>();
     private static Method methodGetHandle, methodMarkDirty, methodBiomeToBiomeBase, methodGetBiomeIndex, methodSetBiome;

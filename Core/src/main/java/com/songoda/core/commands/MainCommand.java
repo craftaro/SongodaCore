@@ -90,7 +90,7 @@ public class MainCommand extends AbstractCommand {
                     chatMessage.addMessage(ChatColor.DARK_GRAY + "- ")
                             .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
                             .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
-                    chatMessage.sendTo((Player) sender);
+                    chatMessage.sendTo(sender);
                 }
             }
         }

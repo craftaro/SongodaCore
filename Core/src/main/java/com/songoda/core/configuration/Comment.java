@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  * A comment for a configuration key
  */
 public class Comment {
-    final List<String> lines = new ArrayList();
+    final List<String> lines = new ArrayList<>();
     CommentStyle commentStyle = null;
 
     public Comment() {
@@ -53,7 +54,7 @@ public class Comment {
 
     @Override
     public String toString() {
-        return lines.isEmpty() ? "" : lines.stream().collect(Collectors.joining("\n"));
+        return lines.isEmpty() ? "" : String.join("\n", lines);
     }
 
     public static Comment loadComment(List<String> lines) {
@@ -73,7 +74,7 @@ public class Comment {
         // first draw the top of the comment
         if (style.drawBorder) {
             // grab the longest line in the list of lines
-            minSpacing = lines.stream().max((s1, s2) -> s1.length() - s2.length()).get().length();
+            minSpacing = lines.stream().max(Comparator.comparingInt(String::length)).orElse("").length();
             borderSpacing = minSpacing + style.commentPrefix.length() + style.commentSuffix.length();
 
             // draw the first line

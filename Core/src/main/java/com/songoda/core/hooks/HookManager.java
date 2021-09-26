@@ -37,7 +37,7 @@ public class HookManager<T extends Hook> {
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> (T) e.getValue())));
 
             if (!registeredHooks.isEmpty()) {
-                defaultHook = (T) registeredHooks.values().iterator().next();
+                defaultHook = registeredHooks.values().iterator().next();
             }
 
             loaded = true;
@@ -107,7 +107,7 @@ public class HookManager<T extends Hook> {
         }
 
         final String plugin = name.trim();
-        return (T) registeredHooks.get(registeredHooks.keySet().stream()
+        return registeredHooks.get(registeredHooks.keySet().stream()
                 .filter(type -> type.plugin.equalsIgnoreCase(plugin))
                 .findFirst().orElse(null));
     }

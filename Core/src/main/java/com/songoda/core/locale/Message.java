@@ -26,7 +26,7 @@ public class Message {
             Player.Spigot.class.getDeclaredMethod("sendMessage", net.md_5.bungee.api.ChatMessageType.class, net.md_5.bungee.api.chat.TextComponent.class);
 
             canActionBar = true;
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
     }
 
@@ -147,7 +147,7 @@ public class Message {
      * @return the message
      */
     public List<String> getMessageLines() {
-        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message.toText()).split("\n|\\|"));
+        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message.toText()).split("[\n|]"));
     }
 
     /**

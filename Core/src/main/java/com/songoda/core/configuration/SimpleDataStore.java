@@ -26,7 +26,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
     protected final Plugin plugin;
     protected final String filename, dirName;
     private final Function<ConfigurationSection, T> getFromSection;
-    protected final HashMap<Object, T> data = new HashMap();
+    protected final HashMap<Object, T> data = new HashMap<>();
     private File file;
     private final Object lock = new Object();
     SaveTask saveTask;
@@ -163,16 +163,15 @@ public class SimpleDataStore<T extends DataStoreObject> {
      *
      * @param value values to be added
      */
-    @Nullable
     public void addAll(@NotNull T[] value) {
         if (value == null) {
             return;
         }
 
         synchronized (lock) {
-            for (int i = 0; i < value.length; ++i) {
-                if (value[i] != null) {
-                    data.put(value[i].getKey(), value[i]);
+            for (T t : value) {
+                if (t != null) {
+                    data.put(t.getKey(), t);
                 }
             }
         }
@@ -219,9 +218,8 @@ public class SimpleDataStore<T extends DataStoreObject> {
             synchronized (lock) {
                 data.clear();
 
-                f.getValues(false).entrySet().stream()
-                        .filter(d -> d.getValue() instanceof ConfigurationSection)
-                        .map(Map.Entry::getValue)
+                f.getValues(false).values().stream()
+                        .filter(ConfigurationSection.class::isInstance)
                         .map(v -> getFromSection.apply((ConfigurationSection) v))
                         .forEach(v -> data.put(v.getKey(), v));
             }
@@ -235,7 +233,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * made
      */
     public void saveChanges() {
-        if (saveTask != null || data.values().stream().anyMatch(v -> v.hasChanged())) {
+        if (saveTask != null || data.values().stream().anyMatch(DataStoreObject::hasChanged)) {
             flushSave();
         }
     }
@@ -266,12 +264,12 @@ public class SimpleDataStore<T extends DataStoreObject> {
         YamlConfiguration f = new YamlConfiguration();
 
         synchronized (lock) {
-            data.values().stream().forEach(e -> e.saveToSection(f.createSection(e.getConfigKey())));
+            data.values().forEach(e -> e.saveToSection(f.createSection(e.getConfigKey())));
         }
 
         try {
             f.save(getFile());
-            data.values().stream().forEach(e -> e.setChanged(false));
+            data.values().forEach(e -> e.setChanged(false));
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, "Failed to save data to " + file.getName(), ex);
         }

@@ -1293,7 +1293,7 @@ public enum CompatibleMaterial {
     // quick test to see if our version is < 1.13
     protected static final boolean useLegacy = ServerVersion.isServerVersionBelow(ServerVersion.V1_13);
     // map to speed up name->material lookups
-    private static final Map<String, CompatibleMaterial> lookupMap = new HashMap();
+    private static final Map<String, CompatibleMaterial> lookupMap = new HashMap<>();
 
     static {
         for (CompatibleMaterial m : values()) {
@@ -1904,7 +1904,7 @@ public enum CompatibleMaterial {
      * Checks if this Material can be used as fuel in a Furnace
      */
     public boolean isFuel() {
-        // this function is not implemented in some older versions, so we need this here..
+        // this function is not implemented in some older versions, so we need this here...
         switch (this) {
             case ACACIA_BOAT:
             case ACACIA_BUTTON:
@@ -2318,7 +2318,7 @@ public enum CompatibleMaterial {
      * Checks if this Material is an obtainable item.
      */
     public boolean isItem() {
-        // this function is not implemented in some older versions, so we need this here..
+        // this function is not implemented in some older versions, so we need this here...
         switch (this) {
             case CAVE_AIR:
             case VOID_AIR:
@@ -2423,7 +2423,7 @@ public enum CompatibleMaterial {
      * additional interact handling is performed for the material.
      */
     public boolean isInteractable() {
-        // this function is not implemented in some older versions, so we need this here..
+        // this function is not implemented in some older versions, so we need this here...
         switch (this) {
             case ACACIA_BUTTON:
             case ACACIA_DOOR:
@@ -2793,8 +2793,9 @@ public enum CompatibleMaterial {
 
         return false;
     }
+
     /**
-     * @return true if this material is a food that can be cooked and is in its cooked state
+     * @return true if this material is food that can be cooked and is in its cooked state
      */
     public boolean isCooked() {
         switch (this) {
@@ -2814,7 +2815,7 @@ public enum CompatibleMaterial {
     }
 
     /**
-     * @return true if this material is a food that can be cooked and is in its raw state
+     * @return true if this material is food that can be cooked and is in its raw state
      */
     public boolean isRaw() {
         switch (this) {

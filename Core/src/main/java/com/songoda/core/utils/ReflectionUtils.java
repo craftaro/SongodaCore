@@ -211,7 +211,7 @@ public class ReflectionUtils {
         return packageClasses;
     }
 
-    public static enum ITERATION {
+    public enum ITERATION {
         NONE, CLASS, PACKAGE, FULL
     }
 
@@ -234,7 +234,7 @@ public class ReflectionUtils {
         // http://stackoverflow.com/questions/1456930/how-do-i-read-all-classes-from-a-java-package-in-the-classpath
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageURL;
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
         if (packageName.contains("/")) {
             // load as a file
@@ -284,7 +284,7 @@ public class ReflectionUtils {
             jarEntries = jf.entries();
 
             // in case of multiple sub-classes, keep track of what classes have been searched
-            ArrayList<String> loaded = new ArrayList<String>();
+            ArrayList<String> loaded = new ArrayList<>();
 
             while (jarEntries.hasMoreElements()) {
                 entryName = jarEntries.nextElement().getName();
@@ -331,7 +331,7 @@ public class ReflectionUtils {
             File[] contenuti = folder.listFiles();
 
             // in case of multiple sub-classes, keep track of what classes have been searched
-            ArrayList<String> loaded = new ArrayList<String>();
+            ArrayList<String> loaded = new ArrayList<>();
 
             String entryName;
             for (File actual : contenuti) {

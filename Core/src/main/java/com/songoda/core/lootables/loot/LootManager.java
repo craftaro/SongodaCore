@@ -39,7 +39,7 @@ public class LootManager {
     public void removeLootable(String key) {
         registeredLootables.remove(key);
 
-        File file = new File(lootables.getLootablesDir() + "/" + key.toLowerCase() + ".json");
+        File file = new File(lootables.getLootablesDir(), key.toLowerCase() + ".json");
         file.delete();
     }
 
@@ -189,8 +189,7 @@ public class LootManager {
         // Save to file
         for (Lootable lootable : registeredLootables.values()) {
             try {
-                File file = new File(lootables.getLootablesDir()
-                        + "/" + lootable.getKey().toLowerCase() + ".json");
+                File file = new File(lootables.getLootablesDir(), lootable.getKey().toLowerCase() + ".json");
 
                 if (file.exists() && defaults) {
                     continue;

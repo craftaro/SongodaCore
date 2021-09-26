@@ -26,6 +26,7 @@ public class TextUtils {
 //        supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
 //        supportedCharsets.add(StandardCharsets.UTF_16);
 
+        // FIXME: One unsupported charset causes other ones not to be tried
         try {
             supportedCharsets.add(Charset.forName("windows-1253"));
             supportedCharsets.add(Charset.forName("ISO-8859-7"));
@@ -67,6 +68,8 @@ public class TextUtils {
         return wrap(null, line);
     }
 
+    // TODO: We might want to remove white spaces at the beginning after wrapping a substring into a new line
+    // TODO: Why do we accept a String as a color when we need it in a very specific format?!
     public static List<String> wrap(String color, String line) {
         if (color != null) {
             color = "&" + color;
@@ -97,7 +100,7 @@ public class TextUtils {
     /**
      * Convert a string to an invisible colored string that's lore-safe <br />
      * (Safe to use as lore) <br />
-     * Note: Do not use semi-colons in this string, or they will be lost when decoding!
+     * Note: Do not use semi-colons or § in this string, or they will be lost when decoding!
      *
      * @param s string to convert
      *
@@ -111,7 +114,10 @@ public class TextUtils {
         StringBuilder hidden = new StringBuilder();
 
         for (char c : s.toCharArray()) {
-            hidden.append(ChatColor.COLOR_CHAR).append(';').append(ChatColor.COLOR_CHAR).append(c);
+            hidden.append(ChatColor.COLOR_CHAR)
+                    .append(';')
+                    .append(ChatColor.COLOR_CHAR)
+                    .append(c);
         }
 
         return hidden.toString();
@@ -120,7 +126,7 @@ public class TextUtils {
     /**
      * Convert a string to an invisible colored string <br />
      * (Not safe to use as lore) <br />
-     * Note: Do not use semi-colons in this string, or they will be lost when decoding!
+     * Note: Do not use semi-colons or § in this string, or they will be lost when decoding!
      *
      * @param s string to convert
      *
@@ -133,12 +139,14 @@ public class TextUtils {
 
         StringBuilder hidden = new StringBuilder();
         for (char c : s.toCharArray()) {
-            hidden.append(ChatColor.COLOR_CHAR).append(c);
+            hidden.append(ChatColor.COLOR_CHAR)
+                    .append(c);
         }
 
         return hidden.toString();
     }
 
+    // TODO: Is there a more reliable way?
     /**
      * Removes color markers used to encode strings as invisible text
      *
@@ -158,7 +166,7 @@ public class TextUtils {
         byte[] buffer = new byte[2048];
         int len;
 
-        // Read the first 2KiB of the file and test the file's encoding
+        // Read the first 2 KiB of the file and test the file's encoding
         try (FileInputStream input = new FileInputStream(f)) {
             len = input.read(buffer);
         } catch (Exception ex) {
@@ -172,7 +180,7 @@ public class TextUtils {
         byte[] buffer = new byte[2048];
         int len;
 
-        // Read the first 2KiB of the file and test the file's encoding
+        // Read the first 2 KiB of the file and test the file's encoding
         try {
             reader.mark(2048);
             len = reader.read(buffer);
@@ -188,11 +196,11 @@ public class TextUtils {
     public static Charset detectCharset(byte[] data, int len, Charset def) {
         // check the file header
         if (len > 4) {
-            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) { // FF FE 00 00 is UTF-32LE
+            if (data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) { // FF FE is UTF-16LE
                 return StandardCharsets.UTF_16LE;
-            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {  // 00 00 FE FF is UTF-32BE
+            } else if (data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) {  // FE FF is UTF-16BE
                 return StandardCharsets.UTF_16BE;
-            } else if (data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { // UTF-8 with BOM, same sig as ISO-8859-1
+            } else if (data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { // UTF-8 with BOM
                 return StandardCharsets.UTF_8;
             }
         }

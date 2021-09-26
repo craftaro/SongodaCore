@@ -6,7 +6,6 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
@@ -40,7 +39,7 @@ public class WorldGuardFlagHandler {
     static boolean legacy_v62 = false;
     static boolean legacy_v5 = false;
     static boolean hooksInstalled = false;
-    static Map<String, Object> flags = new HashMap();
+    static Map<String, Object> flags = new HashMap<>();
 
     static {
         if (wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null) {
@@ -99,7 +98,7 @@ public class WorldGuardFlagHandler {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard", addFlag.getName());
             Object wgFlag = WorldGuard.getInstance().getFlagRegistry().get(addFlag.getName());
 
-            if (wgFlag == null || !(wgFlag instanceof StateFlag)) {
+            if (!(wgFlag instanceof StateFlag)) {
                 wgPlugin = false;
                 Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             } else {
@@ -118,7 +117,7 @@ public class WorldGuardFlagHandler {
             Field flagField = defaultFlagClazz.getField("flagsList");
             Flag<?>[] flagsOld = (Flag<?>[]) flagField.get(null);
             Flag wgFlag = Stream.of(flagsOld)
-                    .filter(f -> ((Flag<?>) f).getName().equalsIgnoreCase(flag))
+                    .filter(f -> f.getName().equalsIgnoreCase(flag))
                     .findFirst().orElse(null);
 
             if (wgFlag != null) {
@@ -288,7 +287,7 @@ public class WorldGuardFlagHandler {
                     BlockVector3.at((c.getX() << 4) + 15, 0, (c.getZ() << 4) + 15));
 
             ApplicableRegionSet set = worldManager.getApplicableRegions(chunkRegion);
-            State result = set.queryState((RegionAssociable) null, (StateFlag) flagObj);
+            State result = set.queryState(null, (StateFlag) flagObj);
 
             if (result == null && set.size() == 0) {
                 return null;
@@ -335,7 +334,7 @@ public class WorldGuardFlagHandler {
             }
 
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, l.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, l.getWorld());
             if (worldManager == null) {
                 return null;
             }
@@ -348,7 +347,7 @@ public class WorldGuardFlagHandler {
             // so what's the verdict?
             State result;
             if (legacy_v62 || legacy_v60) {
-                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = ((ApplicableRegionSet) set).queryState(null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function
@@ -394,7 +393,7 @@ public class WorldGuardFlagHandler {
             }
 
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
             if (worldManager == null) {
                 return null;
             }
@@ -410,7 +409,7 @@ public class WorldGuardFlagHandler {
             // so what's the verdict?
             State result;
             if (legacy_v62 || legacy_v60) {
-                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = ((ApplicableRegionSet) set).queryState(null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function
@@ -422,7 +421,7 @@ public class WorldGuardFlagHandler {
                 result = (State) legacy5_applicableRegionSet_getFlag.invoke(set, flag);
             }
 
-            if (result == null && set != null && ((Iterable) set).iterator().hasNext()) {
+            if (result == null && set != null && ((Iterable<?>) set).iterator().hasNext()) {
                 return null;
             }
 

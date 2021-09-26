@@ -53,7 +53,7 @@ public class PlayerUtils {
     }
 
     /**
-     * Get a list of all of the players that this player can "see"
+     * Get a list of all the players that this player can "see"
      *
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
@@ -90,7 +90,7 @@ public class PlayerUtils {
                 .filter(p -> p != player)
                 .filter(p -> startsWith == null || p.getName().toLowerCase().startsWith(startsWith))
                 .filter(p -> player == null || (player.canSee(p) && p.getMetadata("vanished").isEmpty()))
-                .map(p -> (Player) p)
+                .map(Player.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -120,6 +120,8 @@ public class PlayerUtils {
      * @return List of matching player display names
      */
     public static List<String> getAllPlayersDisplay(CommandSender us, String startsWith) {
+        // FIXME: Why do we need that regex? It just breaks the startsWith check
+        //        + the DisplayName comparison is not made lower case
         final String arg = startsWith.replaceAll("[^a-zA-Z]", "").toLowerCase();
 
         return Bukkit.getOnlinePlayers().stream()
@@ -196,7 +198,7 @@ public class PlayerUtils {
         Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
 
         if (!leftover.isEmpty()) {
-            leftover.values().stream().forEach(it -> player.getWorld().dropItemNaturally(player.getLocation(), it));
+            leftover.values().forEach(it -> player.getWorld().dropItemNaturally(player.getLocation(), it));
         }
     }
 
@@ -210,7 +212,7 @@ public class PlayerUtils {
             final World world = player.getWorld();
             final Location location = player.getLocation();
 
-            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+            leftover.values().forEach(it -> world.dropItemNaturally(location, it));
         }
     }
 
@@ -219,12 +221,12 @@ public class PlayerUtils {
             return;
         }
 
-        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items.toArray(new ItemStack[0]));
 
         if (!leftover.isEmpty()) {
             final World world = player.getWorld();
             final Location location = player.getLocation();
-            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+            leftover.values().forEach(it -> world.dropItemNaturally(location, it));
         }
     }
 

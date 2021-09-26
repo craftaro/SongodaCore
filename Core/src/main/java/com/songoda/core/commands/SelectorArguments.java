@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SelectorArguments {
-    static Pattern selectorPattern = Pattern.compile("^(@[apers])(\\[(.*?)\\])?$");
+    static Pattern selectorPattern = Pattern.compile("^(@[apers])(\\[(.*?)])?$");
     static Pattern selectorRangePattern = Pattern.compile("^([0-9]{1,9}(\\.[0-9]{1,9})?)?(\\.\\.)?([0-9]{1,9}(\\.[0-9]{1,9})?)?$");
 
     /**
@@ -141,7 +141,8 @@ public class SelectorArguments {
 
         switch (selector) {
             case PLAYER:
-                Collections.sort(list2, (o1, o2) -> (int) (o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location)));
+                list2.sort((o1, o2) -> (int) (o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location)));
+
                 return Arrays.asList(list2.get(0));
             case RANDOM_PLAYER:
                 Collections.shuffle(list2);
@@ -163,7 +164,7 @@ public class SelectorArguments {
                 return rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntitiesByClasses(Player.class)
                         : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2).stream()
-                        .filter(e -> e instanceof Player).collect(Collectors.toSet());
+                        .filter(Player.class::isInstance).collect(Collectors.toSet());
 
             case ALL_ENTITIES:
                 return rangeMax == Double.POSITIVE_INFINITY
@@ -171,10 +172,10 @@ public class SelectorArguments {
                         : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2);
 
             case SELF:
-                return sender instanceof Entity ? Arrays.asList((Entity) sender) : Collections.EMPTY_LIST;
+                return sender instanceof Entity ? Arrays.asList((Entity) sender) : Collections.emptyList();
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     protected List<Entity> filter(Location location, Collection<Entity> list) {
@@ -185,9 +186,10 @@ public class SelectorArguments {
         return stream.collect(Collectors.toList());
     }
 
-    public static enum SelectorType {
+    public enum SelectorType {
         PLAYER, RANDOM_PLAYER, ALL_PLAYER, ALL_ENTITIES, SELF;
 
+        // TODO: Store selector string in enum
         public static SelectorType getType(String str) {
             if (str != null) {
                 switch (str.toLowerCase()) {
@@ -201,6 +203,8 @@ public class SelectorArguments {
                         return ALL_ENTITIES;
                     case "@s":
                         return SELF;
+                    default:
+                        break;
                 }
             }
 

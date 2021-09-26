@@ -32,8 +32,4 @@ public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
     public byte[] getByteArray(String tag) {
         return new byte[0];
     }
-
-    @Override
-    public void addExtras() {
-    }
 }

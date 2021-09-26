@@ -111,7 +111,7 @@ public class SongodaCore {
 
                         // we are newer than the registered service: steal all of its registrations
                         // grab the old core's registrations
-                        List otherPlugins = (List) clazz.getMethod("getPlugins").invoke(null);
+                        List<?> otherPlugins = (List<?>) clazz.getMethod("getPlugins").invoke(null);
 
                         // destroy the old core
                         Object oldCore = clazz.getMethod("getInstance").invoke(null);
@@ -177,15 +177,15 @@ public class SongodaCore {
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
 
         // we aggressively want to own this command
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
-            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-        }, 10 * 60 * 1));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
-            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-        }, 20 * 60 * 1));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () -> {
-            CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
-        }, 20 * 60 * 2));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+                10 * 60));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+                20 * 60));
+        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+                20 * 60 * 2));
     }
 
     /**
@@ -207,7 +207,7 @@ public class SongodaCore {
         loginListener = null;
     }
 
-    private ArrayList<BukkitTask> tasks = new ArrayList();
+    private ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
@@ -297,7 +297,7 @@ public class SongodaCore {
     }
 
     private static class ShadedEventListener implements Listener {
-        boolean via = false;
+        boolean via;
         boolean proto = false;
 
         ShadedEventListener() {
@@ -345,7 +345,7 @@ public class SongodaCore {
     }
 
     private class EventListener implements Listener {
-        final HashMap<UUID, Long> lastCheck = new HashMap();
+        final HashMap<UUID, Long> lastCheck = new HashMap<>();
 
         @EventHandler
         void onLogin(PlayerLoginEvent event) {

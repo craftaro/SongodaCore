@@ -64,8 +64,8 @@ public abstract class AbstractCommand {
         return _cmdType == CommandType.PLAYER_ONLY;
     }
 
-    public static enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
+    public enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
 
-    public static enum CommandType {PLAYER_ONLY, CONSOLE_OK}
+    public enum CommandType {PLAYER_ONLY, CONSOLE_OK}
 }
 

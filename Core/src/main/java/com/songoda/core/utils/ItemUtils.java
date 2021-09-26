@@ -1,6 +1,3 @@
-/**
- * This class uses some Minecraft code and also Paper API
- */
 package com.songoda.core.utils;
 
 import com.mojang.authlib.GameProfile;
@@ -31,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +38,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * This class uses some Minecraft code and also Paper API
+ */
 public class ItemUtils {
     static boolean can_getI18NDisplayName = true;
 
@@ -367,7 +368,7 @@ public class ItemUtils {
     }
 
     public static void setHeadOwner(ItemStack head, OfflinePlayer player) {
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || head == null || !CompatibleMaterial.PLAYER_HEAD.matches(head)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || !CompatibleMaterial.PLAYER_HEAD.matches(head)) {
             return;
         }
 
@@ -456,9 +457,6 @@ public class ItemUtils {
         try {
             SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
             Field cb_SkullMeta_profile = localSkullMeta.getClass().getDeclaredField("profile");
-            if (cb_SkullMeta_profile == null) {
-                return null;
-            }
             cb_SkullMeta_profile.setAccessible(true);
 
             GameProfile profile = (GameProfile) cb_SkullMeta_profile.get(localSkullMeta);
@@ -559,8 +557,7 @@ public class ItemUtils {
     public static boolean canMove(ItemStack[] contents, ItemStack item) {
         final ItemMeta itemMeta = item.getItemMeta();
 
-        for (int i = 0; i < contents.length; ++i) {
-            final ItemStack stack = contents[i];
+        for (final ItemStack stack : contents) {
             if (stack == null || stack.getAmount() == 0) {
                 return true;
             }
@@ -788,7 +785,7 @@ public class ItemUtils {
 
         boolean[] check = null;
 
-        if (inventorySource != null && inventorySource != Material.AIR) {
+        if (inventorySource != Material.AIR) {
             // Don't transfer shulker boxes into other shulker boxes, that's a bad idea.
             if (inventorySource.name().contains("SHULKER_BOX") && item.getType().name().contains("SHULKER_BOX")) {
                 return false;
@@ -997,7 +994,7 @@ public class ItemUtils {
 
         boolean[] check = null;
 
-        if (inventorySource != null && inventorySource != Material.AIR) {
+        if (inventorySource != Material.AIR) {
             // Don't transfer shulker boxes into other shulker boxes, that's a bad idea.
             if (inventorySource.name().contains("SHULKER_BOX") && item.getType().name().contains("SHULKER_BOX")) {
                 return false;
@@ -1159,15 +1156,10 @@ public class ItemUtils {
         // grab the amount to move and the max item stack size
         int toAdd = amount;
         final int maxStack = item.getMaxStackSize();
-        boolean[] check = null;
 
         // we can reduce calls to ItemStack.isSimilar() by caching what cells to look at
-        if (check == null) {
-            check = new boolean[containerSize];
-            for (int i = 0; toAdd > 0 && i < check.length; i++) {
-                check[i] = true;
-            }
-        }
+        boolean[] check = new boolean[containerSize];
+        Arrays.fill(check, true);
 
         // first verify that we can add this item
         for (int i = 0; toAdd > 0 && i < containerSize; i++) {

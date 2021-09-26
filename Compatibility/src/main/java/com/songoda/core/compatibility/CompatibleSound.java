@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
  * near equivalent for the current server.
  */
 public enum CompatibleSound {
-    // some of these values are missing an API value..
+    // some of these values are missing an API value...
     // would using the raw strings be better?
     // 1.8 list:
     // https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/mapping-and-modding-tutorials/2213619-1-8-all-playsound-sound-arguments
@@ -469,8 +469,8 @@ public enum CompatibleSound {
     BLOCK_CHEST_CLOSE(ServerVersion.V1_9, v("CHEST_CLOSE")),
     BLOCK_CHEST_LOCKED(ServerVersion.V1_9, v("CHEST_CLOSE", true)),
     BLOCK_CHEST_OPEN(ServerVersion.V1_9, v("CHEST_OPEN")),
-    BLOCK_CHORUS_FLOWER_DEATH(ServerVersion.V1_9, v(null, true)), // I have no idea..
-    BLOCK_CHORUS_FLOWER_GROW(ServerVersion.V1_9, v(null, true)), // I have no idea..
+    BLOCK_CHORUS_FLOWER_DEATH(ServerVersion.V1_9, v(null, true)), // I have no idea...
+    BLOCK_CHORUS_FLOWER_GROW(ServerVersion.V1_9, v(null, true)), // I have no idea...
     BLOCK_COMPARATOR_CLICK(ServerVersion.V1_9, v("WOOD_CLICK", true)),
     BLOCK_COMPOSTER_EMPTY,
     BLOCK_COMPOSTER_FILL,
@@ -634,7 +634,7 @@ public enum CompatibleSound {
     ENTITY_ARMOR_STAND_FALL,
     ENTITY_ARMOR_STAND_HIT,
     ENTITY_ARMOR_STAND_PLACE,
-    ENTITY_ARROW_HIT("SUCCESSFUL_HIT"), // these may be reversed..
+    ENTITY_ARROW_HIT("SUCCESSFUL_HIT"), // these may be reversed...
     ENTITY_ARROW_HIT_PLAYER("ARROW_HIT"),
     ENTITY_ARROW_SHOOT("SHOOT_ARROW"),
     ENTITY_BAT_AMBIENT("BAT_IDLE"),
@@ -1222,7 +1222,7 @@ public enum CompatibleSound {
     protected /*final*/ boolean compatibilityMode;
     protected static final boolean DEBUG = false;
 
-    private CompatibleSound() {
+    CompatibleSound() {
         // This could get risky, since we haven't finished this
         //sound = Sound.valueOf(name());
         Sound find = null;
@@ -1240,7 +1240,7 @@ public enum CompatibleSound {
     }
 
     // if the sound ony ever changed from 1.8 -> 1.9
-    private CompatibleSound(String compatibility_18) {
+    CompatibleSound(String compatibility_18) {
         try {
             compatibilityMode = false;
 
@@ -1255,7 +1255,7 @@ public enum CompatibleSound {
         }
     }
 
-    private CompatibleSound(Version... versions) {
+    CompatibleSound(Version... versions) {
         try {
             for (Version v : versions) {
                 if (v.sound != null && ServerVersion.isServerVersionAtLeast(v.version)) {
@@ -1283,7 +1283,7 @@ public enum CompatibleSound {
         compatibilityMode = find == null;
     }
 
-    private CompatibleSound(ServerVersion minVersion, Version... versions) {
+    CompatibleSound(ServerVersion minVersion, Version... versions) {
         try {
             if (ServerVersion.isServerVersionAtLeast(minVersion)) {
                 // should be good to use this sound

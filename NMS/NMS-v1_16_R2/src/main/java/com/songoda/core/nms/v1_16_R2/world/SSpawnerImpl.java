@@ -48,6 +48,7 @@ public class SSpawnerImpl implements SSpawner {
 
         short spawnRange = 4;
         for (int i = 0; i < 50; i++) {
+            @SuppressWarnings("ConstantConditions")
             WorldServer world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
 
             Random random = world.getRandom();

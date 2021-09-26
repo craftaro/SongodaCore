@@ -11,7 +11,7 @@ public enum GuiType {
     protected final int rows;
     protected final int columns;
 
-    private GuiType(InventoryType type, int rows, int columns) {
+    GuiType(InventoryType type, int rows, int columns) {
         this.type = type;
         this.rows = rows;
         this.columns = columns;

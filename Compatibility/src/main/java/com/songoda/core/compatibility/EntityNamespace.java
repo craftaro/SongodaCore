@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityNamespace {
-    static final HashMap<String, EntityType> validTypes = new HashMap();
-    static final HashMap<String, String> legacyToModernTypes = new HashMap() {
+    static final HashMap<String, EntityType> validTypes = new HashMap<>();
+    static final HashMap<String, String> legacyToModernTypes = new HashMap<String, String>() {
         {
             put("xporb", "experience_orb");
             put("xp_orb", "experience_orb");

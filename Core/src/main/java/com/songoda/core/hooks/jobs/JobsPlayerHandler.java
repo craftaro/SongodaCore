@@ -149,7 +149,7 @@ public class JobsPlayerHandler {
     }
 
     public void tameEntity(LivingEntity entity) {
-        Jobs.action(jPlayer, new EntityActionInfo((Entity) entity, ActionType.TAME));
+        Jobs.action(jPlayer, new EntityActionInfo(entity, ActionType.TAME));
     }
 
     public void catchFish(ItemStack items) {

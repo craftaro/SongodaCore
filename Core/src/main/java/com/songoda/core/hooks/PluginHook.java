@@ -70,7 +70,7 @@ public final class PluginHook<T extends Class> {
         this.managerClass = handler;
 
         if (hooks == null) {
-            hooks = new LinkedHashMap();
+            hooks = new LinkedHashMap<>();
         }
 
         hooks.put(handler, this);

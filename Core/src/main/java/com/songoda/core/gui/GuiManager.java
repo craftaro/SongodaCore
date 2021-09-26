@@ -33,7 +33,7 @@ public class GuiManager {
     final Plugin plugin;
     final UUID uuid = UUID.randomUUID(); // manager tracking to fix weird bugs from lazy programming
     final GuiListener listener = new GuiListener(this);
-    final Map<Player, Gui> openInventories = new HashMap();
+    final Map<Player, Gui> openInventories = new HashMap<>();
     private final Object lock = new Object();
     private boolean initialized = false;
     private boolean shutdown = false;

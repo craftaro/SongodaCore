@@ -85,7 +85,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
                     c.children.values().stream()
                             .filter(s -> !all.contains(s))
-                            .forEach(s -> all.add(s));
+                            .forEach(all::add);
                 });
 
         return all;
@@ -302,7 +302,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                         .filter(e -> !console || !e.getValue().isNoConsole())
                         .filter(e -> e.getKey().startsWith(arg))
                         .filter(e -> op || e.getValue().getPermissionNode() == null || sender.hasPermission(e.getValue().getPermissionNode()))
-                        .map(e -> e.getKey())
+                        .map(Map.Entry::getKey)
                         .collect(Collectors.toList());
             }
 

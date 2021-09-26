@@ -139,7 +139,7 @@ public class Locale {
      */
     public static List<String> getLocales(Plugin plugin) {
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
-        List<String> all = new ArrayList();
+        List<String> all = new ArrayList<>();
 
         for (File localeFile : localeFolder.listFiles()) {
             String fileName = localeFile.getName();
@@ -315,7 +315,7 @@ public class Locale {
             // load lists as strings with newlines
             lang.getValues(true).forEach((k, v) -> nodes.put(k,
                     v instanceof List
-                            ? (((List) v).stream().map(Object::toString).collect(Collectors.joining("\n")).toString())
+                            ? (((List<?>) v).stream().map(Object::toString).collect(Collectors.joining("\n")))
                             : v.toString()));
 
             return true;
@@ -338,7 +338,7 @@ public class Locale {
                 line1 = line;
                 line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
                 if (line1.length() != line.length()) {
-                    output.append(line1.substring(0, line1.length() - line.length()));
+                    output.append(line1, 0, line1.length() - line.length());
                 }
             }
 
@@ -372,7 +372,7 @@ public class Locale {
 
         if (!msgs.isEmpty()) {
             try (FileInputStream stream = new FileInputStream(file);
-                 BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset))) {
+                 BufferedReader source = new BufferedReader(new InputStreamReader(stream, charset))) {
                 String line;
                 for (int lineNumber = 0; (line = source.readLine()) != null; ++lineNumber) {
                     if (lineNumber == 0) {

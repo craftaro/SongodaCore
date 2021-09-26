@@ -82,7 +82,7 @@ public class ChatPrompt implements Listener {
 
     private void startListener(Plugin plugin) {
         this.listener = new Listener() {
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onChat(AsyncPlayerChatEvent event) {
                 Player player = event.getPlayer();
 
@@ -111,7 +111,7 @@ public class ChatPrompt implements Listener {
                 Bukkit.getScheduler().cancelTask(taskId);
             }
 
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onCancel(PlayerCommandPreprocessEvent event) {
                 Player player = event.getPlayer();
 
@@ -139,15 +139,15 @@ public class ChatPrompt implements Listener {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public static interface ChatConfirmHandler {
+    public interface ChatConfirmHandler {
         void onChat(ChatConfirmEvent event);
     }
 
-    public static interface OnClose {
+    public interface OnClose {
         void onClose();
     }
 
-    public static interface OnCancel {
+    public interface OnCancel {
         void onCancel();
     }
 

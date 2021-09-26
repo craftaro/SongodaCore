@@ -36,8 +36,8 @@ public class ConfigEditorGui extends SimplePagedGui {
     final Player player;
     Method configSection_getCommentString = null;
     boolean edits = false;
-    List<String> sections = new ArrayList();
-    List<String> settings = new ArrayList();
+    List<String> sections = new ArrayList<>();
+    List<String> settings = new ArrayList<>();
 
     protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config) {
         this(player, plugin, parent, file, config, config);
@@ -99,7 +99,7 @@ public class ConfigEditorGui extends SimplePagedGui {
 
             if (val instanceof Boolean) {
                 // toggle switch
-                setButton(index, configItem(CompatibleMaterial.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
+                setButton(index, configItem(CompatibleMaterial.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf(val), "Click to toggle this setting"),
                         (event) -> this.toggle(event.slot, settingKey));
 
                 if ((Boolean) val) {
@@ -107,7 +107,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                 }
             } else if (isNumber(val)) {
                 // number dial
-                this.setButton(index, configItem(CompatibleMaterial.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Number) val), "Click to edit this setting"),
+                this.setButton(index, configItem(CompatibleMaterial.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf(val), "Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
                             ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + settingKey + ":", response -> {
@@ -153,14 +153,13 @@ public class ConfigEditorGui extends SimplePagedGui {
                                     });
                         });
             } else if (val instanceof List) {
-                setButton(index, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "Click to edit this setting"),
-                        (event) -> {
-                            event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
-                                if (((ConfigEditorListEditorGui) gui.gui).saveChanges) {
-                                    setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).values);
-                                }
-                            }));
-                        });
+                setButton(index, configItem(CompatibleMaterial.WRITABLE_BOOK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List<?>) val).size()), "Click to edit this setting"),
+                        (event) ->
+                                event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
+                                    if (((ConfigEditorListEditorGui) gui.gui).saveChanges) {
+                                        setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).values);
+                                    }
+                                })));
             } /* else {
                 // idk. should we display uneditable values?
             }  */
@@ -186,7 +185,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         if (meta != null && val != null) {
             String valStr;
             if (val instanceof List) {
-                valStr = String.format("(%d values)", ((List) val).size());
+                valStr = String.format("(%d values)", ((List<?>) val).size());
             } else {
                 valStr = val.toString();
             }
@@ -280,7 +279,7 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     private boolean isNumber(Object value) {
-        return value != null && (value instanceof Long
+        return (value instanceof Long
                 || value instanceof Integer
                 || value instanceof Float
                 || value instanceof Double);
@@ -321,7 +320,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             try {
                 Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
-                    info = (value + "\n" + comment.toString()).split("\n");
+                    info = (value + "\n" + comment).split("\n");
                 }
             } catch (Exception ignore) {
             }
