@@ -3,7 +3,6 @@ package com.songoda.core.utils;
 import org.bukkit.block.BlockFace;
 
 public class RotationUtils {
-
     public static float faceToYaw(BlockFace face) {
         switch (face) {
             case NORTH:
@@ -15,6 +14,7 @@ public class RotationUtils {
             case WEST:
                 return 90F;
         }
+
         return 0F;
     }
 
@@ -33,6 +33,7 @@ public class RotationUtils {
             case 450:
                 return BlockFace.WEST;
         }
+
         // idk
         return BlockFace.SOUTH;
     }

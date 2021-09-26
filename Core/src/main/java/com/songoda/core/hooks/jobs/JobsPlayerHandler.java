@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JobsPlayerHandler {
-
     protected final JobsPlayer jPlayer;
 
     protected JobsPlayerHandler(JobsPlayer jPlayer) {
@@ -33,6 +32,7 @@ public class JobsPlayerHandler {
 
     public static JobsPlayerHandler loadPlayer(Player player) {
         JobsPlayer jPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
+
         return jPlayer != null ? new JobsPlayerHandler(jPlayer) : null;
     }
 
@@ -50,6 +50,7 @@ public class JobsPlayerHandler {
 
     public void promoteJob(String jobName) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.promoteJob(job, 1);
         }
@@ -57,6 +58,7 @@ public class JobsPlayerHandler {
 
     public void promoteJob(String jobName, int levels) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.promoteJob(job, levels);
         }
@@ -64,6 +66,7 @@ public class JobsPlayerHandler {
 
     public void demoteJob(String jobName) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.demoteJob(job, 1);
         }
@@ -71,6 +74,7 @@ public class JobsPlayerHandler {
 
     public void demoteJob(String jobName, int levels) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.demoteJob(job, levels);
         }
@@ -78,6 +82,7 @@ public class JobsPlayerHandler {
 
     public void joinJob(String jobName) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.joinJob(job);
         }
@@ -89,6 +94,7 @@ public class JobsPlayerHandler {
 
     public void leaveJob(String jobName) {
         Job job = Jobs.getJob(jobName);
+
         if (job != null) {
             jPlayer.leaveJob(job);
         }
@@ -154,13 +160,16 @@ public class JobsPlayerHandler {
         Jobs.action(jPlayer, new EntityActionInfo(entity, ActionType.KILL), damageSource, entity);
         if (entity instanceof Player && !entity.hasMetadata("NPC")) {
             JobsPlayer jVictim = Jobs.getPlayerManager().getJobsPlayer((Player) entity);
+
             if (jVictim == null) {
                 return;
             }
+
             List<JobProgression> jobs = jVictim.getJobProgression();
             if (jobs == null) {
                 return;
             }
+
             for (JobProgression job : jobs) {
                 Jobs.action(jPlayer, new CustomKillInfo(job.getJob().getName(), ActionType.CUSTOMKILL), damageSource, entity);
             }
@@ -169,14 +178,17 @@ public class JobsPlayerHandler {
 
     public void itemEnchanted(ItemStack resultStack) {
         Map<Enchantment, Integer> enchants = resultStack.getEnchantments();
+
         for (Map.Entry<Enchantment, Integer> oneEnchant : enchants.entrySet()) {
             CMIEnchantment e;
             String enchantName;
             Integer level2;
             Enchantment enchant = oneEnchant.getKey();
+
             if (enchant == null || (enchantName = (e = CMIEnchantment.get(enchant)) == null ? null : e.toString()) == null || (level2 = oneEnchant.getValue()) == null) {
                 continue;
             }
+
             Jobs.action(jPlayer, new EnchantActionInfo(enchantName, level2, ActionType.ENCHANT));
         }
     }

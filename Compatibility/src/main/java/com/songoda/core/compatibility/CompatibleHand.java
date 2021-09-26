@@ -16,7 +16,6 @@ import java.util.Map;
  * @since 2020-03-24
  */
 public enum CompatibleHand {
-
     MAIN_HAND, OFF_HAND;
 
     private static Map<String, Method> methodCache = new HashMap<>();
@@ -25,6 +24,7 @@ public enum CompatibleHand {
         try {
             Class<?> clazz = event.getClass();
             String className = clazz.getName();
+
             Method method;
             if (methodCache.containsKey(className)) {
                 method = methodCache.get(className);
@@ -32,10 +32,15 @@ public enum CompatibleHand {
                 method = clazz.getDeclaredMethod("getHand");
                 methodCache.put(className, method);
             }
+
             EquipmentSlot slot = (EquipmentSlot) method.invoke(event);
-            if (slot == EquipmentSlot.OFF_HAND) return OFF_HAND;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+
+            if (slot == EquipmentSlot.OFF_HAND) {
+                return OFF_HAND;
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {
         }
+
         return MAIN_HAND;
     }
 
@@ -65,10 +70,12 @@ public enum CompatibleHand {
         int result = item.getAmount() - amount;
         item.setAmount(result);
 
-        if (this == CompatibleHand.MAIN_HAND)
+        if (this == CompatibleHand.MAIN_HAND) {
             player.setItemInHand(result > 0 ? item : null);
-        else
-            player.getInventory().setItemInOffHand(result > 0 ? item : null);
+            return;
+        }
+
+        player.getInventory().setItemInOffHand(result > 0 ? item : null);
     }
 
     /**
@@ -79,10 +86,11 @@ public enum CompatibleHand {
      * @return the item
      */
     public ItemStack getItem(Player player) {
-        if (this == MAIN_HAND)
+        if (this == MAIN_HAND) {
             return player.getItemInHand();
-        else
-            return player.getInventory().getItemInOffHand();
+        }
+
+        return player.getInventory().getItemInOffHand();
     }
 
     /**
@@ -92,9 +100,11 @@ public enum CompatibleHand {
      * @param item   the item to set
      */
     public void setItem(Player player, ItemStack item) {
-        if (this == MAIN_HAND)
+        if (this == MAIN_HAND) {
             player.setItemInHand(item);
-        else
-            player.getInventory().setItemInOffHand(item);
+            return;
+        }
+
+        player.getInventory().setItemInOffHand(item);
     }
 }

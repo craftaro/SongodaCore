@@ -56,28 +56,30 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) throws NoSuchFieldException, IllegalAccessException {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
 
-        if (tickAmount > 0) {
-            int j = chunk.locX * 16;
-            int k = chunk.locZ * 16;
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            for (ChunkSection chunksection : chunk.getSections()) {
-                if (chunksection != net.minecraft.server.v1_10_R1.Chunk.a && chunksection.shouldTick()) {
-                    for (int i = 0; i < tickAmount; ++i) {
-                        int worldL = (int) ReflectionUtils.getFieldValue(chunk.world, "l");
-                        worldL = worldL * 3 + 1013904223;
-                        ReflectionUtils.setFieldValue(chunk.world, "l", worldL);
+        int j = chunk.locX * 16;
+        int k = chunk.locZ * 16;
 
-                        int l1 = worldL >> 2;
-                        int i2 = l1 & 15;
-                        int j2 = l1 >> 8 & 15;
-                        int k2 = l1 >> 16 & 15;
+        for (ChunkSection chunksection : chunk.getSections()) {
+            if (chunksection != net.minecraft.server.v1_10_R1.Chunk.a && chunksection.shouldTick()) {
+                for (int i = 0; i < tickAmount; ++i) {
+                    int worldL = (int) ReflectionUtils.getFieldValue(chunk.world, "l");
+                    worldL = worldL * 3 + 1013904223;
+                    ReflectionUtils.setFieldValue(chunk.world, "l", worldL);
 
-                        IBlockData iblockdata = chunksection.getType(i2, k2, j2);
-                        Block block = iblockdata.getBlock();
+                    int l1 = worldL >> 2;
+                    int i2 = l1 & 15;
+                    int j2 = l1 >> 8 & 15;
+                    int k2 = l1 >> 16 & 15;
 
-                        if (block.isTicking()) {
-                            block.a(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), iblockdata, chunk.world.random);
-                        }
+                    IBlockData iblockdata = chunksection.getType(i2, k2, j2);
+                    Block block = iblockdata.getBlock();
+
+                    if (block.isTicking()) {
+                        block.a(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), iblockdata, chunk.world.random);
                     }
                 }
             }

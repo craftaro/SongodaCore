@@ -3,7 +3,6 @@ package com.songoda.core.configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
 public interface DataStoreObject<T> {
-
     /**
      * @return a unique hashable instance of T to store this value under
      */
@@ -16,8 +15,6 @@ public interface DataStoreObject<T> {
 
     /**
      * Save this data to a ConfigurationSection
-     *
-     * @param sec
      */
     public abstract void saveToSection(ConfigurationSection sec);
 
@@ -28,8 +25,6 @@ public interface DataStoreObject<T> {
 
     /**
      * Mark this data as needing a save or not
-     *
-     * @param isChanged
      */
     public void setChanged(boolean isChanged);
 }

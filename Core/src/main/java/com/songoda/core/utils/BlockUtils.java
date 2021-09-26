@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BlockUtils {
-
     protected static final Set<Material> DOORS;
     protected static final Set<Material> PRESSURE_PLATES;
     protected static final Set<Material> FENCE_GATES;
@@ -52,7 +51,7 @@ public class BlockUtils {
             try {
                 //legacyUpdateBlockData = Block.class.getDeclaredMethod("update");
                 legacySetBlockData = Block.class.getDeclaredMethod("setData", byte.class);
-            } catch (NoSuchMethodException ex) {
+            } catch (NoSuchMethodException ignore) {
             }
         }
     }
@@ -66,6 +65,7 @@ public class BlockUtils {
      */
     public static boolean tryInteract(Block b) {
         final Material bType = b.getType();
+
         if (isOpenable(bType)) {
             toggleDoorStates(true, b);
             return true;
@@ -96,6 +96,7 @@ public class BlockUtils {
 
     private static void _updatePressurePlateLegacy(Block plate, int power) {
         final Material m = plate.getType();
+
         try {
             if (m.name().equals("GOLD_PLATE") || m.name().equals("IRON_PLATE")) {
                 legacySetBlockData.invoke(plate, (byte) (power & 0x15));
@@ -125,7 +126,11 @@ public class BlockUtils {
 
     private static void _pressButtonLegacy(Block button) {
         final Material m = button.getType();
-        if (!m.name().endsWith("_BUTTON")) return;
+
+        if (!m.name().endsWith("_BUTTON")) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() | (31 & 0x8)));
             button.getState().update();
@@ -136,7 +141,11 @@ public class BlockUtils {
 
     private static void _releaseButtonLegacy(Block button) {
         final Material m = button.getType();
-        if (!m.name().endsWith("_BUTTON")) return;
+
+        if (!m.name().endsWith("_BUTTON")) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() & ~0x8));
             button.getState().update();
@@ -155,7 +164,11 @@ public class BlockUtils {
 
     private static void _toggleLeverLegacy(Block lever) {
         final Material m = lever.getType();
-        if (m != Material.LEVER) return;
+
+        if (m != Material.LEVER) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(lever, (byte) (lever.getData() ^ 0x8));
             lever.getState().update();
@@ -243,10 +256,6 @@ public class BlockUtils {
 
     /**
      * Get the double door for the given block
-     *
-     * @param block
-     *
-     * @return
      */
     public static Block getDoubleDoor(Block block) {
         // TODO? if legacy, just search N/S/E/W to see if there's another door nearby
@@ -258,9 +267,9 @@ public class BlockUtils {
     }
 
     public static boolean isOpenable(Material m) {
-        return DOORS.contains(m)
-                || FENCE_GATES.contains(m)
-                || TRAP_DOORS.contains(m);
+        return DOORS.contains(m) ||
+                FENCE_GATES.contains(m) ||
+                TRAP_DOORS.contains(m);
     }
 
     public static BlockFace getDoorClosedDirection(Block door) {
@@ -269,8 +278,10 @@ public class BlockUtils {
 
     private static BlockFace _getDoorClosedDirectionLegacy(Block door) {
         final Material type = door.getType();
+
         if (DOORS.contains(type)) {
             boolean isTop = (door.getData() & 0x8) != 0;
+
             if (isTop) {
                 // The lower half of the door contains the direction & open/close state
                 door = door.getRelative(BlockFace.DOWN);
@@ -278,7 +289,9 @@ public class BlockUtils {
                     return null;
                 }
             }
+
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             //int facing = (door.getData() & 0x3);
             // [east, south, west, north]
             boolean facingNS = (door.getData() & 0x1) != 0;
@@ -289,6 +302,7 @@ public class BlockUtils {
             }
         } else if (FENCE_GATES.contains(door.getType())) {
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             //int facing = (door.getData() & 0x3);
             // so fence gate orientations are [south, west, north, east]
             boolean facingNS = (door.getData() & 0x1) == 0;
@@ -299,6 +313,7 @@ public class BlockUtils {
             }
         } else if (TRAP_DOORS.contains(door.getType())) {
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             // [south, north, east, west]
             boolean facingNS = (door.getData() & 0x3) <= 1;
             if (facingNS) {
@@ -307,6 +322,7 @@ public class BlockUtils {
                 return isOpen ? BlockFace.SOUTH : BlockFace.EAST;
             }
         }
+
         return null;
     }
 
@@ -319,7 +335,10 @@ public class BlockUtils {
      * @param location location of the container
      */
     public static void updateAdjacentComparators(Location location) {
-        if (location == null || location.getWorld() == null) return;
+        if (location == null || location.getWorld() == null) {
+            return;
+        }
+
         try {
             // Cache reflection.
             if (clazzCraftWorld == null) {
@@ -347,8 +366,8 @@ public class BlockUtils {
                     .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
                                     .newInstance(location.getX(), location.getY(), location.getZ()),
                             nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+        } catch (ReflectiveOperationException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -361,13 +380,6 @@ public class BlockUtils {
      * <p>
      * The chunk must be loaded and players must relog if they have the
      * chunk loaded in order to use this method.
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param material
-     * @param data
      */
     public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
         try {
@@ -408,8 +420,8 @@ public class BlockUtils {
                 Object IBlockData = getByCombinedId.invoke(null, material.getId() + (data << 12));
                 setType.invoke(chunk, blockPosition, IBlockData);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -427,16 +439,19 @@ public class BlockUtils {
     public static boolean isCropFullyGrown(Block block) {
         if (block == null) {
             return false;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._isCropFullyGrown(block);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return false;
-        } else {
-            return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -449,16 +464,19 @@ public class BlockUtils {
     public static int getMaxGrowthStage(Block block) {
         if (block == null) {
             return -1;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(block);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return -1;
-        } else {
-            return (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -471,16 +489,19 @@ public class BlockUtils {
     public static int getMaxGrowthStage(Material material) {
         if (material == null) {
             return -1;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(material);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(material);
         if (mat == null || !mat.isCrop()) {
             return -1;
-        } else {
-            return (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -517,8 +538,9 @@ public class BlockUtils {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-            if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
+
+            if (mat != null && mat.isCrop() &&
+                    block.getData() < (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
@@ -539,6 +561,7 @@ public class BlockUtils {
             BlockUtilsModern._resetGrowthStage(block);
         } else {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
+
             if (mat != null && mat.isCrop()) {
                 try {
                     legacySetBlockData.invoke(block, (byte) 0);
@@ -557,7 +580,6 @@ public class BlockUtils {
      * @return true if this material doesn't have a solid hitbox
      */
     public static boolean canPassThrough(Material m) {
-
         switch (m.name()) {
             case "ACACIA_BUTTON":
             case "ACACIA_PRESSURE_PLATE":
@@ -731,6 +753,7 @@ public class BlockUtils {
             case "BEETROOT_BLOCK":
                 return true;
         }
+
         return false;
     }
 
@@ -1064,6 +1087,7 @@ public class BlockUtils {
             case "BEETROOT_BLOCK":
                 return true;
         }
+
         return false;
     }
 }

@@ -24,7 +24,6 @@ import java.util.Map;
  * @since 2019-08-31
  */
 public class PluginConfigGui extends SimplePagedGui {
-
     final JavaPlugin plugin;
     LinkedHashMap<String, MemoryConfiguration> configs = new LinkedHashMap();
 
@@ -34,6 +33,7 @@ public class PluginConfigGui extends SimplePagedGui {
 
     public PluginConfigGui(SongodaPlugin plugin, Gui parent) {
         super(parent);
+
         this.plugin = plugin;
 
         // collect list of plugins
@@ -44,6 +44,7 @@ public class PluginConfigGui extends SimplePagedGui {
                 configs.put(cfg.getFile().getName(), cfg);
             }
         }
+
         init();
     }
 
@@ -76,6 +77,7 @@ public class PluginConfigGui extends SimplePagedGui {
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             // I guess not!
         }
+
         init();
     }
 

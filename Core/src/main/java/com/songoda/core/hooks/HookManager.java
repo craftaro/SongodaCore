@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HookManager<T extends Hook> {
-
     private final Class typeClass;
     private T defaultHook = null;
     private boolean loaded = false;
@@ -36,9 +35,11 @@ public class HookManager<T extends Hook> {
         if (!loaded) {
             registeredHooks.putAll(PluginHook.loadHooks(typeClass, hookingPlugin).entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> (T) e.getValue())));
+
             if (!registeredHooks.isEmpty()) {
                 defaultHook = (T) registeredHooks.values().iterator().next();
             }
+
             loaded = true;
         }
     }
@@ -66,8 +67,10 @@ public class HookManager<T extends Hook> {
         T hook = getHook(name);
         if (hook != null) {
             defaultHook = hook;
+
             return true;
         }
+
         return false;
     }
 
@@ -84,8 +87,10 @@ public class HookManager<T extends Hook> {
         T hook = getHook(plugin);
         if (hook != null) {
             defaultHook = hook;
+
             return true;
         }
+
         return false;
     }
 
@@ -97,8 +102,10 @@ public class HookManager<T extends Hook> {
      * @return returns null if plugin is not enabled
      */
     public T getHook(String name) {
-        if (name == null)
+        if (name == null) {
             return null;
+        }
+
         final String plugin = name.trim();
         return (T) registeredHooks.get(registeredHooks.keySet().stream()
                 .filter(type -> type.plugin.equalsIgnoreCase(plugin))

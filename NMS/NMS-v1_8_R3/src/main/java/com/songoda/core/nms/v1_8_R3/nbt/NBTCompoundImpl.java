@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class NBTCompoundImpl implements NBTCompound {
-
     protected NBTTagCompound compound;
 
     protected NBTCompoundImpl(NBTTagCompound compound) {
@@ -176,15 +175,17 @@ public class NBTCompoundImpl implements NBTCompound {
             addExtras();
             NBTTagCompound compound = (NBTTagCompound) this.compound.clone(); // Changed in 1.12 // Changed in 1.9.4
 
-            for (String exclusion : exclusions)
+            for (String exclusion : exclusions) {
                 compound.remove(exclusion);
+            }
 
             NBTCompressedStreamTools.a(compound, (OutputStream) dataOutput);
 
             return outputStream.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 
@@ -193,8 +194,8 @@ public class NBTCompoundImpl implements NBTCompound {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(serialized);
              ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
             compound = NBTCompressedStreamTools.a((InputStream) dataInput);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

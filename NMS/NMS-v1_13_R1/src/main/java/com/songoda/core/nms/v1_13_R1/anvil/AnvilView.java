@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AnvilView extends ContainerAnvil implements CustomAnvil {
-
     private final EntityPlayer entity;
     private final Inventory inventory;
     private String title = "Repairing";
@@ -37,8 +36,10 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         try {
             mc_ContainerAnvil_repairInventory = ContainerAnvil.class.getDeclaredField("repairInventory");
             mc_ContainerAnvil_repairInventory.setAccessible(true);
+
             mc_ContainerAnvil_resultInventory = ContainerAnvil.class.getDeclaredField("resultInventory");
             mc_ContainerAnvil_resultInventory.setAccessible(true);
+
             mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
             mc_ContainerAnvil_bukkitEntity.setAccessible(true);
         } catch (Exception ex) {
@@ -48,13 +49,16 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     public AnvilView(EntityPlayer entity, InventoryHolder holder) {
         super(entity.inventory, entity.world, new BlockPosition(0, 0, 0), entity);
+
         this.checkReachable = false;
         this.entity = entity;
+
         if (holder != null) {
             this.inventory = getBukkitView(entity, holder).getTopInventory();
-        } else {
-            this.inventory = getBukkitView().getTopInventory();
+            return;
         }
+
+        this.inventory = getBukkitView().getTopInventory();
     }
 
     public CraftInventoryView getBukkitView(EntityHuman player, InventoryHolder holder) {
@@ -65,10 +69,12 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
                     (IInventory) mc_ContainerAnvil_resultInventory.get(this), this);
             CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
             mc_ContainerAnvil_bukkitEntity.set(this, view);
+
             return view;
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
         }
+
         return getBukkitView();
     }
 
@@ -80,6 +86,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     @Override
     public void d() {
         super.d();
+
         if (cost >= 0) {
             this.levelCost = cost;
         }
@@ -167,7 +174,6 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     @Override
     public void open() {
-
         // Counter stuff that the game uses to keep track of inventories
         int id = entity.nextContainerCounter();
 

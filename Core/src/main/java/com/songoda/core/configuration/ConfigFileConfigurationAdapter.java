@@ -14,11 +14,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ConfigFileConfigurationAdapter extends FileConfiguration {
-
     final Config config;
 
     public ConfigFileConfigurationAdapter(Config config) {
         super(config);
+
         this.config = config;
     }
 

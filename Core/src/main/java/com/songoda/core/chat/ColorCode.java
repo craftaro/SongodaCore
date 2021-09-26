@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ColorCode {
-
     BLACK('0', ChatColor.BLACK, true),
     DARK_BLUE('1', ChatColor.DARK_BLUE, true),
     DARK_GREEN('2', ChatColor.DARK_GREEN, true),

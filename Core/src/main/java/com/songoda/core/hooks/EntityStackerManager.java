@@ -8,7 +8,6 @@ import org.bukkit.entity.LivingEntity;
  * A convenience class for static access to a Stacker HookManager
  */
 public class EntityStackerManager {
-
     private static final HookManager<Stacker> manager = new HookManager(Stacker.class);
 
     /**
@@ -56,8 +55,9 @@ public class EntityStackerManager {
     }
 
     public static void remove(LivingEntity entity, int amount) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().remove(entity, amount);
+        }
     }
 
     public static void addOne(LivingEntity entity) {
@@ -65,8 +65,9 @@ public class EntityStackerManager {
     }
 
     public static void add(LivingEntity entity, int amount) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().add(entity, amount);
+        }
     }
 
     public static int getMinStackSize(EntityType type) {

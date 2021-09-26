@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class ItemUtils {
-
     static boolean can_getI18NDisplayName = true;
 
     static {
@@ -55,9 +54,9 @@ public class ItemUtils {
     public static String getItemName(ItemStack it) {
         if (it == null) {
             return null;
-        } else {
-            return itemName(it.getType());
         }
+
+        return itemName(it.getType());
     }
 
     static String itemName(Material mat) {
@@ -66,10 +65,12 @@ public class ItemUtils {
 
         Stream.of(matName.split(" ")).forEach(s -> {
             s = s.toLowerCase();
+
             if (s.equals("of")) {
                 titleCase.append(s).append(" ");
             } else {
                 char[] str = s.toCharArray();
+
                 str[0] = Character.toUpperCase(str[0]);
                 titleCase.append(new String(str)).append(" ");
             }
@@ -89,12 +90,13 @@ public class ItemUtils {
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
             methodAsNMSCopy = clazzCraftItemStack.getMethod("asNMSCopy", ItemStack.class);
 
-            if (ServerVersion.isServerVersion(ServerVersion.V1_8))
+            if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
-            else
+            } else {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            }
+        } catch (NoSuchMethodException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -102,15 +104,17 @@ public class ItemUtils {
         try {
             Object nmsItemStack = methodAsNMSCopy.invoke(null, item);
 
-            if (ServerVersion.isServerVersion(ServerVersion.V1_8))
+            if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
                 nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level);
-            else
+            } else {
                 nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level, false);
+            }
 
             item = (ItemStack) methodAsBukkitCopy.invoke(null, nmsItemStack);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
         }
+
         return item;
     }
 
@@ -119,12 +123,18 @@ public class ItemUtils {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
             dataOutput.writeInt(items.length);
-            for (ItemStack item : items) dataOutput.writeObject(item);
+
+            for (ItemStack item : items) {
+                dataOutput.writeObject(item);
+            }
+
             dataOutput.close();
+
             return Base64Coder.encodeLines(outputStream.toByteArray());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 
@@ -133,13 +143,18 @@ public class ItemUtils {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
             ItemStack[] items = new ItemStack[dataInput.readInt()];
-            for (int i = 0; i < items.length; i++)
+
+            for (int i = 0; i < items.length; i++) {
                 items[i] = (ItemStack) dataInput.readObject();
+            }
+
             dataInput.close();
+
             return items;
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IOException ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 
@@ -154,22 +169,27 @@ public class ItemUtils {
     public static ItemStack getAsCopy(ItemStack item, int qty) {
         ItemStack clone = item.clone();
         clone.setAmount(qty);
+
         return clone;
     }
 
     public static boolean hasEnoughDurability(ItemStack tool, int requiredAmount) {
-        if (tool.getType().getMaxDurability() <= 1)
+        if (tool.getType().getMaxDurability() <= 1) {
             return true;
+        }
+
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-            if (!tool.hasItemMeta() || !(tool.getItemMeta() instanceof Damageable))
+            if (!tool.hasItemMeta() || !(tool.getItemMeta() instanceof Damageable)) {
                 return true;
+            }
 
             Damageable damageable = (Damageable) tool.getItemMeta();
             int durabilityRemaining = tool.getType().getMaxDurability() - damageable.getDamage();
+
             return durabilityRemaining > requiredAmount;
-        } else {
-            return tool.getDurability() + requiredAmount <= tool.getType().getMaxDurability();
         }
+
+        return tool.getDurability() + requiredAmount <= tool.getType().getMaxDurability();
     }
 
     static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
@@ -225,42 +245,44 @@ public class ItemUtils {
             ItemMeta m = item.getItemMeta();
             m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(m);
+
             return item;
-        } else {
-            // hack a fake enchant onto the item
-            // Confirmed works on 1.8, 1.9, 1.10
-            // Does not work 1.11+ (minecraft ignores the glitched enchantment)
-            if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
-                try {
-                    Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
-                    Object tag = mc_ItemStack_getTag.invoke(nmsStack);
-                    if (tag == null) {
-                        tag = mc_NBTTagCompound.newInstance();
-                    }
-                    // set to have a fake enchantment
-                    Object enchantmentList = mc_NBTTagList.newInstance();
-                    /*
-                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-                        // Servers from 1.13 and up change the id to a string
-                        Object fakeEnchantment = mc_NBTTagCompound.newInstance();
-                        mc_NBTTagCompound_setString.invoke(fakeEnchantment, "id", "glow:glow");
-                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 0);
-                        mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
-                    } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
-                        // Servers from 1.11 and up require *something* in the enchantment field
-                        Object fakeEnchantment = mc_NBTTagCompound.newInstance();
-                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "id", (short) 245);
-                        mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 1);
-                        mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
-                    }//*/
-                    mc_NBTTagCompound_set.invoke(tag, "ench", enchantmentList);
-                    mc_ItemStack_setTag.invoke(nmsStack, tag);
-                    item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
-                } catch (Exception ex) {
-                    Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
+        }
+
+        // hack a fake enchant onto the item
+        // Confirmed works on 1.8, 1.9, 1.10
+        // Does not work 1.11+ (minecraft ignores the glitched enchantment)
+        if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
+            try {
+                Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
+                Object tag = mc_ItemStack_getTag.invoke(nmsStack);
+                if (tag == null) {
+                    tag = mc_NBTTagCompound.newInstance();
                 }
+                // set to have a fake enchantment
+                Object enchantmentList = mc_NBTTagList.newInstance();
+                /*
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+                    // Servers from 1.13 and up change the id to a string
+                    Object fakeEnchantment = mc_NBTTagCompound.newInstance();
+                    mc_NBTTagCompound_setString.invoke(fakeEnchantment, "id", "glow:glow");
+                    mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 0);
+                    mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
+                } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
+                    // Servers from 1.11 and up require *something* in the enchantment field
+                    Object fakeEnchantment = mc_NBTTagCompound.newInstance();
+                    mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "id", (short) 245);
+                    mc_NBTTagCompound_setShort.invoke(fakeEnchantment, "lvl", (short) 1);
+                    mc_NBTTagList_add.invoke(enchantmentList, fakeEnchantment);
+                }//*/
+                mc_NBTTagCompound_set.invoke(tag, "ench", enchantmentList);
+                mc_ItemStack_setTag.invoke(nmsStack, tag);
+                item = (ItemStack) cb_CraftItemStack_asCraftMirror.invoke(null, nmsStack);
+            } catch (Exception ex) {
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to set glow enchantment on item: " + item, ex);
             }
         }
+
         return item;
     }
 
@@ -274,12 +296,14 @@ public class ItemUtils {
     public static ItemStack removeGlow(ItemStack item) {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
             item.removeEnchantment(Enchantment.DURABILITY);
+
             return item;
         } else {
             if (item != null && item.getType() != Material.AIR && cb_CraftItemStack_asCraftMirror != null) {
                 try {
                     Object nmsStack = cb_CraftItemStack_asNMSCopy.invoke(null, item);
                     Object tag = mc_ItemStack_getTag.invoke(nmsStack);
+
                     if (tag != null) {
                         // remove enchantment list
                         mc_NBTTagCompound_remove.invoke(tag, "ench");
@@ -291,6 +315,7 @@ public class ItemUtils {
                 }
             }
         }
+
         return item;
     }
 
@@ -304,7 +329,7 @@ public class ItemUtils {
                 mc_Item_getItem = mc_ItemStack.getDeclaredMethod("getItem");
                 mc_Item_maxStackSize = mc_Item.getDeclaredField("maxStackSize");
                 mc_Item_maxStackSize.setAccessible(true);
-            } catch (Exception ex) {
+            } catch (Exception ignore) {
             }
         }
     }
@@ -314,10 +339,11 @@ public class ItemUtils {
             try {
                 Object objItemStack = mc_Item_getItem.invoke(cb_CraftItemStack_asNMSCopy.invoke(null, item));
                 mc_Item_maxStackSize.set(objItemStack, max);
-            } catch (ReflectiveOperationException e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Failed to set max stack size on item " + item, e);
+            } catch (ReflectiveOperationException ex) {
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to set max stack size on item " + item, ex);
             }
         }
+
         return item;
     }
 
@@ -328,12 +354,15 @@ public class ItemUtils {
         }
 
         SkullMeta meta = (SkullMeta) head.getItemMeta();
+
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             meta.setOwningPlayer(player);
         } else {
             meta.setOwner(player.getName());
         }
+
         head.setItemMeta(meta);
+
         return head;
     }
 
@@ -341,7 +370,9 @@ public class ItemUtils {
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || head == null || !CompatibleMaterial.PLAYER_HEAD.matches(head)) {
             return;
         }
+
         SkullMeta meta = (SkullMeta) head.getItemMeta();
+
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             meta.setOwningPlayer(player);
         } else {
@@ -355,17 +386,21 @@ public class ItemUtils {
 
     public static ItemStack getCustomHead(String signature, String texture) {
         ItemStack skullItem = CompatibleMaterial.PLAYER_HEAD.getItem();
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8))
+
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return skullItem;
+        }
 
         SkullMeta sm = (SkullMeta) skullItem.getItemMeta();
         GameProfile gm;
         if (texture.endsWith("=")) {
             gm = new GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "CustomHead");
-            if (signature == null)
+
+            if (signature == null) {
                 gm.getProperties().put("textures", new Property("texture", texture.replaceAll("=", "")));
-            else
+            } else {
                 gm.getProperties().put("textures", new Property("textures", texture, signature));
+            }
         } else {
             gm = new GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "CustomHead");
             byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"http://textures.minecraft.net/texture/%s\"}}}", texture).getBytes());
@@ -378,6 +413,7 @@ public class ItemUtils {
             profileField.setAccessible(true);
             profileField.set(sm, gm);
             skullItem.setItemMeta(sm);
+
             return skullItem;
         } catch (NoSuchFieldException | IllegalAccessException | SecurityException ex) {
             throw new RuntimeException("Reflection error while setting head texture", ex);
@@ -390,7 +426,7 @@ public class ItemUtils {
     static {
         try {
             cb_CraftPlayer_getProfile = cb_CraftPlayer.getMethod("getProfile");
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
     }
 
@@ -398,35 +434,40 @@ public class ItemUtils {
         if (player == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return null;
         }
-        try {
 
+        try {
             Object craftPlayer = cb_CraftPlayer.cast(player);
 
             Iterator<Property> iterator = ((GameProfile) cb_CraftPlayer_getProfile.invoke(craftPlayer)).getProperties().get("textures").iterator();
 
             return iterator.hasNext() ? iterator.next().getValue() : null;
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
         }
+
+        return null;
     }
 
     public static String getSkullTexture(ItemStack item) {
         if (!CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return null;
         }
+
         try {
             SkullMeta localSkullMeta = (SkullMeta) item.getItemMeta();
             Field cb_SkullMeta_profile = localSkullMeta.getClass().getDeclaredField("profile");
-            if (cb_SkullMeta_profile == null) return null;
+            if (cb_SkullMeta_profile == null) {
+                return null;
+            }
             cb_SkullMeta_profile.setAccessible(true);
 
             GameProfile profile = (GameProfile) cb_SkullMeta_profile.get(localSkullMeta);
             Iterator<Property> iterator = profile.getProperties().get("textures").iterator();
 
             return iterator.hasNext() ? iterator.next().getValue() : null;
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ignore) {
         }
+
         return null;
     }
 
@@ -468,6 +509,7 @@ public class ItemUtils {
      */
     public static boolean isSimilarMaterial(ItemStack is1, ItemStack is2) {
         CompatibleMaterial mat1 = CompatibleMaterial.getMaterial(is1);
+
         return mat1 != null && mat1 == CompatibleMaterial.getMaterial(is2);
     }
 
@@ -491,12 +533,14 @@ public class ItemUtils {
         final ItemMeta itemMeta = item.getItemMeta();
         for (ItemStack stack : inventory) {
             final ItemMeta stackMeta;
+
             if (isSimilarMaterial(stack, item) && (stack.getAmount() + item.getAmount()) < stack.getMaxStackSize()
                     && ((itemMeta == null) == ((stackMeta = stack.getItemMeta()) == null))
                     && (itemMeta == null || Bukkit.getItemFactory().equals(itemMeta, stackMeta))) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -514,11 +558,13 @@ public class ItemUtils {
      */
     public static boolean canMove(ItemStack[] contents, ItemStack item) {
         final ItemMeta itemMeta = item.getItemMeta();
-        for (int i = 0; i < contents.length; i++) {
+
+        for (int i = 0; i < contents.length; ++i) {
             final ItemStack stack = contents[i];
             if (stack == null || stack.getAmount() == 0) {
                 return true;
             }
+
             final ItemMeta stackMeta;
             if (isSimilarMaterial(stack, item) && (stack.getAmount() + item.getAmount()) < stack.getMaxStackSize()
                     && ((itemMeta == null) == ((stackMeta = stack.getItemMeta()) == null))
@@ -526,6 +572,7 @@ public class ItemUtils {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -545,12 +592,15 @@ public class ItemUtils {
     public static boolean canMoveReserved(Inventory inventory, ItemStack item, int reserved) {
         final ItemMeta itemMeta = item.getItemMeta();
         final ItemStack[] contents = inventory.getContents();
-        for (int i = 0; i < contents.length; i++) {
+
+        for (int i = 0; i < contents.length; ++i) {
             if (i == reserved) {
                 continue;
             }
+
             final ItemStack stack = contents[i];
             final ItemMeta stackMeta;
+
             if (stack == null || stack.getAmount() == 0
                     || (isSimilarMaterial(stack, item) && (stack.getAmount() + item.getAmount()) < stack.getMaxStackSize()
                     && ((itemMeta == null) == ((stackMeta = stack.getItemMeta()) == null))
@@ -558,6 +608,7 @@ public class ItemUtils {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -576,14 +627,18 @@ public class ItemUtils {
      */
     public static boolean canMoveReserved(ItemStack[] contents, ItemStack item, int reserved) {
         final ItemMeta itemMeta = item.getItemMeta();
-        for (int i = 0; i < contents.length; i++) {
+
+        for (int i = 0; i < contents.length; ++i) {
             if (i == reserved) {
                 continue;
             }
+
             final ItemStack stack = contents[i];
+
             if (stack == null || stack.getAmount() == 0) {
                 return true;
             }
+
             final ItemMeta stackMeta;
             if (isSimilarMaterial(stack, item) && (stack.getAmount() + item.getAmount()) < stack.getMaxStackSize()
                     && ((itemMeta == null) == ((stackMeta = stack.getItemMeta()) == null))
@@ -591,6 +646,7 @@ public class ItemUtils {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -621,34 +677,42 @@ public class ItemUtils {
      */
     public static int addAny(ItemStack item, int amountToAdd, List<ItemStack> inventory, int maxSize, int reserved) {
         int totalAdded = 0;
+
         if (inventory != null && item != null && amountToAdd > 0) {
             final int maxStack = item.getMaxStackSize();
-            for (int i = 0; amountToAdd > 0 && i < maxSize; i++) {
+
+            for (int i = 0; amountToAdd > 0 && i < maxSize; ++i) {
                 if (i == reserved) {
                     continue;
                 }
+
                 final ItemStack cacheItem = i >= inventory.size() ? null : inventory.get(i);
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     int toAdd = Math.min(maxStack, amountToAdd);
                     ItemStack item2 = item.clone();
                     item2.setAmount(toAdd);
+
                     if (i >= inventory.size()) {
                         inventory.add(item2);
                     } else {
                         inventory.set(i, item2);
                     }
+
                     totalAdded += toAdd;
                     amountToAdd -= toAdd;
                 } else if (maxStack > cacheItem.getAmount() && item.isSimilar(cacheItem)) {
                     // free space!
                     int toAdd = Math.min(maxStack - cacheItem.getAmount(), amountToAdd);
+
                     inventory.get(i).setAmount(toAdd + cacheItem.getAmount());
+
                     totalAdded += toAdd;
                     amountToAdd -= toAdd;
                 }
             }
         }
+
         return totalAdded;
     }
 
@@ -666,6 +730,7 @@ public class ItemUtils {
         if (inventory == null || item == null || item.getAmount() <= 0 || containerSize <= 0) {
             return false;
         }
+
         return addItem(item, item.getAmount(), inventory, containerSize);
     }
 
@@ -684,6 +749,7 @@ public class ItemUtils {
         if (inventory == null || item == null || item.getAmount() <= 0 || containerSize <= 0) {
             return false;
         }
+
         return addItem(item, item.getAmount(), inventory, containerSize, reserved);
     }
 
@@ -719,6 +785,7 @@ public class ItemUtils {
         if (inventory == null || item == null || amount <= 0 || inventorySource == null) {
             return false;
         }
+
         boolean[] check = null;
 
         if (inventorySource != null && inventorySource != Material.AIR) {
@@ -730,14 +797,15 @@ public class ItemUtils {
             // some destination containers have special conditions
             switch (inventorySource.name()) {
                 case "BREWING_STAND": {
-
                     // first compile a list of what slots to check
                     check = new boolean[5];
                     String typeStr = item.getType().name().toUpperCase();
+
                     if (typeStr.contains("POTION") || typeStr.contains("BOTTLE")) {
                         // potion bottles are the first three slots
                         check[0] = check[1] = check[2] = true;
                     }
+
                     // fuel in 5th position, input in 4th
                     if (item.getType() == Material.BLAZE_POWDER) {
                         check[4] = true;
@@ -749,13 +817,12 @@ public class ItemUtils {
                 case "BLAST_FURNACE":
                 case "BURNING_FURNACE":
                 case "FURNACE": {
-
                     check = new boolean[3];
 
                     boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
+
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
-
                         check[1] = true;
                     } else {
                         check[0] = true;
@@ -771,18 +838,20 @@ public class ItemUtils {
         // we can reduce calls to ItemStack.isSimilar() by caching what cells to look at
         if (check == null) {
             check = new boolean[containerSize];
-            for (int i = 0; toAdd > 0 && i < check.length; i++) {
+            for (int i = 0; toAdd > 0 && i < check.length; ++i) {
                 check[i] = true;
             }
         }
+
         if (reserved >= 0 && check.length < reserved) {
             check[reserved] = false;
         }
 
         // first verify that we can add this item
-        for (int i = 0; toAdd > 0 && i < containerSize; i++) {
+        for (int i = 0; toAdd > 0 && i < containerSize; ++i) {
             if (check[i]) {
                 final ItemStack cacheItem = i >= inventory.size() ? null : inventory.get(i);
+
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     toAdd -= Math.min(maxStack, toAdd);
@@ -796,35 +865,44 @@ public class ItemUtils {
                 }
             }
         }
+
         if (toAdd <= 0) {
             // all good to add!
             toAdd = item.getAmount();
+
             for (int i = 0; toAdd > 0 && i < containerSize; i++) {
                 if (!check[i]) {
                     continue;
                 }
+
                 final ItemStack cacheItem = i >= inventory.size() ? null : inventory.get(i);
+
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     int adding = Math.min(maxStack, toAdd);
                     ItemStack item2 = item.clone();
                     item2.setAmount(adding);
+
                     if (i >= inventory.size()) {
                         inventory.add(item2);
                     } else {
                         inventory.set(i, item2);
                     }
+
                     toAdd -= adding;
                 } else if (maxStack > cacheItem.getAmount()) {
                     // free space!
                     // (no need to check item.isSimilar(cacheItem), since we have that cached in check[])
                     int adding = Math.min(maxStack - cacheItem.getAmount(), toAdd);
+
                     inventory.get(i).setAmount(adding + cacheItem.getAmount());
                     toAdd -= adding;
                 }
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -839,28 +917,35 @@ public class ItemUtils {
      */
     public static int addAny(ItemStack item, int amountToAdd, Inventory inventory) {
         int totalAdded = 0;
+
         if (inventory != null && item != null && amountToAdd > 0) {
             final int containerSize = inventory.getSize();
             final int maxStack = item.getMaxStackSize();
-            for (int i = 0; amountToAdd > 0 && i < containerSize; i++) {
+
+            for (int i = 0; amountToAdd > 0 && i < containerSize; ++i) {
                 final ItemStack cacheItem = inventory.getItem(i);
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     int toAdd = Math.min(maxStack, amountToAdd);
+
                     ItemStack item2 = item.clone();
                     item2.setAmount(toAdd);
                     inventory.setItem(i, item2);
+
                     totalAdded += toAdd;
                     amountToAdd -= toAdd;
                 } else if (maxStack > cacheItem.getAmount() && item.isSimilar(cacheItem)) {
                     // free space!
                     int toAdd = Math.min(maxStack - cacheItem.getAmount(), amountToAdd);
+
                     cacheItem.setAmount(toAdd + cacheItem.getAmount());
+
                     totalAdded += toAdd;
                     amountToAdd -= toAdd;
                 }
             }
         }
+
         return totalAdded;
     }
 
@@ -876,6 +961,7 @@ public class ItemUtils {
         if (inventory == null || item == null || item.getAmount() <= 0) {
             return false;
         }
+
         return addItem(item, item.getAmount(), inventory, -1, null);
     }
 
@@ -908,10 +994,10 @@ public class ItemUtils {
         if (inventory == null || item == null || amount <= 0 || inventorySource == null) {
             return false;
         }
+
         boolean[] check = null;
 
         if (inventorySource != null && inventorySource != Material.AIR) {
-
             // Don't transfer shulker boxes into other shulker boxes, that's a bad idea.
             if (inventorySource.name().contains("SHULKER_BOX") && item.getType().name().contains("SHULKER_BOX")) {
                 return false;
@@ -920,14 +1006,15 @@ public class ItemUtils {
             // some destination containers have special conditions
             switch (inventorySource.name()) {
                 case "BREWING_STAND": {
-
                     // first compile a list of what slots to check
                     check = new boolean[5];
                     String typeStr = item.getType().name().toUpperCase();
+
                     if (typeStr.contains("POTION") || typeStr.contains("BOTTLE")) {
                         // potion bottles are the first three slots
                         check[0] = check[1] = check[2] = true;
                     }
+
                     // fuel in 5th position, input in 4th
                     if (item.getType() == Material.BLAZE_POWDER) {
                         check[4] = true;
@@ -939,13 +1026,11 @@ public class ItemUtils {
                 case "BLAST_FURNACE":
                 case "BURNING_FURNACE":
                 case "FURNACE": {
-
                     check = new boolean[3];
 
                     boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
-
                         check[1] = true;
                     } else {
                         check[0] = true;
@@ -953,6 +1038,7 @@ public class ItemUtils {
                 }
             }
         }
+
         // grab the amount to move and the max item stack size
         int toAdd = item.getAmount();
         final int maxStack = item.getMaxStackSize();
@@ -961,7 +1047,8 @@ public class ItemUtils {
         // we can reduce calls to ItemStack.isSimilar() by caching what cells to look at
         if (check == null) {
             check = new boolean[containerSize];
-            for (int i = 0; toAdd > 0 && i < check.length; i++) {
+
+            for (int i = 0; toAdd > 0 && i < check.length; ++i) {
                 check[i] = true;
             }
         }
@@ -970,6 +1057,7 @@ public class ItemUtils {
         for (int i = 0; toAdd > 0 && i < containerSize; i++) {
             if (check[i]) {
                 final ItemStack cacheItem = inventory.getItem(i);
+
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     toAdd -= Math.min(maxStack, toAdd);
@@ -983,13 +1071,15 @@ public class ItemUtils {
                 }
             }
         }
+
         if (toAdd <= 0) {
             // all good to add!
             toAdd = item.getAmount();
-            for (int i = 0; toAdd > 0 && i < containerSize; i++) {
+            for (int i = 0; toAdd > 0 && i < containerSize; ++i) {
                 if (!check[i]) {
                     continue;
                 }
+
                 final ItemStack cacheItem = inventory.getItem(i);
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
@@ -1006,8 +1096,10 @@ public class ItemUtils {
                     toAdd -= adding;
                 }
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -1044,6 +1136,7 @@ public class ItemUtils {
             case 'f':
                 return CompatibleMaterial.WHITE_DYE;
         }
+
         return CompatibleMaterial.STONE;
     }
 
@@ -1101,17 +1194,20 @@ public class ItemUtils {
                 if (!check[i]) {
                     continue;
                 }
+
                 final ItemStack cacheItem = i >= inventory.size() ? null : inventory.get(i);
                 if (cacheItem == null || cacheItem.getAmount() == 0) {
                     // free slot!
                     int adding = Math.min(maxStack, toAdd);
                     ItemStack item2 = item.clone();
                     item2.setAmount(adding);
+
                     if (i >= inventory.size()) {
                         inventory.add(item2);
                     } else {
                         inventory.set(i, item2);
                     }
+
                     toAdd -= adding;
                 } else if (maxStack > cacheItem.getAmount()) {
                     // free space!
@@ -1121,8 +1217,10 @@ public class ItemUtils {
                     toAdd -= adding;
                 }
             }
+
             return true;
         }
+
         return false;
     }
 }

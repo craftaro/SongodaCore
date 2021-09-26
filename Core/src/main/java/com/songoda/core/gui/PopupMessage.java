@@ -24,7 +24,6 @@ import java.util.UUID;
  * Calling this class on anything below 1.12 will cause ClassLoader Exceptions!
  */
 class PopupMessage {
-
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final HashSet<UUID> registeredMessages = new HashSet();
 
@@ -52,14 +51,18 @@ class PopupMessage {
     private String getJSON() {
         JsonObject json = new JsonObject();
         JsonObject advDisplay = new JsonObject();
+
         if (this.icon != null) {
             JsonObject displayIcon = new JsonObject();
             displayIcon.addProperty("item", "minecraft:" + this.icon.getMaterial().name().toLowerCase());
+
             if (this.icon.usesData()) {
                 displayIcon.addProperty("data", this.icon.getData());
             }
+
             advDisplay.add("icon", displayIcon);
         }
+
         advDisplay.add("title", gson.fromJson(ComponentSerializer.toString(this.title), JsonElement.class));
         advDisplay.addProperty("background", background.key);
         advDisplay.addProperty("description", "");
@@ -88,24 +91,27 @@ class PopupMessage {
         final Advancement adv = getAdvancement();
         final AdvancementProgress progress = pl.getAdvancementProgress(adv);
 
-        if (!progress.isDone())
+        if (!progress.isDone()) {
             progress.getRemainingCriteria().forEach((crit) -> progress.awardCriteria(crit));
+        }
     }
 
     protected void revoke(final Player pl) {
         final Advancement adv = getAdvancement();
         final AdvancementProgress prog = pl.getAdvancementProgress(adv);
 
-        if (prog.isDone())
+        if (prog.isDone()) {
             prog.getAwardedCriteria().forEach((crit) -> prog.revokeCriteria(crit));
+        }
     }
 
     protected void add() {
         if (!registeredMessages.contains(id)) {
             registeredMessages.add(id);
+
             try {
                 Bukkit.getUnsafe().loadAdvancement(key, getJSON());
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ex) {
                 Bukkit.getLogger().warning("Failed to create popup advancement!");
             }
         }
@@ -126,6 +132,7 @@ class PopupMessage {
         TASK,
         CHALLENGE,
         GOAL;
+
         final String id;
 
         private FrameType() {
@@ -163,6 +170,7 @@ class PopupMessage {
         USED_ENDER_EYE,
         USED_TOTEM,
         VILLAGER_TRADE;
+
         final ServerVersion minVersion;
         final String compatible;
         final String key;

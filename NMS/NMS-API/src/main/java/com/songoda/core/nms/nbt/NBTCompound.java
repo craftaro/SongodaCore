@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface NBTCompound {
-
     NBTCompound set(String tag, String s);
 
     NBTCompound set(String tag, boolean b);

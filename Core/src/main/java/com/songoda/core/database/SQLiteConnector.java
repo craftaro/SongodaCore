@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLiteConnector implements DatabaseConnector {
-
     private final Plugin plugin;
     private final String connectionString;
     private Connection connection;
@@ -19,8 +18,8 @@ public class SQLiteConnector implements DatabaseConnector {
 
         try {
             Class.forName("org.sqlite.JDBC"); // This is required to put here for Spigot 1.10 and below to force class load
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
     }
 

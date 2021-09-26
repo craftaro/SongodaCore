@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class Loot {
-
     // Command ran for this drop.
     @SerializedName("Command")
     private String command;
@@ -128,10 +127,15 @@ public class Loot {
     }
 
     public List<String> getLore() {
-        if (lore == null) return null;
+        if (lore == null) {
+            return null;
+        }
+
         List<String> lore = new ArrayList<>();
-        for (String line : this.lore)
+
+        for (String line : this.lore) {
             lore.add(TextUtils.formatText(line));
+        }
 
         return lore;
     }
@@ -141,19 +145,25 @@ public class Loot {
     }
 
     public ItemStack getEnchants(ItemStack item) {
-        if (enchants == null) return null;
+        if (enchants == null) {
+            return null;
+        }
+
         Map<Enchantment, Integer> enchants = new HashMap<>();
         for (Map.Entry<String, Integer> entry : this.enchants.entrySet()) {
-
             if (entry.getValue() == null) continue;
 
             if (entry.getKey().equalsIgnoreCase("RANDOM")) {
                 item = ItemUtils.applyRandomEnchants(item, entry.getValue());
+
                 continue;
             }
+
             enchants.put(Enchantment.getByName(entry.getKey()), entry.getValue());
         }
+
         item.addEnchantments(enchants);
+
         return item;
     }
 
@@ -187,15 +197,23 @@ public class Loot {
 
     public boolean runChance(int looting, ItemStack murderWeapon) {
         double chance = this.chance;
+
         if (enchantChances != null && murderWeapon != null && enchants != null) {
             for (Map.Entry<Enchantment, Integer> entry : murderWeapon.getEnchantments().entrySet()) {
                 String key = entry.getKey().getName() + ":" + entry.getValue();
-                if (!enchants.containsKey(key)) continue;
+
+                if (!enchants.containsKey(key)) {
+                    continue;
+                }
+
                 double ch = enchantChances.get(key);
-                if (ch > chance)
+
+                if (ch > chance) {
                     chance = enchantChances.get(key);
+                }
             }
         }
+
         return (Math.random() * 100) - (chance + (lootingIncrease == null ? 1
                 : lootingIncrease * looting)) < 0 || chance == 100;
     }
@@ -255,13 +273,19 @@ public class Loot {
     public void addChildLoots(Loot... loots) {
         this.childDropCountMin = 1;
         this.childDropCountMax = 1;
-        if (childLoot == null)
+
+        if (childLoot == null) {
             this.childLoot = new ArrayList<>();
+        }
+
         this.childLoot.addAll(Arrays.asList(loots));
     }
 
     public void removeChildLoot(Loot loot) {
-        if (childLoot == null) return;
+        if (childLoot == null) {
+            return;
+        }
+
         this.childLoot.remove(loot);
     }
 
@@ -299,7 +323,10 @@ public class Loot {
     }
 
     public int getChildDropCount() {
-        if (childDropCountMin == null || childDropCountMax == null) return 0;
+        if (childDropCountMin == null || childDropCountMax == null) {
+            return 0;
+        }
+
         return new Random().nextInt(childDropCountMax - childDropCountMin + 1) + childDropCountMin;
     }
 

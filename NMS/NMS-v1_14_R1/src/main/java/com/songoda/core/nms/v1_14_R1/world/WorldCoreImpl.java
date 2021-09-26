@@ -57,38 +57,40 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
 
-        if (tickAmount > 0) {
-            ChunkCoordIntPair chunkcoordintpair = chunk.getPos();
-            int j = chunkcoordintpair.d();
-            int k = chunkcoordintpair.e();
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            GameProfilerFiller profiler = chunk.world.getMethodProfiler();
+        ChunkCoordIntPair chunkcoordintpair = chunk.getPos();
+        int j = chunkcoordintpair.d();
+        int k = chunkcoordintpair.e();
 
-            profiler.enter("tickBlocks");
-            for (ChunkSection chunksection : chunk.getSections()) {
-                if (chunksection != net.minecraft.server.v1_14_R1.Chunk.a && chunksection.d()) {
-                    int j1 = chunksection.getYPosition();
+        GameProfilerFiller profiler = chunk.world.getMethodProfiler();
 
-                    for (int i = 0; i < tickAmount; ++i) {
-                        BlockPosition blockposition2 = chunk.world.a(j, j1, k, 15);
-                        profiler.enter("randomTick");
-                        IBlockData iblockdata = chunksection.getType(blockposition2.getX() - j, blockposition2.getY() - j1, blockposition2.getZ() - k);
+        profiler.enter("tickBlocks");
+        for (ChunkSection chunksection : chunk.getSections()) {
+            if (chunksection != net.minecraft.server.v1_14_R1.Chunk.a && chunksection.d()) {
+                int j1 = chunksection.getYPosition();
 
-                        if (iblockdata.q()) {
-                            iblockdata.b(chunk.world, blockposition2, chunk.world.random);
-                        }
+                for (int i = 0; i < tickAmount; ++i) {
+                    BlockPosition blockposition2 = chunk.world.a(j, j1, k, 15);
+                    profiler.enter("randomTick");
+                    IBlockData iblockdata = chunksection.getType(blockposition2.getX() - j, blockposition2.getY() - j1, blockposition2.getZ() - k);
 
-                        Fluid fluid = iblockdata.p();
-                        if (fluid.h()) {
-                            fluid.b(chunk.world, blockposition2, chunk.world.random);
-                        }
-
-                        profiler.exit();
+                    if (iblockdata.q()) {
+                        iblockdata.b(chunk.world, blockposition2, chunk.world.random);
                     }
+
+                    Fluid fluid = iblockdata.p();
+                    if (fluid.h()) {
+                        fluid.b(chunk.world, blockposition2, chunk.world.random);
+                    }
+
+                    profiler.exit();
                 }
             }
-
-            profiler.exit();
         }
+
+        profiler.exit();
     }
 }

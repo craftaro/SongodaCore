@@ -12,7 +12,6 @@ import org.bukkit.inventory.InventoryHolder;
  * @since 2019-08-25
  */
 class GuiHolder implements InventoryHolder {
-
     final Gui gui;
     final GuiManager manager;
 

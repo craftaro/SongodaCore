@@ -1,11 +1,8 @@
 package com.songoda.core.hooks;
 
 public interface Hook {
-
     /**
      * Get the name of the plugin being used
-     *
-     * @return
      */
     abstract String getName();
 

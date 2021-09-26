@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
  * @since 2019-09-13
  */
 public interface CustomAnvil {
-
     public void setLevelCost(int cost);
 
     public int getLevelCost();

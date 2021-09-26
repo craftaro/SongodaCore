@@ -8,7 +8,6 @@ import uk.antiperson.stackmob.api.EntityManager;
 import uk.antiperson.stackmob.api.StackedEntity;
 
 public class StackMob extends Stacker {
-
     private final EntityManager plugin;
 
     public StackMob() {

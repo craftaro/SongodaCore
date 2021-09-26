@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
  * easily manipulated then deployed
  */
 public class Message {
-
     private static boolean canActionBar = false;
 
     static {
@@ -25,6 +24,7 @@ public class Message {
             Class.forName("net.md_5.bungee.api.ChatMessageType");
             Class.forName("net.md_5.bungee.api.chat.TextComponent");
             Player.Spigot.class.getDeclaredMethod("sendMessage", net.md_5.bungee.api.ChatMessageType.class, net.md_5.bungee.api.chat.TextComponent.class);
+
             canActionBar = true;
         } catch (Exception ex) {
         }
@@ -41,6 +41,7 @@ public class Message {
     public Message(String message) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.fromText(message);
+
         this.message = chatMessage;
     }
 
@@ -80,12 +81,15 @@ public class Message {
         if (sender instanceof Player) {
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
                 ((Player) sender).sendTitle("", getMessage(), 10, 30, 10);
-            } else {
-                ((Player) sender).sendTitle("", getMessage());
+                return;
             }
-        } else {
-            sender.sendMessage(this.getMessage());
+
+            ((Player) sender).sendTitle("", getMessage());
+
+            return;
         }
+
+        sender.sendMessage(this.getMessage());
     }
 
     /**
@@ -96,12 +100,16 @@ public class Message {
     public void sendActionBar(CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(this.getMessage());
-        } else if (!canActionBar) {
-            sendTitle(sender);
-        } else {
-            ((Player) sender).spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
-                    new net.md_5.bungee.api.chat.TextComponent(getMessage()));
+            return;
         }
+
+        if (!canActionBar) {
+            sendTitle(sender);
+            return;
+        }
+
+        ((Player) sender).spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
+                new net.md_5.bungee.api.chat.TextComponent(getMessage()));
     }
 
     /**
@@ -163,12 +171,14 @@ public class Message {
     public Message processPlaceholder(String placeholder, Object replacement) {
         final String place = Matcher.quoteReplacement(placeholder);
         this.message = message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
+
         return this;
     }
 
     Message setPrefix(String prefix) {
         this.prefix = new ChatMessage();
         this.prefix.fromText(prefix + " ");
+
         return this;
     }
 

@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SSpawner {
-
     protected final com.songoda.core.nms.world.SSpawner sSpawner;
     protected final Location location;
 
@@ -42,13 +41,17 @@ public class SSpawner {
      */
     public int spawn(int amountToSpawn, String particle, Set<CompatibleMaterial> canSpawnOn, SpawnedEntity spawned,
                      EntityType... types) {
-        if (location.getWorld() == null) return 0;
+        if (location.getWorld() == null) {
+            return 0;
+        }
 
-        if (canSpawnOn == null)
+        if (canSpawnOn == null) {
             canSpawnOn = new HashSet<>();
+        }
 
-        if (canSpawnOn.isEmpty())
+        if (canSpawnOn.isEmpty()) {
             canSpawnOn.addAll(EntityUtils.getSpawnBlocks(types[0]));
+        }
 
         boolean useStackPlugin = EntityStackerManager.isEnabled();
 
@@ -58,16 +61,20 @@ public class SSpawner {
         while (spawnCountUsed-- > 0) {
             EntityType type = types[ThreadLocalRandom.current().nextInt(types.length)];
             LivingEntity entity = sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
+
             if (entity != null) {
                 // If this entity is indeed stackable then spawn a single stack with the desired stack size.
                 if (useStackPlugin && amountToSpawn >= EntityStackerManager.getMinStackSize(type)) {
                     EntityStackerManager.add(entity, amountToSpawn);
                     amountSpawned = amountToSpawn;
+
                     break;
                 }
+
                 amountSpawned++;
             }
         }
+
         return amountSpawned;
     }
 

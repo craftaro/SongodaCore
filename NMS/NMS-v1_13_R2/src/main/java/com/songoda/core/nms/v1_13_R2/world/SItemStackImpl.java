@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class SItemStackImpl implements SItemStack {
-
     private final ItemStack item;
 
     public SItemStackImpl(ItemStack item) {

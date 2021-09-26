@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class CompatibleParticleHandler {
-
     public static enum ParticleType {
         EXPLOSION_NORMAL,
         EXPLOSION_LARGE,

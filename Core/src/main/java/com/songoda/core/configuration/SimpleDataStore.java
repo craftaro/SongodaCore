@@ -26,7 +26,6 @@ import java.util.logging.Level;
  * @since 2019-09-06
  */
 public class SimpleDataStore<T extends DataStoreObject> {
-
     protected final Plugin plugin;
     protected final String filename, dirName;
     private final Function<ConfigurationSection, T> getFromSection;
@@ -63,6 +62,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
                 this.file = new File(plugin.getDataFolder(), filename != null ? filename : "data.yml");
             }
         }
+
         return file;
     }
 
@@ -99,10 +99,13 @@ public class SimpleDataStore<T extends DataStoreObject> {
     @Nullable
     public T remove(@NotNull Object key) {
         T temp;
+
         synchronized (lock) {
             temp = data.remove(key);
         }
+
         save();
+
         return temp;
     }
 
@@ -119,11 +122,15 @@ public class SimpleDataStore<T extends DataStoreObject> {
         if (value == null) {
             return null;
         }
+
         T temp;
+
         synchronized (lock) {
             temp = data.remove(value.getKey());
         }
+
         save();
+
         return temp;
     }
 
@@ -141,11 +148,15 @@ public class SimpleDataStore<T extends DataStoreObject> {
         if (value == null) {
             return null;
         }
+
         T temp;
+
         synchronized (lock) {
             temp = data.put(value.getKey(), value);
         }
+
         save();
+
         return temp;
     }
 
@@ -160,6 +171,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
         if (value == null) {
             return;
         }
+
         synchronized (lock) {
             for (int i = 0; i < value.length; ++i) {
                 if (value[i] != null) {
@@ -167,6 +179,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
                 }
             }
         }
+
         save();
     }
 
@@ -181,6 +194,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
         if (value == null) {
             return;
         }
+
         synchronized (lock) {
             for (T v : value) {
                 if (v != null) {
@@ -188,6 +202,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
                 }
             }
         }
+
         save();
     }
 
@@ -198,6 +213,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
         if (!getFile().exists()) {
             return;
         }
+
         try {
             YamlConfiguration f = new YamlConfiguration();
             f.options().pathSeparator('\0');
@@ -205,6 +221,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
 
             synchronized (lock) {
                 data.clear();
+
                 f.getValues(false).entrySet().stream()
                         .filter(d -> d.getValue() instanceof ConfigurationSection)
                         .map(Map.Entry::getValue)
@@ -248,10 +265,13 @@ public class SimpleDataStore<T extends DataStoreObject> {
             saveTask = null;
             autosaveTimer = null;
         }
+
         YamlConfiguration f = new YamlConfiguration();
+
         synchronized (lock) {
             data.values().stream().forEach(e -> e.saveToSection(f.createSection(e.getConfigKey())));
         }
+
         try {
             f.save(getFile());
             data.values().stream().forEach(e -> e.setChanged(false));
@@ -261,7 +281,6 @@ public class SimpleDataStore<T extends DataStoreObject> {
     }
 
     class SaveTask extends TimerTask {
-
         @Override
         public void run() {
             flushSave();

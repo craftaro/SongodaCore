@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class WorldGuardHook {
-
     static boolean canHook = false;
 
     static {
@@ -21,7 +20,7 @@ public class WorldGuardHook {
             // if this class exists, we're good to use WG classes
             Class.forName("com.sk89q.worldguard.protection.flags.Flag");
             canHook = true;
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ignore) {
         }
     }
 

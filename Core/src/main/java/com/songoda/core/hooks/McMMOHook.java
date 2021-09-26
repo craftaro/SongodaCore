@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 public class McMMOHook {
-
     static boolean canHook = false;
 
     static {
@@ -16,7 +15,7 @@ public class McMMOHook {
             // if this class exists, we're good to use McMMO
             Class.forName("com.gmail.nossr50.api.AbilityAPI");
             canHook = true;
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ignore) {
         }
     }
 

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainCommand extends AbstractCommand {
-
     String header = null;
     String description;
     boolean sortHelp = false;
@@ -22,6 +21,7 @@ public class MainCommand extends AbstractCommand {
 
     public MainCommand(Plugin plugin, String command) {
         super(CommandType.CONSOLE_OK, command);
+
         this.command = command;
         this.plugin = plugin;
         this.description = "Shows the command help page for /" + command;
@@ -56,6 +56,7 @@ public class MainCommand extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
+
         if (header != null) {
             sender.sendMessage(header);
         } else {
@@ -63,17 +64,21 @@ public class MainCommand extends AbstractCommand {
                             plugin.getDescription().getName(), plugin.getDescription().getVersion()), sender instanceof ConsoleCommandSender)
                     .sendTo(sender);
         }
+
         sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/songoda" + ChatColor.GRAY + " - Opens the Songoda plugin GUI");
         sender.sendMessage("");
 
         if (nestedCommands != null) {
             List<String> commands = nestedCommands.children.values().stream().distinct().map(c -> c.getCommands().get(0)).collect(Collectors.toList());
+
             if (sortHelp) {
                 Collections.sort(commands);
             }
+
             boolean isPlayer = sender instanceof Player;
             // todo? pagation if commands.size is too large? (player-only)
             sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + getSyntax() + ChatColor.GRAY + " - " + getDescription());
+
             for (String cmdStr : commands) {
                 final AbstractCommand cmd = nestedCommands.children.get(cmdStr);
                 if (cmd == null) continue;

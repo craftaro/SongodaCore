@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractCommand {
-
     private final CommandType _cmdType;
     private final boolean _hasArgs;
     private final List<String> _handledCommands = new ArrayList<>();

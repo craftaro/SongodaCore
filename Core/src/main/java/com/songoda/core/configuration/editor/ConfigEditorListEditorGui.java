@@ -17,7 +17,6 @@ import java.util.List;
  * @since 2019-08-31
  */
 public class ConfigEditorListEditorGui extends SimplePagedGui {
-
     final ConfigEditorGui current;
 
     public boolean saveChanges = false;
@@ -25,6 +24,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
 
     public ConfigEditorListEditorGui(ConfigEditorGui current, String key, List<String> val) {
         super(current);
+
         this.current = current;
         this.blankItem = current.getDefaultItem();
         headerBackItem = footerBackItem = current.getHeaderBackItem();
@@ -59,6 +59,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
 
     void redraw() {
         page = 1;
+
         // clear old display
         if (inventory != null) {
             for (Integer i : cellItems.keySet().toArray(new Integer[0])) {
@@ -78,6 +79,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
                 redraw();
             });
         }
+
         // update display
         update();
     }

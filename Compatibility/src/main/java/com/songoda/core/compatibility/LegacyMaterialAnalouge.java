@@ -13,7 +13,6 @@ import java.util.Map;
  * @since 2019-08-23
  */
 public enum LegacyMaterialAnalouge {
-
     /* 1.17 */
     // ToDo: Improve legal materials.
     AMETHYST_BLOCK(ServerVersion.V1_17, "STONE"),
@@ -739,7 +738,6 @@ public enum LegacyMaterialAnalouge {
     YELLOW_WALL_BANNER(ServerVersion.V1_8, "WALL_SIGN"),
     ZOMBIE_HORSE_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
     ZOMBIE_VILLAGER_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
-
     ;
 
     final ServerVersion versionLessThan;
@@ -822,11 +820,8 @@ public enum LegacyMaterialAnalouge {
                 // use legacy material if on legacy
                 material = Material.getMaterial(legacyMaterial);
                 data = legacyData;
-            } else if (modernMaterial != null) {
-                material = Material.getMaterial(modernMaterial);
-                data = null;
             } else {
-                material = null;
+                material = Material.getMaterial(modernMaterial);
                 data = null;
             }
         } else {
@@ -851,6 +846,7 @@ public enum LegacyMaterialAnalouge {
         if (material == null) {
             return null;
         }
+
         return data != null ? new ItemStack(material, 1, data) : new ItemStack(material);
     }
 }

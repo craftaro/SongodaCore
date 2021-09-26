@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
-
     private final net.minecraft.server.v1_8_R3.ItemStack nmsItem;
 
     public NBTItemImpl(net.minecraft.server.v1_8_R3.ItemStack nmsItem) {

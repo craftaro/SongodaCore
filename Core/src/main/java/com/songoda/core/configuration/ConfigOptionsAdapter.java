@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ConfigOptionsAdapter extends FileConfigurationOptions {
-
     final ConfigSection config;
 
     public ConfigOptionsAdapter(ConfigSection config) {
@@ -47,6 +46,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
         } else {
             ((Config) config.root).setHeader(value.split("\n"));
         }
+
         return this;
     }
 
@@ -56,6 +56,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
         if (!value) {
             ((Config) config.root).setHeader((List) null);
         }
+
         return this;
     }
 

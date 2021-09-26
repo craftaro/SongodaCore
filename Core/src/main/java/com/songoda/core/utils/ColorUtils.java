@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ColorUtils {
-
     private static Map<ColorCode, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
 
     static {
@@ -61,6 +60,7 @@ public class ColorUtils {
             int blue = Math.abs(b - set.getBlue());
             closest.put(red + green + blue, color);
         });
+
         return closest.firstEntry().getValue();
     }
 }

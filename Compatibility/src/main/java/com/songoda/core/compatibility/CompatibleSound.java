@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
  * @since 2019-08-25
  */
 public enum CompatibleSound {
-
     // some of these values are missing an API value..
     // would using the raw strings be better?
     // 1.8 list:
@@ -1247,14 +1246,15 @@ public enum CompatibleSound {
     private CompatibleSound(String compatibility_18) {
         try {
             compatibilityMode = false;
+
             if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
                 sound = Sound.valueOf(compatibility_18);
             } else {
                 sound = Sound.valueOf(name());
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             System.err.println("ERROR loading " + name());
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 
@@ -1267,12 +1267,13 @@ public enum CompatibleSound {
                     return;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             System.err.println("ERROR loading " + name());
             for (Version v : versions) {
                 System.err.println(v.version + " - " + v.sound);
             }
-            e.printStackTrace();
+
+            ex.printStackTrace();
         }
         Sound find = null;
         for (Sound s : Sound.values()) {
@@ -1302,12 +1303,13 @@ public enum CompatibleSound {
                 sound = null;
                 compatibilityMode = false;
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             System.err.println("ERROR loading " + name() + " (" + minVersion);
             for (Version v : versions) {
                 System.err.println(v.version + " - " + v.sound);
             }
-            e.printStackTrace();
+
+            ex.printStackTrace();
         }
     }
 

@@ -20,9 +20,7 @@ import java.util.logging.Logger;
  * @since 2019-08-23
  */
 public class LegacyParticleEffects {
-
     public static enum Type {
-
         EXPLOSION_NORMAL("explode"),
         EXPLOSION_LARGE("largeexplode"),
         EXPLOSION_HUGE("hugeexplosion"),
@@ -205,6 +203,7 @@ public class LegacyParticleEffects {
                 // Set those fields we need to be accessible!
                 field.setAccessible(true);
                 final String fieldName = field.getName();
+
                 // Set them to what we want!
                 if (fieldName.equals("a")) {
                     // we're just going to assume it's either 1.7 or 1.8
@@ -237,6 +236,7 @@ public class LegacyParticleEffects {
                  k = int[] for packet data (like block type for ITEM_CRACK)
                  */
             }
+
             // send it on its way!
             for (Player p : sendTo) {
                 sendPacket(sPacket, p);
@@ -250,6 +250,7 @@ public class LegacyParticleEffects {
     private static void sendPacket(Object packet, Player to) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Object cbPlayer = cb_craftPlayer_getHandle.invoke(to);
         Object mcConnection = mc_entityPlayer_playerConnection.get(cbPlayer);
+
         mc_playerConnection_sendPacket.invoke(mcConnection, packet);
     }
 }

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public abstract class DataMigration {
-
     private final int revision;
 
     public DataMigration(int revision) {

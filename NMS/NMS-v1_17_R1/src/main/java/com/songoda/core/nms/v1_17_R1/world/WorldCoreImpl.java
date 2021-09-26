@@ -23,7 +23,6 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftChunk;
 import org.bukkit.inventory.ItemStack;
 
 public class WorldCoreImpl implements WorldCore {
-
     @Override
     public SSpawner getSpawner(CreatureSpawner spawner) {
         return new SSpawnerImpl(spawner.getLocation());
@@ -59,40 +58,42 @@ public class WorldCoreImpl implements WorldCore {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
         WorldServer world = (WorldServer) chunk.getWorld();
 
-        if (tickAmount > 0) {
-            GameProfilerFiller profiler = world.getMethodProfiler();
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            ChunkCoordIntPair chunkPos = chunk.getPos();
-            int minBlockX = chunkPos.d();
-            int minBlockZ = chunkPos.e();
+        GameProfilerFiller profiler = world.getMethodProfiler();
 
-            profiler.enter("tickBlocks");
-            for (ChunkSection cSection : chunk.getSections()) {
-                if (cSection != Chunk.a && // cSection != Chunk.EMPTY_SECTION
-                        cSection.d()) {  // #isRandomlyTicking
-                    int bottomBlockY = cSection.getYPosition();
+        ChunkCoordIntPair chunkPos = chunk.getPos();
+        int minBlockX = chunkPos.d();
+        int minBlockZ = chunkPos.e();
 
-                    for (int k1 = 0; k1 < tickAmount; ++k1) {
-                        BlockPosition bPos = world.a(minBlockX, bottomBlockY, minBlockZ, 15);
-                        profiler.enter("randomTick");
+        profiler.enter("tickBlocks");
+        for (ChunkSection cSection : chunk.getSections()) {
+            if (cSection != Chunk.a && // cSection != Chunk.EMPTY_SECTION
+                    cSection.d()) {  // #isRandomlyTicking
+                int bottomBlockY = cSection.getYPosition();
 
-                        IBlockData blockState = cSection.getType(bPos.getX() - minBlockX, bPos.getY() - bottomBlockY, bPos.getZ() - minBlockZ);
+                for (int k1 = 0; k1 < tickAmount; ++k1) {
+                    BlockPosition bPos = world.a(minBlockX, bottomBlockY, minBlockZ, 15);
+                    profiler.enter("randomTick");
 
-                        if (blockState.isTicking()) {
-                            blockState.b(world, bPos, chunk.getWorld().w);  // #randomTick
-                        }
+                    IBlockData blockState = cSection.getType(bPos.getX() - minBlockX, bPos.getY() - bottomBlockY, bPos.getZ() - minBlockZ);
 
-                        Fluid fluid = blockState.getFluid();
-                        if (fluid.f()) {    // #isRandomlyTicking
-                            fluid.b(world, bPos, chunk.getWorld().w);  // #randomTick
-                        }
-
-                        profiler.exit();
+                    if (blockState.isTicking()) {
+                        blockState.b(world, bPos, chunk.getWorld().w);  // #randomTick
                     }
+
+                    Fluid fluid = blockState.getFluid();
+                    if (fluid.f()) {    // #isRandomlyTicking
+                        fluid.b(world, bPos, chunk.getWorld().w);  // #randomTick
+                    }
+
+                    profiler.exit();
                 }
             }
-
-            profiler.exit();
         }
+
+        profiler.exit();
     }
 }

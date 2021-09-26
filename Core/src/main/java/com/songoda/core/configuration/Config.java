@@ -50,7 +50,6 @@ import java.util.stream.Collectors;
  * @since 2019-08-28
  */
 public class Config extends ConfigSection {
-
     /*
     Serialization notes:
     // implements ConfigurationSerializable:
@@ -75,35 +74,43 @@ public class Config extends ConfigSection {
     Charset defaultCharset = StandardCharsets.UTF_8;
     SaveTask saveTask;
     Timer autosaveTimer;
+
     ////////////// Config settings ////////////////
     /**
      * save file whenever a change is made
      */
     boolean autosave = false;
+
     /**
      * time in seconds to start a save after a change is made
      */
     int autosaveInterval = 60;
+
     /**
      * remove nodes not defined in defaults
      */
     boolean autoremove = false;
+
     /**
      * load comments when loading the file
      */
     boolean loadComments = true;
+
     /**
      * Default comment applied to config nodes
      */
     ConfigFormattingRules.CommentStyle defaultNodeCommentFormat = ConfigFormattingRules.CommentStyle.SIMPLE;
+
     /**
      * Default comment applied to section nodes
      */
     ConfigFormattingRules.CommentStyle defaultSectionCommentFormat = ConfigFormattingRules.CommentStyle.SPACED;
+
     /**
      * Extra lines to put between root nodes
      */
     int rootNodeSpacing = 1;
+
     /**
      * Extra lines to put in front of comments. <br>
      * This is separate from rootNodeSpacing, if applicable.
@@ -113,6 +120,7 @@ public class Config extends ConfigSection {
     public Config() {
         this.plugin = null;
         this.file = null;
+
         dirName = null;
         fileName = null;
     }
@@ -120,24 +128,28 @@ public class Config extends ConfigSection {
     public Config(@NotNull File file) {
         this.plugin = null;
         this.file = file.getAbsoluteFile();
+
         dirName = null;
         fileName = null;
     }
 
     public Config(@NotNull Plugin plugin) {
         this.plugin = plugin;
+
         dirName = null;
         fileName = null;
     }
 
     public Config(@NotNull Plugin plugin, @NotNull String file) {
         this.plugin = plugin;
+
         dirName = null;
         fileName = file;
     }
 
     public Config(@NotNull Plugin plugin, @Nullable String directory, @NotNull String file) {
         this.plugin = plugin;
+
         dirName = directory;
         fileName = file;
     }
@@ -156,6 +168,7 @@ public class Config extends ConfigSection {
                 this.file = new File(plugin.getDataFolder(), fileName != null ? fileName : "config.yml");
             }
         }
+
         return file;
     }
 
@@ -337,6 +350,7 @@ public class Config extends ConfigSection {
         } else {
             headerComment = new Comment(description);
         }
+
         return this;
     }
 
@@ -347,6 +361,7 @@ public class Config extends ConfigSection {
         } else {
             headerComment = new Comment(commentStyle, description);
         }
+
         return this;
     }
 
@@ -357,6 +372,7 @@ public class Config extends ConfigSection {
         } else {
             headerComment = new Comment(description);
         }
+
         return this;
     }
 
@@ -367,6 +383,7 @@ public class Config extends ConfigSection {
         } else {
             headerComment = new Comment(commentStyle, description);
         }
+
         return this;
     }
 
@@ -374,24 +391,27 @@ public class Config extends ConfigSection {
     public List<String> getHeader() {
         if (headerComment != null) {
             return headerComment.getLines();
-        } else {
-            return Collections.EMPTY_LIST;
         }
+
+        return Collections.EMPTY_LIST;
     }
 
     public Config clearConfig(boolean clearDefaults) {
         root.values.clear();
         root.configComments.clear();
+
         if (clearDefaults) {
             root.defaultComments.clear();
             root.defaults.clear();
         }
+
         return this;
     }
 
     public Config clearDefaults() {
         root.defaultComments.clear();
         root.defaults.clear();
+
         return this;
     }
 
@@ -404,17 +424,22 @@ public class Config extends ConfigSection {
         if (file.exists()) {
             try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
+
                 // upgrade charset if file was saved in a more complex format
                 if (charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
                     defaultCharset = StandardCharsets.UTF_16;
                 }
+
                 this.load(new InputStreamReader(stream, charset));
+
                 return true;
             } catch (IOException | InvalidConfigurationException ex) {
                 (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
             }
+
             return false;
         }
+
         return true;
     }
 
@@ -432,11 +457,13 @@ public class Config extends ConfigSection {
                 builder.append(line).append('\n');
             }
         }
+
         this.loadFromString(builder.toString());
     }
 
     public void loadFromString(@NotNull String contents) throws InvalidConfigurationException {
         Map input;
+
         try {
             input = (Map) this.yaml.load(contents);
         } catch (YAMLException e2) {
@@ -444,10 +471,12 @@ public class Config extends ConfigSection {
         } catch (ClassCastException e3) {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
+
         if (input != null) {
             if (loadComments) {
                 this.parseComments(contents, input);
             }
+
             this.convertMapsToSections(input, this);
         }
     }
@@ -457,10 +486,12 @@ public class Config extends ConfigSection {
         for (Map.Entry<?, ?> entry : input.entrySet()) {
             String key = entry.getKey().toString();
             Object value = entry.getValue();
+
             if (value instanceof Map) {
                 this.convertMapsToSections((Map) value, section.createSection(key));
                 continue;
             }
+
             section.set(key, value);
         }
     }
@@ -477,6 +508,7 @@ public class Config extends ConfigSection {
         int index = 0;
         LinkedList<String> currentPath = new LinkedList();
         ArrayList<String> commentBlock = new ArrayList();
+
         try {
             while ((line = in.readLine()) != null) {
                 if (line.isEmpty()) {
@@ -523,6 +555,7 @@ public class Config extends ConfigSection {
                     }
                 }
             }
+
             if (!commentBlock.isEmpty()) {
                 footerComment = Comment.loadComment(commentBlock);
                 commentBlock.clear();
@@ -534,6 +567,7 @@ public class Config extends ConfigSection {
     public void deleteNonDefaultSettings() {
         // Delete old config values (thread-safe)
         List<String> defaultKeys = Arrays.asList(defaults.keySet().toArray(new String[0]));
+
         for (String key : values.keySet().toArray(new String[0])) {
             if (!defaultKeys.contains(key)) {
                 values.remove(key);
@@ -558,9 +592,11 @@ public class Config extends ConfigSection {
 
     public boolean saveChanges() {
         boolean saved = true;
+
         if (changed || hasNewDefaults()) {
             saved = save();
         }
+
         if (saveTask != null) {
             //Close Threads
             saveTask.cancel();
@@ -568,14 +604,19 @@ public class Config extends ConfigSection {
             saveTask = null;
             autosaveTimer = null;
         }
+
         return saved;
     }
 
     boolean hasNewDefaults() {
         if (file != null && !file.exists()) return true;
+
         for (String def : defaults.keySet()) {
-            if (!values.containsKey(def)) return true;
+            if (!values.containsKey(def)) {
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -587,6 +628,7 @@ public class Config extends ConfigSection {
             saveTask = null;
             autosaveTimer = null;
         }
+
         return save(getFile());
     }
 
@@ -597,15 +639,18 @@ public class Config extends ConfigSection {
 
     public boolean save(@NotNull File file) {
         Validate.notNull(file, "File cannot be null");
+
         if (file.getParentFile() != null && !file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
+
         String data = this.saveToString();
-        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), defaultCharset);) {
+        try (OutputStreamWriter writer = new OutputStreamWriter((OutputStream) new FileOutputStream(file), defaultCharset)) {
             writer.write(data);
         } catch (IOException e) {
             return false;
         }
+
         return true;
     }
 
@@ -615,28 +660,35 @@ public class Config extends ConfigSection {
             if (autoremove) {
                 deleteNonDefaultSettings();
             }
+
             yamlOptions.setIndent(indentation);
             yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             yamlOptions.setSplitLines(false);
             yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
             StringWriter str = new StringWriter();
+
             if (headerComment != null) {
                 headerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
                 str.write("\n"); // add one space after the header
             }
+
             String dump = yaml.dump(this.getValues(false));
             if (!dump.equals(BLANK_CONFIG)) {
                 writeComments(dump, str);
             }
+
             if (footerComment != null) {
                 str.write("\n");
                 footerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
             }
+
             return str.toString();
         } catch (Throwable ex) {
             Logger.getLogger(Config.class.getName()).log(Level.SEVERE, "Error saving config", ex);
             delaySave();
         }
+
         return "";
     }
 
@@ -645,10 +697,12 @@ public class Config extends ConfigSection {
     protected void writeComments(String data, Writer out) throws IOException {
         // line-by-line apply line spacing formatting and comments per-node
         BufferedReader in = new BufferedReader(new StringReader(data));
+
         String line;
         boolean insideScalar = false;
         boolean firstNode = true;
         int index = 0;
+
         LinkedList<String> currentPath = new LinkedList();
         while ((line = in.readLine()) != null) {
             // ignore comments and empty lines (there shouldn't be any, but just in case)
@@ -667,6 +721,7 @@ public class Config extends ConfigSection {
                 while (depth < currentPath.size()) {
                     currentPath.removeLast();
                 }
+
                 currentPath.add(m.group(2));
                 String path = currentPath.stream().collect(Collectors.joining(String.valueOf(pathChar)));
 
@@ -708,6 +763,7 @@ public class Config extends ConfigSection {
                     // write it down!
                     comment.writeComment(out, lineOffset, style);
                 }
+
                 // ignore scalars
                 index = lineOffset;
                 if (m.group(3).trim().equals("|") || m.group(3).trim().equals(">")) {
@@ -727,11 +783,11 @@ public class Config extends ConfigSection {
                 return i;
             }
         }
+
         return -1;
     }
 
     class SaveTask extends TimerTask {
-
         @Override
         public void run() {
             saveChanges();

@@ -78,6 +78,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                             + " v" + getDescription().getVersion()
                             + " c" + SongodaCore.getCoreLibraryVersion()
                             + ": Disabling plugin!", t);
+
             emergencyStop = true;
         }
     }
@@ -86,6 +87,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public final void onEnable() {
         if (emergencyStop) {
             setEnabled(false);
+
             return;
         }
 
@@ -98,26 +100,33 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         try {
             locale = Locale.loadDefaultLocale(this, "en_US");
+
             // plugin setup
             onPluginEnable();
+
             // Load Data.
             Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
+
             if (emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 console.sendMessage(" ");
                 return;
             }
+
             // Start Metrics
             Metrics.start(this);
-        } catch (Throwable t) {
+        } catch (Throwable th) {
             Bukkit.getLogger().log(Level.SEVERE,
                     "Unexpected error while loading " + getDescription().getName()
                             + " v" + getDescription().getVersion()
                             + " c" + SongodaCore.getCoreLibraryVersion()
-                            + ": Disabling plugin!", t);
+                            + ": Disabling plugin!", th);
+
             emergencyStop();
+
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             console.sendMessage(" ");
+
             return;
         }
 
@@ -127,6 +136,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     protected void emergencyStop() {
         emergencyStop = true;
+
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
@@ -135,13 +145,16 @@ public abstract class SongodaPlugin extends JavaPlugin {
         if (emergencyStop) {
             return;
         }
+
         console.sendMessage(" "); // blank line to speparate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
         console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY.toString(),
                 ChatColor.RED.toString(), "Disabling", ChatColor.GRAY.toString()));
+
         onPluginDisable();
+
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(" "); // blank line to speparate chatter
     }
@@ -166,15 +179,15 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public boolean setLocale(String localeName, boolean reload) {
         if (locale != null && locale.getName().equals(localeName)) {
             return !reload || locale.reloadMessages();
-        } else {
-            Locale l = Locale.loadLocale(this, localeName);
-            if (l != null) {
-                locale = l;
-                return true;
-            } else {
-                return false;
-            }
         }
+
+        Locale l = Locale.loadLocale(this, localeName);
+        if (l != null) {
+            locale = l;
+            return true;
+        }
+
+        return false;
     }
 
     protected void shutdownDataManager(DataManagerAbstract dataManager) {

@@ -10,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import java.util.List;
 
 public class SWorld {
-
     protected final com.songoda.core.nms.world.SWorld sWorld;
     protected final World world;
 
@@ -21,6 +20,7 @@ public class SWorld {
 
     public Entity[] getEntitiesFromChunk(int x, int z) {
         Location location = new Location(null, 0.0D, 0.0D, 0.0D);
+
         return getLivingEntities().stream().filter((entity) -> {
             entity.getLocation(location);
             return location.getBlockX() >> 4 == x && location.getBlockZ() >> 4 == z;
@@ -28,8 +28,10 @@ public class SWorld {
     }
 
     public List<LivingEntity> getLivingEntities() {
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_17))
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_17)) {
             return world.getLivingEntities();
+        }
+
         return sWorld.getLivingEntities();
     }
 

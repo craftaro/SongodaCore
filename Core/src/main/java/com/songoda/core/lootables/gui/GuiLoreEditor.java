@@ -6,7 +6,6 @@ import com.songoda.core.lootables.loot.Loot;
 import java.util.List;
 
 public class GuiLoreEditor extends AbstractGuiListEditor {
-
     public GuiLoreEditor(Loot loot, Gui returnGui) {
         super(loot, returnGui);
     }

@@ -6,7 +6,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
 public abstract class Stacker implements Hook {
-
     public abstract boolean supportsItemStacking();
 
     public abstract boolean supportsEntityStacking();

@@ -56,31 +56,32 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) throws NoSuchFieldException, IllegalAccessException {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
 
-        if (tickAmount > 0) {
-            int k = chunk.locX * 16;
-            int l = chunk.locZ * 16;
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            for (ChunkSection cSection : chunk.getSections()) {
-                if (cSection != null && cSection.shouldTick()) {
+        int k = chunk.locX * 16;
+        int l = chunk.locZ * 16;
 
-                    for (int i = 0; i < tickAmount; ++i) {
-                        int m = (int) ReflectionUtils.getFieldValue(chunk.world, "m");
+        for (ChunkSection cSection : chunk.getSections()) {
+            if (cSection != null && cSection.shouldTick()) {
+                for (int i = 0; i < tickAmount; ++i) {
+                    int m = (int) ReflectionUtils.getFieldValue(chunk.world, "m");
 
-                        m = m * 3 + 1013904223;
-                        ReflectionUtils.setFieldValue(chunk.world, "m", m);
+                    m = m * 3 + 1013904223;
+                    ReflectionUtils.setFieldValue(chunk.world, "m", m);
 
-                        int i2 = m >> 2;
-                        int j2 = i2 & 15;
-                        int k2 = i2 >> 8 & 15;
-                        int l2 = i2 >> 16 & 15;
+                    int i2 = m >> 2;
+                    int j2 = i2 & 15;
+                    int k2 = i2 >> 8 & 15;
+                    int l2 = i2 >> 16 & 15;
 
-                        BlockPosition blockposition2 = new BlockPosition(j2 + k, l2 + cSection.getYPosition(), k2 + l);
-                        IBlockData iblockdata = cSection.getType(j2, l2, k2);
-                        Block block = iblockdata.getBlock();
+                    BlockPosition blockposition2 = new BlockPosition(j2 + k, l2 + cSection.getYPosition(), k2 + l);
+                    IBlockData iblockdata = cSection.getType(j2, l2, k2);
+                    Block block = iblockdata.getBlock();
 
-                        if (block.isTicking()) {
-                            block.a(chunk.world, blockposition2, iblockdata, chunk.world.random);
-                        }
+                    if (block.isTicking()) {
+                        block.a(chunk.world, blockposition2, iblockdata, chunk.world.random);
                     }
                 }
             }

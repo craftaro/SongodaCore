@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 public class HologramsHolograms extends Holograms {
-
     HologramPlugin hologramPlugin;
     HashSet<String> ourHolograms = new HashSet<>();
 
     public HologramsHolograms(Plugin plugin) {
         super(plugin);
+
         hologramPlugin = (HologramPlugin) Bukkit.getPluginManager().getPlugin("Holograms");
     }
 
@@ -45,12 +45,15 @@ public class HologramsHolograms extends Holograms {
     @Override
     public void removeHologram(Location location) {
         location = fixLocation(location);
+
         final String id = locStr(location);
         Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
+
         if (hologram != null) {
             hologram.despawn();
             hologramPlugin.getHologramManager().removeActiveHologram(hologram);
         }
+
         ourHolograms.remove(id);
     }
 
@@ -58,11 +61,13 @@ public class HologramsHolograms extends Holograms {
     public void removeAllHolograms() {
         for (String id : ourHolograms) {
             Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
+
             if (hologram != null) {
                 hologram.despawn();
                 hologramPlugin.getHologramManager().removeActiveHologram(hologram);
             }
         }
+
         ourHolograms.clear();
     }
 
@@ -112,14 +117,17 @@ public class HologramsHolograms extends Holograms {
 
     private void createAt(Location location, List<String> lines) {
         final String id = locStr(location);
+
         Hologram hologram = new Hologram(id, location);
+
         for (String line : lines) {
             hologram.addLine(new TextLine(hologram, line));
         }
 
         hologramPlugin.getHologramManager().addActiveHologram(hologram);
 
-        if (!ourHolograms.contains(id))
+        if (!ourHolograms.contains(id)) {
             ourHolograms.add(id);
+        }
     }
 }

@@ -7,12 +7,12 @@ import org.bukkit.OfflinePlayer;
 import java.math.BigDecimal;
 
 public class ReserveEconomy extends Economy {
-
     EconomyAPI economyAPI;
 
     public ReserveEconomy() {
-        if (Reserve.instance().economyProvided())
+        if (Reserve.instance().economyProvided()) {
             economyAPI = Reserve.instance().economy();
+        }
     }
 
     @Override

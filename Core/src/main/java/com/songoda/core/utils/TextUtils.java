@@ -40,19 +40,27 @@ public class TextUtils {
     }
 
     public static String formatText(String text, boolean capitalize) {
-        if (text == null || text.equals(""))
+        if (text == null || text.equals("")) {
             return "";
-        if (capitalize)
+        }
+
+        if (capitalize) {
             text = text.substring(0, 1).toUpperCase() + text.substring(1);
+        }
+
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     public static List<String> formatText(List<String> list) {
-        return list.stream().map(TextUtils::formatText).collect(Collectors.toList());
+        return list.stream()
+                .map(TextUtils::formatText)
+                .collect(Collectors.toList());
     }
 
     public static List<String> formatText(String... list) {
-        return Arrays.stream(list).map(TextUtils::formatText).collect(Collectors.toList());
+        return Arrays.stream(list)
+                .map(TextUtils::formatText)
+                .collect(Collectors.toList());
     }
 
     public static List<String> wrap(String line) {
@@ -60,16 +68,18 @@ public class TextUtils {
     }
 
     public static List<String> wrap(String color, String line) {
-        if (color != null)
+        if (color != null) {
             color = "&" + color;
-        else
+        } else {
             color = "";
+        }
 
         List<String> lore = new ArrayList<>();
         int lastIndex = 0;
-        for (int n = 0; n < line.length(); n++) {
-            if (n - lastIndex < 25)
+        for (int n = 0; n < line.length(); ++n) {
+            if (n - lastIndex < 25) {
                 continue;
+            }
 
             if (line.charAt(n) == ' ') {
                 lore.add(TextUtils.formatText(color + TextUtils.formatText(line.substring(lastIndex, n))));
@@ -77,8 +87,10 @@ public class TextUtils {
             }
         }
 
-        if (lastIndex - line.length() < 25)
+        if (lastIndex - line.length() < 25) {
             lore.add(TextUtils.formatText(color + TextUtils.formatText(line.substring(lastIndex))));
+        }
+
         return lore;
     }
 
@@ -92,11 +104,16 @@ public class TextUtils {
      * @return encoded string
      */
     public static String convertToInvisibleLoreString(String s) {
-        if (s == null || s.equals(""))
+        if (s == null || s.equals("")) {
             return "";
+        }
+
         StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray())
+
+        for (char c : s.toCharArray()) {
             hidden.append(ChatColor.COLOR_CHAR).append(';').append(ChatColor.COLOR_CHAR).append(c);
+        }
+
         return hidden.toString();
     }
 
@@ -110,10 +127,15 @@ public class TextUtils {
      * @return encoded string
      */
     public static String convertToInvisibleString(String s) {
-        if (s == null || s.equals(""))
+        if (s == null || s.equals("")) {
             return "";
+        }
+
         StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR).append(c);
+        for (char c : s.toCharArray()) {
+            hidden.append(ChatColor.COLOR_CHAR).append(c);
+        }
+
         return hidden.toString();
     }
 
@@ -128,6 +150,7 @@ public class TextUtils {
         if (s == null || s.equals("")) {
             return "";
         }
+
         return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
     }
 
@@ -153,6 +176,7 @@ public class TextUtils {
         try {
             reader.mark(2048);
             len = reader.read(buffer);
+
             reader.reset();
         } catch (Exception ex) {
             return null;

@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 public class SimpleNestedCommand {
-
     final AbstractCommand parent;
     final LinkedHashMap<String, AbstractCommand> children = new LinkedHashMap<>();
 

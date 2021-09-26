@@ -32,7 +32,6 @@ import java.util.logging.Level;
  * @since 2019-08-31
  */
 public class ConfigEditorGui extends SimplePagedGui {
-
     final JavaPlugin plugin;
     final String file;
     final MemoryConfiguration config;
@@ -49,6 +48,7 @@ public class ConfigEditorGui extends SimplePagedGui {
 
     protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
         super(parent);
+
         this.player = player;
         this.plugin = plugin;
         this.file = file;
@@ -65,7 +65,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         // if we have a ConfigSection, we can also grab comments
         try {
             configSection_getCommentString = node.getClass().getDeclaredMethod("getCommentString", String.class);
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
 
         // decorate header
@@ -80,9 +80,10 @@ public class ConfigEditorGui extends SimplePagedGui {
         for (String key : node.getKeys(false)) {
             if (node.isConfigurationSection(key)) {
                 sections.add(key);
-            } else {
-                settings.add(key);
+                continue;
             }
+
+            settings.add(key);
         }
 
         // next we need to display the config settings
@@ -95,11 +96,15 @@ public class ConfigEditorGui extends SimplePagedGui {
         // now display individual settings
         for (final String settingKey : settings) {
             final Object val = node.get(settingKey);
-            if (val == null) continue;
-            else if (val instanceof Boolean) {
+            if (val == null) {
+                continue;
+            }
+
+            if (val instanceof Boolean) {
                 // toggle switch
                 setButton(index, configItem(CompatibleMaterial.LEVER, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "Click to toggle this setting"),
                         (event) -> this.toggle(event.slot, settingKey));
+
                 if ((Boolean) val) {
                     highlightItem(index);
                 }
@@ -159,9 +164,9 @@ public class ConfigEditorGui extends SimplePagedGui {
                                 }
                             }));
                         });
-            } else {
+            } /* else {
                 // idk. should we display uneditable values?
-            }
+            }  */
 
             ++index;
         }
@@ -173,9 +178,14 @@ public class ConfigEditorGui extends SimplePagedGui {
 
     protected void updateValue(int clickCell, String path) {
         ItemStack item = inventory.getItem(clickCell);
-        if (item == null || item == AIR) return;
+
+        if (item == null || item == AIR) {
+            return;
+        }
+
         ItemMeta meta = item.getItemMeta();
         Object val = node.get(path);
+
         if (meta != null && val != null) {
             String valStr;
             if (val instanceof List) {
@@ -183,6 +193,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             } else {
                 valStr = val.toString();
             }
+
             List<String> lore = meta.getLore();
             if (lore == null || lore.isEmpty()) {
                 meta.setLore(Arrays.asList(valStr));
@@ -190,20 +201,24 @@ public class ConfigEditorGui extends SimplePagedGui {
                 lore.set(0, valStr);
                 meta.setLore(lore);
             }
+
             item.setItemMeta(meta);
             setItem(clickCell, item);
         }
+
         edits = true;
     }
 
     void toggle(int clickCell, String path) {
         boolean val = !node.getBoolean(path);
         node.set(path, val);
+
         if (val) {
             setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
         } else {
             setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
         }
+
         updateValue(clickCell, path);
     }
 
@@ -216,20 +231,24 @@ public class ConfigEditorGui extends SimplePagedGui {
             } else if (node.isLong(path)) {
                 node.set(path, Long.parseLong(input));
             }
+
             updateValue(clickCell, path);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             return false;
         }
+
         return true;
     }
 
     void setMaterial(int clickCell, String path, ItemStack item) {
         CompatibleMaterial mat = CompatibleMaterial.getMaterial(item);
+
         if (mat == null) {
             node.set(path, CompatibleMaterial.STONE.name());
         } else {
             node.set(path, mat.name());
         }
+
         updateValue(clickCell, path);
     }
 
@@ -242,6 +261,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         if (!edits) {
             return;
         }
+
         // could also check and call saveChanges()
         if (config instanceof FileConfiguration) {
             try {
@@ -257,50 +277,59 @@ public class ConfigEditorGui extends SimplePagedGui {
             plugin.getLogger().log(Level.WARNING, "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
             return;
         }
+
         plugin.reloadConfig();
         player.sendMessage(ChatColor.GREEN + "Config " + file + " saved!");
     }
 
     private boolean isNumber(Object value) {
-        return value != null && (
-                value instanceof Long
-                        || value instanceof Integer
-                        || value instanceof Float
-                        || value instanceof Double);
+        return value != null && (value instanceof Long
+                || value instanceof Integer
+                || value instanceof Float
+                || value instanceof Double);
     }
 
     private boolean isMaterial(Object value) {
         CompatibleMaterial m;
+
         return value instanceof String && value.toString().equals(value.toString().toUpperCase())
                 && (m = CompatibleMaterial.getMaterial(value.toString())) != null && m.isValidItem();
     }
 
     protected ItemStack configItem(CompatibleMaterial type, String name, ConfigurationSection node, String path, String def) {
         String[] info = null;
+
         if (configSection_getCommentString != null) {
             try {
                 Object comment = configSection_getCommentString.invoke(node, path);
+
                 if (comment != null) {
                     info = comment.toString().split("\n");
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignore) {
             }
         }
+
         return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? def.split("\n") : null));
     }
 
     protected ItemStack configItem(CompatibleMaterial type, String name, ConfigurationSection node, String path, String value, String def) {
-        if (value == null) value = "";
+        if (value == null) {
+            value = "";
+        }
+
         String[] info = null;
+
         if (configSection_getCommentString != null) {
             try {
                 Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
                     info = (value + "\n" + comment.toString()).split("\n");
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignore) {
             }
         }
+
         return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (value + "\n" + def).split("\n") : null));
     }
 }

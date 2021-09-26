@@ -13,7 +13,6 @@ import java.util.Map;
  * @since 2019-09-12
  */
 public enum LegacyMaterialBlockType {
-
     OAK_LEAVES("LEAVES", (byte) 8, true),
     SPRUCE_LEAVES("LEAVES", (byte) 9, true),
     BIRCH_LEAVES("LEAVES", (byte) 10, true),

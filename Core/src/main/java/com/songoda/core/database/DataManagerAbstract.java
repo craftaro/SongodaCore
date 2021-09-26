@@ -64,9 +64,10 @@ public class DataManagerAbstract {
             ResultSet result = statement.executeQuery(query);
             result.next();
             id = result.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+
         return id;
     }
 
@@ -150,17 +151,24 @@ public class DataManagerAbstract {
      */
     @Deprecated
     public void queueAsync(Runnable runnable, String queueKey) {
-        if (queueKey == null) return;
+        if (queueKey == null) {
+            return;
+        }
+
         List<Runnable> queue = queues.computeIfAbsent(queueKey, t -> new LinkedList<>());
         queue.add(runnable);
-        if (queue.size() == 1) runQueue(queueKey);
+
+        if (queue.size() == 1) {
+            runQueue(queueKey);
+        }
     }
 
     @Deprecated
     private void runQueue(String queueKey) {
         doQueue(queueKey, (s) -> {
-            if (!queues.get(queueKey).isEmpty())
+            if (!queues.get(queueKey).isEmpty()) {
                 runQueue(queueKey);
+            }
         });
     }
 

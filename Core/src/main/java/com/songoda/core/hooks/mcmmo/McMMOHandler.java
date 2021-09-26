@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class McMMOHandler {
-
     static boolean mcmmo_v2 = false;
     static boolean legacy_v13 = false;
     static boolean legacy_v12 = false;
@@ -62,6 +61,7 @@ public class McMMOHandler {
                 mcmmo_SecondaryAbility_valueOf = mcmmo_SecondaryAbility.getDeclaredMethod("valueOf", String.class);
                 mcmmo_Permissions_secondaryAbilityEnabled = com.gmail.nossr50.util.Permissions.class.getDeclaredMethod("secondaryAbilityEnabled", Player.class, mcmmo_SecondaryAbility);
                 mcmmo_SkillUtils_activationSuccessful = com.gmail.nossr50.util.skills.SkillUtils.class.getDeclaredMethod("activationSuccessful", mcmmo_SecondaryAbility, Player.class, int.class, int.class);
+
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
                     mcmmo_ExperienceConfig_getXp = mcmmo_ExperienceConfig_instance.getClass().getDeclaredMethod("getXp", mcmmo_SkillType, org.bukkit.block.data.BlockData.class);
                     legacy_v13 = true;
@@ -72,8 +72,8 @@ public class McMMOHandler {
                     mcmmo_ExperienceConfig_getXp = mcmmo_ExperienceConfig_instance.getClass().getDeclaredMethod("getXp", mcmmo_SkillType, org.bukkit.Material.class);
                     legacy_v8 = true;
                 }
-            } catch (Exception ex1) {
-                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to register McMMO Legacy Hook", ex1);
+            } catch (Exception ex2) {
+                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to register McMMO Legacy Hook", ex2);
             }
         }
     }
@@ -81,10 +81,13 @@ public class McMMOHandler {
     public static void addMining(Player player, Collection<Block> blocks) {
         if (player == null || blocks == null || blocks.isEmpty()) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             addBlockSkillLegacy(player, blocks, "mining");
             return;
         }
+
         ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.MINING);
     }
@@ -92,10 +95,13 @@ public class McMMOHandler {
     public static void addExcavation(Player player, Collection<Block> blocks) {
         if (player == null || blocks == null || blocks.isEmpty()) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             addBlockSkillLegacy(player, blocks, "excavation");
             return;
         }
+
         ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.EXCAVATION);
     }
@@ -103,10 +109,13 @@ public class McMMOHandler {
     public static void addHerbalism(Player player, Collection<Block> blocks) {
         if (player == null || blocks == null || blocks.isEmpty()) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             addBlockSkillLegacy(player, blocks, "herbalism");
             return;
         }
+
         ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.HERBALISM);
     }
@@ -114,10 +123,13 @@ public class McMMOHandler {
     public static void addWoodcutting(Player player, Collection<Block> blocks) {
         if (player == null || blocks == null || blocks.isEmpty()) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             addBlockSkillLegacy(player, blocks, "woodcutting");
             return;
         }
+
         ArrayList<BlockState> blockStates = blocks.stream().map(b -> b.getState()).collect(Collectors.toCollection(ArrayList::new));
         ExperienceAPI.addXpFromBlocksBySkill(blockStates, UserManager.getPlayer(player), PrimarySkillType.WOODCUTTING);
     }
@@ -125,252 +137,336 @@ public class McMMOHandler {
     public static int getAcrobaticsSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "acrobatics");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.ACROBATICS);
     }
 
     public static int getAlchemySkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "alchemy");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.ALCHEMY);
     }
 
     public static int getArcherySkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "archery");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.ARCHERY);
     }
 
     public static int getAxesSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "axes");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.AXES);
     }
 
     public static int getExcavationSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "excavation");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.EXCAVATION);
     }
 
     public static int getFishingSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "fishing");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.FISHING);
     }
 
     public static int getHerbalismSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "herbalism");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.HERBALISM);
     }
 
     public static int getMiningSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "mining");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.MINING);
     }
 
     public static int getRepairSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "repair");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.REPAIR);
     }
 
     public static int getSmeltingSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "smelting");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.SMELTING);
     }
 
     public static int getSwordsSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "swords");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.SWORDS);
     }
 
     public static int getTamingSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "taming");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.TAMING);
     }
 
     public static int getUnarmedSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "unarmed");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.UNARMED);
     }
 
     public static int getWoodcuttingSkill(Player player) {
         if (player == null) {
             return -1;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             return getSkillLegacy(player, "woodcutting");
         }
+
         return UserManager.getPlayer(player).getSkillLevel(PrimarySkillType.WOODCUTTING);
     }
 
     public static void addAcrobatics(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "acrobatics", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.ACROBATICS, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addAlchemy(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "alchemy", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.ALCHEMY, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addArchery(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "archery", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.ARCHERY, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addAxes(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "axes", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.AXES, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addExcavation(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "excavation", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.EXCAVATION, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addFishing(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "fishing", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.FISHING, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addHerbalism(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "herbalism", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.HERBALISM, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addMining(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "mining", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.MINING, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addRepair(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "repair", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.REPAIR, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addSmelting(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "smelting", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.SMELTING, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addSwords(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "swords", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.SWORDS, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addTaming(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "taming", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.TAMING, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addUnarmed(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "unarmed", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.UNARMED, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
     public static void addWoodcutting(Player player, int xp) {
         if (player == null) {
             return;
-        } else if (legacy_v13 || legacy_v12 || legacy_v8) {
+        }
+
+        if (legacy_v13 || legacy_v12 || legacy_v8) {
             ExperienceAPI.addXP(player, "woodcutting", xp);
         }
+
         UserManager.getPlayer(player).beginXpGain(PrimarySkillType.WOODCUTTING, xp, XPGainReason.UNKNOWN, XPGainSource.CUSTOM);
     }
 
@@ -455,22 +551,25 @@ public class McMMOHandler {
         if (player.hasMetadata("mcMMO: Player Data")) {
             try {
                 Object skillType = mcmmo_SkillType_valueOf.invoke(null, skill.toUpperCase());
+
                 if ((boolean) mcmmo_SkillType_getDoubleDropsDisabled.invoke(skillType)) {
                     return false;
                 }
 
                 int skillLevel = (int) mcmmo_McMMOPlayer_getSkillLevel.invoke(UserManager.getPlayer(player), skillType);
                 int activationChance = (int) mcmmo_PerksUtils_handleLuckyPerks.invoke(null, player, skillType);
-
                 Object secondaryDouble = mcmmo_SecondaryAbility_valueOf.invoke(null, skill.toUpperCase() + "_DOUBLE_DROPS");
+
                 if (!((boolean) mcmmo_Permissions_secondaryAbilityEnabled.invoke(null, player, secondaryDouble))) {
                     return false;
                 }
+
                 return (boolean) mcmmo_SkillUtils_activationSuccessful.invoke(null, secondaryDouble, player, skillLevel, activationChance);
-            } catch (Exception ex1) {
-                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex1);
+            } catch (Exception ex) {
+                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex);
             }
         }
+
         return false;
     }
 
@@ -484,30 +583,34 @@ public class McMMOHandler {
             }
 
             ExperienceAPI.addXP(player, skill, xp);
-        } catch (Exception ex1) {
-            Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex1);
+        } catch (Exception ex) {
+            Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex);
         }
     }
 
     protected static Object legacy_getBlock(Block block) {
         if (legacy_v13) {
             return block.getBlockData();
-        } else if (legacy_v12) {
-            return block.getState().getData();
-        } else {
-            return block.getType();
         }
+
+        if (legacy_v12) {
+            return block.getState().getData();
+        }
+
+        return block.getType();
     }
 
     protected static int getSkillLegacy(Player player, String skill) {
         if (player.hasMetadata("mcMMO: Player Data")) {
             try {
                 Object skillType = mcmmo_SkillType_valueOf.invoke(null, skill.toUpperCase());
+
                 return (int) mcmmo_McMMOPlayer_getSkillLevel.invoke(UserManager.getPlayer(player), skillType);
-            } catch (Exception ex1) {
-                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex1);
+            } catch (Exception ex) {
+                Logger.getLogger(McMMOHandler.class.getName()).log(Level.SEVERE, "Failed to invoke McMMO Legacy Hook", ex);
             }
         }
+
         return 0;
     }
 }

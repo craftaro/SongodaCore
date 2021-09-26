@@ -22,7 +22,6 @@ import java.util.List;
  * @since 2019-09-15
  */
 public class AnvilGui extends Gui {
-
     final Player player;
     CustomAnvil anvil;
     List<String> endPrompt = null;
@@ -33,6 +32,7 @@ public class AnvilGui extends Gui {
 
     public AnvilGui(Player player, Gui parent) {
         super(parent);
+
         this.player = player;
     }
 
@@ -117,11 +117,14 @@ public class AnvilGui extends Gui {
     @Override
     protected void createInventory() {
         AnvilCore nms = NmsManager.getAnvil();
+
         if (nms != null) {
             anvil = nms.createAnvil(player, new GuiHolder(guiManager, this));
             anvil.setCustomTitle(title);
             anvil.setLevelCost(0);
+
             inventory = anvil.getInventory();
+
             anvil.setOnChange(this::updateOutputPrompt);
         }
     }

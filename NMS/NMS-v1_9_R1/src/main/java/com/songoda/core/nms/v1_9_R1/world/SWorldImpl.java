@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SWorldImpl implements SWorld {
-
     public SWorldImpl() {
     }
 

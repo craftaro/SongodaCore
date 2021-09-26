@@ -24,7 +24,6 @@ import java.util.Set;
  * @since 2020-03-27
  */
 public enum CompatibleBiome {
-
     /* 1.17 */
     DRIPSTONE_CAVES(ServerVersion.V1_17),
     LUSH_CAVES(ServerVersion.V1_17),
@@ -121,13 +120,17 @@ public enum CompatibleBiome {
     private static Field fieldStorageRegistry;
 
     static {
-        for (CompatibleBiome biome : values())
-            for (Version version : biome.getVersions())
+        for (CompatibleBiome biome : values()) {
+            for (Version version : biome.getVersions()) {
                 lookupMap.put(version.biome, biome);
+            }
+        }
 
-        for (CompatibleBiome biome : CompatibleBiome.values())
-            if (biome.isCompatible())
+        for (CompatibleBiome biome : CompatibleBiome.values()) {
+            if (biome.isCompatible()) {
                 compatibleBiomes.add(biome);
+            }
+        }
 
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             try {
@@ -148,13 +151,14 @@ public enum CompatibleBiome {
                 try {
                     // If 1.16.5
                     fieldStorageRegistry = classBiomeStorage.getDeclaredField("registry");
-                } catch (NoSuchFieldException e) {
+                } catch (NoSuchFieldException ex) {
                     // If less than 1.16.5
                     fieldStorageRegistry = classBiomeStorage.getDeclaredField("g");
                 }
+
                 fieldStorageRegistry.setAccessible(true);
-            } catch (NoSuchMethodException | NoSuchFieldException e) {
-                e.printStackTrace();
+            } catch (NoSuchMethodException | NoSuchFieldException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -171,6 +175,7 @@ public enum CompatibleBiome {
     public boolean isCompatible() {
         Version version = versions.getLast();
         ServerVersion.isServerVersionAtLeast(version.version);
+
         return true;
     }
 
@@ -179,9 +184,12 @@ public enum CompatibleBiome {
     }
 
     public Biome getBiome() {
-        for (Version version : versions)
-            if (ServerVersion.isServerVersionAtLeast(version.version))
+        for (Version version : versions) {
+            if (ServerVersion.isServerVersionAtLeast(version.version)) {
                 return Biome.valueOf(version.biome);
+            }
+        }
+
         return null;
     }
 
@@ -201,14 +209,17 @@ public enum CompatibleBiome {
         Object nmsChunk = null;
         Object biomeStorage = null;
         Object biomeBase = null;
+
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             nmsChunk = methodGetHandle.invoke(chunk);
             biomeStorage = methodGetBiomeIndex.invoke(nmsChunk);
+
             if (isAbove1_16_R1) {
                 Object registry = fieldStorageRegistry.get(biomeStorage);
                 biomeBase = methodBiomeToBiomeBase.invoke(null, registry, getBiome());
-            } else
+            } else {
                 biomeBase = methodBiomeToBiomeBase.invoke(null, getBiome());
+            }
         }
 
         World world = chunk.getWorld();
@@ -216,22 +227,31 @@ public enum CompatibleBiome {
         int chunkZ = chunk.getZ();
         for (int x = chunkX << 4; x < (chunkX << 4) + 16; x++) {
             for (int z = chunkZ << 4; z < (chunkZ << 4) + 16; z++) {
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
-                    for (int y = 0; y < world.getMaxHeight(); ++y)
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
+                    for (int y = 0; y < world.getMaxHeight(); ++y) {
                         methodSetBiome.invoke(biomeStorage, x >> 2, y >> 2, z >> 2, biomeBase);
-                else
-                    chunk.getWorld().setBiome(x, z, getBiome());
+                    }
+
+                    continue;
+                }
+
+                chunk.getWorld().setBiome(x, z, getBiome());
             }
         }
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
+
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             methodMarkDirty.invoke(nmsChunk);
+        }
     }
 
     public void setBiome(World world, int x, int y, int z) {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15))
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
             world.setBiome(x, y, z, getBiome());
-        else
-            world.setBiome(x, z, getBiome());
+
+            return;
+        }
+
+        world.setBiome(x, z, getBiome());
     }
 
     private static Version v(ServerVersion version, String biome) {
@@ -243,7 +263,6 @@ public enum CompatibleBiome {
     }
 
     private static class Version {
-
         final ServerVersion version;
         final String biome;
 

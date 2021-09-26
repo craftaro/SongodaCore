@@ -13,11 +13,11 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import java.util.Optional;
 
 public class BentoBoxProtection extends Protection {
-
     private final IslandsManager islandsManager;
 
     public BentoBoxProtection(Plugin plugin) {
         super(plugin);
+
         this.islandsManager = BentoBox.getInstance().getIslands();
     }
 
