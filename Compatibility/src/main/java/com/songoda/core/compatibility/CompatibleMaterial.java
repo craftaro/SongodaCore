@@ -2108,9 +2108,11 @@ public enum CompatibleMaterial {
                 return COOKED_RABBIT;
             case KELP:
                 return DRIED_KELP;
+            case RAW_IRON:
             case IRON_ORE:
             case DEEPSLATE_IRON_ORE:
                 return IRON_INGOT;
+            case RAW_GOLD:
             case GOLD_ORE:
             case DEEPSLATE_GOLD_ORE:
                 return GOLD_INGOT;
@@ -2131,6 +2133,7 @@ public enum CompatibleMaterial {
                 return EMERALD;
             case NETHER_QUARTZ_ORE:
                 return QUARTZ;
+            case RAW_COPPER:
             case COPPER_ORE:
             case DEEPSLATE_COPPER_ORE:
                 return COPPER_INGOT;
@@ -2756,6 +2759,33 @@ public enum CompatibleMaterial {
         return true;
     }
 
+    /**
+     * @return true if this material is a valid brewing stand ingredient
+     */
+    public boolean isBrewingStandIngredient() {
+        switch (this) {
+            case NETHER_WART:
+            case REDSTONE:
+            case GLOWSTONE_DUST:
+            case FERMENTED_SPIDER_EYE:
+            case GUNPOWDER:
+            case DRAGON_BREATH:
+            case SUGAR:
+            case RABBIT_FOOT:
+            case GLISTERING_MELON_SLICE:
+            case SPIDER_EYE:
+            case PUFFERFISH:
+            case MAGMA_CREAM:
+            case GOLDEN_CARROT:
+            case BLAZE_POWDER:
+            case GHAST_TEAR:
+            case TURTLE_HELMET:
+            case PHANTOM_MEMBRANE:
+                return true;
+        }
+
+        return false;
+    }
     /**
      * @return true if this material is a food that can be cooked and is in its cooked state
      */
