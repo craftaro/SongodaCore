@@ -162,12 +162,18 @@ public class PlayerUtils {
 
     public static Player getRandomPlayer() {
         final Collection<? extends Player> all = Bukkit.getOnlinePlayers();
+        if (all.isEmpty()) {
+            return null;
+        }
+
         final Iterator<? extends Player> alli = all.iterator();
+
         int pick = random.nextInt(all.size());
         for (; pick > 0; --pick) {
             alli.next();
         }
-        return alli.hasNext() ? alli.next() : null;
+
+        return alli.next();
     }
 
     public static void giveItem(Player player, ItemStack item) {
