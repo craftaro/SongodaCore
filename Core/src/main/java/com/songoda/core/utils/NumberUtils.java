@@ -15,6 +15,7 @@ public class NumberUtils {
         // This is done to specifically prevent the NBSP character from printing in foreign languages.
         DecimalFormatSymbols symbols = decimalFormatter.getDecimalFormatSymbols();
         symbols.setGroupingSeparator(',');
+        symbols.setDecimalSeparator('.');
 
         decimalFormatter.setDecimalFormatSymbols(symbols);
         return decimalFormatter.format(number);
