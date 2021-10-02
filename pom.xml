@@ -94,6 +94,16 @@
         </repository>
 
         <repository>
+            <id>bg-repo</id>
+            <url>https://repo.bg-software.com/repository/api/</url>
+        </repository>
+
+        <repository>
+            <id>ViaVersion</id>
+            <url>https://repo.viaversion.com/</url>
+        </repository>
+
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io/</url>
         </repository>
