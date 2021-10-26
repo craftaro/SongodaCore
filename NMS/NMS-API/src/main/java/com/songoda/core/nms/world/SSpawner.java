@@ -27,7 +27,8 @@ public interface SSpawner {
         ILLUSIONER("illusion_illager", "IllusionIllager"),
         IRON_GOLEM("villager_golem", "VillagerGolem"),
         MUSHROOM_COW("mooshroom", "MushroomCow"),
-        MAGMA_CUBE("magma_cube", "LavaSlime");
+        MAGMA_CUBE("magma_cube", "LavaSlime"),
+        CAVE_SPIDER("cave_spider", "CaveSpider");
 
         private final String lower;
         private final String upper;

@@ -1,5 +1,6 @@
 package com.songoda.core.compatibility;
 
+import com.viaversion.viaversion.api.Via;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,8 +13,7 @@ import java.util.UUID;
  * NOTE: this is automatically initialized through SongodaCore
  */
 public class ClientVersion {
-
-    static HashMap<UUID, ServerVersion> players = new HashMap();
+    static HashMap<UUID, ServerVersion> players = new HashMap<>();
 
     /**
      * Check to see what client version this player is connected to the server
@@ -28,6 +28,7 @@ public class ClientVersion {
         if (player == null || !players.containsKey(player.getUniqueId())) {
             return ServerVersion.getServerVersion();
         }
+
         return players.get(player.getUniqueId());
     }
 
@@ -51,7 +52,7 @@ public class ClientVersion {
     public static void onLoginVia(Player p, JavaPlugin plugin) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (p.isOnline()) {
-                final int version = us.myles.ViaVersion.api.Via.getAPI().getPlayerVersion(p.getUniqueId());
+                final int version = Via.getAPI().getPlayerVersion(p.getUniqueId());
                 players.put(p.getUniqueId(), protocolToVersion(version));
             }
         }, 20);
