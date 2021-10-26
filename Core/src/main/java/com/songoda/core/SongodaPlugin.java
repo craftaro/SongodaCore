@@ -1,6 +1,7 @@
 package com.songoda.core;
 
 import com.songoda.core.configuration.Config;
+import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -19,7 +21,6 @@ import java.util.logging.Level;
  * @author jascotty2
  */
 public abstract class SongodaPlugin extends JavaPlugin {
-
     protected Locale locale;
     protected Config config = new Config(this);
     protected long dataLoadDelay = 20L;
@@ -36,7 +37,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public abstract void onDataLoad();
 
     /**
-     * Called after reloadConfig​() is called
+     * Called after reloadConfig() is called
      */
     public abstract void onConfigReload();
 
@@ -172,6 +173,43 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 return true;
             } else {
                 return false;
+            }
+        }
+    }
+
+    protected void shutdownDataManager(DataManagerAbstract dataManager) {
+        // 3 minutes is overkill, but we just want to make sure
+        shutdownDataManager(dataManager, 15, TimeUnit.MINUTES.toSeconds(3));
+    }
+
+    protected void shutdownDataManager(DataManagerAbstract dataManager, int reportInterval, long secondsUntilForceShutdown) {
+        dataManager.shutdownTaskQueue();
+
+        while (!dataManager.isTaskQueueTerminated() && secondsUntilForceShutdown > 0) {
+            long secondsToWait = Math.min(reportInterval, secondsUntilForceShutdown);
+
+            try {
+                if (dataManager.waitForShutdown(secondsToWait, TimeUnit.SECONDS)) {
+                    break;
+                }
+
+                getLogger().info(String.format("A DataManager is currently working on %d tasks... " +
+                                "We are giving him another %d seconds until we forcefully shut him down " +
+                                "(continuing to report in %d second intervals)",
+                        dataManager.getTaskQueueSize(), secondsUntilForceShutdown, reportInterval));
+            } catch (InterruptedException ignore) {
+            } finally {
+                secondsUntilForceShutdown -= secondsToWait;
+            }
+        }
+
+        if (!dataManager.isTaskQueueTerminated()) {
+            int unfinishedTasks = dataManager.forceShutdownTaskQueue().size();
+
+            if (unfinishedTasks > 0) {
+                getLogger().log(Level.WARNING,
+                        String.format("A DataManager has been forcefully terminated with %d unfinished tasks - " +
+                                "This can be a serious problem, please report it to us (Songoda)!", unfinishedTasks));
             }
         }
     }
