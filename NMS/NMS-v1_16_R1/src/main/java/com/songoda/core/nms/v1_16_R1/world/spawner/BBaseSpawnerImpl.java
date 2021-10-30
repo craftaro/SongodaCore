@@ -62,104 +62,106 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
             double spawnerE = (double) ReflectionUtils.getFieldValue(spawner, "e");
             ReflectionUtils.setFieldValue(spawner, "f", spawnerE);
             ReflectionUtils.setFieldValue(spawner, "e", (spawnerE + (double) (1000F / ((float) spawner.spawnDelay + 200F))) % 360D);
-        } else {
-            if (spawner.spawnDelay == -1) {
-                delay(spawner);
+            return;
+        }
+
+        if (spawner.spawnDelay == -1) {
+            delay(spawner);
+        }
+
+        if (spawner.spawnDelay > 0) {
+            --spawner.spawnDelay;
+            return;
+        }
+
+        boolean flag = false;
+        int i = 0;
+
+        while (true) {
+            if (i >= spawner.spawnCount) {
+                if (flag) {
+                    delay(spawner);
+                }
+
+                break;
             }
 
-            if (spawner.spawnDelay > 0) {
-                --spawner.spawnDelay;
+            NBTTagCompound nbttagcompound = spawner.spawnData.getEntity();
+            Optional<EntityTypes<?>> optional = EntityTypes.a(nbttagcompound);
+            if (!optional.isPresent()) {
+                delay(spawner);
                 return;
             }
 
-            boolean flag = false;
-            int i = 0;
-
-            while (true) {
-                if (i >= spawner.spawnCount) {
-                    if (flag) {
+            NBTTagList nbttaglist = nbttagcompound.getList("Pos", 6);
+            int j = nbttaglist.size();
+            double d3 = j >= 1 ? nbttaglist.h(0) : (double) blockposition.getX() + (world.random.nextDouble() - world.random.nextDouble()) * (double) spawner.spawnRange + .5D;
+            double d4 = j >= 2 ? nbttaglist.h(1) : (double) (blockposition.getY() + world.random.nextInt(3) - 1);
+            double d5 = j >= 3 ? nbttaglist.h(2) : (double) blockposition.getZ() + (world.random.nextDouble() - world.random.nextDouble()) * (double) spawner.spawnRange + .5D;
+            if (world.b(optional.get().a(d3, d4, d5)) && EntityPositionTypes.a(optional.get(), world.getMinecraftWorld(), EnumMobSpawn.SPAWNER, new BlockPosition(d3, d4, d5), world.getRandom())) {
+                label112:
+                {
+                    Entity entity = EntityTypes.a(nbttagcompound, world, (entity1) -> {
+                        entity1.setPositionRotation(d3, d4, d5, entity1.yaw, entity1.pitch);
+                        return entity1;
+                    });
+                    if (entity == null) {
                         delay(spawner);
+                        return;
                     }
-                    break;
-                }
 
-                NBTTagCompound nbttagcompound = spawner.spawnData.getEntity();
-                Optional<EntityTypes<?>> optional = EntityTypes.a(nbttagcompound);
-                if (!optional.isPresent()) {
-                    delay(spawner);
-                    return;
-                }
+                    int k = world.a(entity.getClass(), (new AxisAlignedBB(
+                            blockposition.getX(),
+                            blockposition.getY(),
+                            blockposition.getZ(),
+                            blockposition.getX() + 1,
+                            blockposition.getY() + 1,
+                            blockposition.getZ() + 1))
+                            .g(spawner.spawnRange)).size();
+                    if (k >= spawner.maxNearbyEntities) {
+                        delay(spawner);
+                        return;
+                    }
 
-                NBTTagList nbttaglist = nbttagcompound.getList("Pos", 6);
-                int j = nbttaglist.size();
-                double d3 = j >= 1 ? nbttaglist.h(0) : (double) blockposition.getX() + (world.random.nextDouble() - world.random.nextDouble()) * (double) spawner.spawnRange + .5D;
-                double d4 = j >= 2 ? nbttaglist.h(1) : (double) (blockposition.getY() + world.random.nextInt(3) - 1);
-                double d5 = j >= 3 ? nbttaglist.h(2) : (double) blockposition.getZ() + (world.random.nextDouble() - world.random.nextDouble()) * (double) spawner.spawnRange + .5D;
-                if (world.b(optional.get().a(d3, d4, d5)) && EntityPositionTypes.a(optional.get(), world.getMinecraftWorld(), EnumMobSpawn.SPAWNER, new BlockPosition(d3, d4, d5), world.getRandom())) {
-                    label112:
-                    {
-                        Entity entity = EntityTypes.a(nbttagcompound, world, (entity1) -> {
-                            entity1.setPositionRotation(d3, d4, d5, entity1.yaw, entity1.pitch);
-                            return entity1;
-                        });
-                        if (entity == null) {
-                            delay(spawner);
-                            return;
+                    entity.setPositionRotation(entity.locX(), entity.locY(), entity.locZ(), world.random.nextFloat() * 360.0F, 0.0F);
+                    if (entity instanceof EntityInsentient) {
+                        EntityInsentient entityinsentient = (EntityInsentient) entity;
+                        if (!entityinsentient.a(world, EnumMobSpawn.SPAWNER) || !entityinsentient.a(world)) {
+                            break label112;
                         }
 
-                        int k = world.a(entity.getClass(), (new AxisAlignedBB(
-                                blockposition.getX(),
-                                blockposition.getY(),
-                                blockposition.getZ(),
-                                blockposition.getX() + 1,
-                                blockposition.getY() + 1,
-                                blockposition.getZ() + 1))
-                                .g(spawner.spawnRange)).size();
-                        if (k >= spawner.maxNearbyEntities) {
-                            delay(spawner);
-                            return;
+                        if (spawner.spawnData.getEntity().e() == 1 && spawner.spawnData.getEntity().hasKeyOfType("id", 8)) {
+                            ((EntityInsentient) entity).prepare(world, world.getDamageScaler(entity.getChunkCoordinates()), EnumMobSpawn.SPAWNER, null, null);
                         }
 
-                        entity.setPositionRotation(entity.locX(), entity.locY(), entity.locZ(), world.random.nextFloat() * 360.0F, 0.0F);
+                        if (entityinsentient.world.spigotConfig.nerfSpawnerMobs) {
+                            entityinsentient.aware = false;
+                        }
+                    }
+
+                    if (CraftEventFactory.callSpawnerSpawnEvent(entity, blockposition).isCancelled()) {
+                        Entity vehicle = entity.getVehicle();
+                        if (vehicle != null) {
+                            vehicle.dead = true;
+                        }
+
+                        Entity passenger;
+                        for (Iterator<Entity> var19 = entity.getAllPassengers().iterator(); var19.hasNext(); passenger.dead = true) {
+                            passenger = var19.next();
+                        }
+                    } else {
+                        addWithPassengers(spawner, entity);
+                        world.triggerEffect(2004, blockposition, 0);
                         if (entity instanceof EntityInsentient) {
-                            EntityInsentient entityinsentient = (EntityInsentient) entity;
-                            if (!entityinsentient.a(world, EnumMobSpawn.SPAWNER) || !entityinsentient.a(world)) {
-                                break label112;
-                            }
-
-                            if (spawner.spawnData.getEntity().e() == 1 && spawner.spawnData.getEntity().hasKeyOfType("id", 8)) {
-                                ((EntityInsentient) entity).prepare(world, world.getDamageScaler(entity.getChunkCoordinates()), EnumMobSpawn.SPAWNER, null, null);
-                            }
-
-                            if (entityinsentient.world.spigotConfig.nerfSpawnerMobs) {
-                                entityinsentient.aware = false;
-                            }
+                            ((EntityInsentient) entity).doSpawnEffect();
                         }
 
-                        if (CraftEventFactory.callSpawnerSpawnEvent(entity, blockposition).isCancelled()) {
-                            Entity vehicle = entity.getVehicle();
-                            if (vehicle != null) {
-                                vehicle.dead = true;
-                            }
-
-                            Entity passenger;
-                            for (Iterator<Entity> var19 = entity.getAllPassengers().iterator(); var19.hasNext(); passenger.dead = true) {
-                                passenger = var19.next();
-                            }
-                        } else {
-                            addWithPassengers(spawner, entity);
-                            world.triggerEffect(2004, blockposition, 0);
-                            if (entity instanceof EntityInsentient) {
-                                ((EntityInsentient) entity).doSpawnEffect();
-                            }
-
-                            flag = true;
-                        }
+                        flag = true;
                     }
                 }
-
-                ++i;
             }
+
+            ++i;
         }
     }
 
@@ -188,7 +190,6 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
     @SuppressWarnings("JavadocReference")
     private void addWithPassengers(MobSpawnerAbstract spawner, Entity entity) {
         if (spawner.a().addEntity(entity, CreatureSpawnEvent.SpawnReason.SPAWNER)) {
-
             for (Entity entity1 : entity.getPassengers()) {
                 addWithPassengers(spawner, entity1);
             }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DataMigrationManager {
-
     private final List<DataMigration> migrations;
     private final DatabaseConnector databaseConnector;
     private final DataManagerAbstract dataManagerAbstract;
@@ -65,23 +64,23 @@ public class DataMigrationManager {
 
             // Grab required migrations
             int finalCurrentMigration = currentMigration;
-            List<DataMigration> requiredMigrations = this.migrations
-                    .stream()
+            List<DataMigration> requiredMigrations = this.migrations.stream()
                     .filter(x -> x.getRevision() > finalCurrentMigration)
                     .sorted(Comparator.comparingInt(DataMigration::getRevision))
                     .collect(Collectors.toList());
 
             // Nothing to migrate, abort
-            if (requiredMigrations.isEmpty())
+            if (requiredMigrations.isEmpty()) {
                 return;
+            }
 
             // Migrate the data
-            for (DataMigration dataMigration : requiredMigrations)
+            for (DataMigration dataMigration : requiredMigrations) {
                 dataMigration.migrate(connection, this.dataManagerAbstract.getTablePrefix());
+            }
 
             // Set the new current migration to be the highest migrated to
-            currentMigration = requiredMigrations
-                    .stream()
+            currentMigration = requiredMigrations.stream()
                     .map(DataMigration::getRevision)
                     .max(Integer::compareTo)
                     .orElse(-1);

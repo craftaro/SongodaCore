@@ -17,21 +17,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PlayerUtils {
-
     static Random random = new Random();
 
     public static void sendMessages(Player player, String... messages) {
-        for (String message : messages)
+        for (String message : messages) {
             player.sendMessage(message);
+        }
     }
 
     public static void sendMessages(Player player, List<String> messages) {
-        for (String message : messages)
+        for (String message : messages) {
             player.sendMessage(message);
+        }
     }
 
     /**
-     * Get a list of all of the players that this player can "see"
+     * Get a list of all the players that this player can "see"
      *
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
@@ -42,6 +43,7 @@ public class PlayerUtils {
     public static List<String> getVisiblePlayerNames(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
+
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p != player)
                 .filter(p -> startsWith == null || p.getName().toLowerCase().startsWith(startsWith))
@@ -51,7 +53,7 @@ public class PlayerUtils {
     }
 
     /**
-     * Get a list of all of the players that this player can "see"
+     * Get a list of all the players that this player can "see"
      *
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
@@ -62,6 +64,7 @@ public class PlayerUtils {
     public static List<String> getVisiblePlayerDisplayNames(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.replaceAll("[^a-zA-Z]", "").toLowerCase();
+
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p != player)
                 .filter(p -> startsWith == null || p.getDisplayName().replaceAll("[^a-zA-Z]", "").toLowerCase().startsWith(startsWith))
@@ -71,7 +74,7 @@ public class PlayerUtils {
     }
 
     /**
-     * Get a list of all of the players that this player can "see"
+     * Get a list of all the players that this player can "see"
      *
      * @param sender       user to check against, or null for all players
      * @param startingWith optional query to test: only players whose game names
@@ -82,11 +85,12 @@ public class PlayerUtils {
     public static List<Player> getVisiblePlayers(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
+
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p != player)
                 .filter(p -> startsWith == null || p.getName().toLowerCase().startsWith(startsWith))
                 .filter(p -> player == null || (player.canSee(p) && p.getMetadata("vanished").isEmpty()))
-                .map(p -> (Player) p)
+                .map(Player.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -100,6 +104,7 @@ public class PlayerUtils {
      */
     public static List<String> getAllPlayers(CommandSender us, String startsWith) {
         final String arg = startsWith.toLowerCase();
+
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> us != p && p.getName().startsWith(arg))
                 .map(Player::getName)
@@ -115,7 +120,10 @@ public class PlayerUtils {
      * @return List of matching player display names
      */
     public static List<String> getAllPlayersDisplay(CommandSender us, String startsWith) {
+        // FIXME: Why do we need that regex? It just breaks the startsWith check
+        //        + the DisplayName comparison is not made lower case
         final String arg = startsWith.replaceAll("[^a-zA-Z]", "").toLowerCase();
+
         return Bukkit.getOnlinePlayers().stream()
                 .filter(p -> us != p && p.getDisplayName().replaceAll("[^a-zA-Z]", "").startsWith(arg))
                 .map(Player::getDisplayName)
@@ -132,14 +140,17 @@ public class PlayerUtils {
      */
     public static Player findPlayer(String player) {
         Player found = Bukkit.getServer().getPlayer(player);
+
         if (found == null) {
             final String searchName = player.toLowerCase();
             final String searchDisplayName = player.replaceAll("[^a-zA-Z]", "").toLowerCase();
             int d = 999;
+
             for (Player p2 : Bukkit.getOnlinePlayers()) {
                 final String test;
                 if (p2.getName().toLowerCase().startsWith(searchName)) {
                     int d2 = p2.getName().length() - searchName.length();
+
                     if (d2 < d) {
                         found = p2;
                         d = d2;
@@ -148,6 +159,7 @@ public class PlayerUtils {
                     }
                 } else if ((test = p2.getDisplayName().replaceAll("[^a-zA-Z]", "")).toLowerCase().startsWith(searchDisplayName)) {
                     int d2 = test.length() - searchDisplayName.length();
+
                     if (d2 < d) {
                         found = p2;
                         d = d2;
@@ -157,6 +169,7 @@ public class PlayerUtils {
                 }
             }
         }
+
         return found;
     }
 
@@ -169,6 +182,7 @@ public class PlayerUtils {
         final Iterator<? extends Player> alli = all.iterator();
 
         int pick = random.nextInt(all.size());
+
         for (; pick > 0; --pick) {
             alli.next();
         }
@@ -180,9 +194,11 @@ public class PlayerUtils {
         if (player == null || !player.isOnline() || item == null) {
             return;
         }
+
         Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+
         if (!leftover.isEmpty()) {
-            leftover.values().stream().forEach(it -> player.getWorld().dropItemNaturally(player.getLocation(), it));
+            leftover.values().forEach(it -> player.getWorld().dropItemNaturally(player.getLocation(), it));
         }
     }
 
@@ -190,11 +206,13 @@ public class PlayerUtils {
         if (player == null || !player.isOnline() || items == null || items.length == 0) {
             return;
         }
+
         Map<Integer, ItemStack> leftover = player.getInventory().addItem(items);
         if (!leftover.isEmpty()) {
             final World world = player.getWorld();
             final Location location = player.getLocation();
-            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+
+            leftover.values().forEach(it -> world.dropItemNaturally(location, it));
         }
     }
 
@@ -202,11 +220,13 @@ public class PlayerUtils {
         if (player == null || !player.isOnline() || items == null || items.isEmpty()) {
             return;
         }
-        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
+
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(items.toArray(new ItemStack[0]));
+
         if (!leftover.isEmpty()) {
             final World world = player.getWorld();
             final Location location = player.getLocation();
-            leftover.values().stream().forEach(it -> world.dropItemNaturally(location, it));
+            leftover.values().forEach(it -> world.dropItemNaturally(location, it));
         }
     }
 
@@ -217,17 +237,22 @@ public class PlayerUtils {
         int highest = 0;
 
         for (PermissionAttachmentInfo info : permissions) {
-
             final String perm = info.getPermission();
 
-            if (!perm.startsWith(permission)) continue;
+            if (!perm.startsWith(permission)) {
+                continue;
+            }
 
             final int index = perm.lastIndexOf('.');
 
-            if (index == -1 || index == perm.length()) continue;
+            if (index == -1 || index == perm.length()) {
+                continue;
+            }
 
             String numStr = perm.substring(perm.lastIndexOf('.') + 1);
-            if (numStr.equals("*")) return def;
+            if (numStr.equals("*")) {
+                return def;
+            }
 
             final int number = Integer.parseInt(numStr);
 

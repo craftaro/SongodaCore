@@ -35,7 +35,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public final class PluginHook<T extends Class> {
-
     public static final PluginHook ECO_VAULT = new PluginHook(Economy.class, "Vault", VaultEconomy.class);
     public static final PluginHook ECO_PLAYER_POINTS = new PluginHook(Economy.class, "PlayerPoints", PlayerPointsEconomy.class);
     public static final PluginHook ECO_RESERVE = new PluginHook(Economy.class, "Reserve", ReserveEconomy.class);
@@ -65,13 +64,17 @@ public final class PluginHook<T extends Class> {
         if (!Hook.class.isAssignableFrom(handler)) {
             throw new RuntimeException("Tried to register a non-Hook plugin hook! " + pluginName + " -> " + handler.getName());
         }
+
         this.hookGeneric = type;
         this.plugin = pluginName;
         this.managerClass = handler;
+
         if (hooks == null) {
-            hooks = new LinkedHashMap();
+            hooks = new LinkedHashMap<>();
         }
+
         hooks.put(handler, this);
+
         // Does this class have a plugin constructor?
         try {
             pluginConstructor = handler.getDeclaredConstructor(Plugin.class);
@@ -89,7 +92,6 @@ public final class PluginHook<T extends Class> {
      * Permissible constructors are empty () or (org.bukkit.plugin.Plugin) <br>
      * Each plugin defined must use a different handler class.
      *
-     * @param <T>
      * @param type       Generic hook type for this plugin
      * @param pluginName Plugin name
      * @param handler    Specific class that will handle this plugin, if enabled.
@@ -107,6 +109,7 @@ public final class PluginHook<T extends Class> {
         for (PluginHook hook : getHooks(type)) {
             if (pluginManager.isPluginEnabled(hook.plugin)) {
                 Hook handler = (Hook) (plugin != null ? hook.load(plugin) : hook.load());
+
                 if (handler != null && handler.isEnabled()) {
                     loaded.put(hook, handler);
                 }
@@ -136,6 +139,7 @@ public final class PluginHook<T extends Class> {
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Unexpected Error while creating a new Hook Manager for " + plugin, ex);
         }
+
         return null;
     }
 
@@ -148,6 +152,7 @@ public final class PluginHook<T extends Class> {
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Unexpected Error while creating a new Hook Manager for " + plugin, ex);
         }
+
         return null;
     }
 
@@ -156,6 +161,7 @@ public final class PluginHook<T extends Class> {
         int hash = 3;
         hash = 37 * hash + Objects.hashCode(this.plugin);
         hash = 37 * hash + Objects.hashCode(this.managerClass);
+
         return hash;
     }
 
@@ -164,8 +170,8 @@ public final class PluginHook<T extends Class> {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
+
         final PluginHook<?> other = (PluginHook<?>) obj;
-        return Objects.equals(this.plugin, other.plugin)
-                && Objects.equals(this.managerClass, other.managerClass);
+        return Objects.equals(this.plugin, other.plugin) && Objects.equals(this.managerClass, other.managerClass);
     }
 }

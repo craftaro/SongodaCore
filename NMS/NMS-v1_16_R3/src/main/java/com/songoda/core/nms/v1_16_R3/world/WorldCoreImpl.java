@@ -57,43 +57,45 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
 
-        if (tickAmount > 0) {
-            GameProfilerFiller profiler = chunk.world.getMethodProfiler();
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            ChunkCoordIntPair chunkPos = chunk.getPos();
-            int minBlockX = chunkPos.d();
-            int minBlockZ = chunkPos.e();
+        GameProfilerFiller profiler = chunk.world.getMethodProfiler();
 
-            profiler.enter("tickBlocks");
-            for (ChunkSection cSection : chunk.getSections()) {
-                if (cSection != Chunk.a &&    // cSection != Chunk.EMPTY_SECTION
-                        cSection.d()) { // #isRandomlyTicking()
-                    int bottomBlockY = cSection.getYPosition();
+        ChunkCoordIntPair chunkPos = chunk.getPos();
+        int minBlockX = chunkPos.d();
+        int minBlockZ = chunkPos.e();
 
-                    for (int i = 0; i < tickAmount; ++i) {
-                        BlockPosition randomBlockPos = chunk.world.a(minBlockX, bottomBlockY, minBlockZ, 15);   // getBlockRandomPos
-                        profiler.enter("randomTick");
+        profiler.enter("tickBlocks");
+        for (ChunkSection cSection : chunk.getSections()) {
+            if (cSection != Chunk.a &&    // cSection != Chunk.EMPTY_SECTION
+                    cSection.d()) { // #isRandomlyTicking()
+                int bottomBlockY = cSection.getYPosition();
 
-                        IBlockData blockState = cSection.getType(
-                                randomBlockPos.getX() - minBlockX,
-                                randomBlockPos.getY() - bottomBlockY,
-                                randomBlockPos.getZ() - minBlockZ);   // #getBlockState
+                for (int i = 0; i < tickAmount; ++i) {
+                    BlockPosition randomBlockPos = chunk.world.a(minBlockX, bottomBlockY, minBlockZ, 15);   // getBlockRandomPos
+                    profiler.enter("randomTick");
 
-                        if (blockState.isTicking()) {   // #isRandomlyTicking()
-                            blockState.b(chunk.world, randomBlockPos, chunk.world.random);  // #randomTick
-                        }
+                    IBlockData blockState = cSection.getType(
+                            randomBlockPos.getX() - minBlockX,
+                            randomBlockPos.getY() - bottomBlockY,
+                            randomBlockPos.getZ() - minBlockZ);   // #getBlockState
 
-                        Fluid fluidState = blockState.getFluid();   // #getFluidState()
-                        if (fluidState.f()) {   // #isRandomlyTicking()
-                            fluidState.b(chunk.world, randomBlockPos, chunk.world.random);  // #randomTick
-                        }
-
-                        profiler.exit();
+                    if (blockState.isTicking()) {   // #isRandomlyTicking()
+                        blockState.b(chunk.world, randomBlockPos, chunk.world.random);  // #randomTick
                     }
+
+                    Fluid fluidState = blockState.getFluid();   // #getFluidState()
+                    if (fluidState.f()) {   // #isRandomlyTicking()
+                        fluidState.b(chunk.world, randomBlockPos, chunk.world.random);  // #randomTick
+                    }
+
+                    profiler.exit();
                 }
             }
-
-            profiler.exit();
         }
+
+        profiler.exit();
     }
 }

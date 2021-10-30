@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ColorUtils {
-
     private static Map<ColorCode, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
 
     static {
@@ -30,9 +29,9 @@ public class ColorUtils {
     }
 
     private static class ColorSet<R, G, B> {
-        R red = null;
-        G green = null;
-        B blue = null;
+        R red;
+        G green;
+        B blue;
 
         ColorSet(R red, G green, B blue) {
             this.red = red;
@@ -59,8 +58,10 @@ public class ColorUtils {
             int red = Math.abs(r - set.getRed());
             int green = Math.abs(g - set.getGreen());
             int blue = Math.abs(b - set.getBlue());
+
             closest.put(red + green + blue, color);
         });
+
         return closest.firstEntry().getValue();
     }
 }

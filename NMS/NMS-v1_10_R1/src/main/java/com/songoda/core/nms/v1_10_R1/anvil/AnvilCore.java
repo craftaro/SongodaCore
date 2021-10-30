@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 
 public class AnvilCore implements com.songoda.core.nms.anvil.AnvilCore {
-
     @Override
     public CustomAnvil createAnvil(Player player) {
         return new AnvilView(((CraftPlayer) player).getHandle(), null);

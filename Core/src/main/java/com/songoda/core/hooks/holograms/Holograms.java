@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Holograms implements Hook {
-
     protected double xOffset = 0.5;
     protected double yOffset = 0.5;
     protected double zOffset = 0.5;
@@ -24,6 +23,7 @@ public abstract class Holograms implements Hook {
         this.xOffset = x;
         this.yOffset = y;
         this.zOffset = z;
+
         return this;
     }
 
@@ -38,6 +38,7 @@ public abstract class Holograms implements Hook {
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
+
         return location.clone().add((x - (int) x) + xOffset, (y - (int) y) + yOffset + defaultHeightOffset(), (z - (int) z) + zOffset);
     }
 

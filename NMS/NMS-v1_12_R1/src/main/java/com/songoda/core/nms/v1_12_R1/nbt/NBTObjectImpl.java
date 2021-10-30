@@ -7,7 +7,6 @@ import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import java.util.Set;
 
 public class NBTObjectImpl implements NBTObject {
-
     private final NBTTagCompound compound;
     private final String tag;
 

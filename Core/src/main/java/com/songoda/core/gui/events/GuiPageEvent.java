@@ -4,7 +4,6 @@ import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
 
 public class GuiPageEvent {
-
     final Gui gui;
     final GuiManager manager;
     final int lastPage;

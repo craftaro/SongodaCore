@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class SWorldBorder {
-
     private static Class<?> packetPlayOutWorldBorderEnumClass;
     private static Class<?> worldBorderClass;
     private static Class<?> craftWorldClass;
@@ -40,15 +39,16 @@ public class SWorldBorder {
                             packetPlayOutWorldBorderEnumClass);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
     public static void send(Player player, Color color, double size, Location centerLocation) {
         try {
-            if (centerLocation == null || centerLocation.getWorld() == null)
+            if (centerLocation == null || centerLocation.getWorld() == null) {
                 return;
+            }
 
             Object worldBorder = worldBorderClass.getConstructor().newInstance();
 
@@ -89,13 +89,12 @@ public class SWorldBorder {
                         Enum.valueOf((Class<Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
                 NMSUtils.sendPacket(player, packet);
             }
-        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+            ex.printStackTrace();
         }
     }
 
     public enum Color {
-
         Blue, Green, Red
     }
 }

@@ -6,19 +6,21 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LocaleModule implements PluginInfoModule {
-
     @Override
     public void run(PluginInfo plugin) {
-        if (plugin.getJavaPlugin() == null || plugin.getSongodaId() <= 0) return;
-        JSONObject json = plugin.getJson();
+        if (plugin.getJavaPlugin() == null || plugin.getSongodaId() <= 0) {
+            return;
+        }
+
         try {
+            JSONObject json = plugin.getJson();
             JSONArray files = (JSONArray) json.get("neededFiles");
+
             for (Object o : files) {
                 JSONObject file = (JSONObject) o;
 
@@ -26,13 +28,14 @@ public class LocaleModule implements PluginInfoModule {
                     downloadLocale(plugin, (String) file.get("link"), (String) file.get("name"));
                 }
             }
-        } catch (IOException e) {
-            Logger.getLogger(LocaleModule.class.getName()).log(Level.INFO, "Failed to check for locale files: " + e.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(LocaleModule.class.getName()).log(Level.INFO, "Failed to check for locale files: " + ex.getMessage());
         }
     }
 
-    void downloadLocale(PluginInfo plugin, String link, String fileName) throws MalformedURLException, IOException {
+    void downloadLocale(PluginInfo plugin, String link, String fileName) throws IOException {
         URL url = new URL(link);
+
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         urlConnection.setRequestProperty("Accept", "*/*");

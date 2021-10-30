@@ -24,15 +24,11 @@ import java.util.Map;
  * TODO: does not restore inventory if server crashes while player inventory is open
  * Method to fix: save inv + ender slot to file, store paper in ender inv with name of cache file, check for paper item in slot when loading
  * Or just manually manage all inventories in a file and remove when restored
- *
- * @author jascotty2
- * @since 2019-08-25
  */
 public class DoubleGui extends Gui {
-
     protected boolean startStashed = true;
     protected int playerRows = 4;
-    protected Map<Player, ItemStack[]> stash = new HashMap();
+    protected Map<Player, ItemStack[]> stash = new HashMap<>();
 
     public DoubleGui() {
         super(GuiType.STANDARD);
@@ -111,67 +107,83 @@ public class DoubleGui extends Gui {
 
     public DoubleGui setPlayerUnlockedRange(int cellFirst, int cellLast, boolean open) {
         final int last = invOffset(cellLast);
+
         for (int cell = invOffset(cellFirst); cell <= last; ++cell) {
             unlockedCells.put(cell, open);
         }
+
         return this;
     }
 
     public DoubleGui setPlayerUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
         final int last = invOffset(cellColLast + cellRowLast * 9);
+
         for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
             unlockedCells.put(cell, true);
         }
+
         return this;
     }
 
     public DoubleGui setPlayerUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
         final int last = invOffset(cellColLast + cellRowLast * 9);
+
         for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
             unlockedCells.put(cell, open);
         }
+
         return this;
     }
 
     public DoubleGui setPlayerItem(int cell, ItemStack item) {
         cellItems.put(invOffset(cell), item);
+
         if (open && cell >= 0 && cell < 36) {
             cell = cell >= 27 ? cell - 27 : cell + 9;
+
             for (HumanEntity e : inventory.getViewers()) {
                 e.getInventory().setItem(cell, item);
             }
         }
+
         return this;
     }
 
     public DoubleGui setPlayerItem(int row, int col, ItemStack item) {
         int cell = col + row * 9;
         cellItems.put(invOffset(cell), item);
+
         if (open && cell >= 0 && cell < 36) {
             cell = cell >= 27 ? cell - 27 : cell + 9;
+
             for (HumanEntity e : inventory.getViewers()) {
                 e.getInventory().setItem(cell, item);
             }
         }
+
         return this;
     }
 
     public DoubleGui highlightPlayerItem(int cell) {
         final int invCell = invOffset(cell);
         ItemStack item = cellItems.get(invCell);
+
         if (item != null) {
             setPlayerItem(cell, ItemUtils.addGlow(item));
         }
+
         return this;
     }
 
     public DoubleGui highlightPlayerItem(int row, int col) {
         final int cell = col + row * 9;
         final int invCell = invOffset(cell);
+
         ItemStack item = cellItems.get(invCell);
         if (item != null) {
             setPlayerItem(cell, ItemUtils.addGlow(item));
         }
+
         return this;
     }
 
@@ -199,14 +211,17 @@ public class DoubleGui extends Gui {
         for (int cell = cellFirst; cell <= cellLast; ++cell) {
             setConditional(invOffset(cell), null, action);
         }
+
         return this;
     }
 
     public DoubleGui setPlayerActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, Clickable action) {
         final int last = cellColLast + cellRowLast * 9;
+
         for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
             setConditional(invOffset(cell), null, action);
         }
+
         return this;
     }
 
@@ -214,51 +229,61 @@ public class DoubleGui extends Gui {
         for (int cell = cellFirst; cell <= cellLast; ++cell) {
             setConditional(invOffset(cell), type, action);
         }
+
         return this;
     }
 
     public DoubleGui setPlayerActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, ClickType type, Clickable action) {
         final int last = cellColLast + cellRowLast * 9;
+
         for (int cell = cellColFirst + cellRowFirst * 9; cell <= last; ++cell) {
             setConditional(invOffset(cell), type, action);
         }
+
         return this;
     }
 
     public DoubleGui clearPlayerActions(int cell) {
-        conditionalButtons.remove(cell = invOffset(cell));
+        conditionalButtons.remove(invOffset(cell));
         return this;
     }
 
     public DoubleGui clearPlayerActions(int row, int col) {
         final int cell = invOffset(col + row * 9);
         conditionalButtons.remove(cell);
+
         return this;
     }
 
     public DoubleGui setPlayerButton(int cell, ItemStack item, Clickable action) {
         setPlayerItem(cell, item);
         setConditional(invOffset(cell), null, action);
+
         return this;
     }
 
     public DoubleGui setPlayerButton(int row, int col, ItemStack item, Clickable action) {
         final int cell = col + row * 9;
+
         setPlayerItem(cell, item);
         setConditional(invOffset(cell), null, action);
+
         return this;
     }
 
     public DoubleGui setPlayerButton(int cell, ItemStack item, ClickType type, Clickable action) {
         setItem(cell, item);
         setConditional(invOffset(cell), type, action);
+
         return this;
     }
 
     public DoubleGui setPlayerButton(int row, int col, ItemStack item, ClickType type, Clickable action) {
         final int cell = col + row * 9;
+
         setPlayerItem(cell, item);
         setConditional(invOffset(cell), type, action);
+
         return this;
     }
 
@@ -267,6 +292,7 @@ public class DoubleGui extends Gui {
         final int cell = event.getSlot(), offsetCell = clickOffset(cell);
         Map<ClickType, Clickable> conditionals = conditionalButtons.get(offsetCell);
         Clickable button;
+
         if (conditionals != null
                 && ((button = conditionals.get(event.getClick())) != null || (button = conditionals.get(null)) != null)) {
             button.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
@@ -274,7 +300,9 @@ public class DoubleGui extends Gui {
             // no event for this button
             return false;
         }
-        event.setCancelled(!unlockedCells.entrySet().stream().anyMatch(e -> offsetCell == e.getKey() && e.getValue()));
+
+        event.setCancelled(unlockedCells.entrySet().stream().noneMatch(e -> offsetCell == e.getKey() && e.getValue()));
+
         return true;
     }
 
@@ -283,6 +311,7 @@ public class DoubleGui extends Gui {
         if (dropper != null) {
             return dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
         }
+
         // do not allow by default
         return false;
     }
@@ -290,8 +319,9 @@ public class DoubleGui extends Gui {
     @Override
     public void onOpen(GuiManager manager, Player player) {
         // replace the player's inventory
-        if (startStashed)
+        if (startStashed) {
             stashItems(player);
+        }
 
         // other opening functions
         super.onOpen(manager, player);

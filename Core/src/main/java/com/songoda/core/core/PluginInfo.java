@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PluginInfo {
-
     protected final JavaPlugin javaPlugin;
     protected final int songodaId;
     protected final String coreIcon;
@@ -37,6 +36,7 @@ public final class PluginInfo {
 
     public void setLatestVersion(String latestVersion) {
         this.latestVersion = latestVersion;
+
         hasUpdate = latestVersion != null && !latestVersion.isEmpty() && !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
     }
 
@@ -82,6 +82,7 @@ public final class PluginInfo {
 
     public PluginInfoModule addModule(PluginInfoModule module) {
         modules.add(module);
+
         return module;
     }
 

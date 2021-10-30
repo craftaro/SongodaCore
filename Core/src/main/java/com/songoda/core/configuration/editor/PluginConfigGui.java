@@ -19,14 +19,10 @@ import java.util.Map;
 
 /**
  * Edit all configuration files for a specific plugin
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class PluginConfigGui extends SimplePagedGui {
-
     final JavaPlugin plugin;
-    LinkedHashMap<String, MemoryConfiguration> configs = new LinkedHashMap();
+    LinkedHashMap<String, MemoryConfiguration> configs = new LinkedHashMap<>();
 
     public PluginConfigGui(SongodaPlugin plugin) {
         this(plugin, null);
@@ -34,6 +30,7 @@ public class PluginConfigGui extends SimplePagedGui {
 
     public PluginConfigGui(SongodaPlugin plugin, Gui parent) {
         super(parent);
+
         this.plugin = plugin;
 
         // collect list of plugins
@@ -44,6 +41,7 @@ public class PluginConfigGui extends SimplePagedGui {
                 configs.put(cfg.getFile().getName(), cfg);
             }
         }
+
         init();
     }
 
@@ -61,21 +59,22 @@ public class PluginConfigGui extends SimplePagedGui {
         try {
             // can we also grab extra config from this mysterious plugin?
             Object more = plugin.getClass().getDeclaredMethod("getExtraConfig").invoke(plugin);
-            if (more != null && more instanceof List && !((List) more).isEmpty()) {
+            if (more instanceof List && !((List<?>) more).isEmpty()) {
                 try {
                     // if we have the getExtraConfig function, we should also be able to get the file
-                    Method method_Config_getFile = ((List) more).get(0).getClass().getDeclaredMethod("getFile");
-                    for (Object cfg : ((List) more)) {
+                    Method method_Config_getFile = ((List<?>) more).get(0).getClass().getDeclaredMethod("getFile");
+                    for (Object cfg : ((List<?>) more)) {
                         configs.put(((File) method_Config_getFile.invoke(cfg)).getName(), (MemoryConfiguration) cfg);
                     }
                 } catch (Exception ex) {
                     // include a failsafe, I guess
-                    ((List) more).forEach(cfg -> configs.put("(File " + configs.size() + ")", (MemoryConfiguration) cfg));
+                    ((List<?>) more).forEach(cfg -> configs.put("(File " + configs.size() + ")", (MemoryConfiguration) cfg));
                 }
             }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             // I guess not!
         }
+
         init();
     }
 

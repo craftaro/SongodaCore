@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Lootable {
-
     // The key applicable to this lootable.
     @SerializedName("Type")
     private final String type;
@@ -22,6 +21,7 @@ public class Lootable {
 
     public Lootable(String key, Loot... loots) {
         this.type = key;
+
         registeredLoot.addAll(Arrays.asList(loots));
     }
 

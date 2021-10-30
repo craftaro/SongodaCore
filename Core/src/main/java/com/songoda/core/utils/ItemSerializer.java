@@ -15,7 +15,6 @@ import java.util.List;
  * Class based off of https://gist.github.com/graywolf336/8153678
  */
 public class ItemSerializer {
-
     /**
      * A method to serialize an {@link ItemStack} list to Base64 String.
      *
@@ -32,14 +31,15 @@ public class ItemSerializer {
             dataOutput.writeInt(items.size());
 
             // Save every element in the list
-            for (ItemStack item : items)
+            for (ItemStack item : items) {
                 dataOutput.writeObject(item);
+            }
 
             // Serialize that array
             dataOutput.close();
             return Base64Coder.encodeLines(outputStream.toByteArray());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return null;
@@ -60,13 +60,15 @@ public class ItemSerializer {
             List<ItemStack> items = new ArrayList<>();
 
             // Read the serialized itemstack list
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < length; ++i) {
                 items.add((ItemStack) dataInput.readObject());
+            }
 
             dataInput.close();
+
             return items;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return null;
@@ -81,10 +83,11 @@ public class ItemSerializer {
      */
     public static ItemStack deserializeItem(byte[] data) {
         ItemStack item = null;
+
         try (BukkitObjectInputStream stream = new BukkitObjectInputStream(new ByteArrayInputStream(data))) {
             item = (ItemStack) stream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
 
         return item;
@@ -100,9 +103,10 @@ public class ItemSerializer {
     public static byte[] serializeItem(ItemStack item) {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); BukkitObjectOutputStream bukkitStream = new BukkitObjectOutputStream(stream)) {
             bukkitStream.writeObject(item);
+
             return stream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return null;

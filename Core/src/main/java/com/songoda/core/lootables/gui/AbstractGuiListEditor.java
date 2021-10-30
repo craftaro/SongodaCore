@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractGuiListEditor extends Gui {
-
     protected final Loot loot;
     private final Gui returnGui;
 
@@ -20,12 +19,15 @@ public abstract class AbstractGuiListEditor extends Gui {
         super(1, returnGui);
         this.returnGui = returnGui;
         this.loot = loot;
+
         setDefaultItem(null);
+
         paint();
     }
 
     public void paint() {
         List<String> lore = getData() == null ? new ArrayList<>() : getData();
+
         setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
@@ -46,7 +48,7 @@ public abstract class AbstractGuiListEditor extends Gui {
                         String validated = validate(gui.getInputText());
                         if (validated != null) {
                             lore.add(validated);
-                            updateData(lore.isEmpty() ? null : lore);
+                            updateData(lore);
                             e.player.closeInventory();
                             paint();
                         }

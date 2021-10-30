@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class LandsProtection extends Protection {
-
     private final LandsIntegration landsIntegration;
 
     public LandsProtection(Plugin plugin) {
         super(plugin);
+
         this.landsIntegration = new LandsIntegration(plugin);
     }
 
@@ -33,6 +33,7 @@ public class LandsProtection extends Protection {
 
     private boolean hasPerms(Player player, Location location, RoleSetting roleSetting) {
         Area area = landsIntegration.getAreaByLoc(location);
+
         if (area == null) {
             return true;
         }

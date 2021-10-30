@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class ChatPrompt implements Listener {
-
     private static final List<UUID> registered = new ArrayList<>();
 
     private final Plugin plugin;
@@ -29,6 +28,7 @@ public class ChatPrompt implements Listener {
     private ChatPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
         this.plugin = plugin;
         this.handler = hander;
+
         registered.add(player.getUniqueId());
     }
 
@@ -40,8 +40,11 @@ public class ChatPrompt implements Listener {
         ChatPrompt prompt = new ChatPrompt(plugin, player, hander);
         prompt.startListener(plugin);
         player.closeInventory();
-        if (message != null)
+
+        if (message != null) {
             player.sendMessage(message);
+        }
+
         return prompt;
     }
 
@@ -69,18 +72,23 @@ public class ChatPrompt implements Listener {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         onClose.onClose(), 0L);
             }
+
             HandlerList.unregisterAll(listener);
             player.sendMessage("Your action has timed out.");
         }, ticks);
+
         return this;
     }
 
     private void startListener(Plugin plugin) {
         this.listener = new Listener() {
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onChat(AsyncPlayerChatEvent event) {
                 Player player = event.getPlayer();
-                if (!ChatPrompt.isRegistered(player)) return;
+
+                if (!ChatPrompt.isRegistered(player)) {
+                    return;
+                }
 
                 ChatPrompt.unregister(player);
                 event.setCancelled(true);
@@ -88,6 +96,7 @@ public class ChatPrompt implements Listener {
                 ChatConfirmEvent chatConfirmEvent = new ChatConfirmEvent(player, event.getMessage());
 
                 player.sendMessage("\u00BB " + event.getMessage());
+
                 try {
                     handler.onChat(chatConfirmEvent);
                 } catch (Throwable t) {
@@ -95,30 +104,33 @@ public class ChatPrompt implements Listener {
                 }
 
                 if (onClose != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                            onClose.onClose(), 0L);
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onClose.onClose(), 0L);
                 }
+
                 HandlerList.unregisterAll(listener);
                 Bukkit.getScheduler().cancelTask(taskId);
             }
 
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onCancel(PlayerCommandPreprocessEvent event) {
                 Player player = event.getPlayer();
-                if (!ChatPrompt.isRegistered(player)) return;
+
+                if (!ChatPrompt.isRegistered(player)) {
+                    return;
+                }
 
                 ChatPrompt.unregister(player);
 
-                if (event.getMessage().toLowerCase().startsWith("/cancel"))
+                if (event.getMessage().toLowerCase().startsWith("/cancel")) {
                     event.setCancelled(true);
+                }
 
                 if (onCancel != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                            onCancel.onCancel(), 0L);
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onCancel.onCancel(), 0L);
                 } else if (onClose != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                            onClose.onClose(), 0L);
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onClose.onClose(), 0L);
                 }
+
                 HandlerList.unregisterAll(listener);
                 Bukkit.getScheduler().cancelTask(taskId);
             }
@@ -127,20 +139,19 @@ public class ChatPrompt implements Listener {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public static interface ChatConfirmHandler {
+    public interface ChatConfirmHandler {
         void onChat(ChatConfirmEvent event);
     }
 
-    public static interface OnClose {
+    public interface OnClose {
         void onClose();
     }
 
-    public static interface OnCancel {
+    public interface OnCancel {
         void onCancel();
     }
 
     public static class ChatConfirmEvent {
-
         private final Player player;
         private final String message;
 

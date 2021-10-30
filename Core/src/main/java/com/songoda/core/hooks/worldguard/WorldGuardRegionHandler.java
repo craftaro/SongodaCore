@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class WorldGuardRegionHandler {
-
     static boolean wgPlugin;
     static Object worldGuardPlugin;
     static boolean wg_v7 = false;
@@ -37,7 +36,7 @@ public class WorldGuardRegionHandler {
     static Method legacy_getApplicableRegions_Vector = null;
 
     static void init() {
-        if ((wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null)) {
+        if (wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null) {
             // a number of flags were introduced in 7.x that aren't in 5 or 6
             try {
                 // if this class exists, we're on 7.x
@@ -96,16 +95,21 @@ public class WorldGuardRegionHandler {
         if (worldGuardPlugin == null) {
             init();
         }
+
         if (!wgPlugin || c == null) {
-            return Collections.EMPTY_LIST;
-        } else if (legacy_v62 || legacy_v60 || legacy_v5) {
+            return Collections.emptyList();
+        }
+
+        if (legacy_v62 || legacy_v60 || legacy_v5) {
             return getRegionNamesLegacy(c);
         }
 
         RegionManager worldManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(c.getWorld()));
+
         if (worldManager == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
+
         ProtectedCuboidRegion chunkRegion = new ProtectedCuboidRegion("__TEST__",
                 BlockVector3.at(c.getX() << 4, c.getWorld().getMaxHeight(), c.getZ() << 4),
                 BlockVector3.at((c.getX() << 4) + 15, 0, (c.getZ() << 4) + 15));
@@ -126,6 +130,7 @@ public class WorldGuardRegionHandler {
                 parent = parent.getParent();
             }
         }
+
         regions.removeAll(parentNames);
 
         return regions;
@@ -134,10 +139,12 @@ public class WorldGuardRegionHandler {
     private static List<String> getRegionNamesLegacy(Chunk c) {
         try {
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
+
             if (worldManager == null) {
                 return null;
             }
+
             // Create a legacy ProtectedCuboidRegion
             Object chunkRegion = legacy_newProtectedCuboidRegion.newInstance("__TEST__",
                     legacy_newblockVector.newInstance(c.getX() << 4, c.getWorld().getMaxHeight(), c.getZ() << 4),
@@ -162,29 +169,34 @@ public class WorldGuardRegionHandler {
                     parent = parent.getParent();
                 }
             }
+
             regions.removeAll(parentNames);
 
             return regions;
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab regions from WorldGuard", ex);
         }
-        return Collections.EMPTY_LIST;
+
+        return Collections.emptyList();
     }
 
     public static List<String> getRegionNames(Location loc) {
         if (worldGuardPlugin == null) {
             init();
         }
+
         if (!wgPlugin || loc == null) {
-            return Collections.EMPTY_LIST;
-        } else if (legacy_v62 || legacy_v60 || legacy_v5) {
+            return Collections.emptyList();
+        }
+
+        if (legacy_v62 || legacy_v60 || legacy_v5) {
             return getRegionNamesLegacy(loc);
         }
 
         RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
 
         if (regionManager == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<String> regions = new ArrayList<>();
@@ -203,6 +215,7 @@ public class WorldGuardRegionHandler {
                 parent = parent.getParent();
             }
         }
+
         regions.removeAll(parentNames);
 
         return regions;
@@ -211,9 +224,9 @@ public class WorldGuardRegionHandler {
     private static List<String> getRegionNamesLegacy(Location loc) {
         try {
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, loc.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, loc.getWorld());
             if (worldManager == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
 
             // create a vector object
@@ -237,12 +250,14 @@ public class WorldGuardRegionHandler {
                     parent = parent.getParent();
                 }
             }
+
             regions.removeAll(parentNames);
 
             return regions;
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab regions from WorldGuard", ex);
         }
-        return Collections.EMPTY_LIST;
+
+        return Collections.emptyList();
     }
 }

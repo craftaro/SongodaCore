@@ -8,7 +8,6 @@ import org.bukkit.OfflinePlayer;
  * A convenience class for static access to an Economy HookManager
  */
 public class EconomyManager {
-
     private static char currencySymbol = '$';
 
     private static final HookManager<Economy> manager = new HookManager(Economy.class);
@@ -48,8 +47,6 @@ public class EconomyManager {
     /**
      * Get the name of the economy plugin being used. <br />
      * NOTE: using a default economy assumes that this library is shaded
-     *
-     * @return
      */
     public static String getName() {
         return manager.getName();
@@ -119,7 +116,7 @@ public class EconomyManager {
     }
 
     /**
-     * Change the curency symbl used in the #formatEconomy method.
+     * Change the curency symbol used in the #formatEconomy method.
      *
      * @param currencySymbol the new symbol
      */
@@ -128,7 +125,7 @@ public class EconomyManager {
     }
 
     /**
-     * Change the curency symbl used in the #formatEconomy method.
+     * Change the curency symbol used in the #formatEconomy method.
      *
      * @param currencySymbol the new symbol
      */

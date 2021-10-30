@@ -51,7 +51,6 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
      */
     @Override
     public void tick() throws NoSuchFieldException, IllegalAccessException, InvocationTargetException {
-
         BlockPosition blockposition = spawner.b();
 
         if (spawner.a().isClientSide) {
@@ -68,68 +67,69 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
 
             ReflectionUtils.setFieldValue(spawner, "f", spawnerE);
             ReflectionUtils.setFieldValue(spawner, "e", (spawnerE + (double) (1000F / ((float) spawner.spawnDelay + 200F))) % 360D);
-        } else {
-            if (spawner.spawnDelay == -1) {
-                delay(spawner);
+            return;
+        }
+
+        if (spawner.spawnDelay == -1) {
+            delay(spawner);
+        }
+
+        if (spawner.spawnDelay > 0) {
+            --spawner.spawnDelay;
+            return;
+        }
+
+        boolean flag = false;
+        int i = 0;
+
+        int spawnCount = (int) ReflectionUtils.getFieldValue(spawner, "spawnCount");
+        int spawnRange = (int) ReflectionUtils.getFieldValue(spawner, "spawnRange");
+        int maxNearbyEntities = (int) ReflectionUtils.getFieldValue(spawner, "maxNearbyEntities");
+
+        while (true) {
+            if (i >= spawnCount) {
+                if (flag) {
+                    delay(spawner);
+                }
+                break;
             }
 
-            if (spawner.spawnDelay > 0) {
-                --spawner.spawnDelay;
+            Entity entity = EntityTypes.createEntityByName(spawner.getMobName(), spawner.a());
+            if (entity == null) {
                 return;
             }
 
-            boolean flag = false;
-            int i = 0;
-
-            int spawnCount = (int) ReflectionUtils.getFieldValue(spawner, "spawnCount");
-            int spawnRange = (int) ReflectionUtils.getFieldValue(spawner, "spawnRange");
-            int maxNearbyEntities = (int) ReflectionUtils.getFieldValue(spawner, "maxNearbyEntities");
-
-            while (true) {
-                if (i >= spawnCount) {
-                    if (flag) {
-                        delay(spawner);
-                    }
-                    break;
-                }
-
-                Entity entity = EntityTypes.createEntityByName(spawner.getMobName(), spawner.a());
-                if (entity == null) {
-                    return;
-                }
-
-                int j = spawner.a().a(entity.getClass(), (new AxisAlignedBB(
-                        blockposition.getX(),
-                        blockposition.getY(),
-                        blockposition.getZ(),
-                        blockposition.getX() + 1,
-                        blockposition.getY() + 1,
-                        blockposition.getZ() + 1))
-                        .grow(spawnRange, spawnRange, spawnRange)).size();
-                if (j >= maxNearbyEntities) {
-                    delay(spawner);
-                    return;
-                }
-
-                double d0 = (double) blockposition.getX() + (spawner.a().random.nextDouble() - spawner.a().random.nextDouble()) * (double) spawnRange + .5D;
-                double d3 = blockposition.getY() + spawner.a().random.nextInt(3) - 1;
-                double d4 = (double) blockposition.getZ() + (spawner.a().random.nextDouble() - spawner.a().random.nextDouble()) * (double) spawnRange + .5D;
-
-                EntityInsentient entityinsentient = entity instanceof EntityInsentient ? (EntityInsentient) entity : null;
-                entity.setPositionRotation(d0, d3, d4, spawner.a().random.nextFloat() * 360F, 0F);
-
-                if (entityinsentient == null || entityinsentient.bR() && entityinsentient.canSpawn()) {
-                    aEntityBooleanMethod.invoke(spawner, entity, true);
-                    spawner.a().triggerEffect(2004, blockposition, 0);
-                    if (entityinsentient != null) {
-                        entityinsentient.y();
-                    }
-
-                    flag = true;
-                }
-
-                ++i;
+            int j = spawner.a().a(entity.getClass(), (new AxisAlignedBB(
+                    blockposition.getX(),
+                    blockposition.getY(),
+                    blockposition.getZ(),
+                    blockposition.getX() + 1,
+                    blockposition.getY() + 1,
+                    blockposition.getZ() + 1))
+                    .grow(spawnRange, spawnRange, spawnRange)).size();
+            if (j >= maxNearbyEntities) {
+                delay(spawner);
+                return;
             }
+
+            double d0 = (double) blockposition.getX() + (spawner.a().random.nextDouble() - spawner.a().random.nextDouble()) * (double) spawnRange + .5D;
+            double d3 = blockposition.getY() + spawner.a().random.nextInt(3) - 1;
+            double d4 = (double) blockposition.getZ() + (spawner.a().random.nextDouble() - spawner.a().random.nextDouble()) * (double) spawnRange + .5D;
+
+            EntityInsentient entityinsentient = entity instanceof EntityInsentient ? (EntityInsentient) entity : null;
+            entity.setPositionRotation(d0, d3, d4, spawner.a().random.nextFloat() * 360F, 0F);
+
+            if (entityinsentient == null || entityinsentient.bR() && entityinsentient.canSpawn()) {
+                aEntityBooleanMethod.invoke(spawner, entity, true);
+                spawner.a().triggerEffect(2004, blockposition, 0);
+                if (entityinsentient != null) {
+                    entityinsentient.y();
+                }
+
+                flag = true;
+            }
+
+            ++i;
         }
     }
 

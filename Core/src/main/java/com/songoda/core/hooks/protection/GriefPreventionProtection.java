@@ -8,38 +8,44 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class GriefPreventionProtection extends Protection {
-
     private final DataStore dataStore;
 
     public GriefPreventionProtection(Plugin plugin) {
         super(plugin);
+
         this.dataStore = GriefPrevention.instance.dataStore;
     }
 
     @Override
     public boolean canPlace(Player player, Location location) {
         Claim claim = getClaim(location);
+
         if (claim == null) {
             return true;
         }
+
         return claim.allowBuild(player, location.getBlock().getType()) == null;
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
         Claim claim = getClaim(location);
+
         if (claim == null) {
             return true;
         }
+
         return claim.allowBreak(player, location.getBlock().getType()) == null;
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
         Claim claim = getClaim(location);
+
         if (claim == null) {
             return true;
         }
+
         return claim.allowContainers(player) == null;
     }
 

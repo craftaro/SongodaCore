@@ -14,13 +14,13 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
-
     private static Field fieldG;
 
     private Entity nmsEntity;
 
     public NBTEntityImpl(NBTTagCompound entityNBT, Entity nmsEntity) {
         super(entityNBT);
+
         this.nmsEntity = nmsEntity;
     }
 
@@ -28,8 +28,8 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
         try {
             fieldG = EntityTypes.class.getDeclaredField("g");
             fieldG.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -51,11 +51,13 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
                 spawned.setLocation(location.getX(), location.getY(), location.getZ(),
                         location.getPitch(), location.getYaw());
                 nmsEntity = spawned;
+
                 return entity;
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 
@@ -79,7 +81,9 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     @Override
     public void addExtras() {
         String key = EntityTypes.b(nmsEntity); // Changed in 1.12
-        if (key != null)
+
+        if (key != null) {
             compound.setString("entity_type", key); // Changed in 1.13
+        }
     }
 }

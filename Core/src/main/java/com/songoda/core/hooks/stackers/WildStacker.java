@@ -8,7 +8,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
 public class WildStacker extends Stacker {
-
     final Plugin plugin;
 
     public WildStacker(Plugin plugin) {
@@ -70,9 +69,11 @@ public class WildStacker extends Stacker {
     @Override
     public int getMinStackSize(EntityType type) {
         int min = plugin.getConfig().getInt("entities.minimum-limits." + type.name(), -1);
+
         if (min == -1) {
             min = plugin.getConfig().getInt("entities.minimum-limits.all", -1);
         }
+
         return min == -1 ? 0 : min;
     }
 }

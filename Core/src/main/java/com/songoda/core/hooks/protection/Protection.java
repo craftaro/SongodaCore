@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public abstract class Protection implements Hook {
-
     protected final Plugin plugin;
 
     public Protection(Plugin plugin) {

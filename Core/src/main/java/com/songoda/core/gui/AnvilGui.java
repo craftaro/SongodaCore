@@ -17,12 +17,8 @@ import java.util.List;
 
 /**
  * Anvil GUI for text prompts
- *
- * @author jascotty2
- * @since 2019-09-15
  */
 public class AnvilGui extends Gui {
-
     final Player player;
     CustomAnvil anvil;
     List<String> endPrompt = null;
@@ -33,6 +29,7 @@ public class AnvilGui extends Gui {
 
     public AnvilGui(Player player, Gui parent) {
         super(parent);
+
         this.player = player;
     }
 
@@ -78,9 +75,12 @@ public class AnvilGui extends Gui {
     }
 
     void updateOutputPrompt() {
-        final ItemStack in;
-        if (endPrompt != null && (in = cellItems.get(0)) != null) {
-            setItem(2, GuiUtils.createButtonItem(in, endPrompt));
+        if (endPrompt != null) {
+            ItemStack in = cellItems.get(0);
+
+            if (in != null) {
+                setItem(2, GuiUtils.createButtonItem(in, endPrompt));
+            }
         }
     }
 
@@ -99,15 +99,24 @@ public class AnvilGui extends Gui {
 
         createInventory();
         ItemStack item;
-        if ((item = cellItems.get(0)) != null) {
+        if (cellItems.containsKey(0)) {
+            item = cellItems.get(0);
+
             inventory.setItem(0, item);
-        } else if ((item = cellItems.get(1)) != null) {
+        } else if (cellItems.containsKey(1)) {
+            item = cellItems.get(1);
+
             inventory.setItem(1, item);
         } else if (!acceptsItems) {
-            cellItems.put(0, item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " "));
+            item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " ");
+
+            cellItems.put(0, item);
             inventory.setItem(0, item);
         }
-        if ((item = cellItems.get(2)) != null) {
+
+        if (cellItems.containsKey(2)) {
+            item = cellItems.get(2);
+
             inventory.setItem(2, item);
         }
 
@@ -117,11 +126,14 @@ public class AnvilGui extends Gui {
     @Override
     protected void createInventory() {
         AnvilCore nms = NmsManager.getAnvil();
+
         if (nms != null) {
             anvil = nms.createAnvil(player, new GuiHolder(guiManager, this));
             anvil.setCustomTitle(title);
             anvil.setLevelCost(0);
+
             inventory = anvil.getInventory();
+
             anvil.setOnChange(this::updateOutputPrompt);
         }
     }

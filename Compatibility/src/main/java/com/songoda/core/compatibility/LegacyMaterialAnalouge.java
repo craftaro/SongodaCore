@@ -8,12 +8,8 @@ import java.util.Map;
 
 /**
  * Near-Materials for older servers 1.7+
- *
- * @author jascotty2
- * @since 2019-08-23
  */
 public enum LegacyMaterialAnalouge {
-
     /* 1.17 */
     // ToDo: Improve legal materials.
     AMETHYST_BLOCK(ServerVersion.V1_17, "STONE"),
@@ -298,7 +294,7 @@ public enum LegacyMaterialAnalouge {
     BAMBOO(ServerVersion.V1_14, "SUGAR_CANE", "SUGAR_CANE_BLOCK"),
     BAMBOO_SAPLING(ServerVersion.V1_14, "SUGAR_CANE"),
     BARREL(ServerVersion.V1_14, "TRAPPED_CHEST"),
-    BARRIER(ServerVersion.V1_8, "STAINED_GLASS", (byte) 14), // plain glass would make more sense if this were to be a block..
+    BARRIER(ServerVersion.V1_8, "STAINED_GLASS", (byte) 14), // plain glass would make more sense if this were to be a block...
     BEETROOT(ServerVersion.V1_9, "RAW_BEEF"),
     BEETROOT_SEEDS(ServerVersion.V1_9, "SEEDS"),
     BEETROOT_SOUP(ServerVersion.V1_9, "MUSHROOM_SOUP"),
@@ -420,7 +416,7 @@ public enum LegacyMaterialAnalouge {
     DIORITE_WALL(ServerVersion.V1_14, "COBBLESTONE_WALL", "COBBLE_WALL"),
     DOLPHIN_SPAWN_EGG(ServerVersion.V1_13, "MONSTER_EGG", (byte) 0),
     DONKEY_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 100),
-    DRAGON_BREATH(ServerVersion.V1_9, "POTION", (byte) 0), // or maybe glowstone..
+    DRAGON_BREATH(ServerVersion.V1_9, "POTION", (byte) 0), // or maybe glowstone...
     DRAGON_HEAD(ServerVersion.V1_9, "SKULL_ITEM", (byte) 4),
     DRAGON_WALL_HEAD(ServerVersion.V1_9, "SKULL", (byte) 4),
     DRIED_KELP(ServerVersion.V1_13, "POTATO_ITEM"),
@@ -714,7 +710,7 @@ public enum LegacyMaterialAnalouge {
     TUBE_CORAL_FAN(ServerVersion.V1_13, "WOOL", (byte) 11),
     TUBE_CORAL_WALL_FAN(ServerVersion.V1_13, "WOOL", (byte) 11),
     TURTLE_EGG(ServerVersion.V1_13, "DRAGON_EGG"),
-    TURTLE_HELMET(ServerVersion.V1_13, "LEATHER_HELMET"), // would be cool to color it green..
+    TURTLE_HELMET(ServerVersion.V1_13, "LEATHER_HELMET"), // would be cool to color it green...
     TURTLE_SPAWN_EGG(ServerVersion.V1_13, "MONSTER_EGG", (byte) 60),
     VEX_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
     VINDICATOR_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
@@ -739,7 +735,6 @@ public enum LegacyMaterialAnalouge {
     YELLOW_WALL_BANNER(ServerVersion.V1_8, "WALL_SIGN"),
     ZOMBIE_HORSE_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
     ZOMBIE_VILLAGER_SPAWN_EGG(ServerVersion.V1_11, "MONSTER_EGG", (byte) 0),
-
     ;
 
     final ServerVersion versionLessThan;
@@ -753,7 +748,7 @@ public enum LegacyMaterialAnalouge {
     final Byte data;
 
     // map to speed up name->material lookups
-    private static final Map<String, LegacyMaterialAnalouge> lookupMap = new HashMap();
+    private static final Map<String, LegacyMaterialAnalouge> lookupMap = new HashMap<>();
 
     static {
         for (LegacyMaterialAnalouge m : values()) {
@@ -765,35 +760,35 @@ public enum LegacyMaterialAnalouge {
         return lookupMap.get(material);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData) {
         this(versionLessThan, null, legacyMaterial, legacyData, null, null, null);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial) {
         this(versionLessThan, null, legacyMaterial, null, null, null, null);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial) {
         this(versionLessThan, modernAnalouge, legacyMaterial, null, null, null, null);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, byte legacyData) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, byte legacyData) {
         this(versionLessThan, modernAnalouge, legacyMaterial, legacyData, null, null, null);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
         this(versionLessThan, null, legacyMaterial, legacyData, legacyMinimum, compatMaterial, compatData);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
         this(versionLessThan, null, legacyMaterial, null, legacyMinimum, compatMaterial, compatData);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial) {
         this(versionLessThan, null, legacyMaterial, legacyData, legacyMinimum, compatMaterial, null);
     }
 
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial) {
         this(versionLessThan, null, legacyMaterial, null, legacyMinimum, compatMaterial, null);
     }
 
@@ -803,7 +798,7 @@ public enum LegacyMaterialAnalouge {
      * @param legacyMaterial  pre-1.13 material name
      * @param legacyData      data for defining specific legacy items
      */
-    private LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, Byte legacyData, ServerVersion legacyMinimum, String compatMaterial, Byte compatData) {
+    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, Byte legacyData, ServerVersion legacyMinimum, String compatMaterial, Byte compatData) {
         this.versionLessThan = versionLessThan;
         this.modernMaterial = modernAnalouge;
         this.legacyMaterial = legacyMaterial;
@@ -822,11 +817,8 @@ public enum LegacyMaterialAnalouge {
                 // use legacy material if on legacy
                 material = Material.getMaterial(legacyMaterial);
                 data = legacyData;
-            } else if (modernMaterial != null) {
-                material = Material.getMaterial(modernMaterial);
-                data = null;
             } else {
-                material = null;
+                material = Material.getMaterial(modernMaterial);
                 data = null;
             }
         } else {
@@ -851,6 +843,7 @@ public enum LegacyMaterialAnalouge {
         if (material == null) {
             return null;
         }
+
         return data != null ? new ItemStack(material, 1, data) : new ItemStack(material);
     }
 }

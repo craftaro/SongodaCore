@@ -9,7 +9,6 @@ import org.bukkit.block.Block;
  * A convenience class for static access to a Log HookManager
  */
 public class LogManager {
-
     private static final HookManager<Log> manager = new HookManager(Log.class);
 
     /**
@@ -47,8 +46,6 @@ public class LogManager {
     /**
      * Get the name of the log plugin being used. <br />
      * NOTE: using a default log assumes that this library is shaded
-     *
-     * @return
      */
     public static String getName() {
         return manager.getName();
@@ -62,8 +59,9 @@ public class LogManager {
      * @param block  the block that is placed
      */
     public static void logPlacement(OfflinePlayer player, Block block) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().logPlacement(player, block);
+        }
     }
 
     /**
@@ -73,8 +71,9 @@ public class LogManager {
      * @param player player to commit actionremvedplaced
      */
     public static void logRemoval(OfflinePlayer player, Block block) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().logRemoval(player, block);
+        }
     }
 
     /**
@@ -85,7 +84,8 @@ public class LogManager {
      * @param location the location that is interacted with
      */
     public static void logInteraction(OfflinePlayer player, Location location) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().logInteraction(player, location);
+        }
     }
 }

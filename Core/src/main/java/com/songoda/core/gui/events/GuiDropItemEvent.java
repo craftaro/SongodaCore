@@ -14,6 +14,7 @@ public class GuiDropItemEvent extends GuiEvent {
 
     public GuiDropItemEvent(GuiManager manager, Gui gui, Player player, InventoryClickEvent event) {
         super(manager, gui, player);
+
         this.cursor = event.getCursor();
         this.clickType = event.getClick();
         this.event = event;

@@ -8,12 +8,8 @@ import java.util.Map;
 /**
  * Starting in Minecraft 1.13, separate materials for blocks and items were
  * phased out. This provides a translation for those values.
- *
- * @author jascotty2
- * @since 2019-09-12
  */
 public enum LegacyMaterialBlockType {
-
     OAK_LEAVES("LEAVES", (byte) 8, true),
     SPRUCE_LEAVES("LEAVES", (byte) 9, true),
     BIRCH_LEAVES("LEAVES", (byte) 10, true),
@@ -56,8 +52,8 @@ public enum LegacyMaterialBlockType {
     final String alternateBlockMaterialName;
     final Material blockMaterial, alternateBlockMaterial;
     final boolean requiresData; // some blocks require data to render properly (double blocks)
-    final static Map<String, LegacyMaterialBlockType> lookupTable = new HashMap();
-    final static Map<String, LegacyMaterialBlockType> reverseLookupTable = new HashMap();
+    final static Map<String, LegacyMaterialBlockType> lookupTable = new HashMap<>();
+    final static Map<String, LegacyMaterialBlockType> reverseLookupTable = new HashMap<>();
 
     static {
         for (LegacyMaterialBlockType t : values()) {
@@ -69,23 +65,23 @@ public enum LegacyMaterialBlockType {
         }
     }
 
-    private LegacyMaterialBlockType(String blockMaterial) {
+    LegacyMaterialBlockType(String blockMaterial) {
         this(blockMaterial, (byte) -1, null, false);
     }
 
-    private LegacyMaterialBlockType(String blockMaterial, boolean requiresData) {
+    LegacyMaterialBlockType(String blockMaterial, boolean requiresData) {
         this(blockMaterial, (byte) -1, null, requiresData);
     }
 
-    private LegacyMaterialBlockType(String blockMaterial, byte data, boolean requiresData) {
+    LegacyMaterialBlockType(String blockMaterial, byte data, boolean requiresData) {
         this(blockMaterial, data, null, requiresData);
     }
 
-    private LegacyMaterialBlockType(String blockMaterial, String alternateMaterial) {
+    LegacyMaterialBlockType(String blockMaterial, String alternateMaterial) {
         this(blockMaterial, (byte) -1, alternateMaterial, false);
     }
 
-    private LegacyMaterialBlockType(String blockMaterial, byte data, String alternateMaterial, boolean requiresData) {
+    LegacyMaterialBlockType(String blockMaterial, byte data, String alternateMaterial, boolean requiresData) {
         this.blockMaterialName = blockMaterial;
         this.alternateBlockMaterialName = alternateMaterial;
         this.requiresData = requiresData;

@@ -7,6 +7,7 @@ public class ReflectionUtils {
         throw new IllegalStateException("Utility class");
     }
 
+    @SuppressWarnings("deprecation")
     public static Object getFieldValue(Object instance, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         Field f = getField(instance, fieldName);
         boolean accessible = f.isAccessible();
@@ -20,6 +21,7 @@ public class ReflectionUtils {
         return result;
     }
 
+    @SuppressWarnings("deprecation")
     public static void setFieldValue(Object instance, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
         Field f = getField(instance, fieldName);
         boolean accessible = f.isAccessible();

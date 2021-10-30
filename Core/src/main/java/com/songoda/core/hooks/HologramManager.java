@@ -11,7 +11,6 @@ import java.util.Map;
  * A convenience class for static access to a Holograms HookManager
  */
 public class HologramManager {
-
     private static final HookManager<Holograms> manager = new HookManager(Holograms.class);
 
     /**
@@ -49,37 +48,44 @@ public class HologramManager {
     }
 
     public static void createHologram(Location location, String line) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().createHologram(location, line);
+        }
     }
 
     public static void createHologram(Location location, List<String> lines) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().createHologram(location, lines);
+        }
     }
 
     public static void removeHologram(Location location) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().removeHologram(location);
+        }
     }
 
     public static void removeAllHolograms() {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().removeAllHolograms();
+        }
     }
 
     public static void updateHologram(Location location, String line) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().updateHologram(location, line);
+        }
     }
 
     public static void updateHologram(Location location, List<String> lines) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().updateHologram(location, lines);
+        }
     }
 
     public static void bulkUpdateHolograms(Map<Location, List<String>> holograms) {
-        if (manager.isEnabled())
+        if (manager.isEnabled()) {
             manager.getCurrentHook().bulkUpdateHolograms(holograms);
+        }
     }
 }

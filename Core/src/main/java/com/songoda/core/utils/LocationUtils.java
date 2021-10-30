@@ -3,9 +3,13 @@ package com.songoda.core.utils;
 import org.bukkit.Location;
 
 public class LocationUtils {
-
+    /**
+     * Compares the block coordinates of two locations <strong>ignoring the world</strong>
+     */
     public static boolean isLocationMatching(Location location1, Location location2) {
-        return location1.getBlockX() == location2.getBlockX() && location1.getBlockY() == location2.getBlockY() && location1.getBlockZ() == location2.getBlockZ();
+        return location1.getBlockX() == location2.getBlockX() &&
+                location1.getBlockY() == location2.getBlockY() &&
+                location1.getBlockZ() == location2.getBlockZ();
     }
 
     public static boolean isInArea(Location l, Location pos1, Location pos2) {

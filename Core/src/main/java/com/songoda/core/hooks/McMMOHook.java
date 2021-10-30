@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 public class McMMOHook {
-
     static boolean canHook = false;
 
     static {
@@ -16,7 +15,7 @@ public class McMMOHook {
             // if this class exists, we're good to use McMMO
             Class.forName("com.gmail.nossr50.api.AbilityAPI");
             canHook = true;
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ignore) {
         }
     }
 
@@ -185,46 +184,46 @@ public class McMMOHook {
     }
 
     public static boolean hasHerbalismDoubleDrops(Player player) {
-        return canHook ? McMMOHandler.hasHerbalismDoubleDrops(player) : false;
+        return canHook && McMMOHandler.hasHerbalismDoubleDrops(player);
     }
 
     public static boolean hasMiningDoubleDrops(Player player) {
-        return canHook ? McMMOHandler.hasMiningDoubleDrops(player) : false;
+        return canHook && McMMOHandler.hasMiningDoubleDrops(player);
     }
 
     public static boolean hasWoodcuttingDoubleDrops(Player player) {
-        return canHook ? McMMOHandler.hasWoodcuttingDoubleDrops(player) : false;
+        return canHook && McMMOHandler.hasWoodcuttingDoubleDrops(player);
     }
 
     public static boolean isUsingBerserk(Player player) {
-        return canHook ? McMMOHandler.isUsingBerserk(player) : false;
+        return canHook && McMMOHandler.isUsingBerserk(player);
     }
 
     public static boolean isUsingGigaDrill(Player player) {
-        return canHook ? McMMOHandler.isUsingGigaDrill(player) : false;
+        return canHook && McMMOHandler.isUsingGigaDrill(player);
     }
 
     public static boolean isUsingGreenTerra(Player player) {
-        return canHook ? McMMOHandler.isUsingGreenTerra(player) : false;
+        return canHook && McMMOHandler.isUsingGreenTerra(player);
     }
 
     public static boolean isUsingSerratedStrikes(Player player) {
-        return canHook ? McMMOHandler.isUsingSerratedStrikes(player) : false;
+        return canHook && McMMOHandler.isUsingSerratedStrikes(player);
     }
 
     public static boolean isUsingSkullSplitter(Player player) {
-        return canHook ? McMMOHandler.isUsingSkullSplitter(player) : false;
+        return canHook && McMMOHandler.isUsingSkullSplitter(player);
     }
 
     public static boolean isUsingSuperBreaker(Player player) {
-        return canHook ? McMMOHandler.isUsingSuperBreaker(player) : false;
+        return canHook && McMMOHandler.isUsingSuperBreaker(player);
     }
 
     public static boolean isUsingTreeFeller(Player player) {
-        return canHook ? McMMOHandler.isUsingTreeFeller(player) : false;
+        return canHook && McMMOHandler.isUsingTreeFeller(player);
     }
 
     public static boolean isBleeding(LivingEntity victim) {
-        return canHook ? McMMOHandler.isBleeding(victim) : false;
+        return canHook && McMMOHandler.isBleeding(victim);
     }
 }

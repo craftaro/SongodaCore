@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractCommand {
-
     private final CommandType _cmdType;
     private final boolean _hasArgs;
     private final List<String> _handledCommands = new ArrayList<>();
@@ -65,8 +64,8 @@ public abstract class AbstractCommand {
         return _cmdType == CommandType.PLAYER_ONLY;
     }
 
-    public static enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
+    public enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}
 
-    public static enum CommandType {PLAYER_ONLY, CONSOLE_OK}
+    public enum CommandType {PLAYER_ONLY, CONSOLE_OK}
 }
 

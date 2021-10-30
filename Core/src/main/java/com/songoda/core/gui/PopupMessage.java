@@ -24,9 +24,8 @@ import java.util.UUID;
  * Calling this class on anything below 1.12 will cause ClassLoader Exceptions!
  */
 class PopupMessage {
-
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final HashSet<UUID> registeredMessages = new HashSet();
+    private static final HashSet<UUID> registeredMessages = new HashSet<>();
 
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
@@ -52,14 +51,18 @@ class PopupMessage {
     private String getJSON() {
         JsonObject json = new JsonObject();
         JsonObject advDisplay = new JsonObject();
+
         if (this.icon != null) {
             JsonObject displayIcon = new JsonObject();
             displayIcon.addProperty("item", "minecraft:" + this.icon.getMaterial().name().toLowerCase());
+
             if (this.icon.usesData()) {
                 displayIcon.addProperty("data", this.icon.getData());
             }
+
             advDisplay.add("icon", displayIcon);
         }
+
         advDisplay.add("title", gson.fromJson(ComponentSerializer.toString(this.title), JsonElement.class));
         advDisplay.addProperty("background", background.key);
         advDisplay.addProperty("description", "");
@@ -88,24 +91,31 @@ class PopupMessage {
         final Advancement adv = getAdvancement();
         final AdvancementProgress progress = pl.getAdvancementProgress(adv);
 
-        if (!progress.isDone())
-            progress.getRemainingCriteria().forEach((crit) -> progress.awardCriteria(crit));
+        if (!progress.isDone()) {
+            for (String s : progress.getRemainingCriteria()) {
+                progress.awardCriteria(s);
+            }
+        }
     }
 
     protected void revoke(final Player pl) {
         final Advancement adv = getAdvancement();
         final AdvancementProgress prog = pl.getAdvancementProgress(adv);
 
-        if (prog.isDone())
-            prog.getAwardedCriteria().forEach((crit) -> prog.revokeCriteria(crit));
+        if (prog.isDone()) {
+            for (String s : prog.getAwardedCriteria()) {
+                prog.revokeCriteria(s);
+            }
+        }
     }
 
     protected void add() {
         if (!registeredMessages.contains(id)) {
             registeredMessages.add(id);
+
             try {
                 Bukkit.getUnsafe().loadAdvancement(key, getJSON());
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ex) {
                 Bukkit.getLogger().warning("Failed to create popup advancement!");
             }
         }
@@ -122,18 +132,19 @@ class PopupMessage {
         return Bukkit.getAdvancement(key);
     }
 
-    public static enum FrameType {
+    public enum FrameType {
         TASK,
         CHALLENGE,
         GOAL;
+
         final String id;
 
-        private FrameType() {
+        FrameType() {
             id = name().toLowerCase();
         }
     }
 
-    public static enum TriggerType {
+    public enum TriggerType {
         ARBITRARY_PLAYER_TICK(ServerVersion.V1_13, "TICK"),
         BRED_ANIMALS,
         BREWED_POTION,
@@ -163,17 +174,18 @@ class PopupMessage {
         USED_ENDER_EYE,
         USED_TOTEM,
         VILLAGER_TRADE;
+
         final ServerVersion minVersion;
         final String compatible;
         final String key;
 
-        private TriggerType() {
+        TriggerType() {
             this.minVersion = ServerVersion.UNKNOWN;
             this.compatible = "";
             this.key = "minecraft:" + name().toLowerCase();
         }
 
-        private TriggerType(ServerVersion minVersion, String compatible) {
+        TriggerType(ServerVersion minVersion, String compatible) {
             this.minVersion = minVersion;
             this.compatible = compatible;
             this.key = "minecraft:" + (ServerVersion.isServerVersionAtLeast(minVersion) ? name() : compatible).toLowerCase();

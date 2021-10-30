@@ -6,7 +6,6 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
@@ -33,7 +32,6 @@ import java.util.stream.Stream;
  * Note: Hooks must be added before WG loads!
  */
 public class WorldGuardFlagHandler {
-
     static boolean wgPlugin;
     static Object worldGuardPlugin;
     static boolean wg_v7 = false;
@@ -41,10 +39,10 @@ public class WorldGuardFlagHandler {
     static boolean legacy_v62 = false;
     static boolean legacy_v5 = false;
     static boolean hooksInstalled = false;
-    static Map<String, Object> flags = new HashMap();
+    static Map<String, Object> flags = new HashMap<>();
 
     static {
-        if ((wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null)) {
+        if (wgPlugin = (worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard")) != null) {
             // a number of flags were introduced in 7.x that aren't in 5 or 6
             try {
                 // if this class exists, we're on 7.x
@@ -99,7 +97,8 @@ public class WorldGuardFlagHandler {
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not add flag {0} to WorldGuard", addFlag.getName());
             Object wgFlag = WorldGuard.getInstance().getFlagRegistry().get(addFlag.getName());
-            if (wgFlag == null || !(wgFlag instanceof StateFlag)) {
+
+            if (!(wgFlag instanceof StateFlag)) {
                 wgPlugin = false;
                 Bukkit.getServer().getLogger().log(Level.WARNING, "Could not hook WorldGuard");
             } else {
@@ -118,8 +117,9 @@ public class WorldGuardFlagHandler {
             Field flagField = defaultFlagClazz.getField("flagsList");
             Flag<?>[] flagsOld = (Flag<?>[]) flagField.get(null);
             Flag wgFlag = Stream.of(flagsOld)
-                    .filter(f -> ((Flag<?>) f).getName().equalsIgnoreCase(flag))
+                    .filter(f -> f.getName().equalsIgnoreCase(flag))
                     .findFirst().orElse(null);
+
             if (wgFlag != null) {
                 // we already have one
                 flags.put(flag, wgFlag);
@@ -148,6 +148,7 @@ public class WorldGuardFlagHandler {
                     legacy_simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
                     legacy_simpleFlagRegistry_get = legacy_simpleFlagRegistryClazz.getDeclaredMethod("get", String.class);
                 }
+
                 legacy_simpleFlagRegistryClazz.getDeclaredMethod("register", Flag.class).invoke(legacy_worldGuardPlugin_flagRegistry, wgFlag);
             }
 
@@ -164,6 +165,7 @@ public class WorldGuardFlagHandler {
     private static Object getPrivateField(Class<?> c, Object handle, String fieldName) throws Exception {
         Field field = c.getDeclaredField(fieldName);
         field.setAccessible(true); // This should be okay since it only runs on older versions.
+
         return field.get(handle);
     }
 
@@ -193,6 +195,7 @@ public class WorldGuardFlagHandler {
                         legacy_simpleFlagRegistryClazz = Class.forName("com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry");
                         legacy_simpleFlagRegistry_get = legacy_simpleFlagRegistryClazz.getDeclaredMethod("get", String.class);
                     }
+
                     flags.put(flag, flagObj = legacy_simpleFlagRegistry_get.invoke(legacy_worldGuardPlugin_flagRegistry, flag));
                 } catch (Exception ex) {
                     Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
@@ -207,9 +210,11 @@ public class WorldGuardFlagHandler {
                 } catch (Exception ex) {
                     Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
                 }
+
                 legacy_loadedFlags = true;
             }
         }
+
         return flagObj;
     }
 
@@ -243,8 +248,10 @@ public class WorldGuardFlagHandler {
         if (flagObj instanceof StateFlag) {
             RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
             State result = query.getApplicableRegions(BukkitAdapter.adapt(loc)).queryState(player, (StateFlag) flagObj);
+
             return result != null ? result == State.ALLOW : null;
         }
+
         return null;
     }
 
@@ -260,6 +267,7 @@ public class WorldGuardFlagHandler {
         if (!wgPlugin) {
             return null;
         }
+
         Object flagObj = getFlag(flag);
         // There's a different way to get this in the old version
         if (legacy_v62 || legacy_v60 || legacy_v5) {
@@ -269,19 +277,25 @@ public class WorldGuardFlagHandler {
         // so, what's up?
         if (flagObj instanceof StateFlag) {
             RegionManager worldManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(c.getWorld()));
+
             if (worldManager == null) {
                 return null;
             }
+
             ProtectedCuboidRegion chunkRegion = new ProtectedCuboidRegion("__TEST__",
                     BlockVector3.at(c.getX() << 4, c.getWorld().getMaxHeight(), c.getZ() << 4),
                     BlockVector3.at((c.getX() << 4) + 15, 0, (c.getZ() << 4) + 15));
+
             ApplicableRegionSet set = worldManager.getApplicableRegions(chunkRegion);
-            State result = set.queryState((RegionAssociable) null, (StateFlag) flagObj);
+            State result = set.queryState(null, (StateFlag) flagObj);
+
             if (result == null && set.size() == 0) {
                 return null;
             }
+
             return result == State.ALLOW;
         }
+
         return null;
     }
 
@@ -320,7 +334,7 @@ public class WorldGuardFlagHandler {
             }
 
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, l.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, l.getWorld());
             if (worldManager == null) {
                 return null;
             }
@@ -333,7 +347,7 @@ public class WorldGuardFlagHandler {
             // so what's the verdict?
             State result;
             if (legacy_v62 || legacy_v60) {
-                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = ((ApplicableRegionSet) set).queryState(null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function
@@ -341,15 +355,19 @@ public class WorldGuardFlagHandler {
                 if (legacy5_applicableRegionSet_getFlag == null) {
                     legacy5_applicableRegionSet_getFlag = Class.forName("com.sk89q.worldguard.protection.ApplicableRegionSet").getMethod("getFlag", Flag.class);
                 }
+
                 result = (State) legacy5_applicableRegionSet_getFlag.invoke(set, flag);
             }
+
             if (result == null && set != null && ((Iterable) set).iterator().hasNext()) {
                 return null;
             }
+
             return result == State.ALLOW;
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
         }
+
         return null;
     }
 
@@ -375,7 +393,7 @@ public class WorldGuardFlagHandler {
             }
 
             // grab the applicable manager for this world
-            Object worldManager = (RegionManager) legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
+            Object worldManager = legacy_getRegionManager.invoke(worldGuardPlugin, c.getWorld());
             if (worldManager == null) {
                 return null;
             }
@@ -391,7 +409,7 @@ public class WorldGuardFlagHandler {
             // so what's the verdict?
             State result;
             if (legacy_v62 || legacy_v60) {
-                result = (State) ((ApplicableRegionSet) set).queryState((RegionAssociable) null, (StateFlag) flag);
+                result = ((ApplicableRegionSet) set).queryState(null, (StateFlag) flag);
             } else {
                 // v5 has a different class signature for ApplicableRegionSet
                 // also doesn't have a "queryState" function
@@ -399,15 +417,19 @@ public class WorldGuardFlagHandler {
                 if (legacy5_applicableRegionSet_getFlag == null) {
                     legacy5_applicableRegionSet_getFlag = Class.forName("com.sk89q.worldguard.protection.ApplicableRegionSet").getMethod("getFlag", Flag.class);
                 }
+
                 result = (State) legacy5_applicableRegionSet_getFlag.invoke(set, flag);
             }
-            if (result == null && set != null && ((Iterable) set).iterator().hasNext()) {
+
+            if (result == null && set != null && ((Iterable<?>) set).iterator().hasNext()) {
                 return null;
             }
+
             return result == State.ALLOW;
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().log(Level.WARNING, "Could not grab flags from WorldGuard", ex);
         }
+
         return null;
     }
 }

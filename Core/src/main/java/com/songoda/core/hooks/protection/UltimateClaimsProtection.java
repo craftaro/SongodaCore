@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class UltimateClaimsProtection extends Protection {
-
     private final UltimateClaims instance;
 
     public UltimateClaimsProtection(Plugin plugin) {
         super(plugin);
+
         instance = UltimateClaims.getInstance();
     }
 

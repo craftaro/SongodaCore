@@ -3,7 +3,6 @@ package com.songoda.core.nms.nbt;
 import java.util.Set;
 
 public interface NBTObject {
-
     String asString();
 
     boolean asBoolean();

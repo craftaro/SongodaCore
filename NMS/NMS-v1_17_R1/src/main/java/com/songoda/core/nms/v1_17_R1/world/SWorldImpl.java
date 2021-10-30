@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SWorldImpl implements SWorld {
-
     private final World world;
 
     private static Field fieldG;
@@ -22,9 +21,10 @@ public class SWorldImpl implements SWorld {
     static {
         try {
             fieldG = WorldServer.class.getDeclaredField("G");
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
         }
+
         fieldG.setAccessible(true);
     }
 
@@ -34,7 +34,7 @@ public class SWorldImpl implements SWorld {
 
     @Override
     public List<LivingEntity> getLivingEntities() {
-        List<LivingEntity> list = new ArrayList();
+        List<LivingEntity> list = new ArrayList<>();
         try {
 
             WorldServer worldServer = ((CraftWorld) world).getHandle();
@@ -47,9 +47,10 @@ public class SWorldImpl implements SWorld {
                     list.add((LivingEntity) bukkitEntity);
                 }
             });
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
         }
+
         return list;
     }
 }
