@@ -20,6 +20,8 @@
 
         <sonar.organization>songoda</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.junit.reportPaths>target/surefire-reports/*.xml</sonar.junit.reportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <modules>
@@ -71,6 +73,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Plugins required for tests or coverage reports -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
@@ -80,6 +83,28 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M5</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8-SNAPSHOT</version>
+
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -87,6 +112,11 @@
         <pluginRepository>
             <id>apache.snapshots</id>
             <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>sonatype.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </pluginRepository>
     </pluginRepositories>
 
