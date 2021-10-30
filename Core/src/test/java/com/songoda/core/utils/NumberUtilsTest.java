@@ -1,5 +1,6 @@
 package com.songoda.core.utils;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +19,7 @@ class NumberUtilsTest {
         assertEquals("1,999,999.99", NumberUtils.formatNumber(1999999.99));
     }
 
+    @Disabled("Tested method's output relies on the executing system (Locale)")
     @Test
     void formatWithSuffix() {
         assertEquals("100", NumberUtils.formatWithSuffix(100));
