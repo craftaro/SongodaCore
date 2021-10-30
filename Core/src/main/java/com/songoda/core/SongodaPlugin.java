@@ -144,7 +144,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             return;
         }
 
-        console.sendMessage(" "); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
@@ -154,7 +154,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
         onPluginDisable();
 
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(" "); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to separate chatter
     }
 
     public ConsoleCommandSender getConsole() {
