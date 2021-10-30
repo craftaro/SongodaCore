@@ -59,8 +59,8 @@ public class ClientVersion {
     }
 
     private static ServerVersion protocolToVersion(int version) {
-        // https://github.com/ViaVersion/ViaVersion/blob/master/common/src/main/java/us/myles/ViaVersion/api/protocol/ProtocolVersion.java
-        // https://github.com/ProtocolSupport/ProtocolSupport/blob/master/src/protocolsupport/api/ProtocolVersion.java
+        // https://wiki.vg/Protocol_version_numbers#Versions_after_the_Netty_rewrite
+        // https://github.com/ViaVersion/ViaVersion/blob/master/api/src/main/java/com/viaversion/viaversion/api/protocol/version/ProtocolVersion.java
         switch (version) {
             case 4:
             case 5:
@@ -103,8 +103,10 @@ public class ClientVersion {
             case 755:
             case 756:
                 return ServerVersion.V1_17;
+
+            default:
+                return version > 756 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;
         }
-        return version > 498 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;
     }
 
     /**
