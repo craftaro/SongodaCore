@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
@@ -326,53 +327,77 @@ public class BlockUtils {
         return null;
     }
 
-    private static Class<?> clazzCraftWorld, clazzCraftBlock, clazzBlockPosition;
-    private static Method getHandle, updateAdjacentComparators, craftBlock_getNMS, nmsBlockData_getBlock;
+    /* Only to be used by #updateAdjacentComparators */
+    private static Method chunkToNmsChunk, nmsChunkGetWorld, craftBlockGetPosition, craftBlockBlockDataGetter, blockDataGetBlock, craftMagicNumbersGetBlockByMaterial, nmsWorldUpdateAdjacentComparators;
+    /* Only to be used by #updateAdjacentComparators */
+    private static Constructor<?> blockPositionConstructor;
 
     /**
      * Manually trigger the updateAdjacentComparators method for containers
      *
-     * @param location location of the container
+     * @param loc The Location of the container
      */
-    public static void updateAdjacentComparators(Location location) {
-        if (location == null || location.getWorld() == null) {
+    public static void updateAdjacentComparators(Location loc) {
+        if (loc == null || loc.getWorld() == null) {
             return;
         }
 
+        Block craftBlock = loc.getBlock();
+
         try {
-            // Cache reflection.
-            if (clazzCraftWorld == null) {
-                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
-                clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
-                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
-                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
-                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
+            if (chunkToNmsChunk == null) {
+                chunkToNmsChunk = loc.getChunk().getClass().getMethod("getHandle");
+                nmsChunkGetWorld = chunkToNmsChunk.getReturnType().getMethod("getWorld");
 
-                getHandle = clazzCraftWorld.getMethod("getHandle");
-                updateAdjacentComparators = clazzWorld.getMethod("updateAdjacentComparators", clazzBlockPosition, clazzBlock);
+                Class<?> blockPositionClass;
+                try {
+                    craftBlockGetPosition = craftBlock.getClass().getMethod("getPosition");
 
-                craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
-                Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
-                nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
+                    blockPositionClass = craftBlockGetPosition.getReturnType();
+                } catch (NoSuchMethodException ignore) {
+                    blockPositionClass = ClassMapping.BLOCK_POSITION.getClazz();
+
+                    blockPositionConstructor = blockPositionClass.getConstructor(double.class, double.class, double.class);
+                }
+
+                nmsWorldUpdateAdjacentComparators = nmsChunkGetWorld.getReturnType().getMethod("updateAdjacentComparators", blockPositionClass, ClassMapping.BLOCK.getClazz());
+
+                try {
+                    craftBlockBlockDataGetter = craftBlock.getClass().getMethod("getNMS");
+                    blockDataGetBlock = craftBlockBlockDataGetter.getReturnType().getMethod("getBlock");
+                } catch (NoSuchMethodException ignore) {
+                    craftMagicNumbersGetBlockByMaterial = ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz()
+                            .getMethod("getBlock", craftBlock.getType().getClass());
+                }
             }
 
-            // invoke and cast objects.
-            Object craftWorld = clazzCraftWorld.cast(location.getWorld());
-            Object world = getHandle.invoke(craftWorld);
-            Object craftBlock = clazzCraftBlock.cast(location.getBlock());
+            Object nmsChunk = chunkToNmsChunk.invoke(loc.getChunk());
+            Object nmsWorld = nmsChunkGetWorld.invoke(nmsChunk);
 
-            // Invoke final method.
-            updateAdjacentComparators
-                    .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
-                                    .newInstance(location.getX(), location.getY(), location.getZ()),
-                            nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
+            Object blockPosition;
+            if (craftBlockGetPosition != null) {
+                blockPosition = craftBlockGetPosition.invoke(craftBlock);
+            } else {
+                blockPosition = blockPositionConstructor.newInstance(loc.getX(), loc.getY(), loc.getZ());
+            }
+
+            Object nmsBlock;
+            if (craftBlockBlockDataGetter != null) {
+                nmsBlock = blockDataGetBlock.invoke(craftBlockBlockDataGetter.invoke(craftBlock));
+            } else {
+                nmsBlock = craftMagicNumbersGetBlockByMaterial.invoke(null, craftBlock.getType());
+            }
+
+            nmsWorldUpdateAdjacentComparators.invoke(nmsWorld, blockPosition, nmsBlock);
         } catch (ReflectiveOperationException ex) {
             ex.printStackTrace();
         }
     }
 
-    private static Class<?> clazzIBlockData, clazzBlocks;
-    private static Method getByCombinedId, setType, getChunkAt, getBlockData;
+    /* Only to be used by #setBlockFast */
+    private static Class<?> clazzIBlockData, clazzBlocks, clazzCraftWorld, clazzBlockPosition;
+    /* Only to be used by #setBlockFast */
+    private static Method getHandle, getByCombinedId, setType, getChunkAt, getBlockData;
 
     /**
      * Set a block to a certain type by updating the block directly in the
