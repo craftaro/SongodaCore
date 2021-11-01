@@ -5,12 +5,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultEconomy extends Economy {
-
     private final net.milkbowl.vault.economy.Economy vault;
 
     public VaultEconomy() {
         // this returns null if we have Vault with no compatible eco plugin
         RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> v = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
         if (v != null) {
             this.vault = v.getProvider();
         } else {
@@ -31,8 +31,10 @@ public class VaultEconomy extends Economy {
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        if (vault == null)
+        if (vault == null) {
             return 0;
+        }
+
         return vault.getBalance(player);
     }
 

@@ -13,11 +13,11 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import java.util.Optional;
 
 public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
-
     private Entity nmsEntity;
 
     public NBTEntityImpl(NBTTagCompound entityNBT, Entity nmsEntity) {
         super(entityNBT);
+
         this.nmsEntity = nmsEntity;
     }
 
@@ -27,6 +27,8 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
 
         Optional<EntityTypes<?>> optionalEntity = EntityTypes.a(entityType);
         if (optionalEntity.isPresent()) {
+            assert location.getWorld() != null;
+
             Entity spawned = optionalEntity.get().spawnCreature(
                     ((CraftWorld) location.getWorld()).getHandle(),
                     compound,
@@ -43,15 +45,18 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
                 org.bukkit.entity.Entity entity = spawned.getBukkitEntity();
                 entity.teleport(location);
                 nmsEntity = spawned;
+
                 return entity;
             }
         }
+
         return null;
     }
 
     @Override
     public org.bukkit.entity.Entity reSpawn(Location location) {
         nmsEntity.dead = true;
+
         return spawn(location);
     }
 

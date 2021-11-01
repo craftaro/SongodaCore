@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class SongodaCoreCommand extends AbstractCommand {
-
     protected GuiManager guiManager;
 
     public SongodaCoreCommand() {
@@ -22,10 +21,12 @@ public class SongodaCoreCommand extends AbstractCommand {
             if (guiManager == null || guiManager.isClosed()) {
                 guiManager = new GuiManager(SongodaCore.getHijackedPlugin());
             }
+
             guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
         } else {
             sender.sendMessage("/songoda diag");
         }
+
         return ReturnType.SUCCESS;
     }
 

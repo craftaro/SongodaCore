@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MathUtils {
-
     private static final Map<String, Double> cache = new HashMap<>();
 
     public static double eval(String toParse) {

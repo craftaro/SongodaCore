@@ -14,7 +14,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.util.Optional;
 
 public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
-
     private Entity nmsEntity;
 
     public NBTEntityImpl(NBTTagCompound entityNBT, Entity nmsEntity) {
@@ -49,6 +48,7 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
                 return entity;
             }
         }
+
         return null;
     }
 
@@ -61,7 +61,9 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     @Override
     public void addExtras() {
         MinecraftKey key = IRegistry.ENTITY_TYPE.getKey(nmsEntity.P());
-        if (key != null)
+
+        if (key != null) {
             compound.setString("entity_type", key.toString()); // Changed in 1.13
+        }
     }
 }

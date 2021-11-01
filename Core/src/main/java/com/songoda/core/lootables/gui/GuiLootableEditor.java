@@ -13,26 +13,30 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 public class GuiLootableEditor extends Gui {
-
     private final LootManager lootManager;
     private final Lootable lootable;
     private final Gui returnGui;
 
     public GuiLootableEditor(LootManager lootManager, Lootable lootable, Gui returnGui) {
         super(6);
+
         this.lootManager = lootManager;
         this.lootable = lootable;
         this.returnGui = returnGui;
+
         setOnClose((event) ->
                 lootManager.saveLootables(false));
         setDefaultItem(null);
         setTitle("Lootables Editor");
+
         paint();
     }
 
     private void paint() {
-        if (inventory != null)
+        if (inventory != null) {
             inventory.clear();
+        }
+
         setActionForRange(0, 0, 5, 9, null);
 
         setButton(0, GuiUtils.createButtonItem(CompatibleMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Loot")),
@@ -42,12 +46,14 @@ public class GuiLootableEditor extends Gui {
                         try {
                             lootable.registerLoot(new LootBuilder().setMaterial(CompatibleMaterial
                                     .valueOf(gui.getInputText().trim())).build());
-                        } catch (IllegalArgumentException e) {
+                        } catch (IllegalArgumentException ex) {
                             event.player.sendMessage("That is not a valid material.");
                         }
+
                         event.player.closeInventory();
                         paint();
                     }));
+
                     gui.setTitle("Enter a material");
                     guiManager.showGUI(event.player, gui);
                 }));
@@ -68,10 +74,15 @@ public class GuiLootableEditor extends Gui {
                         if (event.clickType == ClickType.RIGHT) {
                             lootable.removeLoot(loot);
                             paint();
-                        } else if (event.clickType == ClickType.LEFT) {
+
+                            return;
+                        }
+
+                        if (event.clickType == ClickType.LEFT) {
                             guiManager.showGUI(event.player, new GuiLootEditor(lootManager, loot, this));
                         }
                     });
+
             i++;
         }
     }

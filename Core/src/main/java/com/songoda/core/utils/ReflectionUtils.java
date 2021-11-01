@@ -30,16 +30,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ReflectionUtils {
-
     public final static double JAVA_VERSION = getVersion();
     private static String system_os = System.getProperty("os.name").toLowerCase();
 
     private static double getVersion() {
         String version = System.getProperty("java.version");
         int i = version.indexOf('.');
+
         if (i != -1 && (i = version.indexOf('.', i + 1)) != -1) {
             return Double.parseDouble(version.substring(0, i));
         }
+
         return Double.NaN;
     }
 
@@ -51,18 +52,21 @@ public class ReflectionUtils {
     public static void setPrivateField(Class<?> c, Object handle, String fieldName, Object value) throws Exception {
         Field f = c.getDeclaredField(fieldName);
         f.setAccessible(true);
+
         f.set(handle, value);
     }
 
     public static Object getPrivateField(Class<?> c, Object handle, String fieldName) throws Exception {
         Field field = c.getDeclaredField(fieldName);
         field.setAccessible(true);
+
         return field.get(handle);
     }
 
     public static Object invokePrivateMethod(Class<?> c, String methodName, Object handle, Class[] types, Object[] parameters) throws Exception {
         Method m = c.getDeclaredMethod(methodName, types);
         m.setAccessible(true);
+
         return m.invoke(handle, parameters);
     }
 
@@ -83,6 +87,7 @@ public class ReflectionUtils {
         } catch (Exception ex) {
             j7getStackTraceElementMethod = j7getStackTraceDepthMethod = null;
         }
+
         try {
             j8getJavaLangAccess = Class.forName("sun.misc.SharedSecrets").getDeclaredMethod("getStackTraceElement");
             j8getJavaLangAccess.setAccessible(true);
@@ -104,33 +109,39 @@ public class ReflectionUtils {
 
             if (j8getStackTraceElementMethod != null) {
                 return (StackTraceElement) j8getStackTraceElementMethod.invoke(j8getJavaLangAccess.invoke(null), dummy, index);
-//			} else if (JAVA_VERSION >= 9) {
+            }
+
+//			if (JAVA_VERSION >= 9) {
 //				return StackWalker.getInstance(Collections.emptySet(), index + 1)
 //				.walk(s -> s.skip(index).findFirst())
 //				.orElse(null);
-            } else if (j7getStackTraceElementMethod == null) {
+//            }
+
+            if (j7getStackTraceElementMethod == null) {
                 // better than nothing, right? :/
                 return (new Throwable()).getStackTrace()[index];
-            } else {
-                if (index < (Integer) j7getStackTraceDepthMethod.invoke(dummy)) {
-                    return (StackTraceElement) j7getStackTraceElementMethod.invoke(new Throwable(), index);
-                } else {
-                    return null;
-                }
             }
-        } catch (Throwable t) {
+
+            if (index < (Integer) j7getStackTraceDepthMethod.invoke(dummy)) {
+                return (StackTraceElement) j7getStackTraceElementMethod.invoke(new Throwable(), index);
+            }
+        } catch (Throwable ignore) {
         }
+
         return null;
     }
 
     public static <T extends Annotation> Map<Class<?>, T> getClassesInClassPackageByAnnotation(Class<?> clazz, Class<T> annotation) throws IOException {
         final Map<Class<?>, T> foundClasses = new HashMap<>();
+
         for (Class<?> c : getAllClassesInClassPackage(clazz, false)) {
             T t = c.getAnnotation(annotation);
+
             if (t != null) {
                 foundClasses.put(c, t);
             }
         }
+
         return foundClasses;
     }
 
@@ -139,16 +150,20 @@ public class ReflectionUtils {
 
         final String clazzPackageName = clazz.getPackage().getName();
         URL dot = clazz.getResource(".");
+
         if (dot == null) {
             // jar file
             String packagePath = clazzPackageName.replace('.', '/');
             CodeSource src = clazz.getProtectionDomain().getCodeSource();
+
             if (src != null) {
                 URL jar = src.getLocation();
                 ZipInputStream zip = new ZipInputStream(jar.openStream());
+
                 ZipEntry e;
                 while ((e = zip.getNextEntry()) != null) {
                     String name = e.getName();
+
                     if (!name.endsWith("/") && name.startsWith(packagePath + "/")) {
                         if (recursive || name.indexOf('/', packagePath.length() + 1) == -1) {
                             try {
@@ -161,46 +176,49 @@ public class ReflectionUtils {
                     }
                 }
             }
-        } else {
-            String clazzPath = clazz.getResource(".").getPath();
-            if (clazzPath.startsWith("/") && system_os.contains("win")) {
-                clazzPath = clazzPath.substring(1);
-            }
-            Path packagePath = Paths.get(clazzPath);
 
-            Files.walkFileTree(packagePath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    String filename = file.getName(file.getNameCount() - 1).toString();
-
-                    if (filename.endsWith(".class")) {
-                        String className = filename.replace(".class", "");
-
-                        try {
-                            Class<?> loadedClazz = Class.forName(
-                                    clazzPackageName + "." + className);
-
-                            packageClasses.add(loadedClazz);
-                        } catch (ClassNotFoundException e) {
-                            SongodaCore.getLogger().log(Level.FINE, "class not found: " + e.getMessage());
-                        }
-                    }
-                    return super.visitFile(file, attrs);
-                }
-            });
+            return packageClasses;
         }
+
+        String clazzPath = clazz.getResource(".").getPath();
+        if (clazzPath.startsWith("/") && system_os.contains("win")) {
+            clazzPath = clazzPath.substring(1);
+        }
+        Path packagePath = Paths.get(clazzPath);
+
+        Files.walkFileTree(packagePath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                String filename = file.getName(file.getNameCount() - 1).toString();
+
+                if (filename.endsWith(".class")) {
+                    String className = filename.replace(".class", "");
+
+                    try {
+                        Class<?> loadedClazz = Class.forName(
+                                clazzPackageName + "." + className);
+
+                        packageClasses.add(loadedClazz);
+                    } catch (ClassNotFoundException e) {
+                        SongodaCore.getLogger().log(Level.FINE, "class not found: " + e.getMessage());
+                    }
+                }
+
+                return super.visitFile(file, attrs);
+            }
+        });
 
         return packageClasses;
     }
 
-    public static enum ITERATION {
-
+    public enum ITERATION {
         NONE, CLASS, PACKAGE, FULL
     }
 
     public static List<String> getClassNamesFromPackage(Class classInPackage) throws IOException, URISyntaxException, ClassNotFoundException {
         String classPath = classInPackage.getName();
         int packageDelim = classPath.lastIndexOf('.');
+
         return getClassNamesFromPackage(getJarFile(classInPackage), classPath.substring(0, packageDelim), ITERATION.NONE);
     }
 
@@ -216,7 +234,7 @@ public class ReflectionUtils {
         // http://stackoverflow.com/questions/1456930/how-do-i-read-all-classes-from-a-java-package-in-the-classpath
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageURL;
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
 
         if (packageName.contains("/")) {
             // load as a file
@@ -264,29 +282,34 @@ public class ReflectionUtils {
 
             jf = new JarFile(jarFileName);
             jarEntries = jf.entries();
+
             // in case of multiple sub-classes, keep track of what classes have been searched
-            ArrayList<String> loaded = new ArrayList<String>();
+            ArrayList<String> loaded = new ArrayList<>();
+
             while (jarEntries.hasMoreElements()) {
                 entryName = jarEntries.nextElement().getName();
+
                 if (entryName.startsWith(packageName) && entryName.length() > packageName.length() && entryName.toLowerCase().endsWith(".class")) {
                     if (entryName.contains(".")) {
                         entryName = entryName.substring(packageName.length() + 1, entryName.lastIndexOf('.'));
                     }
+
                     // iteration test
                     if (!entryName.contains("/") || (iterate == ITERATION.PACKAGE || iterate == ITERATION.FULL)) {
-
                         if (entryName.contains("$")) { // added - sub-package test
                             // added - iteration
                             if (iterate == ITERATION.CLASS || iterate == ITERATION.FULL) {
                                 entryName = entryName.substring(0, entryName.indexOf('$')).replace('/', '.');
                                 if (!loaded.contains(entryName)) {
                                     loaded.add(entryName);
+
                                     try {
                                         Class c = Class.forName(packageName.replace('/', '.') + "." + entryName);
+
                                         for (Class c2 : c.getDeclaredClasses()) {
                                             names.add(entryName + "." + c2.getSimpleName());
                                         }
-                                    } catch (Throwable t) {
+                                    } catch (Throwable ignore) {
                                     }
                                 }
                             }
@@ -302,22 +325,27 @@ public class ReflectionUtils {
             // loop through files in classpath
             URI uri = new URI(packageURL.toString());
             File folder = new File(uri.getPath());
+
             // won't work with path which contains blank (%20)
             // File folder = new File(packageURL.getFile());
             File[] contenuti = folder.listFiles();
+
             // in case of multiple sub-classes, keep track of what classes have been searched
-            ArrayList<String> loaded = new ArrayList<String>();
+            ArrayList<String> loaded = new ArrayList<>();
+
             String entryName;
             for (File actual : contenuti) {
                 entryName = actual.getName();
                 if (entryName.contains(".")) { // added - folder check
                     entryName = entryName.substring(0, entryName.lastIndexOf('.'));
+
                     if (entryName.contains("$")) { // added - sub-package test
                         // added - iteration
                         if (iterate == ITERATION.CLASS || iterate == ITERATION.FULL) {
                             entryName = entryName.substring(0, entryName.indexOf('$'));
                             if (!loaded.contains(entryName)) {
                                 loaded.add(entryName);
+
                                 Class c = Class.forName(packageName.replace('/', '.') + "." + entryName);
                                 for (Class c2 : c.getDeclaredClasses()) {
                                     names.add(entryName + "." + c2.getSimpleName());
@@ -335,6 +363,7 @@ public class ReflectionUtils {
                 }
             }
         }
+
         return names;
     }
 }

@@ -5,7 +5,6 @@ import com.songoda.core.gui.GuiManager;
 import org.bukkit.entity.Player;
 
 public abstract class GuiEvent {
-
     public final GuiManager manager;
     public final Gui gui;
     public final Player player;

@@ -7,7 +7,6 @@ import net.minecraft.server.v1_8_R1.NBTTagCompound;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -15,7 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class NBTCompoundImpl implements NBTCompound {
-
     protected NBTTagCompound compound;
 
     protected NBTCompoundImpl(NBTTagCompound compound) {
@@ -84,6 +82,7 @@ public class NBTCompoundImpl implements NBTCompound {
     public NBTCompound set(String tag, UUID u) {
         set(tag + "Most", u.getMostSignificantBits());
         set(tag + "Least", u.getLeastSignificantBits());
+
         return this;
     }
 
@@ -152,11 +151,11 @@ public class NBTCompoundImpl implements NBTCompound {
     public NBTCompound getCompound(String tag) {
         if (has(tag)) {
             return getNBTObject(tag).asCompound();
-        } else {
-            NBTTagCompound newCompound = new NBTTagCompound();
-            compound.set(tag, newCompound);
-            return new NBTCompoundImpl(newCompound);
         }
+
+        NBTTagCompound newCompound = new NBTTagCompound();
+        compound.set(tag, newCompound);
+        return new NBTCompoundImpl(newCompound);
     }
 
     @Override
@@ -176,15 +175,17 @@ public class NBTCompoundImpl implements NBTCompound {
             addExtras();
             NBTTagCompound compound = (NBTTagCompound) this.compound.clone(); // Changed in 1.12 // Changed in 1.9.4
 
-            for (String exclusion : exclusions)
+            for (String exclusion : exclusions) {
                 compound.remove(exclusion);
+            }
 
             NBTCompressedStreamTools.a(compound, (OutputStream) dataOutput);
 
             return outputStream.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 
@@ -192,9 +193,9 @@ public class NBTCompoundImpl implements NBTCompound {
     public void deSerialize(byte[] serialized) {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(serialized);
              ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
-            compound = NBTCompressedStreamTools.a((InputStream) dataInput);
-        } catch (Exception e) {
-            e.printStackTrace();
+            compound = NBTCompressedStreamTools.a(dataInput);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

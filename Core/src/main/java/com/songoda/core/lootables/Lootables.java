@@ -3,7 +3,6 @@ package com.songoda.core.lootables;
 import com.songoda.core.lootables.loot.LootManager;
 
 public class Lootables {
-
     private final String lootablesDir;
 
     private final LootManager lootManager;

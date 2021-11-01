@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class SItemStack {
-
     protected final com.songoda.core.nms.world.SItemStack sItem;
     protected final ItemStack item;
 
@@ -34,15 +33,17 @@ public class SItemStack {
     /**
      * Damage the selected item
      *
-     * @param player the player who's item you want to damage
+     * @param player the player whose item you want to damage
      * @param damage the amount of damage to apply to the item
      */
     public ItemStack addDamage(Player player, int damage, boolean respectVanillaUnbreakingEnchantments) {
-        if (item == null)
+        if (item == null) {
             return null;
+        }
 
-        if (item.getItemMeta() == null)
+        if (item.getItemMeta() == null) {
             return item;
+        }
 
         int maxDurability = item.getType().getMaxDurability();
         int durability;
@@ -75,8 +76,10 @@ public class SItemStack {
             item.setDurability((short) Math.max(0, item.getDurability() + damage));
             durability = item.getDurability();
         }
-        if (durability >= maxDurability && player != null)
+
+        if (durability >= maxDurability && player != null) {
             destroy(player);
+        }
 
         return item;
     }
@@ -88,6 +91,7 @@ public class SItemStack {
     public void destroy(Player player, int amount) {
         PlayerItemBreakEvent breakEvent = new PlayerItemBreakEvent(player, item);
         Bukkit.getServer().getPluginManager().callEvent(breakEvent);
+
         sItem.breakItem(player, amount);
         CompatibleSound.ENTITY_ITEM_BREAK.play(player);
     }
@@ -109,7 +113,9 @@ public class SItemStack {
     }
 
     private static boolean shouldApplyDamage(int unbreakingEnchantLevel) {
-        if (unbreakingEnchantLevel <= 0) return true;
+        if (unbreakingEnchantLevel <= 0) {
+            return true;
+        }
 
         return Math.random() <= 1.0 / (unbreakingEnchantLevel + 1);
     }

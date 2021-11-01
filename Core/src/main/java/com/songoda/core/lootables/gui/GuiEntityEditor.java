@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiEntityEditor extends AbstractGuiListEditor {
-
     public GuiEntityEditor(Loot loot, Gui returnGui) {
         super(loot, returnGui);
     }
@@ -26,11 +25,13 @@ public class GuiEntityEditor extends AbstractGuiListEditor {
     @Override
     protected String validate(String line) {
         line = line.toUpperCase().trim();
+
         try {
             EntityType.valueOf(line);
             return line;
-        } catch (IllegalArgumentException e) {
-            return null;
+        } catch (IllegalArgumentException ignore) {
         }
+
+        return null;
     }
 }

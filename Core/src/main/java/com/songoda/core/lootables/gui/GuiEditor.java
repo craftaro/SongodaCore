@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiEditor extends Gui {
-
     private final LootManager lootManager;
 
     public GuiEditor(LootManager lootManager) {
         super(6);
+
         this.lootManager = lootManager;
+
         setDefaultItem(null);
         setTitle("Lootables Overview");
 
@@ -26,8 +27,10 @@ public class GuiEditor extends Gui {
     }
 
     private void paint() {
-        if (inventory != null)
+        if (inventory != null) {
             inventory.clear();
+        }
+
         setActionForRange(0, 0, 5, 9, null);
 
         List<Lootable> lootables = new ArrayList<>(lootManager.getRegisteredLootables().values());
@@ -35,19 +38,21 @@ public class GuiEditor extends Gui {
         double itemCount = lootables.size();
         this.pages = (int) Math.max(1, Math.ceil(itemCount / 36));
 
-        if (page != 1)
+        if (page != 1) {
             setButton(5, 2, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Back"),
                     (event) -> {
                         page--;
                         paint();
                     });
+        }
 
-        if (page != pages)
+        if (page != pages) {
             setButton(5, 6, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Next"),
                     (event) -> {
                         page++;
                         paint();
                     });
+        }
 
         for (int i = 9; i < 45; i++) {
             int current = ((page - 1) * 36) - 9;
@@ -55,8 +60,11 @@ public class GuiEditor extends Gui {
                 setItem(i, null);
                 continue;
             }
+
             Lootable lootable = lootables.get(current + i);
-            if (lootable == null) continue;
+            if (lootable == null) {
+                continue;
+            }
 
             setButton(i, getIcon(lootable.getKey()),
                     (event) -> guiManager.showGUI(event.player, new GuiLootableEditor(lootManager, lootable, this)));
@@ -66,16 +74,23 @@ public class GuiEditor extends Gui {
     public ItemStack getIcon(String key) {
         ItemStack stack = null;
         EntityType type = EntityType.fromName(key);
+
         if (type != null) {
             CompatibleMaterial material = CompatibleMaterial.getSpawnEgg(type);
-            if (material != null)
+
+            if (material != null) {
                 stack = material.getItem();
+            }
         }
-        if (stack == null)
+
+        if (stack == null) {
             stack = CompatibleMaterial.GHAST_SPAWN_EGG.getItem();
+        }
+
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(key);
         stack.setItemMeta(meta);
+
         return stack;
     }
 }

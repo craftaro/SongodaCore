@@ -15,21 +15,24 @@ import java.util.List;
 import java.util.Map;
 
 public class GuiEnchantEditor extends Gui {
-
     private final Gui returnGui;
     private final Loot loot;
 
     public GuiEnchantEditor(Loot loot, Gui returnGui) {
         super(1, returnGui);
+
         this.returnGui = returnGui;
         this.loot = loot;
+
         setDefaultItem(null);
         setTitle("Enchantment Editor");
+
         paint();
     }
 
     public void paint() {
         Map<String, Integer> lore = loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(loot.getEnchants());
+
         setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
@@ -56,13 +59,14 @@ public class GuiEnchantEditor extends Gui {
                         AnvilGui gui1 = new AnvilGui(event.player, this);
                         gui1.setAction((ee -> {
                             lore.put(gui.getInputText().toUpperCase().trim(), Integer.parseInt(gui1.getInputText().trim()));
-                            loot.setEnchants(lore.isEmpty() ? null : lore);
+                            loot.setEnchants(lore);
                             ee.player.closeInventory();
                             paint();
                         }));
                         gui1.setTitle("Enter a level");
                         guiManager.showGUI(event.player, gui1);
                     }));
+
                     gui.setTitle("Enter an enchant");
                     guiManager.showGUI(event.player, gui);
                 }));
@@ -71,11 +75,12 @@ public class GuiEnchantEditor extends Gui {
 
         String last = null;
 
-        if (!lore.isEmpty())
+        if (!lore.isEmpty()) {
             for (Map.Entry<String, Integer> entry : lore.entrySet()) {
                 last = entry.getKey();
                 enchantments.add("&6" + entry.getKey() + " " + entry.getValue());
             }
+        }
 
         setItem(4, GuiUtils.createButtonItem(CompatibleMaterial.WRITABLE_BOOK,
                 TextUtils.formatText("&7Enchant Override:"),

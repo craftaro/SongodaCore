@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SelectorArguments {
-
-    static Pattern selectorPattern = Pattern.compile("^(@[apers])(\\[(.*?)\\])?$");
+    static Pattern selectorPattern = Pattern.compile("^(@[apers])(\\[(.*?)])?$");
     static Pattern selectorRangePattern = Pattern.compile("^([0-9]{1,9}(\\.[0-9]{1,9})?)?(\\.\\.)?([0-9]{1,9}(\\.[0-9]{1,9})?)?$");
 
     /**
@@ -38,14 +37,17 @@ public class SelectorArguments {
         if (!(sender instanceof BlockCommandSender || sender instanceof Player)) {
             return null;
         }
+
         Matcher m = selectorPattern.matcher(argument);
         if (!m.find()) {
             return null;
         }
+
         SelectorType type = SelectorType.getType(m.group(1));
         if (type == null) {
             return null;
         }
+
         SelectorArguments selector = new SelectorArguments(sender, type);
 
         if (m.group(3) != null) {
@@ -67,9 +69,11 @@ public class SelectorArguments {
 
     private void parseArguments(String selectorArgs) {
         String[] args = selectorArgs.split(",");
+
         for (String s : args) {
             if (s.contains("=")) {
                 String[] v = s.split("=");
+
                 if (v[0].equals("distance")) {
                     // 10 = d == 10
                     // 10..12 = d > 10 && d <= 12
@@ -80,6 +84,7 @@ public class SelectorArguments {
                         if (distGroup.group(1) != null) {
                             rangeMin = Double.parseDouble(distGroup.group(1));
                         }
+
                         if (distGroup.group(3) == null) {
                             rangeMax = rangeMin;
                         } else if (distGroup.group(4) != null) {
@@ -89,9 +94,11 @@ public class SelectorArguments {
                 } else if (v[0].equals("type")) {
                     entityType = EntityNamespace.minecraftToBukkit(v[1]);
                 }
+
                 // more arguments can be parsed here (TODO)
             }
         }
+
         /*
          advancements 	Advancement earned by entity.
          distance 	Distance to entity.
@@ -121,16 +128,21 @@ public class SelectorArguments {
     public Collection<Entity> getSelection() {
         final Location location = sender instanceof Player ? ((Player) sender).getLocation() : ((BlockCommandSender) sender).getBlock().getLocation();
         Collection<Entity> list = preSelect(location);
+
         if (list.isEmpty()) {
             return list;
         }
+
         List<Entity> list2 = filter(location, list);
+
         if (list2.isEmpty()) {
             return list2;
         }
+
         switch (selector) {
             case PLAYER:
-                Collections.sort(list2, (o1, o2) -> (int) (o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location)));
+                list2.sort((o1, o2) -> (int) (o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location)));
+
                 return Arrays.asList(list2.get(0));
             case RANDOM_PLAYER:
                 Collections.shuffle(list2);
@@ -140,6 +152,7 @@ public class SelectorArguments {
             case SELF:
                 return list2;
         }
+
         return list2;
     }
 
@@ -151,28 +164,32 @@ public class SelectorArguments {
                 return rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntitiesByClasses(Player.class)
                         : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2).stream()
-                        .filter(e -> e instanceof Player).collect(Collectors.toSet());
+                        .filter(Player.class::isInstance).collect(Collectors.toSet());
+
             case ALL_ENTITIES:
                 return rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntities()
                         : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2);
+
             case SELF:
-                return sender instanceof Entity ? Arrays.asList((Entity) sender) : Collections.EMPTY_LIST;
+                return sender instanceof Entity ? Arrays.asList((Entity) sender) : Collections.emptyList();
         }
-        return Collections.EMPTY_LIST;
+
+        return Collections.emptyList();
     }
 
     protected List<Entity> filter(Location location, Collection<Entity> list) {
         Stream<Entity> stream = list.stream()
                 .filter(p -> rangeMin == 0 || p.getLocation().distance(location) > rangeMin)
                 .filter(e -> entityType == null || e.getType() == entityType);
+
         return stream.collect(Collectors.toList());
     }
 
-    public static enum SelectorType {
-
+    public enum SelectorType {
         PLAYER, RANDOM_PLAYER, ALL_PLAYER, ALL_ENTITIES, SELF;
 
+        // TODO: Store selector string in enum
         public static SelectorType getType(String str) {
             if (str != null) {
                 switch (str.toLowerCase()) {
@@ -186,8 +203,11 @@ public class SelectorArguments {
                         return ALL_ENTITIES;
                     case "@s":
                         return SELF;
+                    default:
+                        break;
                 }
             }
+
             return null;
         }
     }

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class LootBuilder {
-
     private final Loot loot;
 
     public LootBuilder() {
@@ -33,16 +32,22 @@ public final class LootBuilder {
 
     public LootBuilder addEnchants(Tuple... tuples) {
         Map<String, Integer> enchants = new HashMap<>();
-        for (Tuple tuple : tuples)
+
+        for (Tuple tuple : tuples) {
             enchants.put((String) tuple.getKey(), (int) tuple.getValue());
+        }
+
         this.loot.setEnchants(enchants);
         return this;
     }
 
     public LootBuilder addEnchantChances(EnchantChance... enchantChances) {
         Map<String, Double> enchants = new HashMap<>();
-        for (EnchantChance chance : enchantChances)
+
+        for (EnchantChance chance : enchantChances) {
             enchants.put(chance.getEnchantment().getName() + ":" + chance.getLevel(), chance.getChanceOverride());
+        }
+
         this.loot.setEnchantChances(enchants);
         return this;
     }
@@ -100,6 +105,7 @@ public final class LootBuilder {
     public LootBuilder setChildDropCount(int count) {
         this.loot.setChildDropCountMin(count);
         this.loot.setChildDropCountMax(count);
+
         return this;
     }
 

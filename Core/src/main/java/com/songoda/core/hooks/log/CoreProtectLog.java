@@ -8,7 +8,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 
 public class CoreProtectLog extends Log {
-
     private CoreProtectAPI api;
     private boolean useDeprecatedMethod = ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12);
 
@@ -30,18 +29,20 @@ public class CoreProtectLog extends Log {
     public void logPlacement(OfflinePlayer player, Block block) {
         if (this.useDeprecatedMethod) {
             this.api.logPlacement(player.getName(), block.getLocation(), block.getType(), block.getData());
-        } else {
-            this.api.logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
+            return;
         }
+
+        this.api.logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
     }
 
     @Override
     public void logRemoval(OfflinePlayer player, Block block) {
         if (this.useDeprecatedMethod) {
             this.api.logRemoval(player.getName(), block.getLocation(), block.getType(), block.getData());
-        } else {
-            this.api.logRemoval(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
+            return;
         }
+
+        this.api.logRemoval(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
     }
 
     @Override

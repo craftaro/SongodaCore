@@ -9,12 +9,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NmsManager {
-
-    private final static String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
-    private final static String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
-    private final static AnvilCore anvil;
-    private final static NBTCore nbt;
-    private final static WorldCore world;
+    private static final String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
+    private static final String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
+    private static final AnvilCore anvil;
+    private static final NBTCore nbt;
+    private static final WorldCore world;
 
     static {
         switch (serverPackageVersion) {
@@ -100,6 +99,7 @@ public class NmsManager {
                 break;
             default:
                 Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version: version {0} not found", serverPackageVersion);
+
                 anvil = null;
                 nbt = null;
                 world = null;

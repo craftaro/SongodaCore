@@ -3,7 +3,6 @@ package com.songoda.core.lootables.loot.objects;
 import org.bukkit.enchantments.Enchantment;
 
 public class EnchantChance {
-
     private final Enchantment enchantment;
     private final int level;
     private final double chanceOverride;

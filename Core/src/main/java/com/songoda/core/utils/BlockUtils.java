@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
@@ -18,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BlockUtils {
-
     protected static final Set<Material> DOORS;
     protected static final Set<Material> PRESSURE_PLATES;
     protected static final Set<Material> FENCE_GATES;
@@ -52,7 +52,7 @@ public class BlockUtils {
             try {
                 //legacyUpdateBlockData = Block.class.getDeclaredMethod("update");
                 legacySetBlockData = Block.class.getDeclaredMethod("setData", byte.class);
-            } catch (NoSuchMethodException ex) {
+            } catch (NoSuchMethodException ignore) {
             }
         }
     }
@@ -66,6 +66,7 @@ public class BlockUtils {
      */
     public static boolean tryInteract(Block b) {
         final Material bType = b.getType();
+
         if (isOpenable(bType)) {
             toggleDoorStates(true, b);
             return true;
@@ -96,6 +97,7 @@ public class BlockUtils {
 
     private static void _updatePressurePlateLegacy(Block plate, int power) {
         final Material m = plate.getType();
+
         try {
             if (m.name().equals("GOLD_PLATE") || m.name().equals("IRON_PLATE")) {
                 legacySetBlockData.invoke(plate, (byte) (power & 0x15));
@@ -125,7 +127,11 @@ public class BlockUtils {
 
     private static void _pressButtonLegacy(Block button) {
         final Material m = button.getType();
-        if (!m.name().endsWith("_BUTTON")) return;
+
+        if (!m.name().endsWith("_BUTTON")) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() | (31 & 0x8)));
             button.getState().update();
@@ -136,7 +142,11 @@ public class BlockUtils {
 
     private static void _releaseButtonLegacy(Block button) {
         final Material m = button.getType();
-        if (!m.name().endsWith("_BUTTON")) return;
+
+        if (!m.name().endsWith("_BUTTON")) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(button, (byte) (button.getData() & ~0x8));
             button.getState().update();
@@ -155,12 +165,16 @@ public class BlockUtils {
 
     private static void _toggleLeverLegacy(Block lever) {
         final Material m = lever.getType();
-        if (m != Material.LEVER) return;
+
+        if (m != Material.LEVER) {
+            return;
+        }
+
         try {
             legacySetBlockData.invoke(lever, (byte) (lever.getData() ^ 0x8));
             lever.getState().update();
             //lever.getWorld().playEffect(lever.getLocation(), Effect.CLICK1, 0);
-            // now we need to update the redstone around it..
+            // now we need to update the redstone around it...
 //            int data = lever.getData() & ~0x8;
 //            Block attached;
 //            switch(data) {
@@ -243,10 +257,6 @@ public class BlockUtils {
 
     /**
      * Get the double door for the given block
-     *
-     * @param block
-     *
-     * @return
      */
     public static Block getDoubleDoor(Block block) {
         // TODO? if legacy, just search N/S/E/W to see if there's another door nearby
@@ -258,9 +268,9 @@ public class BlockUtils {
     }
 
     public static boolean isOpenable(Material m) {
-        return DOORS.contains(m)
-                || FENCE_GATES.contains(m)
-                || TRAP_DOORS.contains(m);
+        return DOORS.contains(m) ||
+                FENCE_GATES.contains(m) ||
+                TRAP_DOORS.contains(m);
     }
 
     public static BlockFace getDoorClosedDirection(Block door) {
@@ -269,8 +279,10 @@ public class BlockUtils {
 
     private static BlockFace _getDoorClosedDirectionLegacy(Block door) {
         final Material type = door.getType();
+
         if (DOORS.contains(type)) {
             boolean isTop = (door.getData() & 0x8) != 0;
+
             if (isTop) {
                 // The lower half of the door contains the direction & open/close state
                 door = door.getRelative(BlockFace.DOWN);
@@ -278,7 +290,9 @@ public class BlockUtils {
                     return null;
                 }
             }
+
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             //int facing = (door.getData() & 0x3);
             // [east, south, west, north]
             boolean facingNS = (door.getData() & 0x1) != 0;
@@ -289,6 +303,7 @@ public class BlockUtils {
             }
         } else if (FENCE_GATES.contains(door.getType())) {
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             //int facing = (door.getData() & 0x3);
             // so fence gate orientations are [south, west, north, east]
             boolean facingNS = (door.getData() & 0x1) == 0;
@@ -299,6 +314,7 @@ public class BlockUtils {
             }
         } else if (TRAP_DOORS.contains(door.getType())) {
             boolean isOpen = (door.getData() & 0x4) != 0;
+
             // [south, north, east, west]
             boolean facingNS = (door.getData() & 0x3) <= 1;
             if (facingNS) {
@@ -307,53 +323,81 @@ public class BlockUtils {
                 return isOpen ? BlockFace.SOUTH : BlockFace.EAST;
             }
         }
+
         return null;
     }
 
-    private static Class<?> clazzCraftWorld, clazzCraftBlock, clazzBlockPosition;
-    private static Method getHandle, updateAdjacentComparators, craftBlock_getNMS, nmsBlockData_getBlock;
+    /* Only to be used by #updateAdjacentComparators */
+    private static Method chunkToNmsChunk, nmsChunkGetWorld, craftBlockGetPosition, craftBlockBlockDataGetter, blockDataGetBlock, craftMagicNumbersGetBlockByMaterial, nmsWorldUpdateAdjacentComparators;
+    /* Only to be used by #updateAdjacentComparators */
+    private static Constructor<?> blockPositionConstructor;
 
     /**
      * Manually trigger the updateAdjacentComparators method for containers
      *
-     * @param location location of the container
+     * @param loc The Location of the container
      */
-    public static void updateAdjacentComparators(Location location) {
-        if (location == null || location.getWorld() == null) return;
+    public static void updateAdjacentComparators(Location loc) {
+        if (loc == null || loc.getWorld() == null) {
+            return;
+        }
+
+        Block craftBlock = loc.getBlock();
+
         try {
-            // Cache reflection.
-            if (clazzCraftWorld == null) {
-                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
-                clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
-                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
-                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
-                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
+            if (chunkToNmsChunk == null) {
+                chunkToNmsChunk = loc.getChunk().getClass().getMethod("getHandle");
+                nmsChunkGetWorld = chunkToNmsChunk.getReturnType().getMethod("getWorld");
 
-                getHandle = clazzCraftWorld.getMethod("getHandle");
-                updateAdjacentComparators = clazzWorld.getMethod("updateAdjacentComparators", clazzBlockPosition, clazzBlock);
+                Class<?> blockPositionClass;
+                try {
+                    craftBlockGetPosition = craftBlock.getClass().getMethod("getPosition");
 
-                craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
-                Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
-                nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
+                    blockPositionClass = craftBlockGetPosition.getReturnType();
+                } catch (NoSuchMethodException ignore) {
+                    blockPositionClass = ClassMapping.BLOCK_POSITION.getClazz();
+
+                    blockPositionConstructor = blockPositionClass.getConstructor(double.class, double.class, double.class);
+                }
+
+                nmsWorldUpdateAdjacentComparators = nmsChunkGetWorld.getReturnType().getMethod("updateAdjacentComparators", blockPositionClass, ClassMapping.BLOCK.getClazz());
+
+                try {
+                    craftBlockBlockDataGetter = craftBlock.getClass().getMethod("getNMS");
+                    blockDataGetBlock = craftBlockBlockDataGetter.getReturnType().getMethod("getBlock");
+                } catch (NoSuchMethodException ignore) {
+                    craftMagicNumbersGetBlockByMaterial = ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz()
+                            .getMethod("getBlock", craftBlock.getType().getClass());
+                }
             }
 
-            // invoke and cast objects.
-            Object craftWorld = clazzCraftWorld.cast(location.getWorld());
-            Object world = getHandle.invoke(craftWorld);
-            Object craftBlock = clazzCraftBlock.cast(location.getBlock());
+            Object nmsChunk = chunkToNmsChunk.invoke(loc.getChunk());
+            Object nmsWorld = nmsChunkGetWorld.invoke(nmsChunk);
 
-            // Invoke final method.
-            updateAdjacentComparators
-                    .invoke(world, clazzBlockPosition.getConstructor(double.class, double.class, double.class)
-                                    .newInstance(location.getX(), location.getY(), location.getZ()),
-                            nmsBlockData_getBlock.invoke(craftBlock_getNMS.invoke(craftBlock)));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            Object blockPosition;
+            if (craftBlockGetPosition != null) {
+                blockPosition = craftBlockGetPosition.invoke(craftBlock);
+            } else {
+                blockPosition = blockPositionConstructor.newInstance(loc.getX(), loc.getY(), loc.getZ());
+            }
+
+            Object nmsBlock;
+            if (craftBlockBlockDataGetter != null) {
+                nmsBlock = blockDataGetBlock.invoke(craftBlockBlockDataGetter.invoke(craftBlock));
+            } else {
+                nmsBlock = craftMagicNumbersGetBlockByMaterial.invoke(null, craftBlock.getType());
+            }
+
+            nmsWorldUpdateAdjacentComparators.invoke(nmsWorld, blockPosition, nmsBlock);
+        } catch (ReflectiveOperationException ex) {
+            ex.printStackTrace();
         }
     }
 
-    private static Class<?> clazzIBlockData, clazzBlocks;
-    private static Method getByCombinedId, setType, getChunkAt, getBlockData;
+    /* Only to be used by #setBlockFast */
+    private static Class<?> clazzIBlockData, clazzBlocks, clazzCraftWorld, clazzBlockPosition;
+    /* Only to be used by #setBlockFast */
+    private static Method getHandle, getByCombinedId, setType, getChunkAt, getBlockData;
 
     /**
      * Set a block to a certain type by updating the block directly in the
@@ -361,13 +405,6 @@ public class BlockUtils {
      * <p>
      * The chunk must be loaded and players must relog if they have the
      * chunk loaded in order to use this method.
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param material
-     * @param data
      */
     public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
         try {
@@ -408,8 +445,8 @@ public class BlockUtils {
                 Object IBlockData = getByCombinedId.invoke(null, material.getId() + (data << 12));
                 setType.invoke(chunk, blockPosition, IBlockData);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -427,16 +464,19 @@ public class BlockUtils {
     public static boolean isCropFullyGrown(Block block) {
         if (block == null) {
             return false;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._isCropFullyGrown(block);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return false;
-        } else {
-            return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -449,16 +489,19 @@ public class BlockUtils {
     public static int getMaxGrowthStage(Block block) {
         if (block == null) {
             return -1;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(block);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
         if (mat == null || !mat.isCrop()) {
             return -1;
-        } else {
-            return (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -471,16 +514,19 @@ public class BlockUtils {
     public static int getMaxGrowthStage(Material material) {
         if (material == null) {
             return -1;
-        } else if (!useLegacy) {
+        }
+
+        if (!useLegacy) {
             return BlockUtilsModern._getMaxGrowthStage(material);
         }
+
         CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(material);
         if (mat == null || !mat.isCrop()) {
             return -1;
-        } else {
-            return (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
         }
+
+        return (mat == CompatibleMaterial.BEETROOTS
+                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -517,8 +563,9 @@ public class BlockUtils {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-            if (mat != null && mat.isCrop() && block.getData() < (mat == CompatibleMaterial.BEETROOTS
-                    || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
+
+            if (mat != null && mat.isCrop() &&
+                    block.getData() < (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
@@ -539,6 +586,7 @@ public class BlockUtils {
             BlockUtilsModern._resetGrowthStage(block);
         } else {
             CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
+
             if (mat != null && mat.isCrop()) {
                 try {
                     legacySetBlockData.invoke(block, (byte) 0);
@@ -557,7 +605,6 @@ public class BlockUtils {
      * @return true if this material doesn't have a solid hitbox
      */
     public static boolean canPassThrough(Material m) {
-
         switch (m.name()) {
             case "ACACIA_BUTTON":
             case "ACACIA_PRESSURE_PLATE":
@@ -730,8 +777,9 @@ public class BlockUtils {
             case "WALL_BANNER":
             case "BEETROOT_BLOCK":
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     /**
@@ -740,7 +788,7 @@ public class BlockUtils {
      *
      * @param m material to check
      *
-     * @return true if this is a block that can be walked though or up
+     * @return true if this is a block that can be walked through or up
      */
     public static boolean canWalkTo(Material m) {
         switch (m.name()) {
@@ -1063,7 +1111,8 @@ public class BlockUtils {
             case "STONE_SLAB2":
             case "BEETROOT_BLOCK":
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 }

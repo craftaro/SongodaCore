@@ -3,7 +3,6 @@ package com.songoda.core.lootables.loot;
 import org.bukkit.inventory.ItemStack;
 
 public class Drop {
-
     private ItemStack itemStack;
 
     private String command;

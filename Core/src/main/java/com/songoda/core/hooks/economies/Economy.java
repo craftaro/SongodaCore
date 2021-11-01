@@ -4,7 +4,6 @@ import com.songoda.core.hooks.Hook;
 import org.bukkit.OfflinePlayer;
 
 public abstract class Economy implements Hook {
-
     /**
      * Get the players available balance
      *

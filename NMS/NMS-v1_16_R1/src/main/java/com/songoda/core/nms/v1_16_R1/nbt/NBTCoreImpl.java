@@ -10,7 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class NBTCoreImpl implements NBTCore {
-
     @Override
     public NBTItem of(ItemStack item) {
         return new NBTItemImpl(CraftItemStack.asNMSCopy(item));

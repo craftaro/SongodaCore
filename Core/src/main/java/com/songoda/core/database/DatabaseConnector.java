@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface DatabaseConnector {
-
     /**
      * Checks if the connection to the database has been created
      *

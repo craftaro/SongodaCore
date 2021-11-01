@@ -10,7 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class NBTCoreImpl implements NBTCore {
-
     @Override
     public NBTItem of(ItemStack item) {
         return new NBTItemImpl(CraftItemStack.asNMSCopy(item));
@@ -26,6 +25,7 @@ public class NBTCoreImpl implements NBTCore {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
         NBTTagCompound nbt = new NBTTagCompound();
         nmsEntity.save(nbt);
+
         return new NBTEntityImpl(nbt, nmsEntity);
     }
 

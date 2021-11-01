@@ -7,7 +7,7 @@ public enum BackgroundType {
     ADVENTURE, END, HUSBANDRY, NETHER, STONE;
     final String key;
 
-    private BackgroundType() {
+    BackgroundType() {
         this.key = "minecraft:textures/gui/advancements/backgrounds/" + name().toLowerCase() + ".png";
     }
 }

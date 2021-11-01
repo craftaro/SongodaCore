@@ -1,7 +1,6 @@
 package com.songoda.core.compatibility;
 
 public enum ClassMapping {
-
     BIOME_BASE("world.level.biome", "BiomeBase"),
     BIOME_STORAGE("world.level.chunk", "BiomeStorage"),
     BLOCK("world.level.block", "Block"),
@@ -43,6 +42,7 @@ public enum ClassMapping {
     CRAFT_CHUNK("CraftChunk"),
     CRAFT_ENTITY("entity", "CraftEntity"),
     CRAFT_ITEM_STACK("inventory", "CraftItemStack"),
+    CRAFT_MAGIC_NUMBERS("util", "CraftMagicNumbers"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld");
 
@@ -63,17 +63,21 @@ public enum ClassMapping {
     }
 
     public Class<?> getClazz(String sub) {
+        String name = sub == null ? className : className + "$" + sub;
+
         try {
-            String name = sub == null ? className : className + "$" + sub;
-            if (className.startsWith("Craft"))
+            if (className.startsWith("Craft")) {
                 return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
                         + (packageName == null ? "" : "." + packageName) + "." + name);
+            }
+
             return Class.forName("net.minecraft." + (
                     ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && packageName != null
                             ? packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 }

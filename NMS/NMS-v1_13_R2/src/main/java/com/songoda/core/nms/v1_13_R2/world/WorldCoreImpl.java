@@ -56,42 +56,44 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) throws NoSuchFieldException, IllegalAccessException {
         Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
 
-        if (tickAmount > 0) {
-            int j = chunk.locX * 16;
-            int k = chunk.locZ * 16;
+        if (tickAmount <= 0) {
+            return;
+        }
 
-            chunk.world.methodProfiler.enter("tickBlocks");
-            for (ChunkSection chunksection : chunk.getSections()) {
-                if (chunksection != net.minecraft.server.v1_13_R2.Chunk.a && chunksection.b()) {
-                    for (int k1 = 0; k1 < tickAmount; ++k1) {
-                        int worldM = (int) ReflectionUtils.getFieldValue(chunk.world, "m");
-                        worldM = worldM * 3 + 1013904223;
-                        ReflectionUtils.setFieldValue(chunk.world, "m", worldM);
+        int j = chunk.locX * 16;
+        int k = chunk.locZ * 16;
 
-                        int l1 = worldM >> 2;
-                        int i2 = l1 & 15;
-                        int j2 = l1 >> 8 & 15;
-                        int k2 = l1 >> 16 & 15;
+        chunk.world.methodProfiler.enter("tickBlocks");
+        for (ChunkSection chunksection : chunk.getSections()) {
+            if (chunksection != net.minecraft.server.v1_13_R2.Chunk.a && chunksection.b()) {
+                for (int k1 = 0; k1 < tickAmount; ++k1) {
+                    int worldM = (int) ReflectionUtils.getFieldValue(chunk.world, "m");
+                    worldM = worldM * 3 + 1013904223;
+                    ReflectionUtils.setFieldValue(chunk.world, "m", worldM);
 
-                        IBlockData iblockdata = chunksection.getType(i2, k2, j2);
-                        Fluid fluid = chunksection.b(i2, k2, j2);
+                    int l1 = worldM >> 2;
+                    int i2 = l1 & 15;
+                    int j2 = l1 >> 8 & 15;
+                    int k2 = l1 >> 16 & 15;
 
-                        chunk.world.methodProfiler.enter("randomTick");
+                    IBlockData iblockdata = chunksection.getType(i2, k2, j2);
+                    Fluid fluid = chunksection.b(i2, k2, j2);
 
-                        if (iblockdata.t()) {
-                            iblockdata.b(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), chunk.world.random);
-                        }
+                    chunk.world.methodProfiler.enter("randomTick");
 
-                        if (fluid.h()) {
-                            fluid.b(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), chunk.world.random);
-                        }
-
-                        chunk.world.methodProfiler.exit();
+                    if (iblockdata.t()) {
+                        iblockdata.b(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), chunk.world.random);
                     }
+
+                    if (fluid.h()) {
+                        fluid.b(chunk.world, new BlockPosition(i2 + j, k2 + chunksection.getYPosition(), j2 + k), chunk.world.random);
+                    }
+
+                    chunk.world.methodProfiler.exit();
                 }
             }
-
-            chunk.world.methodProfiler.exit();
         }
+
+        chunk.world.methodProfiler.exit();
     }
 }

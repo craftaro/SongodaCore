@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ConfigOptionsAdapter extends FileConfigurationOptions {
-
     final ConfigSection config;
 
     public ConfigOptionsAdapter(ConfigSection config) {
@@ -35,7 +34,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     @NotNull
     @Override
     public ConfigOptionsAdapter pathSeparator(char value) {
-        ((Config) config.root).setPathSeparator(value);
+        (config.root).setPathSeparator(value);
         return this;
     }
 
@@ -47,6 +46,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
         } else {
             ((Config) config.root).setHeader(value.split("\n"));
         }
+
         return this;
     }
 
@@ -56,16 +56,17 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
         if (!value) {
             ((Config) config.root).setHeader((List) null);
         }
+
         return this;
     }
 
     public int indent() {
-        return ((Config) config.root).getIndent();
+        return config.root.getIndent();
     }
 
     @NotNull
     public ConfigOptionsAdapter indent(int value) {
-        ((Config) config.root).setIndent(value);
+        config.root.setIndent(value);
         return this;
     }
 }

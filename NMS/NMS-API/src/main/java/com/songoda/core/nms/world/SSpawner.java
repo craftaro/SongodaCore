@@ -9,7 +9,6 @@ import org.bukkit.entity.LivingEntity;
 import java.util.Set;
 
 public interface SSpawner {
-
     LivingEntity spawnEntity(EntityType type, Location spawnerLocation);
 
     LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned,
@@ -42,18 +41,20 @@ public interface SSpawner {
             try {
                 TypeTranslations typeTranslation = valueOf(type.name());
                 return typeTranslation.lower;
-            } catch (Exception e) {
-                return type.name().toLowerCase();
+            } catch (Exception ignore) {
             }
+
+            return type.name().toLowerCase();
         }
 
         public static String getUpperFromType(EntityType type) {
             try {
                 TypeTranslations typeTranslation = valueOf(type.name());
                 return typeTranslation.upper;
-            } catch (Exception e) {
-                return WordUtils.capitalize(type.name().toLowerCase()).replace(" ", "");
+            } catch (Exception ignore) {
             }
+
+            return WordUtils.capitalize(type.name().toLowerCase()).replace(" ", "");
         }
     }
 }

@@ -15,14 +15,9 @@ import java.util.logging.Logger;
 
 /**
  * Particle effects for servers 1.8 and below
- *
- * @author jascotty2
- * @since 2019-08-23
  */
 public class LegacyParticleEffects {
-
-    public static enum Type {
-
+    public enum Type {
         EXPLOSION_NORMAL("explode"),
         EXPLOSION_LARGE("largeexplode"),
         EXPLOSION_HUGE("hugeexplosion"),
@@ -74,19 +69,19 @@ public class LegacyParticleEffects {
         public final ServerVersion minVersion;
         public final ServerVersion maxVersion;
 
-        private Type(String name) {
+        Type(String name) {
             this.name = name;
             this.minVersion = ServerVersion.UNKNOWN;
             this.maxVersion = null;
         }
 
-        private Type(String name, ServerVersion minVersion) {
+        Type(String name, ServerVersion minVersion) {
             this.name = name;
             this.minVersion = minVersion;
             this.maxVersion = null;
         }
 
-        private Type(String name, ServerVersion minVersion, ServerVersion maxVersion) {
+        Type(String name, ServerVersion minVersion, ServerVersion maxVersion) {
             this.name = name;
             this.minVersion = minVersion;
             this.maxVersion = maxVersion;
@@ -104,15 +99,15 @@ public class LegacyParticleEffects {
 
     private static final String version = getNMSVersion();
     private static boolean enabled = true;
-    private static Class mc_packetPlayOutWorldParticlesClazz;
-    private static Class cb_craftPlayerClazz;
+    private static Class<?> mc_packetPlayOutWorldParticlesClazz;
+    private static Class<?> cb_craftPlayerClazz;
     private static Method cb_craftPlayer_getHandle;
-    private static Class mc_entityPlayerClazz;
-    private static Class mc_playerConnectionClazz;
+    private static Class<?> mc_entityPlayerClazz;
+    private static Class<?> mc_playerConnectionClazz;
     private static Field mc_entityPlayer_playerConnection;
-    private static Class mc_PacketInterface;
+    private static Class<?> mc_PacketInterface;
     private static Method mc_playerConnection_sendPacket;
-    private static Class mc_EnumParticle;
+    private static Class<?> mc_EnumParticle;
     private static Method mc_EnumParticle_valueOf;
 
     static {
@@ -163,7 +158,7 @@ public class LegacyParticleEffects {
      * @param e                 particle effect type
      * @param xx                for notes, this is a value 0-1 for the color ([0-24]/24), for
      *                          redstone this is the red value 0-1 ([0-255]/255).
-     *                          Otherwise this is the distance for particles to fly on the x-axis.
+     *                          Otherwise, this is the distance for particles to fly on the x-axis.
      * @param yy                for redstone this is the green value 0-1 ([0-255]/255)
      *                          Otherwise this is the distance for particles to fly on the y-axis.
      * @param zz                for redstone this is the blue value 0-1 ([0-255]/255)
@@ -205,6 +200,7 @@ public class LegacyParticleEffects {
                 // Set those fields we need to be accessible!
                 field.setAccessible(true);
                 final String fieldName = field.getName();
+
                 // Set them to what we want!
                 if (fieldName.equals("a")) {
                     // we're just going to assume it's either 1.7 or 1.8
@@ -237,6 +233,7 @@ public class LegacyParticleEffects {
                  k = int[] for packet data (like block type for ITEM_CRACK)
                  */
             }
+
             // send it on its way!
             for (Player p : sendTo) {
                 sendPacket(sPacket, p);
@@ -250,6 +247,7 @@ public class LegacyParticleEffects {
     private static void sendPacket(Object packet, Player to) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Object cbPlayer = cb_craftPlayer_getHandle.invoke(to);
         Object mcConnection = mc_entityPlayer_playerConnection.get(cbPlayer);
+
         mc_playerConnection_sendPacket.invoke(mcConnection, packet);
     }
 }

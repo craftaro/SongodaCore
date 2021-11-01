@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class ConfigSetting {
-
     final Config config;
     final String key;
 
@@ -21,12 +20,14 @@ public class ConfigSetting {
     public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, String... comment) {
         this.config = config;
         this.key = key;
+
         config.setDefault(key, defaultValue, comment);
     }
 
     public ConfigSetting(@NotNull Config config, @NotNull String key, @NotNull Object defaultValue, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         this.config = config;
         this.key = key;
+
         config.setDefault(key, defaultValue, commentStyle, comment);
     }
 

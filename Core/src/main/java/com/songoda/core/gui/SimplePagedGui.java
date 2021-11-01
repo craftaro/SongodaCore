@@ -15,12 +15,8 @@ import java.util.Map;
 
 /**
  * Paged GUI for when you aren't going to be making too many pages
- *
- * @author jascotty2
- * @since 2019-08-31
  */
 public class SimplePagedGui extends Gui {
-
     protected boolean useHeader;
     private int rowsPerPage, maxCellSlot;
     protected ItemStack headerBackItem;
@@ -75,6 +71,7 @@ public class SimplePagedGui extends Gui {
         if (open && cell >= 0 && cell < inventory.getSize()) {
             inventory.setItem(cell, item);
         }
+
         return this;
     }
 
@@ -102,6 +99,7 @@ public class SimplePagedGui extends Gui {
             final ItemStack item = cellItems.get(cellIndex++);
             inventory.setItem(i, item != null ? item : blankItem);
         }
+
         // page markers
         updatePageNavigation();
     }
@@ -110,17 +108,22 @@ public class SimplePagedGui extends Gui {
     protected void updatePageNavigation() {
         if (page > 1) {
             inventory.setItem(inventory.getSize() - prevPageIndex, prevPage);
+
             this.setButton(-prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
         } else {
             inventory.setItem(inventory.getSize() - prevPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+
             this.setItem(-prevPageIndex, null);
             this.clearActions(-prevPageIndex);
         }
+
         if (pages > 1 && page != pages) {
             inventory.setItem(inventory.getSize() - nextPageIndex, nextPage);
+
             this.setButton(-nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
         } else {
             inventory.setItem(inventory.getSize() - nextPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+
             this.setItem(-nextPageIndex, null);
             this.clearActions(-nextPageIndex);
         }
@@ -129,9 +132,10 @@ public class SimplePagedGui extends Gui {
     @Override
     protected Inventory generateInventory(GuiManager manager) {
         this.guiManager = manager;
+
         // calculate pages here
         rowsPerPage = useHeader ? 4 : 5;
-        maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
+        maxCellSlot = this.cellItems.keySet().stream().max(Integer::compare).orElse(0) + 1;
         int maxRows = (int) Math.ceil(maxCellSlot / 9.);
         pages = (int) Math.max(1, Math.ceil(maxRows / (double) rowsPerPage));
         this.setRows(maxRows + (useHeader ? 1 : 0));
@@ -142,12 +146,14 @@ public class SimplePagedGui extends Gui {
         // populate and return the display inventory
         setPage(Math.min(page, pages));
         update();
+
         return inventory;
     }
 
     @Override
     protected void createInventory() {
         final int cells = rows * 9;
+
         inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), cells,
                 title == null ? "" : trimTitle(title));
     }
@@ -168,7 +174,9 @@ public class SimplePagedGui extends Gui {
         List<Player> toUpdate = null;
         if (Math.min(54, (maxRows + (useHeader ? 1 : 0)) * 9) != inventory.getSize()) {
             toUpdate = getPlayers();
+
             this.setRows(maxRows + (useHeader ? 1 : 0));
+
             createInventory();
         }
 
@@ -176,6 +184,7 @@ public class SimplePagedGui extends Gui {
         if (useHeader) {
             for (int i = 0; i < 9; ++i) {
                 final ItemStack item = cellItems.get(i);
+
                 inventory.setItem(i, item != null ? item : (headerBackItem != null ? headerBackItem : blankItem));
             }
         }
@@ -208,7 +217,7 @@ public class SimplePagedGui extends Gui {
             // footer row
             conditionals = conditionalButtons.get(cell - (rows * 9));
         } else {
-            int cellIndex = page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9));
+            int cellIndex = page == 1 ? cell : cell + (page - 1) * rowsPerPage * 9;
             conditionals = conditionalButtons.get(cellIndex);
         }
 
@@ -220,6 +229,7 @@ public class SimplePagedGui extends Gui {
             // no event for this button
             return false;
         }
+
         return true;
     }
 }

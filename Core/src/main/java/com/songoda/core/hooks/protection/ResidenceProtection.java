@@ -9,22 +9,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class ResidenceProtection extends Protection {
-
     private final Residence instance;
+
     public ResidenceProtection(Plugin plugin) {
         super(plugin);
+
         this.instance = Residence.getInstance();
     }
 
     @Override
     public boolean canPlace(Player player, Location location) {
         ResidencePlayer rPlayer = Residence.getInstance().getPlayerManager().getResidencePlayer(player);
+
         return rPlayer.canPlaceBlock(location.getBlock(), false);
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
         ResidencePlayer rPlayer = Residence.getInstance().getPlayerManager().getResidencePlayer(player);
+
         return rPlayer.canBreakBlock(location.getBlock(), false);
     }
 
@@ -34,11 +37,13 @@ public class ResidenceProtection extends Protection {
     }
 
     private boolean hasPerms(Player player, Location location, Flags flag) {
-        if (instance.isDisabledWorldListener(location.getWorld()))
+        if (instance.isDisabledWorldListener(location.getWorld())) {
             return true;
+        }
 
-        if (instance.isResAdminOn(player))
+        if (instance.isResAdminOn(player)) {
             return true;
+        }
 
         FlagPermissions perms = instance.getPermsByLocForPlayer(location, player);
         return perms.playerHas(player, flag, true);

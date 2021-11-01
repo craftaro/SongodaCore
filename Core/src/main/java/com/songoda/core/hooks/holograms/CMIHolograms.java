@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CMIHolograms extends Holograms {
-
     private static CMI cmi;
     private static HologramManager cmiHologramManager;
     private static HashSet<String> ourHolograms = new HashSet<>();
@@ -28,14 +27,16 @@ public class CMIHolograms extends Holograms {
         try {
             useOldMethod = CMIHologram.class.getDeclaredField("lines").getDeclaringClass() == String[].class;
             cmi_CMIHologram_getLines = CMIHologram.class.getMethod("getLines");
-        } catch (NoSuchFieldException | NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (NoSuchFieldException | NoSuchMethodException ex) {
+            ex.printStackTrace();
         }
     }
 
     public CMIHolograms(Plugin plugin) {
         super(plugin);
+
         cmi = (CMI) Bukkit.getPluginManager().getPlugin("CMI");
+
         if (cmi != null) {
             cmiHologramManager = cmi.getHologramManager();
         }
@@ -64,11 +65,14 @@ public class CMIHolograms extends Holograms {
     @Override
     public void removeHologram(Location location) {
         location = fixLocation(location);
+
         final String id = locStr(location);
         CMIHologram holo = cmiHologramManager.getByName(id);
+
         if (holo != null) {
             cmiHologramManager.removeHolo(holo);
         }
+
         ourHolograms.remove(id);
     }
 
@@ -76,10 +80,12 @@ public class CMIHolograms extends Holograms {
     public void removeAllHolograms() {
         for (String id : ourHolograms) {
             CMIHologram holo = cmiHologramManager.getByName(id);
+
             if (holo != null) {
                 cmiHologramManager.removeHolo(holo);
             }
         }
+
         ourHolograms.clear();
     }
 
@@ -87,6 +93,7 @@ public class CMIHolograms extends Holograms {
     public void updateHologram(Location location, List<String> lines) {
         location = fixLocation(location);
         CMIHologram holo = cmiHologramManager.getByName(locStr(location));
+
         if (holo != null) {
             // only update if there is a change to the text
             List<String> holoLines;
@@ -100,6 +107,7 @@ public class CMIHolograms extends Holograms {
                 Logger.getLogger(CMIHolograms.class.getName()).log(Level.SEVERE, "CMI Hologram error!", ex);
                 holoLines = Collections.emptyList();
             }
+
             boolean isChanged = lines.size() != holoLines.size();
             if (!isChanged) {
                 // double-check the lines
@@ -107,12 +115,15 @@ public class CMIHolograms extends Holograms {
                     isChanged = !holo.getLine(i).equals(lines.get(i));
                 }
             }
+
             if (isChanged) {
                 holo.setLines(lines);
                 holo.update();
             }
+
             return;
         }
+
         createAt(location, lines);
     }
 
@@ -129,6 +140,7 @@ public class CMIHolograms extends Holograms {
 
     private void createAt(Location location, List<String> lines) {
         final String id = locStr(location);
+
         CMIHologram holo = new CMIHologram(id, location);
         holo.setLines(lines);
 

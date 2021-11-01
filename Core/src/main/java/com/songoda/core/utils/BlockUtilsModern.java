@@ -22,24 +22,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BlockUtilsModern {
-
     protected static void _updatePressurePlateModern(Block plate, int power) {
         BlockData blockData = plate.getBlockData();
         boolean update = false;
+
         if (blockData instanceof AnaloguePowerable) {
             AnaloguePowerable a = (AnaloguePowerable) blockData;
             int toPower = Math.min(a.getMaximumPower(), power);
+
             if ((update = toPower != a.getPower())) {
                 a.setPower(toPower);
                 plate.setBlockData(a);
             }
         } else if (blockData instanceof Powerable) {
             Powerable p = (Powerable) blockData;
+
             if ((update = p.isPowered() != (power != 0))) {
                 p.setPowered(power != 0);
                 plate.setBlockData(p);
             }
         }
+
         if (update) {
             _updateRedstoneNeighbours(plate);
         }
@@ -47,6 +50,7 @@ public class BlockUtilsModern {
 
     protected static void _toggleLeverModern(Block lever) {
         BlockData blockData = lever.getBlockData();
+
         if (blockData instanceof Switch) {
             Switch s = (Switch) blockData;
             s.setPowered(!s.isPowered());
@@ -57,6 +61,7 @@ public class BlockUtilsModern {
 
     protected static void _pressButtonModern(Block button) {
         BlockData blockData = button.getBlockData();
+
         if (blockData instanceof Switch) {
             Switch s = (Switch) blockData;
             s.setPowered(true);
@@ -67,6 +72,7 @@ public class BlockUtilsModern {
 
     static void _releaseButtonModern(Block button) {
         BlockData blockData = button.getBlockData();
+
         if (blockData instanceof Switch) {
             Switch s = (Switch) blockData;
             s.setPowered(false);
@@ -86,7 +92,6 @@ public class BlockUtilsModern {
     static {
         try {
             // Cache reflection.
-
             clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
             clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
 
@@ -198,6 +203,7 @@ public class BlockUtilsModern {
             // The lower half of the door contains the open/close state
             if (data.getHalf() == Bisected.Half.TOP) {
                 Block lowerHalf = door.getRelative(BlockFace.DOWN);
+
                 if (lowerHalf.getBlockData() instanceof Door) {
                     Door lowerData = (Door) lowerHalf.getBlockData();
                     lowerData.setOpen(!data.isOpen());
@@ -216,9 +222,11 @@ public class BlockUtilsModern {
     protected static Block _getDoubleDoorModern(Block block) {
         BlockData bd = block.getBlockData();
         Block door = null;
+
         if (bd instanceof Door) {
             final Door d = (Door) bd;
             final BlockFace face = d.getFacing();
+
             if (face.getModX() == 0) {
                 if (d.getHinge() == Door.Hinge.RIGHT) {
                     door = block.getRelative(face.getModZ(), 0, 0);
@@ -233,6 +241,7 @@ public class BlockUtilsModern {
                 }
             }
         }
+
         return door != null && door.getBlockData() instanceof Door
                 && ((Door) door.getBlockData()).getHinge() != ((Door) bd).getHinge() ? door : null;
     }
@@ -240,12 +249,14 @@ public class BlockUtilsModern {
     protected static BlockFace _getDoorClosedDirectionModern(Block door) {
         if (BlockUtils.DOORS.contains(door.getType())) {
             BlockData bd = door.getBlockData();
+
             if (bd instanceof Door) {
                 Door d = (Door) bd;
 
                 // The lower half of the door contains the open/close state
                 if (d.getHalf() == Bisected.Half.TOP) {
                     door = door.getRelative(BlockFace.DOWN);
+
                     if (door.getBlockData() instanceof Door) {
                         d = (Door) door.getBlockData();
                     } else {
@@ -254,6 +265,7 @@ public class BlockUtilsModern {
                 }
 
                 final BlockFace face = d.getFacing();
+
                 // now we /could/ also correct for the hinge (top block), it's not needed information
                 if (face.getModX() == 0) {
                     return d.isOpen() ? BlockFace.EAST : BlockFace.SOUTH;
@@ -263,9 +275,11 @@ public class BlockUtilsModern {
             }
         } else if (BlockUtils.FENCE_GATES.contains(door.getType())) {
             BlockData bd = door.getBlockData();
+
             if (bd instanceof Gate) {
                 Gate g = (Gate) bd;
                 final BlockFace face = g.getFacing();
+
                 if (face.getModX() == 0) {
                     return g.isOpen() ? BlockFace.EAST : BlockFace.SOUTH;
                 } else {
@@ -274,8 +288,10 @@ public class BlockUtilsModern {
             }
         } else if (BlockUtils.TRAP_DOORS.contains(door.getType())) {
             BlockData bd = door.getBlockData();
+
             if (bd instanceof TrapDoor) {
                 TrapDoor t = (TrapDoor) bd;
+
                 if (!t.isOpen()) {
                     return BlockFace.UP;
                 } else {
@@ -283,35 +299,43 @@ public class BlockUtilsModern {
                 }
             }
         }
+
         return null;
     }
 
     protected static boolean _isCropFullyGrown(Block block) {
         BlockData data = block.getBlockData();
+
         if (data instanceof Ageable) {
             return ((Ageable) data).getAge() == ((Ageable) data).getMaximumAge();
         }
+
         return false;
     }
 
     protected static int _getMaxGrowthStage(Block block) {
         BlockData data = block.getBlockData();
+
         if (data instanceof Ageable) {
             return ((Ageable) data).getMaximumAge();
         }
+
         return -1;
     }
 
     protected static int _getMaxGrowthStage(Material material) {
         BlockData data = material.createBlockData();
+
         if (data instanceof Ageable) {
             return ((Ageable) data).getMaximumAge();
         }
+
         return -1;
     }
 
     public static void _setGrowthStage(Block block, int stage) {
         BlockData data = block.getBlockData();
+
         if (data instanceof Ageable) {
             ((Ageable) data).setAge(Math.max(0, Math.min(stage, ((Ageable) data).getMaximumAge())));
             block.setBlockData(data);
@@ -320,9 +344,11 @@ public class BlockUtilsModern {
 
     public static void _incrementGrowthStage(Block block) {
         BlockData data = block.getBlockData();
+
         if (data instanceof Ageable) {
             final int max = ((Ageable) data).getMaximumAge();
             final int age = ((Ageable) data).getAge();
+
             if (age < max) {
                 ((Ageable) data).setAge(age + 1);
                 block.setBlockData(data);
@@ -332,6 +358,7 @@ public class BlockUtilsModern {
 
     public static void _resetGrowthStage(Block block) {
         BlockData data = block.getBlockData();
+
         if (data instanceof Ageable) {
             ((Ageable) data).setAge(0);
             block.setBlockData(data);

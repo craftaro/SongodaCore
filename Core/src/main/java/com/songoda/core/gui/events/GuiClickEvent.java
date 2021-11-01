@@ -17,10 +17,13 @@ public class GuiClickEvent extends GuiEvent {
 
     public GuiClickEvent(GuiManager manager, Gui gui, Player player, InventoryClickEvent event, int slot, boolean guiClicked) {
         super(manager, gui, player);
+
         this.slot = slot;
         this.guiClicked = guiClicked;
         this.cursor = event.getCursor();
+
         Inventory clicked = event.getClickedInventory();
+
         this.clickedItem = clicked == null ? null : clicked.getItem(event.getSlot());
         this.clickType = event.getClick();
         this.event = event;

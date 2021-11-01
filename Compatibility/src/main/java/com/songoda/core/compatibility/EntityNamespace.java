@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityNamespace {
-
-    static final HashMap<String, EntityType> validTypes = new HashMap();
-    static final HashMap<String, String> legacyToModernTypes = new HashMap() {
+    static final HashMap<String, EntityType> validTypes = new HashMap<>();
+    static final HashMap<String, String> legacyToModernTypes = new HashMap<String, String>() {
         {
             put("xporb", "experience_orb");
             put("xp_orb", "experience_orb");
@@ -66,11 +65,14 @@ public class EntityNamespace {
         if (entity == null) {
             return null;
         }
+
         // first try to translate natively
         EntityType type = EntityType.fromName(entity);
+
         if (type == null) {
             // try legacy values
             type = EntityType.fromName(legacyToModernTypes.get(entity));
+
             // try converting modern to legacy
             if (type == null && legacyToModernTypes.containsValue(entity)) {
                 for (Map.Entry<String, String> e : legacyToModernTypes.entrySet()) {
@@ -80,6 +82,7 @@ public class EntityNamespace {
                 }
             }
         }
+
         return type;
     }
 }

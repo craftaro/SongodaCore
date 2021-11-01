@@ -17,8 +17,6 @@ import java.util.logging.Level;
 /**
  * REMINDER: When converting plugins to use this, REMOVE METRICS <br>
  * Must not have two instances of Metrics enabled!
- *
- * @author jascotty2
  */
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
@@ -72,13 +70,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public final void onLoad() {
         try {
             onPluginLoad();
-        } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE,
-                    "Unexpected error while loading " + getDescription().getName()
-                            + " v" + getDescription().getVersion()
-                            + " c" + SongodaCore.getCoreLibraryVersion()
-                            + ": Disabling plugin!", t);
-            emergencyStop = true;
+        } catch (Throwable th) {
+            criticalErrorOnPluginStartup(th);
         }
     }
 
@@ -86,48 +79,45 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public final void onEnable() {
         if (emergencyStop) {
             setEnabled(false);
+
             return;
         }
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
-                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
-        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY.toString(),
-                ChatColor.GREEN.toString(), "Enabling", ChatColor.GRAY.toString()));
+        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
+                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
+        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
+                ChatColor.GREEN, "Enabling", ChatColor.GRAY));
 
         try {
             locale = Locale.loadDefaultLocale(this, "en_US");
+
             // plugin setup
             onPluginEnable();
+
             // Load Data.
             Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
+
             if (emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 console.sendMessage(" ");
                 return;
             }
+
             // Start Metrics
             Metrics.start(this);
-        } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE,
-                    "Unexpected error while loading " + getDescription().getName()
-                            + " v" + getDescription().getVersion()
-                            + " c" + SongodaCore.getCoreLibraryVersion()
-                            + ": Disabling plugin!", t);
-            emergencyStop();
+        } catch (Throwable th) {
+            criticalErrorOnPluginStartup(th);
+
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             console.sendMessage(" ");
+
             return;
         }
 
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(" "); // blank line to separate chatter
-    }
-
-    protected void emergencyStop() {
-        emergencyStop = true;
-        Bukkit.getPluginManager().disablePlugin(this);
     }
 
     @Override
@@ -135,15 +125,18 @@ public abstract class SongodaPlugin extends JavaPlugin {
         if (emergencyStop) {
             return;
         }
-        console.sendMessage(" "); // blank line to speparate chatter
+
+        console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY.toString(),
-                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE.toString()));
-        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY.toString(),
-                ChatColor.RED.toString(), "Disabling", ChatColor.GRAY.toString()));
+        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
+                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
+        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
+                ChatColor.RED, "Disabling", ChatColor.GRAY));
+
         onPluginDisable();
+
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(" "); // blank line to speparate chatter
+        console.sendMessage(" "); // blank line to separate chatter
     }
 
     public ConsoleCommandSender getConsole() {
@@ -166,15 +159,15 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public boolean setLocale(String localeName, boolean reload) {
         if (locale != null && locale.getName().equals(localeName)) {
             return !reload || locale.reloadMessages();
-        } else {
-            Locale l = Locale.loadLocale(this, localeName);
-            if (l != null) {
-                locale = l;
-                return true;
-            } else {
-                return false;
-            }
         }
+
+        Locale l = Locale.loadLocale(this, localeName);
+        if (l != null) {
+            locale = l;
+            return true;
+        }
+
+        return false;
     }
 
     protected void shutdownDataManager(DataManagerAbstract dataManager) {
@@ -212,5 +205,28 @@ public abstract class SongodaPlugin extends JavaPlugin {
                                 "This can be a serious problem, please report it to us (Songoda)!", unfinishedTasks));
             }
         }
+    }
+
+    protected void emergencyStop() {
+        emergencyStop = true;
+
+        Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    /**
+     * Logs one or multiple errors that occurred during plugin startup and calls {@link #emergencyStop()} afterwards
+     *
+     * @param th The error(s) that occurred
+     */
+    protected void criticalErrorOnPluginStartup(Throwable... th) {
+        Bukkit.getLogger().log(Level.SEVERE,
+                String.format(
+                        "Unexpected error while loading %s v%s c%s: Disabling plugin!",
+                        getDescription().getName(),
+                        getDescription().getVersion(),
+                        SongodaCore.getCoreLibraryVersion()
+                ), th);
+
+        emergencyStop();
     }
 }

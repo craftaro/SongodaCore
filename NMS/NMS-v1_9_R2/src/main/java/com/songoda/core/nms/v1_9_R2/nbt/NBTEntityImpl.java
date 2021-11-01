@@ -10,11 +10,11 @@ import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
-
     private Entity nmsEntity;
 
     public NBTEntityImpl(NBTTagCompound entityNBT, Entity nmsEntity) {
         super(entityNBT);
+
         this.nmsEntity = nmsEntity;
     }
 
@@ -35,8 +35,10 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
             spawned.setLocation(location.getX(), location.getY(), location.getZ(),
                     location.getPitch(), location.getYaw());
             nmsEntity = spawned;
+
             return entity;
         }
+
         return null;
     }
 
@@ -49,7 +51,9 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     @Override
     public void addExtras() {
         String key = EntityTypes.b(nmsEntity); // Changed in 1.12
-        if (key != null)
+
+        if (key != null) {
             compound.setString("entity_type", key); // Changed in 1.13
+        }
     }
 }

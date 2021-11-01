@@ -30,14 +30,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Assists in the utilization of localization files. <br>
- * Created to be used by the Songoda Team. <br>
- * Updated 2019-09-01 to support UTF encoded lang files - jascotty2
- *
- * @author Brianna O'Keefe - Songoda
+ * Assists in the utilization of localization files.
  */
 public class Locale {
-
     private static final Pattern OLD_NODE_PATTERN = Pattern.compile("^([^ ]+)\\s*=\\s*\"?(.*?)\"?$");
     private static final String FILE_EXTENSION = ".lang";
 
@@ -69,6 +64,7 @@ public class Locale {
      */
     public static Locale loadDefaultLocale(JavaPlugin plugin, String name) {
         saveDefaultLocale(plugin, name, name);
+
         return loadLocale(plugin, name);
     }
 
@@ -82,13 +78,24 @@ public class Locale {
      */
     public static Locale loadLocale(JavaPlugin plugin, String name) {
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
-        if (!localeFolder.exists()) return null;
+        if (!localeFolder.exists()) {
+            return null;
+        }
+
         File localeFile = new File(localeFolder, name + FILE_EXTENSION);
-        if (!localeFolder.exists()) return null;
+        if (!localeFolder.exists()) {
+            return null;
+        }
+
         // found the lang file, now load it in!
         Locale l = new Locale(plugin, localeFile, name);
-        if (!l.reloadMessages()) return null;
+
+        if (!l.reloadMessages()) {
+            return null;
+        }
+
         plugin.getLogger().info("Loaded locale \"" + name + "\"");
+
         return l;
     }
 
@@ -102,17 +109,26 @@ public class Locale {
     public static List<Locale> loadAllLocales(JavaPlugin plugin) {
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
         List<Locale> all = new ArrayList<>();
+
         for (File localeFile : localeFolder.listFiles()) {
             String fileName = localeFile.getName();
-            if (!fileName.endsWith(FILE_EXTENSION)) continue;
+            if (!fileName.endsWith(FILE_EXTENSION)) {
+                continue;
+            }
+
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-            if (fileName.split("_").length != 2) continue;
+            if (fileName.split("_").length != 2) {
+                continue;
+            }
+
             Locale l = new Locale(plugin, localeFile, fileName);
+
             if (l.reloadMessages()) {
                 plugin.getLogger().info("Loaded locale \"" + fileName + "\"");
                 all.add(l);
             }
         }
+
         return all;
     }
 
@@ -123,16 +139,23 @@ public class Locale {
      */
     public static List<String> getLocales(Plugin plugin) {
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
-        List<String> all = new ArrayList();
+        List<String> all = new ArrayList<>();
+
         for (File localeFile : localeFolder.listFiles()) {
             String fileName = localeFile.getName();
-            if (!fileName.endsWith(FILE_EXTENSION)) continue;
+            if (!fileName.endsWith(FILE_EXTENSION)) {
+                continue;
+            }
+
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+
             if (fileName.split("_").length != 2) {
                 continue;
             }
+
             all.add(fileName);
         }
+
         return all;
     }
 
@@ -163,16 +186,21 @@ public class Locale {
     }
 
     private static boolean saveLocale(Plugin plugin, InputStream in, String fileName, boolean builtin) {
-        if (in == null) return false;
+        if (in == null) {
+            return false;
+        }
+
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
         if (!localeFolder.exists()) localeFolder.mkdirs();
 
-        if (!fileName.endsWith(FILE_EXTENSION))
+        if (!fileName.endsWith(FILE_EXTENSION)) {
             fileName = fileName + FILE_EXTENSION;
+        }
 
         File destinationFile = new File(localeFolder, fileName);
-        if (destinationFile.exists())
+        if (destinationFile.exists()) {
             return updateFiles(plugin, in, destinationFile, builtin);
+        }
 
         try (OutputStream outputStream = new FileOutputStream(destinationFile)) {
             copy(in, outputStream);
@@ -180,14 +208,14 @@ public class Locale {
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 
             return fileName.split("_").length == 2;
-        } catch (IOException e) {
-            return false;
+        } catch (IOException ignore) {
         }
+
+        return false;
     }
 
     // Write new changes to existing files, if any at all
     private static boolean updateFiles(Plugin plugin, InputStream defaultFile, File existingFile, boolean builtin) {
-
         try (BufferedInputStream defaultIn = new BufferedInputStream(defaultFile);
              BufferedInputStream existingIn = new BufferedInputStream(new FileInputStream(existingFile))) {
 
@@ -238,17 +266,19 @@ public class Locale {
                                 String.join("\n", added)
                         );
                     }
+
                     existingLang.setRootNodeSpacing(0);
                     existingLang.save();
                 }
+
                 existingLang.setRootNodeSpacing(0);
                 existingLang.save();
+
                 return !added.isEmpty();
             } catch (InvalidConfigurationException ex) {
                 plugin.getLogger().log(Level.SEVERE, "Error checking config " + existingFile.getName(), ex);
             }
-        } catch (IOException e) {
-            return false;
+        } catch (IOException ignore) {
         }
 
         return false;
@@ -281,31 +311,34 @@ public class Locale {
             Config lang = new Config(file);
             lang.load(reader);
             translateMsgRoot(lang, file, charset);
+
             // load lists as strings with newlines
             lang.getValues(true).forEach((k, v) -> nodes.put(k,
                     v instanceof List
-                            ? (((List) v).stream().map(Object::toString).collect(Collectors.joining("\n")).toString())
+                            ? (((List<?>) v).stream().map(Object::toString).collect(Collectors.joining("\n")))
                             : v.toString()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
         } catch (InvalidConfigurationException ex) {
             Logger.getLogger(Locale.class.getName()).log(Level.SEVERE, "Configuration error in language file \"" + file.getName() + "\"", ex);
-            return false;
         }
-        return true;
+
+        return false;
     }
 
     protected static BufferedReader translatePropertyToYAML(BufferedReader source, Charset charset) throws IOException {
         StringBuilder output = new StringBuilder();
+
         String line, line1;
-        for (int lineNumber = 0; (line = source.readLine()) != null; lineNumber++) {
+        for (int lineNumber = 0; (line = source.readLine()) != null; ++lineNumber) {
             if (lineNumber == 0) {
                 // remove BOM markers, if any
                 line1 = line;
                 line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
                 if (line1.length() != line.length()) {
-                    output.append(line1.substring(0, line1.length() - line.length()));
+                    output.append(line1, 0, line1.length() - line.length());
                 }
             }
 
@@ -326,6 +359,7 @@ public class Locale {
                 output.append(matcher.group(1)).append(": \"").append(matcher.group(2)).append("\"\n");
             }
         }
+
         // I hate Java sometimes because of crap like this:
         return new BufferedReader(new InputStreamReader(new BufferedInputStream(new ByteArrayInputStream(output.toString().getBytes(charset))), charset));
     }
@@ -335,15 +369,17 @@ public class Locale {
                 .filter(e -> e.getValue() instanceof ConfigSection)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+
         if (!msgs.isEmpty()) {
             try (FileInputStream stream = new FileInputStream(file);
-                 BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset))) {
+                 BufferedReader source = new BufferedReader(new InputStreamReader(stream, charset))) {
                 String line;
-                for (int lineNumber = 0; (line = source.readLine()) != null; lineNumber++) {
+                for (int lineNumber = 0; (line = source.readLine()) != null; ++lineNumber) {
                     if (lineNumber == 0) {
                         // remove BOM markers, if any
                         line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
                     }
+
                     Matcher matcher;
                     if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
                             && (matcher = OLD_NODE_PATTERN.matcher(line)).find()
@@ -360,15 +396,18 @@ public class Locale {
                 .filter(e -> e.getValue() instanceof ConfigSection)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+
         if (!msgs.isEmpty()) {
             String[] source = file.split("\n");
+
             String line;
-            for (int lineNumber = 0; lineNumber < source.length; lineNumber++) {
+            for (int lineNumber = 0; lineNumber < source.length; ++lineNumber) {
                 line = source[lineNumber];
                 if (lineNumber == 0) {
                     // remove BOM markers, if any
                     line = line.replaceAll("[\uFEFF\uFFFE\u200B]", "");
                 }
+
                 Matcher matcher;
                 if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
                         && (matcher = OLD_NODE_PATTERN.matcher(line)).find()
@@ -412,6 +451,7 @@ public class Locale {
         if (this.nodes.containsKey(node + ".message")) {
             node += ".message";
         }
+
         return this.getMessageOrDefault(node, node);
     }
 
@@ -427,6 +467,7 @@ public class Locale {
         if (this.nodes.containsKey(node + ".message")) {
             node += ".message";
         }
+
         return supplyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
     }
 
@@ -447,8 +488,8 @@ public class Locale {
             while ((n = input.read(buffer)) != -1) {
                 output.write(buffer, 0, n);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

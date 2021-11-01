@@ -20,12 +20,8 @@ import java.util.stream.Collectors;
 
 /**
  * Configuration for a specific node
- *
- * @author jascotty2
- * @since 2019-08-28
  */
 public class ConfigSection extends MemoryConfiguration {
-
     final String fullPath, nodeKey;
     final ConfigSection root;
     final ConfigSection parent;
@@ -47,10 +43,11 @@ public class ConfigSection extends MemoryConfiguration {
         this.parent = null;
         isDefault = false;
         nodeKey = fullPath = "";
-        configComments = new HashMap();
-        defaultComments = new HashMap();
-        defaults = new LinkedHashMap();
-        values = new LinkedHashMap();
+
+        configComments = new HashMap<>();
+        defaultComments = new HashMap<>();
+        defaults = new LinkedHashMap<>();
+        values = new LinkedHashMap<>();
     }
 
     ConfigSection(ConfigSection root, ConfigSection parent, String nodeKey, boolean isDefault) {
@@ -85,8 +82,10 @@ public class ConfigSection extends MemoryConfiguration {
      * @param pathChar character to use
      */
     public void setPathSeparator(char pathChar) {
-        if (!root.values.isEmpty() || !root.defaults.isEmpty())
+        if (!root.values.isEmpty() || !root.defaults.isEmpty()) {
             throw new RuntimeException("Path change after config initialization");
+        }
+
         root.pathChar = pathChar;
     }
 
@@ -122,9 +121,11 @@ public class ConfigSection extends MemoryConfiguration {
             StringBuilder nodePath = new StringBuilder(fullPath);
             LinkedHashMap<String, Object> writeTo = useDefault ? root.defaults : root.values;
             ConfigSection travelNode = this;
+
             synchronized (root.lock) {
                 for (int i = 0; i < pathParts.length - 1; ++i) {
                     final String node = (i != 0 ? nodePath.append(root.pathChar) : nodePath).append(pathParts[i]).toString();
+
                     if (!(writeTo.get(node) instanceof ConfigSection)) {
                         writeTo.put(node, travelNode = new ConfigSection(root, travelNode, pathParts[i], useDefault));
                     } else {
@@ -139,9 +140,11 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createDefaultSection(@NotNull String path) {
         createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
+
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
         }
+
         return section;
     }
 
@@ -149,10 +152,12 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
         createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
+
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
             root.defaultComments.put(fullPath + path, new Comment(comment));
         }
+
         return section;
     }
 
@@ -160,10 +165,12 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         createNodePath(path, true);
         ConfigSection section = new ConfigSection(root, this, path, true);
+
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, section);
             root.defaultComments.put(fullPath + path, new Comment(commentStyle, comment));
         }
+
         return section;
     }
 
@@ -186,12 +193,13 @@ public class ConfigSection extends MemoryConfiguration {
                 root.configComments.put(fullPath + path, comment);
             }
         }
+
         return this;
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, String... lines) {
-        return setDefaultComment(path, lines.length == 0 ? (List) null : Arrays.asList(lines));
+        return setDefaultComment(path, lines.length == 0 ? null : Arrays.asList(lines));
     }
 
     @NotNull
@@ -199,12 +207,13 @@ public class ConfigSection extends MemoryConfiguration {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(lines));
         }
+
         return this;
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
-        return setDefaultComment(path, commentStyle, lines.length == 0 ? (List) null : Arrays.asList(lines));
+        return setDefaultComment(path, commentStyle, lines.length == 0 ? null : Arrays.asList(lines));
     }
 
     @NotNull
@@ -212,6 +221,7 @@ public class ConfigSection extends MemoryConfiguration {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, new Comment(commentStyle, lines));
         }
+
         return this;
     }
 
@@ -220,30 +230,36 @@ public class ConfigSection extends MemoryConfiguration {
         synchronized (root.lock) {
             root.defaultComments.put(fullPath + path, comment);
         }
+
         return this;
     }
 
     @Nullable
     public Comment getComment(@NotNull String path) {
         Comment result = root.configComments.get(fullPath + path);
+
         if (result == null) {
             result = root.defaultComments.get(fullPath + path);
         }
+
         return result;
     }
 
     @Nullable
     public String getCommentString(@NotNull String path) {
         Comment result = root.configComments.get(fullPath + path);
+
         if (result == null) {
             result = root.defaultComments.get(fullPath + path);
         }
+
         return result != null ? result.toString() : null;
     }
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
         createNodePath(path, true);
+
         synchronized (root.lock) {
             root.defaults.put(fullPath + path, value);
         }
@@ -252,7 +268,7 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public void addDefaults(@NotNull Map<String, Object> defaults) {
         //defaults.entrySet().stream().forEach(m -> root.defaults.put(fullPath + m.getKey(), m.getValue()));
-        defaults.entrySet().stream().forEach(m -> addDefault(m.getKey(), m.getValue()));
+        defaults.entrySet().forEach(m -> addDefault(m.getKey(), m.getValue()));
     }
 
     @Override
@@ -262,8 +278,9 @@ public class ConfigSection extends MemoryConfiguration {
         } else {
             root.defaults.keySet().stream()
                     .filter(k -> k.startsWith(fullPath))
-                    .forEach(k -> root.defaults.remove(k));
+                    .forEach(root.defaults::remove);
         }
+
         addDefaults(c);
     }
 
@@ -285,8 +302,9 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     @Override
     public Set<String> getKeys(boolean deep) {
-        LinkedHashSet<String> result = new LinkedHashSet();
+        LinkedHashSet<String> result = new LinkedHashSet<>();
         int pathIndex = fullPath.lastIndexOf(root.pathChar);
+
         if (deep) {
             result.addAll(root.defaults.keySet().stream()
                     .filter(k -> k.startsWith(fullPath))
@@ -306,29 +324,32 @@ public class ConfigSection extends MemoryConfiguration {
                     .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
+
         return result;
     }
 
     @NotNull
     @Override
     public Map<String, Object> getValues(boolean deep) {
-        LinkedHashMap<String, Object> result = new LinkedHashMap();
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
         int pathIndex = fullPath.lastIndexOf(root.pathChar);
+
         if (deep) {
             result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath))
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
-                            e -> e.getValue(),
+                            Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
+
             result.putAll((Map<String, Object>) root.values.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath))
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
-                            e -> e.getValue(),
+                            Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
@@ -338,35 +359,40 @@ public class ConfigSection extends MemoryConfiguration {
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
-                            e -> e.getValue(),
+                            Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
+
             result.putAll((Map<String, Object>) root.values.entrySet().stream()
                     .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
                             e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
-                            e -> e.getValue(),
+                            Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
         }
+
         return result;
     }
 
     @NotNull
     public List<ConfigSection> getSections(String path) {
         ConfigSection rootSection = getConfigurationSection(path);
+
         if (rootSection == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        ArrayList<ConfigSection> result = new ArrayList();
+
+        ArrayList<ConfigSection> result = new ArrayList<>();
         rootSection.getKeys(false).stream()
-                .map(key -> rootSection.get(key))
-                .filter(object -> object != null && object instanceof ConfigSection)
+                .map(rootSection::get)
+                .filter(ConfigSection.class::isInstance)
                 .forEachOrdered(object -> result.add((ConfigSection) object));
+
         return result;
     }
 
@@ -392,8 +418,10 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Override
     public String getName() {
-        if (fullPath.isEmpty())
+        if (fullPath.isEmpty()) {
             return "";
+        }
+
         String[] parts = fullPath.split(Pattern.quote(String.valueOf(root.pathChar)));
         return parts[parts.length - 1];
     }
@@ -412,9 +440,11 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public Object get(@NotNull String path) {
         Object result = root.values.get(fullPath + path);
+
         if (result == null) {
             result = root.defaults.get(fullPath + path);
         }
+
         return result;
     }
 
@@ -422,6 +452,7 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public Object get(@NotNull String path, @Nullable Object def) {
         Object result = root.values.get(fullPath + path);
+
         return result != null ? result : def;
     }
 
@@ -429,26 +460,31 @@ public class ConfigSection extends MemoryConfiguration {
     public void set(@NotNull String path, @Nullable Object value) {
         if (isDefault) {
             addDefault(path, value);
-        } else {
-            createNodePath(path, false);
-            Object last = null;
-            synchronized (root.lock) {
-                if (value != null) {
-                    root.changed |= (last = root.values.put(fullPath + path, value)) != value;
-                } else {
-                    root.changed |= (last = root.values.remove(fullPath + path)) != null;
-                }
-            }
-            if (last != value && last != null && last instanceof ConfigSection) {
-                // clean up orphaned nodes
-                final String trim = fullPath + path + root.pathChar;
-                synchronized (root.lock) {
-                    root.values.keySet().stream().filter(k -> k.startsWith(trim)).collect(Collectors.toSet()).stream()
-                            .forEach(k -> root.values.remove(k));
-                }
-            }
-            onChange();
+            return;
         }
+
+        createNodePath(path, false);
+        Object last;
+        synchronized (root.lock) {
+            if (value != null) {
+                root.changed |= (last = root.values.put(fullPath + path, value)) != value;
+            } else {
+                root.changed |= (last = root.values.remove(fullPath + path)) != null;
+            }
+        }
+
+        if (last != value && last instanceof ConfigSection) {
+            // clean up orphaned nodes
+            final String trim = fullPath + path + root.pathChar;
+            synchronized (root.lock) {
+                root.values.keySet().stream()
+                        .filter(k -> k.startsWith(trim))
+                        .collect(Collectors.toSet())
+                        .forEach(root.values::remove);
+            }
+        }
+
+        onChange();
     }
 
     @NotNull
@@ -510,17 +546,20 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createSection(@NotNull String path) {
         createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
+
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
+
         root.changed = true;
         onChange();
+
         return section;
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, String... comment) {
-        return createSection(path, null, comment.length == 0 ? (List) null : Arrays.asList(comment));
+        return createSection(path, null, comment.length == 0 ? null : Arrays.asList(comment));
     }
 
     @NotNull
@@ -530,19 +569,22 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
-        return createSection(path, commentStyle, comment.length == 0 ? (List) null : Arrays.asList(comment));
+        return createSection(path, commentStyle, comment.length == 0 ? null : Arrays.asList(comment));
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
         createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
+
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
+
         setComment(path, commentStyle, comment);
         root.changed = true;
         onChange();
+
         return section;
     }
 
@@ -551,18 +593,23 @@ public class ConfigSection extends MemoryConfiguration {
     public ConfigSection createSection(@NotNull String path, Map<?, ?> map) {
         createNodePath(path, false);
         ConfigSection section = new ConfigSection(root, this, path, false);
+
         synchronized (root.lock) {
             root.values.put(fullPath + path, section);
         }
+
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (entry.getValue() instanceof Map) {
-                section.createSection(entry.getKey().toString(), (Map) entry.getValue());
+                section.createSection(entry.getKey().toString(), (Map<?, ?>) entry.getValue());
                 continue;
             }
+
             section.set(entry.getKey().toString(), entry.getValue());
         }
+
         root.changed = true;
         onChange();
+
         return section;
     }
 
@@ -570,6 +617,7 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public String getString(@NotNull String path) {
         Object result = get(path);
+
         return result != null ? result.toString() : null;
     }
 
@@ -577,64 +625,75 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public String getString(@NotNull String path, @Nullable String def) {
         Object result = get(path);
+
         return result != null ? result.toString() : def;
     }
 
     public char getChar(@NotNull String path) {
         Object result = get(path);
+
         return result != null && !result.toString().isEmpty() ? result.toString().charAt(0) : '\0';
     }
 
     public char getChar(@NotNull String path, char def) {
         Object result = get(path);
+
         return result != null && !result.toString().isEmpty() ? result.toString().charAt(0) : def;
     }
 
     @Override
     public int getInt(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).intValue() : 0;
     }
 
     @Override
     public int getInt(@NotNull String path, int def) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).intValue() : def;
     }
 
     @Override
     public boolean getBoolean(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof Boolean ? (Boolean) result : false;
     }
 
     @Override
     public boolean getBoolean(@NotNull String path, boolean def) {
         Object result = get(path);
+
         return result instanceof Boolean ? (Boolean) result : def;
     }
 
     @Override
     public double getDouble(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).doubleValue() : 0;
     }
 
     @Override
     public double getDouble(@NotNull String path, double def) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).doubleValue() : def;
     }
 
     @Override
     public long getLong(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).longValue() : 0;
     }
 
     @Override
     public long getLong(@NotNull String path, long def) {
         Object result = get(path);
+
         return result instanceof Number ? ((Number) result).longValue() : def;
     }
 
@@ -642,27 +701,31 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public List<?> getList(@NotNull String path) {
         Object result = get(path);
-        return result instanceof List ? (List) result : null;
+
+        return result instanceof List ? (List<?>) result : null;
     }
 
     @Nullable
     @Override
     public List<?> getList(@NotNull String path, @Nullable List<?> def) {
         Object result = get(path);
-        return result instanceof List ? (List) result : def;
+
+        return result instanceof List ? (List<?>) result : def;
     }
 
     @Nullable
     public CompatibleMaterial getMaterial(@NotNull String path) {
         String val = getString(path);
-        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
-        return mat;
+
+        return val != null ? CompatibleMaterial.getMaterial(val) : null;
     }
 
     @Nullable
     public CompatibleMaterial getMaterial(@NotNull String path, @Nullable CompatibleMaterial def) {
         String val = getString(path);
+
         CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
+
         return mat != null ? mat : def;
     }
 
@@ -670,25 +733,29 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public <T> T getObject(@NotNull String path, @NotNull Class<T> clazz) {
         Object result = get(path);
-        return result != null && clazz.isInstance(result) ? clazz.cast(result) : null;
+
+        return clazz.isInstance(result) ? clazz.cast(result) : null;
     }
 
     @Nullable
     @Override
     public <T> T getObject(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def) {
         Object result = get(path);
-        return result != null && clazz.isInstance(result) ? clazz.cast(result) : def;
+
+        return clazz.isInstance(result) ? clazz.cast(result) : def;
     }
 
     @Override
     public ConfigSection getConfigurationSection(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof ConfigSection ? (ConfigSection) result : null;
     }
 
     @NotNull
     public ConfigSection getOrCreateConfigurationSection(@NotNull String path) {
         Object result = get(path);
+
         return result instanceof ConfigSection ? (ConfigSection) result : createSection(path);
     }
 }

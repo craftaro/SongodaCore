@@ -1,6 +1,5 @@
 package com.songoda.core.database;
 
-import com.songoda.core.SongodaCore;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.Plugin;
@@ -9,7 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLConnector implements DatabaseConnector {
-
     private final Plugin plugin;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;

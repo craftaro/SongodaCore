@@ -39,7 +39,6 @@ import java.util.zip.GZIPOutputStream;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Metrics {
-
     static {
         // You can use the property to disable the check in your test environment
         if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
@@ -240,7 +239,7 @@ public class Metrics {
             playerAmount = onlinePlayersMethod.getReturnType().equals(Collection.class)
                     ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size()
                     : ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
-        } catch (Exception e) {
+        } catch (Exception ex) {
             playerAmount = Bukkit.getOnlinePlayers().size(); // Just use the new method if the Reflection failed
         }
         int onlineMode = Bukkit.getOnlineMode() ? 1 : 0;
@@ -295,17 +294,14 @@ public class Metrics {
         data.put("plugins", pluginData);
 
         // Create a new thread for the connection to the bStats server
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Send the data
-                    sendData(plugin, data);
-                } catch (Exception e) {
-                    // Something went wrong! :(
-                    if (logFailedRequests) {
-                        plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
-                    }
+        new Thread(() -> {
+            try {
+                // Send the data
+                sendData(plugin, data);
+            } catch (Exception ex) {
+                // Something went wrong! :(
+                if (logFailedRequests) {
+                    plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), ex);
                 }
             }
         }).start();
@@ -327,7 +323,7 @@ public class Metrics {
             throw new IllegalAccessException("This method must not be called from the main thread!");
         }
         if (logSentData) {
-            plugin.getLogger().info("Sending data to bStats: " + data.toString());
+            plugin.getLogger().info("Sending data to bStats: " + data);
         }
         HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
 
@@ -360,7 +356,7 @@ public class Metrics {
         }
         bufferedReader.close();
         if (logResponseStatusText) {
-            plugin.getLogger().info("Sent data to bStats and received response: " + builder.toString());
+            plugin.getLogger().info("Sent data to bStats and received response: " + builder);
         }
     }
 
@@ -387,8 +383,7 @@ public class Metrics {
     /**
      * Represents a custom chart.
      */
-    public static abstract class CustomChart {
-
+    public abstract static class CustomChart {
         // The id of the chart
         final String chartId;
 
@@ -430,7 +425,6 @@ public class Metrics {
      * Represents a custom simple pie.
      */
     public static class SimplePie extends CustomChart {
-
         private final Callable<String> callable;
 
         /**
@@ -461,7 +455,6 @@ public class Metrics {
      * Represents a custom advanced pie.
      */
     public static class AdvancedPie extends CustomChart {
-
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -505,7 +498,6 @@ public class Metrics {
      * Represents a custom drilldown pie.
      */
     public static class DrilldownPie extends CustomChart {
-
         private final Callable<Map<String, Map<String, Integer>>> callable;
 
         /**
@@ -554,7 +546,6 @@ public class Metrics {
      * Represents a custom single line chart.
      */
     public static class SingleLineChart extends CustomChart {
-
         private final Callable<Integer> callable;
 
         /**
@@ -585,7 +576,6 @@ public class Metrics {
      * Represents a custom multi line chart.
      */
     public static class MultiLineChart extends CustomChart {
-
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -629,7 +619,6 @@ public class Metrics {
      * Represents a custom simple bar chart.
      */
     public static class SimpleBarChart extends CustomChart {
-
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -640,6 +629,7 @@ public class Metrics {
          */
         public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
+
             this.callable = callable;
         }
 
@@ -666,7 +656,6 @@ public class Metrics {
      * Represents a custom advanced bar chart.
      */
     public static class AdvancedBarChart extends CustomChart {
-
         private final Callable<Map<String, int[]>> callable;
 
         /**

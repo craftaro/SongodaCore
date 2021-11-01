@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatMessage {
-
     private static final Gson gson = new GsonBuilder().create();
     private final List<JsonObject> textList = new ArrayList<>();
 
@@ -36,7 +35,8 @@ public class ChatMessage {
     }
 
     public ChatMessage fromText(String text, boolean noHex) {
-        Pattern pattern = Pattern.compile("(.*?)(?!&([omnlk]))(?=(&([123456789abcdefr#])|$)|#([a-f]|[A-F]|[0-9]){6})",
+        Pattern pattern = Pattern.compile(
+                "(.*?)(?!&([omnlk]))(?=(&([123456789abcdefr#])|$)|#([a-f]|[A-F]|[0-9]){6})",
                 Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
 
@@ -44,12 +44,15 @@ public class ChatMessage {
             ColorContainer color = null;
             String match1 = matcher.group(1);
 
-            if (matcher.groupCount() == 0 || match1.length() == 0) continue;
+            if (matcher.groupCount() == 0 || match1.length() == 0) {
+                continue;
+            }
 
             char colorChar = '-';
 
-            if (matcher.start() != 0)
+            if (matcher.start() != 0) {
                 colorChar = text.substring(matcher.start() - 1, matcher.start()).charAt(0);
+            }
 
             if (colorChar != '-') {
                 if (colorChar == '#') {
@@ -70,15 +73,17 @@ public class ChatMessage {
 
                 ColorCode code = ColorCode.getByChar(Character.toLowerCase(match2.charAt(0)));
 
-                if (code != null && code != ColorCode.RESET)
+                if (code != null && code != ColorCode.RESET) {
                     stackedCodes.add(code);
+                }
 
-                if (color != null)
+                if (color != null) {
                     match2 = match2.substring(1);
+                }
 
-                if (match2.length() == 0) continue;
-
-                addMessage(match2, color, stackedCodes);
+                if (match2.length() != 0) {
+                    addMessage(match2, color, stackedCodes);
+                }
             }
         }
 
@@ -91,31 +96,40 @@ public class ChatMessage {
 
     public String toText(boolean noHex) {
         StringBuilder text = new StringBuilder();
+
         for (JsonObject object : textList) {
             if (object.has("color")) {
                 String color = object.get("color").getAsString();
                 text.append("&");
+
                 if (color.length() == 7) {
                     text.append(new ColorContainer(color, noHex).getColor().getCode());
                 } else {
                     text.append(ColorCode.valueOf(color.toUpperCase()).getCode());
                 }
             }
+
             for (ColorCode code : ColorCode.values()) {
                 if (code.isColor()) continue;
+
                 String c = code.name().toLowerCase();
-                if (object.has(c) && object.get(c).getAsBoolean())
+                if (object.has(c) && object.get(c).getAsBoolean()) {
                     text.append("&").append(code.getCode());
+                }
             }
+
             text.append(object.get("text").getAsString());
         }
+
         return text.toString();
     }
 
     public ChatMessage addMessage(String s) {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", s);
+
         textList.add(txt);
+
         return this;
     }
 
@@ -127,11 +141,14 @@ public class ChatMessage {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", text);
 
-        if (color != null)
+        if (color != null) {
             txt.addProperty("color", color.getHexCode() != null ? "#" + color.getHexCode() : color.getColorCode().name().toLowerCase());
+        }
+
         for (ColorCode code : ColorCode.values()) {
-            if (!code.isColor())
+            if (!code.isColor()) {
                 txt.addProperty(code.name().toLowerCase(), colorCodes.contains(code));
+            }
         }
 
         textList.add(txt);
@@ -141,14 +158,17 @@ public class ChatMessage {
     public ChatMessage addRunCommand(String text, String hoverText, String cmd) {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", text);
+
         JsonObject hover = new JsonObject();
         hover.addProperty("action", "show_text");
         hover.addProperty("value", hoverText);
         txt.add("hoverEvent", hover);
+
         JsonObject click = new JsonObject();
         click.addProperty("action", "run_command");
         click.addProperty("value", cmd);
         txt.add("clickEvent", click);
+
         textList.add(txt);
         return this;
     }
@@ -156,14 +176,17 @@ public class ChatMessage {
     public ChatMessage addPromptCommand(String text, String hoverText, String cmd) {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", text);
+
         JsonObject hover = new JsonObject();
         hover.addProperty("action", "show_text");
         hover.addProperty("value", hoverText);
         txt.add("hoverEvent", hover);
+
         JsonObject click = new JsonObject();
         click.addProperty("action", "suggest_command");
         click.addProperty("value", cmd);
         txt.add("clickEvent", click);
+
         textList.add(txt);
         return this;
     }
@@ -171,14 +194,17 @@ public class ChatMessage {
     public ChatMessage addURL(String text, String hoverText, String url) {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", text);
+
         JsonObject hover = new JsonObject();
         hover.addProperty("action", "show_text");
         hover.addProperty("value", hoverText);
         txt.add("hoverEvent", hover);
+
         JsonObject click = new JsonObject();
         click.addProperty("action", "open_url");
         click.addProperty("value", url);
         txt.add("clickEvent", hover);
+
         textList.add(txt);
         return this;
     }
@@ -200,10 +226,14 @@ public class ChatMessage {
 
                 Object packet;
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), mc_chatMessageType_Chat.get(null), ((Player) sender).getUniqueId());
+                    packet = mc_PacketPlayOutChat_new.newInstance(
+                            mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)),
+                            mc_chatMessageType_Chat.get(null),
+                            ((Player) sender).getUniqueId());
                 } else {
                     packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)));
                 }
+
                 Object cbPlayer = cb_craftPlayer_getHandle.invoke(sender);
                 Object mcConnection = mc_entityPlayer_playerConnection.get(cbPlayer);
                 mc_playerConnection_sendPacket.invoke(mcConnection, packet);
@@ -211,9 +241,11 @@ public class ChatMessage {
                 Bukkit.getLogger().log(Level.WARNING, "Problem preparing raw chat packets (disabling further packets)", ex);
                 enabled = false;
             }
-        } else {
-            sender.sendMessage(TextUtils.formatText((prefix == null ? "" : prefix.toText(true) + " ") + toText(true)));
+
+            return;
         }
+
+        sender.sendMessage(TextUtils.formatText((prefix == null ? "" : prefix.toText(true) + " ") + toText(true)));
     }
 
     private static boolean enabled = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_8);
@@ -230,7 +262,6 @@ public class ChatMessage {
     static void init() {
         if (enabled) {
             try {
-
                 final String version = ServerVersion.getServerVersionString();
                 Class<?> cb_craftPlayerClazz, mc_entityPlayerClazz, mc_playerConnectionClazz, mc_PacketInterface,
                         mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
@@ -263,11 +294,12 @@ public class ChatMessage {
 
     public ChatMessage replaceAll(String toReplace, String replaceWith) {
         for (JsonObject object : textList) {
-            String text = object.get("text").getAsString()
-                    .replaceAll(toReplace, replaceWith);
+            String text = object.get("text").getAsString().replaceAll(toReplace, replaceWith);
+
             object.remove("text");
             object.addProperty("text", text);
         }
+
         return this;
     }
 }

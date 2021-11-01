@@ -7,11 +7,11 @@ import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryAnvil;
 import org.bukkit.inventory.InventoryHolder;
 
 public class AnvilInventoryCustom extends CraftInventoryAnvil {
-
     final InventoryHolder holder;
 
     public AnvilInventoryCustom(InventoryHolder holder, Location location, IInventory inventory, IInventory resultInventory, ContainerAnvil container) {
         super(location, inventory, resultInventory, container);
+
         this.holder = holder;
     }
 

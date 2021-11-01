@@ -8,17 +8,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class RedProtectProtection extends Protection {
-
     private final RedProtectAPI api;
 
     public RedProtectProtection(Plugin plugin) {
         super(plugin);
+
         this.api = RedProtect.get().getAPI();
     }
 
     @Override
     public boolean canPlace(Player player, Location location) {
         Region region = api.getRegion(location);
+
         if (region == null) {
             return true;
         }
@@ -29,6 +30,7 @@ public class RedProtectProtection extends Protection {
     @Override
     public boolean canBreak(Player player, Location location) {
         Region region = api.getRegion(location);
+
         if (region == null) {
             return true;
         }
@@ -39,6 +41,7 @@ public class RedProtectProtection extends Protection {
     @Override
     public boolean canInteract(Player player, Location location) {
         Region region = api.getRegion(location);
+
         if (region == null) {
             return true;
         }
