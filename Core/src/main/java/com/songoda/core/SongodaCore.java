@@ -51,9 +51,9 @@ public class SongodaCore {
     private final static int coreRevision = 9;
 
     /**
-     * This has been added as of Rev 6
+     * @since coreRevision 6
      */
-    private final static String coreVersion = "2.5.13";
+    private final static String coreVersion = "2.5.14";
 
     /**
      * This is specific to the website api
