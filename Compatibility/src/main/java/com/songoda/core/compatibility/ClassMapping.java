@@ -42,6 +42,7 @@ public enum ClassMapping {
     CRAFT_CHUNK("CraftChunk"),
     CRAFT_ENTITY("entity", "CraftEntity"),
     CRAFT_ITEM_STACK("inventory", "CraftItemStack"),
+    CRAFT_MAGIC_NUMBERS("util", "CraftMagicNumbers"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld");
 
@@ -62,8 +63,9 @@ public enum ClassMapping {
     }
 
     public Class<?> getClazz(String sub) {
+        String name = sub == null ? className : className + "$" + sub;
+
         try {
-            String name = sub == null ? className : className + "$" + sub;
             if (className.startsWith("Craft")) {
                 return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
                         + (packageName == null ? "" : "." + packageName) + "." + name);
