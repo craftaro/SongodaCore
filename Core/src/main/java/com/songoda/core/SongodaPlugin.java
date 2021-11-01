@@ -73,12 +73,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
         try {
             onPluginLoad();
         } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE,
-                    "Unexpected error while loading " + getDescription().getName()
-                            + " v" + getDescription().getVersion()
-                            + " c" + SongodaCore.getCoreLibraryVersion()
-                            + ": Disabling plugin!", t);
-            emergencyStop = true;
+            crash(t);
         }
     }
 
@@ -110,11 +105,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             // Start Metrics
             Metrics.start(this);
         } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE,
-                    "Unexpected error while loading " + getDescription().getName()
-                            + " v" + getDescription().getVersion()
-                            + " c" + SongodaCore.getCoreLibraryVersion()
-                            + ": Disabling plugin!", t);
+            crash(t);
             emergencyStop();
             console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             console.sendMessage(" ");
@@ -213,4 +204,15 @@ public abstract class SongodaPlugin extends JavaPlugin {
             }
         }
     }
+    
+    /**
+        Invoke this method if a severe error occurs and the plugin needs to shut down.
+        
+        @param t Any exceptions that are thrown when crashed should be put here, and will print once the error message logs.
+    */
+    public void crash(Throwable... t) {
+        Bukkit.getLogger().log(Level.SEVERE, String.format("Unexpected error while loading %s v%s c%s: Disabling plugin!", getDescription().getName(), getDescription().getVersion(), SongodaCore.getCoreLibraryVersion()), t);
+        emergencyStop();
+    }
+    
 }
