@@ -4,7 +4,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 
 public enum ServerProject {
-    UNKNOWN, CRAFTBUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE, MOCK_BUKKIT;
+    UNKNOWN, CRAFT_BUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE, MOCK_BUKKIT;
     private final static ServerProject serverProject = checkProject();
 
     private static ServerProject checkProject() {
@@ -45,7 +45,7 @@ public enum ServerProject {
         } catch (ClassNotFoundException ignore) {
         }
 
-        return serverPath.contains("craftbukkit") ? CRAFTBUKKIT : UNKNOWN;
+        return serverPath.contains("craftbukkit") ? CRAFT_BUKKIT : UNKNOWN;
     }
 
     public static ServerProject getServerVersion() {
