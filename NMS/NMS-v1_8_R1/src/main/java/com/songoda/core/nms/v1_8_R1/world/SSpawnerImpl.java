@@ -1,7 +1,7 @@
 package com.songoda.core.nms.v1_8_R1.world;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.CompatibleParticleHandler;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
+import com.songoda.core.compatibility.particle.CompatibleParticleHandler;
 import com.songoda.core.nms.world.SSpawner;
 import com.songoda.core.nms.world.SpawnedEntity;
 import net.minecraft.server.v1_8_R1.BlockPosition;

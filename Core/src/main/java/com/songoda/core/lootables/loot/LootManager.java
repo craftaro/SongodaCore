@@ -3,7 +3,7 @@ package com.songoda.core.lootables.loot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.lootables.Lootables;
 import com.songoda.core.lootables.Modify;
 import org.bukkit.Bukkit;

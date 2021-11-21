@@ -1,6 +1,6 @@
 package com.songoda.core.configuration.editor;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
 import com.songoda.core.input.ChatPrompt;

@@ -1,7 +1,7 @@
 package com.songoda.core.locale;
 
 import com.songoda.core.chat.ChatMessage;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

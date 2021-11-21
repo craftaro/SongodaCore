@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.methods.Clickable;
 import org.bukkit.Bukkit;

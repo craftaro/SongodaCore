@@ -1,5 +1,6 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.client;
 
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.viaversion.viaversion.api.Via;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

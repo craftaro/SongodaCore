@@ -1,5 +1,6 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.material;
 
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -1281,7 +1282,7 @@ public enum CompatibleMaterial {
     ;
 
     private final String modern, modern2, legacy;
-    private final LegacyMaterialAnalouge compatibleMaterial;
+    private final LegacyMaterialAnalogue compatibleMaterial;
     private final LegacyMaterialBlockType legacyBlockMaterial;
     private final boolean legacyRequiresData;
     // some materials (I'm looking at you, GREEN_DYE) have changed ID more than once
@@ -1357,7 +1358,7 @@ public enum CompatibleMaterial {
         this.legacy = legacyMaterial;
         this.legacyData = legacyData == null ? 0 : legacyData;
         this.legacyRequiresData = legacyData != null;
-        this.compatibleMaterial = LegacyMaterialAnalouge.lookupAnalouge(modern);
+        this.compatibleMaterial = LegacyMaterialAnalogue.lookupAnalouge(modern);
 
         if (compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan)) {
             // server older than this item: use a proxy

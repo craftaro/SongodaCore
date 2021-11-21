@@ -1,6 +1,6 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.anvil.AnvilCore;

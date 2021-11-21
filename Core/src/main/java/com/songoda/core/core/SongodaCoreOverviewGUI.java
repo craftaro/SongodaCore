@@ -1,7 +1,7 @@
 package com.songoda.core.core;
 
 import com.songoda.core.SongodaCore;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.configuration.editor.PluginConfigGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;

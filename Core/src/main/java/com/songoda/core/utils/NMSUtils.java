@@ -1,7 +1,7 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

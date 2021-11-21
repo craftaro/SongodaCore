@@ -1,7 +1,7 @@
 package com.songoda.core.lootables.loot;
 
 import com.google.gson.annotations.SerializedName;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import org.bukkit.enchantments.Enchantment;

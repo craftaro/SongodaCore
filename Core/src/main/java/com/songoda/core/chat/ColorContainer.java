@@ -1,6 +1,6 @@
 package com.songoda.core.chat;
 
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.utils.ColorUtils;
 
 import java.awt.*;

@@ -1,6 +1,6 @@
 package com.songoda.core.lootables.loot;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.lootables.loot.objects.EnchantChance;
 import org.bukkit.entity.EntityType;
 

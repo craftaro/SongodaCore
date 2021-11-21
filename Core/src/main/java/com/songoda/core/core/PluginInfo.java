@@ -1,6 +1,6 @@
 package com.songoda.core.core;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 

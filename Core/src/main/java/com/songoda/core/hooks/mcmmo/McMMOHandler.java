@@ -12,7 +12,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.gmail.nossr50.util.random.RandomChanceUtil;
 import com.gmail.nossr50.util.skills.RankUtils;
 import com.gmail.nossr50.util.skills.SkillActivationType;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;

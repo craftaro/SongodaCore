@@ -1,7 +1,7 @@
 package com.songoda.core.commands;
 
-import com.songoda.core.compatibility.ServerProject;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerProject;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

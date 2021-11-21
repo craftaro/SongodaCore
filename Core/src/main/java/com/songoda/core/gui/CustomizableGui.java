@@ -1,7 +1,7 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSection;
 import com.songoda.core.gui.methods.Clickable;

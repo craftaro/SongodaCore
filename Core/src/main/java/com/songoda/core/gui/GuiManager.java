@@ -1,8 +1,8 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.ClientVersion;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.client.ClientVersion;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

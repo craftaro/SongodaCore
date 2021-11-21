@@ -1,7 +1,7 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 

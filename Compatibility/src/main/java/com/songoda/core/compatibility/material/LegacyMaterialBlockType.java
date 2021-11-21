@@ -1,4 +1,4 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.material;
 
 import org.bukkit.Material;
 

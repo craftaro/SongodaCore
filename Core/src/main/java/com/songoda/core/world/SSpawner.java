@@ -1,6 +1,6 @@
 package com.songoda.core.world;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.hooks.EntityStackerManager;
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.world.SpawnedEntity;

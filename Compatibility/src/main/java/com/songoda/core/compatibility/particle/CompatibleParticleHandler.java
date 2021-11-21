@@ -1,5 +1,6 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.particle;
 
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;

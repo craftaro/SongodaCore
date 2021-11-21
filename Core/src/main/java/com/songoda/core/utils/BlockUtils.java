@@ -1,8 +1,8 @@
 package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;

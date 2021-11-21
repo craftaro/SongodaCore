@@ -1,4 +1,4 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.bukkit;
 
 import org.bukkit.potion.PotionEffectType;
 

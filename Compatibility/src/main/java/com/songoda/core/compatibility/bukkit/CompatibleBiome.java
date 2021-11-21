@@ -1,5 +1,7 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.bukkit;
 
+import com.songoda.core.compatibility.ClassMapping;
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;

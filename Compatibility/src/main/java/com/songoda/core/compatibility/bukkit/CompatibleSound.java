@@ -1,5 +1,6 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.bukkit;
 
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;

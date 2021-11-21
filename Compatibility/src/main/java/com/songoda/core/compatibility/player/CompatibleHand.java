@@ -1,4 +1,4 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;

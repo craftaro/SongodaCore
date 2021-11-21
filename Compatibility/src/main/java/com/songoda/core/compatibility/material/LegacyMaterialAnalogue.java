@@ -1,5 +1,6 @@
-package com.songoda.core.compatibility;
+package com.songoda.core.compatibility.material;
 
+import com.songoda.core.compatibility.server.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 /**
  * Near-Materials for older servers 1.7+
  */
-public enum LegacyMaterialAnalouge {
+public enum LegacyMaterialAnalogue {
     /* 1.17 */
     // ToDo: Improve legal materials.
     AMETHYST_BLOCK(ServerVersion.V1_17, "STONE"),
@@ -748,47 +749,47 @@ public enum LegacyMaterialAnalouge {
     final Byte data;
 
     // map to speed up name->material lookups
-    private static final Map<String, LegacyMaterialAnalouge> lookupMap = new HashMap<>();
+    private static final Map<String, LegacyMaterialAnalogue> lookupMap = new HashMap<>();
 
     static {
-        for (LegacyMaterialAnalouge m : values()) {
+        for (LegacyMaterialAnalogue m : values()) {
             lookupMap.put(m.name(), m);
         }
     }
 
-    public static LegacyMaterialAnalouge lookupAnalouge(String material) {
+    public static LegacyMaterialAnalogue lookupAnalouge(String material) {
         return lookupMap.get(material);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial, byte legacyData) {
         this(versionLessThan, null, legacyMaterial, legacyData, null, null, null);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial) {
         this(versionLessThan, null, legacyMaterial, null, null, null, null);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial) {
         this(versionLessThan, modernAnalouge, legacyMaterial, null, null, null, null);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, byte legacyData) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, byte legacyData) {
         this(versionLessThan, modernAnalouge, legacyMaterial, legacyData, null, null, null);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
         this(versionLessThan, null, legacyMaterial, legacyData, legacyMinimum, compatMaterial, compatData);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial, byte compatData) {
         this(versionLessThan, null, legacyMaterial, null, legacyMinimum, compatMaterial, compatData);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial, byte legacyData, ServerVersion legacyMinimum, String compatMaterial) {
         this(versionLessThan, null, legacyMaterial, legacyData, legacyMinimum, compatMaterial, null);
     }
 
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String legacyMaterial, ServerVersion legacyMinimum, String compatMaterial) {
         this(versionLessThan, null, legacyMaterial, null, legacyMinimum, compatMaterial, null);
     }
 
@@ -798,7 +799,7 @@ public enum LegacyMaterialAnalouge {
      * @param legacyMaterial  pre-1.13 material name
      * @param legacyData      data for defining specific legacy items
      */
-    LegacyMaterialAnalouge(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, Byte legacyData, ServerVersion legacyMinimum, String compatMaterial, Byte compatData) {
+    LegacyMaterialAnalogue(ServerVersion versionLessThan, String modernAnalouge, String legacyMaterial, Byte legacyData, ServerVersion legacyMinimum, String compatMaterial, Byte compatData) {
         this.versionLessThan = versionLessThan;
         this.modernMaterial = modernAnalouge;
         this.legacyMaterial = legacyMaterial;

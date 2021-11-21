@@ -1,8 +1,8 @@
 package com.songoda.core.world;
 
-import com.songoda.core.compatibility.CompatibleHand;
-import com.songoda.core.compatibility.CompatibleSound;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.bukkit.CompatibleSound;
+import com.songoda.core.compatibility.player.CompatibleHand;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.nms.NmsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;

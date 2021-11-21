@@ -1,7 +1,7 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.SongodaCore;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

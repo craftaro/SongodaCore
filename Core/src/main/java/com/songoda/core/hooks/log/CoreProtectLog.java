@@ -1,6 +1,6 @@
 package com.songoda.core.hooks.log;
 
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import org.bukkit.Location;

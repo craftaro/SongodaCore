@@ -1,8 +1,8 @@
 package com.songoda.core;
 
 import com.songoda.core.commands.CommandManager;
-import com.songoda.core.compatibility.ClientVersion;
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.client.ClientVersion;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import com.songoda.core.core.LocaleModule;
 import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;

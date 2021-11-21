@@ -1,7 +1,7 @@
 package com.songoda.core.world;
 
 import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

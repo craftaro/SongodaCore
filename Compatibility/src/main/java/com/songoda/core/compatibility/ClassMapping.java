@@ -1,5 +1,7 @@
 package com.songoda.core.compatibility;
 
+import com.songoda.core.compatibility.server.ServerVersion;
+
 public enum ClassMapping {
     BIOME_BASE("world.level.biome", "BiomeBase"),
     BIOME_STORAGE("world.level.chunk", "BiomeStorage"),

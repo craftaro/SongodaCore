@@ -1,6 +1,6 @@
 package com.songoda.core.nms.world;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

@@ -1,6 +1,6 @@
 package com.songoda.core.world;
 
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.nms.NmsManager;
 import org.bukkit.Location;
 import org.bukkit.World;

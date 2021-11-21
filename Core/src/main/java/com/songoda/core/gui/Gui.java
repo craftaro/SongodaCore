@@ -1,8 +1,8 @@
 package com.songoda.core.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.CompatibleSound;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.bukkit.CompatibleSound;
+import com.songoda.core.compatibility.material.CompatibleMaterial;
+import com.songoda.core.compatibility.server.ServerVersion;
 import com.songoda.core.gui.events.GuiClickEvent;
 import com.songoda.core.gui.events.GuiCloseEvent;
 import com.songoda.core.gui.events.GuiDropItemEvent;
