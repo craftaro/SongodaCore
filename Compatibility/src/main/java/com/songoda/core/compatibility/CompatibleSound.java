@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
+ * TODO: Probably recode to be similar to CompatibleMaterial
+ *
  * Sounds that are compatible with server versions 1.7+ <br>
  * TODO: This needs work.
  * Finished 1.8, finished 1.9 blocks, resume with 1.9 entities<br>
@@ -1218,9 +1220,9 @@ public enum CompatibleSound {
     WEATHER_RAIN("AMBIENCE_RAIN"),
     WEATHER_RAIN_ABOVE;
 
-    protected /*final*/ Sound sound;
-    protected /*final*/ boolean compatibilityMode;
-    protected static final boolean DEBUG = false;
+    private /* final */ Sound sound;
+    private /* final */ boolean compatibilityMode;
+    private static final boolean DEBUG = false;
 
     CompatibleSound() {
         // This could get risky, since we haven't finished this
@@ -1239,7 +1241,7 @@ public enum CompatibleSound {
         compatibilityMode = find == null;
     }
 
-    // if the sound ony ever changed from 1.8 -> 1.9
+    // if the sound only ever changed from 1.8 -> 1.9
     CompatibleSound(String compatibility_18) {
         try {
             compatibilityMode = false;
@@ -1272,6 +1274,7 @@ public enum CompatibleSound {
 
             ex.printStackTrace();
         }
+
         Sound find = null;
         for (Sound s : Sound.values()) {
             if (s.name().equals(name())) {
@@ -1279,6 +1282,7 @@ public enum CompatibleSound {
                 break;
             }
         }
+
         sound = find;
         compatibilityMode = find == null;
     }
@@ -1288,7 +1292,6 @@ public enum CompatibleSound {
             if (ServerVersion.isServerVersionAtLeast(minVersion)) {
                 // should be good to use this sound
                 sound = Sound.valueOf(name());
-                compatibilityMode = false;
             } else {
                 for (Version v : versions) {
                     if (v.sound != null && ServerVersion.isServerVersionAtLeast(v.version)) {
@@ -1297,11 +1300,13 @@ public enum CompatibleSound {
                         return;
                     }
                 }
+
                 sound = null;
-                compatibilityMode = false;
             }
+
+            compatibilityMode = false;
         } catch (Exception ex) {
-            System.err.println("ERROR loading " + name() + " (" + minVersion);
+            System.err.println("ERROR loading " + name() + " (" + minVersion + ")");
             for (Version v : versions) {
                 System.err.println(v.version + " - " + v.sound);
             }
@@ -1311,66 +1316,67 @@ public enum CompatibleSound {
     }
 
     /**
-     * Get a Bukkit API sound that matches this sound
+     * Returns the appropriate Bukkit API sound or tries to find a sane alternative,
+     * if the server does not support that sound
      *
-     * @return Returns either the matching sound or a similar sound
+     * @return Either the matching sound or a similar sound
      */
     public Sound getSound() {
         return sound != null ? sound : UI_BUTTON_CLICK.sound;
     }
 
     /**
-     * Send a sound to a specific player
+     * Sends a sound to a specific player
      *
-     * @param sendTo player to send the sound to
+     * @param player The player to play the sound for
      */
-    public void play(Player sendTo) {
-        sendTo.playSound(sendTo.getLocation(), getSound(), 1F, 1F);
+    public void play(Player player) {
+        player.playSound(player.getLocation(), getSound(), 1F, 1F);
+    }
+
+    /**
+     * Sends a sound to a specific player
+     *
+     * @param player player to send the sound to
+     * @param volume The volume of the sound (1 is 100%)
+     * @param pitch  The pitch of the sound (for notchian clients: between 0.5 and 2.0)
+     */
+    public void play(Player player, float volume, float pitch) {
+        player.playSound(player.getLocation(), getSound(), volume, pitch);
     }
 
     /**
      * Send a sound to a specific player
      *
-     * @param sendTo player to send the sound to
-     * @param volume the volume of the sound
-     * @param pitch  the pitch of the sound
+     * @param player   The player to play the sound for
+     * @param location Where the sound should come from
+     * @param volume   The volume of the sound (1 is 100%)
+     *                 * @param pitch  The pitch of the sound (for notchian clients: between 0.5 and 2.0)
      */
-    public void play(Player sendTo, float volume, float pitch) {
-        sendTo.playSound(sendTo.getLocation(), getSound(), volume, pitch);
+    public void play(Player player, Location location, float volume, float pitch) {
+        player.playSound(location, getSound(), volume, pitch);
     }
 
     /**
-     * Send a sound to a specific player
+     * Plays a sound in a given world
      *
-     * @param sendTo   player to send the sound to
-     * @param location where the sound should come from
-     * @param volume   the volume of the sound
-     * @param pitch    the pitch of the sound
+     * @param world    The world to play the sound in
+     * @param location Where the sound should come from
+     * @param volume   The volume of the sound (1 is 100%)
+     * @param pitch    The pitch of the sound (for notchian clients: between 0.5 and 2.0)
      */
-    public void play(Player sendTo, Location location, float volume, float pitch) {
-        sendTo.playSound(sendTo.getLocation(), getSound(), volume, pitch);
+    public void play(World world, Location location, float volume, float pitch) {
+        world.playSound(location, getSound(), volume, pitch);
     }
 
     /**
-     * Play a sound in a world
+     * Stop a currently active sound from playing for a player (Only supporter on 1.10 servers or newer)
      *
-     * @param sendTo   world to send the sound to
-     * @param location where the sound should come from
-     * @param volume   the volume of the sound
-     * @param pitch    the pitch of the sound
+     * @param player The player to stop the sound for
      */
-    public void play(World sendTo, Location location, float volume, float pitch) {
-        sendTo.playSound(location, getSound(), volume, pitch);
-    }
-
-    /**
-     * Stop a currently active sound from playing for a player
-     *
-     * @param sendTo player to stop the sound for
-     */
-    public void stop(Player sendTo) {
+    public void stop(Player player) {
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10)) {
-            sendTo.stopSound(getSound());
+            player.stopSound(getSound());
         }
     }
 
@@ -1400,7 +1406,6 @@ public enum CompatibleSound {
     }
 
     private static class Version {
-
         final ServerVersion version;
         final String sound;
         final boolean compatibilityMode;
