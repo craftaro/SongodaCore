@@ -1420,6 +1420,7 @@ public enum CompatibleMaterial {
         if (usesCompatibility()) {
             return compatibleMaterial.getItem();
         }
+
         return data != null ? new ItemStack(material, amount, data) : new ItemStack(material);
     }
 
@@ -1471,7 +1472,7 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(String name) {
-        return name == null ? null : lookupMap.get(name.toUpperCase());
+        return getMaterial(name, null);
     }
 
     /**
@@ -1496,18 +1497,22 @@ public enum CompatibleMaterial {
      * @return LegacyMaterial or null if none found
      */
     public static CompatibleMaterial getMaterial(Material mat) {
-        if (mat == null)
+        if (mat == null) {
             return null;
+        }
+
         if (useLegacy) {
             CompatibleMaterial compatibleMaterial = lookupMap.get(mat.name() + ":0");
-            if (compatibleMaterial != null)
+            if (compatibleMaterial != null) {
                 return compatibleMaterial;
+            }
         }
+
         return lookupMap.get(mat.name());
     }
 
     /**
-     * Lookup a Material by Itemstack.
+     * Lookup a Material by ItemStack.
      *
      * @param item item to lookup
      *
@@ -1803,6 +1808,7 @@ public enum CompatibleMaterial {
         switch (this) {
             case STRING:
                 return true;
+
             case ACACIA_DOOR:
             case BIRCH_DOOR:
             case DARK_OAK_DOOR:
@@ -1854,6 +1860,7 @@ public enum CompatibleMaterial {
             case CAKE:
             case COMPARATOR:
                 return usesLegacy();
+
             default:
                 return false;
         }
@@ -1882,7 +1889,14 @@ public enum CompatibleMaterial {
 
     /**
      * Check if the material is a block and does not block any light
+     *
+     * @return True if this material is a block and does not block any light
+     *
+     * @see Material#isTransparent()
+     * @deprecated currently does not have an implementation which is well
+     *         linked to the underlying server. Contributions welcome.
      */
+    @Deprecated
     public boolean isTransparent() {
         return material != null && material.isTransparent();
     }
@@ -1921,6 +1935,7 @@ public enum CompatibleMaterial {
             case ACACIA_STAIRS:
             case ACACIA_TRAPDOOR:
             case ACACIA_WOOD:
+            case AZALEA:
             case BAMBOO:
             case BARREL:
             case BIRCH_BOAT:
@@ -1980,6 +1995,7 @@ public enum CompatibleMaterial {
             case DRIED_KELP_BLOCK:
             case FISHING_ROD:
             case FLETCHING_TABLE:
+            case FLOWERING_AZALEA:
             case GRAY_BANNER:
             case GRAY_CARPET:
             case GRAY_WOOL:
@@ -2321,23 +2337,31 @@ public enum CompatibleMaterial {
     public boolean isItem() {
         // this function is not implemented in some older versions, so we need this here...
         switch (this) {
-            case CAVE_AIR:
-            case VOID_AIR:
             case ACACIA_WALL_SIGN:
             case ATTACHED_MELON_STEM:
             case ATTACHED_PUMPKIN_STEM:
             case BAMBOO_SAPLING:
             case BEETROOTS:
+            case BIG_DRIPLEAF_STEM:
             case BIRCH_WALL_SIGN:
+            case BLACK_CANDLE_CAKE:
             case BLACK_WALL_BANNER:
+            case BLUE_CANDLE_CAKE:
             case BLUE_WALL_BANNER:
             case BRAIN_CORAL_WALL_FAN:
+            case BROWN_CANDLE_CAKE:
             case BROWN_WALL_BANNER:
             case BUBBLE_COLUMN:
             case BUBBLE_CORAL_WALL_FAN:
+            case CANDLE_CAKE:
             case CARROTS:
+            case CAVE_AIR:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
             case COCOA:
             case CREEPER_WALL_HEAD:
+            case CRIMSON_WALL_SIGN:
+            case CYAN_CANDLE_CAKE:
             case CYAN_WALL_BANNER:
             case DARK_OAK_WALL_SIGN:
             case DEAD_BRAIN_CORAL_WALL_FAN:
@@ -2351,27 +2375,37 @@ public enum CompatibleMaterial {
             case FIRE:
             case FIRE_CORAL_WALL_FAN:
             case FROSTED_ICE:
+            case GRAY_CANDLE_CAKE:
             case GRAY_WALL_BANNER:
+            case GREEN_CANDLE_CAKE:
             case GREEN_WALL_BANNER:
             case HORN_CORAL_WALL_FAN:
             case JUNGLE_WALL_SIGN:
             case KELP_PLANT:
             case LAVA:
+            case LAVA_CAULDRON:
+            case LIGHT_BLUE_CANDLE_CAKE:
             case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_CANDLE_CAKE:
             case LIGHT_GRAY_WALL_BANNER:
+            case LIME_CANDLE_CAKE:
             case LIME_WALL_BANNER:
+            case MAGENTA_CANDLE_CAKE:
             case MAGENTA_WALL_BANNER:
             case MELON_STEM:
             case MOVING_PISTON:
             case NETHER_PORTAL:
             case OAK_WALL_SIGN:
+            case ORANGE_CANDLE_CAKE:
             case ORANGE_WALL_BANNER:
+            case PINK_CANDLE_CAKE:
             case PINK_WALL_BANNER:
             case PISTON_HEAD:
             case PLAYER_WALL_HEAD:
             case POTATOES:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
             case POTTED_AZURE_BLUET:
             case POTTED_BAMBOO:
             case POTTED_BIRCH_SAPLING:
@@ -2379,10 +2413,13 @@ public enum CompatibleMaterial {
             case POTTED_BROWN_MUSHROOM:
             case POTTED_CACTUS:
             case POTTED_CORNFLOWER:
+            case POTTED_CRIMSON_FUNGUS:
+            case POTTED_CRIMSON_ROOTS:
             case POTTED_DANDELION:
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
             case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
             case POTTED_JUNGLE_SAPLING:
             case POTTED_LILY_OF_THE_VALLEY:
             case POTTED_OAK_SAPLING:
@@ -2393,26 +2430,42 @@ public enum CompatibleMaterial {
             case POTTED_RED_MUSHROOM:
             case POTTED_RED_TULIP:
             case POTTED_SPRUCE_SAPLING:
+            case POTTED_WARPED_FUNGUS:
+            case POTTED_WARPED_ROOTS:
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
+            case POWDER_SNOW:
+            case POWDER_SNOW_CAULDRON:
             case PUMPKIN_STEM:
+            case PURPLE_CANDLE_CAKE:
             case PURPLE_WALL_BANNER:
             case REDSTONE_WALL_TORCH:
             case REDSTONE_WIRE:
+            case RED_CANDLE_CAKE:
             case RED_WALL_BANNER:
             case SKELETON_WALL_SKULL:
+            case SOUL_FIRE:
+            case SOUL_WALL_TORCH:
             case SPRUCE_WALL_SIGN:
             case SWEET_BERRY_BUSH:
             case TALL_SEAGRASS:
             case TRIPWIRE:
             case TUBE_CORAL_WALL_FAN:
+            case TWISTING_VINES_PLANT:
+            case VOID_AIR:
             case WALL_TORCH:
+            case WARPED_WALL_SIGN:
             case WATER:
+            case WATER_CAULDRON:
+            case WEEPING_VINES_PLANT:
+            case WHITE_CANDLE_CAKE:
             case WHITE_WALL_BANNER:
             case WITHER_SKELETON_WALL_SKULL:
+            case YELLOW_CANDLE_CAKE:
             case YELLOW_WALL_BANNER:
             case ZOMBIE_WALL_HEAD:
                 return false;
+
             default:
                 return true;
         }
@@ -2451,21 +2504,32 @@ public enum CompatibleMaterial {
             case BIRCH_WALL_SIGN:
             case BLACKSTONE_STAIRS:
             case BLACK_BED:
+            case BLACK_CANDLE:
+            case BLACK_CANDLE_CAKE:
             case BLACK_SHULKER_BOX:
             case BLAST_FURNACE:
             case BLUE_BED:
+            case BLUE_CANDLE:
+            case BLUE_CANDLE_CAKE:
             case BLUE_SHULKER_BOX:
             case BREWING_STAND:
             case BRICK_STAIRS:
             case BROWN_BED:
+            case BROWN_CANDLE:
+            case BROWN_CANDLE_CAKE:
             case BROWN_SHULKER_BOX:
             case CAKE:
             case CAMPFIRE:
+            case CANDLE:
+            case CANDLE_CAKE:
             case CARTOGRAPHY_TABLE:
             case CAULDRON:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
             case CHAIN_COMMAND_BLOCK:
             case CHEST:
             case CHIPPED_ANVIL:
+            case COBBLED_DEEPSLATE_STAIRS:
             case COBBLESTONE_STAIRS:
             case COMMAND_BLOCK:
             case COMPARATOR:
@@ -2479,7 +2543,10 @@ public enum CompatibleMaterial {
             case CRIMSON_STAIRS:
             case CRIMSON_TRAPDOOR:
             case CRIMSON_WALL_SIGN:
+            case CUT_COPPER_STAIRS:
             case CYAN_BED:
+            case CYAN_CANDLE:
+            case CYAN_CANDLE_CAKE:
             case CYAN_SHULKER_BOX:
             case DAMAGED_ANVIL:
             case DARK_OAK_BUTTON:
@@ -2492,6 +2559,9 @@ public enum CompatibleMaterial {
             case DARK_OAK_WALL_SIGN:
             case DARK_PRISMARINE_STAIRS:
             case DAYLIGHT_DETECTOR:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DEEPSLATE_TILE_STAIRS:
             case DIORITE_STAIRS:
             case DISPENSER:
             case DRAGON_EGG:
@@ -2499,13 +2569,18 @@ public enum CompatibleMaterial {
             case ENCHANTING_TABLE:
             case ENDER_CHEST:
             case END_STONE_BRICK_STAIRS:
+            case EXPOSED_CUT_COPPER_STAIRS:
             case FLETCHING_TABLE:
             case FLOWER_POT:
             case FURNACE:
             case GRANITE_STAIRS:
             case GRAY_BED:
+            case GRAY_CANDLE:
+            case GRAY_CANDLE_CAKE:
             case GRAY_SHULKER_BOX:
             case GREEN_BED:
+            case GREEN_CANDLE:
+            case GREEN_CANDLE_CAKE:
             case GREEN_SHULKER_BOX:
             case GRINDSTONE:
             case HOPPER:
@@ -2521,16 +2596,26 @@ public enum CompatibleMaterial {
             case JUNGLE_STAIRS:
             case JUNGLE_TRAPDOOR:
             case JUNGLE_WALL_SIGN:
+            case LAVA_CAULDRON:
             case LECTERN:
             case LEVER:
+            case LIGHT:
             case LIGHT_BLUE_BED:
+            case LIGHT_BLUE_CANDLE:
+            case LIGHT_BLUE_CANDLE_CAKE:
             case LIGHT_BLUE_SHULKER_BOX:
             case LIGHT_GRAY_BED:
+            case LIGHT_GRAY_CANDLE:
+            case LIGHT_GRAY_CANDLE_CAKE:
             case LIGHT_GRAY_SHULKER_BOX:
             case LIME_BED:
+            case LIME_CANDLE:
+            case LIME_CANDLE_CAKE:
             case LIME_SHULKER_BOX:
             case LOOM:
             case MAGENTA_BED:
+            case MAGENTA_CANDLE:
+            case MAGENTA_CANDLE_CAKE:
             case MAGENTA_SHULKER_BOX:
             case MOSSY_COBBLESTONE_STAIRS:
             case MOSSY_STONE_BRICK_STAIRS:
@@ -2547,17 +2632,24 @@ public enum CompatibleMaterial {
             case OAK_TRAPDOOR:
             case OAK_WALL_SIGN:
             case ORANGE_BED:
+            case ORANGE_CANDLE:
+            case ORANGE_CANDLE_CAKE:
             case ORANGE_SHULKER_BOX:
+            case OXIDIZED_CUT_COPPER_STAIRS:
             case PINK_BED:
+            case PINK_CANDLE:
+            case PINK_CANDLE_CAKE:
             case PINK_SHULKER_BOX:
             case POLISHED_ANDESITE_STAIRS:
             case POLISHED_BLACKSTONE_BRICK_STAIRS:
             case POLISHED_BLACKSTONE_BUTTON:
             case POLISHED_BLACKSTONE_STAIRS:
+            case POLISHED_DEEPSLATE_STAIRS:
             case POLISHED_DIORITE_STAIRS:
             case POLISHED_GRANITE_STAIRS:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
             case POTTED_AZURE_BLUET:
             case POTTED_BAMBOO:
             case POTTED_BIRCH_SAPLING:
@@ -2571,6 +2663,7 @@ public enum CompatibleMaterial {
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
             case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
             case POTTED_JUNGLE_SAPLING:
             case POTTED_LILY_OF_THE_VALLEY:
             case POTTED_OAK_SAPLING:
@@ -2585,16 +2678,21 @@ public enum CompatibleMaterial {
             case POTTED_WARPED_ROOTS:
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
+            case POWDER_SNOW_CAULDRON:
             case PRISMARINE_BRICK_STAIRS:
             case PRISMARINE_STAIRS:
             case PUMPKIN:
             case PURPLE_BED:
+            case PURPLE_CANDLE:
+            case PURPLE_CANDLE_CAKE:
             case PURPLE_SHULKER_BOX:
             case PURPUR_STAIRS:
             case QUARTZ_STAIRS:
             case REDSTONE_ORE:
             case REDSTONE_WIRE:
             case RED_BED:
+            case RED_CANDLE:
+            case RED_CANDLE_CAKE:
             case RED_NETHER_BRICK_STAIRS:
             case RED_SANDSTONE_STAIRS:
             case RED_SHULKER_BOX:
@@ -2633,11 +2731,22 @@ public enum CompatibleMaterial {
             case WARPED_STAIRS:
             case WARPED_TRAPDOOR:
             case WARPED_WALL_SIGN:
+            case WATER_CAULDRON:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CUT_COPPER_STAIRS:
             case WHITE_BED:
+            case WHITE_CANDLE:
+            case WHITE_CANDLE_CAKE:
             case WHITE_SHULKER_BOX:
             case YELLOW_BED:
+            case YELLOW_CANDLE:
+            case YELLOW_CANDLE_CAKE:
             case YELLOW_SHULKER_BOX:
                 return true;
+
             default:
                 return false;
         }
