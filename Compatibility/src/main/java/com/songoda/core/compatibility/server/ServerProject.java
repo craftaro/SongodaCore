@@ -4,11 +4,15 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 
 public enum ServerProject {
-    UNKNOWN, CRAFTBUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE;
+    UNKNOWN, CRAFTBUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE, MOCK_BUKKIT;
     private final static ServerProject serverProject = checkProject();
 
     private static ServerProject checkProject() {
         String serverPath = Bukkit.getServer().getClass().getName();
+
+        if (serverPath.equals("be.seeseemelk.mockbukkit.ServerMock")) {
+            return MOCK_BUKKIT;
+        }
 
         if (serverPath.contains("glowstone")) {
             return GLOWSTONE;
