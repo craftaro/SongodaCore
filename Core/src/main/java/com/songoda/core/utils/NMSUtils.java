@@ -66,6 +66,11 @@ public class NMSUtils {
         }
     }
 
+    // FIXME: Remove this method on next major release
+    /**
+     * @deprecated Doesn't work cross version, use NMSManager#getPlayer() instead
+     */
+    @Deprecated
     public static void sendPacket(Player player, Object packet) {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);

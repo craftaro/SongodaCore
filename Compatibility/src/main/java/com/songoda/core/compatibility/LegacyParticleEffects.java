@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 
 /**
  * Particle effects for servers 1.8 and below
+ *
+ * TODO: Needs a recode, this class should not have any advanced logic like NMS magic
  */
 public class LegacyParticleEffects {
     public enum Type {
@@ -124,7 +126,7 @@ public class LegacyParticleEffects {
             mc_entityPlayer_playerConnection = mc_entityPlayerClazz.getDeclaredField("playerConnection");
             mc_playerConnectionClazz = Class.forName("net.minecraft.server." + version + ".PlayerConnection");
             mc_PacketInterface = Class.forName("net.minecraft.server." + version + ".Packet");
-            mc_playerConnection_sendPacket = mc_playerConnectionClazz.getDeclaredMethod("sendPacket", mc_PacketInterface);
+            mc_playerConnection_sendPacket = mc_playerConnectionClazz.getDeclaredMethod(ServerVersion.isServerVersion(ServerVersion.V1_18) ? "a" : "sendPacket", mc_PacketInterface); // FIXME: Doesn't work cross version, use NMSManager#getPlayer() instead
             if (version.startsWith("v1_8")) {
                 // Aren't worrying about anything after 1.8 in this class here
                 mc_EnumParticle = Class.forName("net.minecraft.server." + version + ".EnumParticle");
@@ -244,6 +246,12 @@ public class LegacyParticleEffects {
         }
     }
 
+    // FIXME: Remove this method on next major release
+
+    /**
+     * @deprecated Doesn't work cross version, use NMSManager#getPlayer() instead
+     */
+    @Deprecated
     private static void sendPacket(Object packet, Player to) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Object cbPlayer = cb_craftPlayer_getHandle.invoke(to);
         Object mcConnection = mc_entityPlayer_playerConnection.get(cbPlayer);

@@ -2,6 +2,7 @@ package com.songoda.core.world;
 
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.nms.NmsManager;
 import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -82,12 +83,12 @@ public class SWorldBorder {
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)) {
                 Object packet = clientboundInitializeBorderPacketConstructor.newInstance(worldBorder);
-                NMSUtils.sendPacket(player, packet);
+                NmsManager.getPlayer().sendPacket(player, packet);
             } else {
                 @SuppressWarnings({"unchecked", "rawtypes"})
                 Object packet = packetPlayOutWorldBorderConstructor.newInstance(worldBorder,
                         Enum.valueOf((Class<Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
-                NMSUtils.sendPacket(player, packet);
+                NmsManager.getPlayer().sendPacket(player, packet);
             }
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
             ex.printStackTrace();
