@@ -4,6 +4,7 @@ import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
@@ -209,10 +210,11 @@ public class CompatibleParticleHandler {
 
     public static void spawnParticles(ParticleType type, Location location, int count) {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ++i) {
                 float xx = (float) (1 * (Math.random() - Math.random()));
                 float yy = (float) (1 * (Math.random() - Math.random()));
                 float zz = (float) (1 * (Math.random() - Math.random()));
+
                 Location at = location.clone().add(xx, yy, zz);
                 LegacyParticleEffects.createParticle(at, type.compatibleEffect);
             }
@@ -223,7 +225,7 @@ public class CompatibleParticleHandler {
 
     public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ) {
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ++i) {
                 float xx = (float) (offsetX * (Math.random() - Math.random()));
                 float yy = (float) (offsetY * (Math.random() - Math.random()));
                 float zz = (float) (offsetZ * (Math.random() - Math.random()));
@@ -281,12 +283,13 @@ public class CompatibleParticleHandler {
             float xx = (float) (radius * (Math.random() - Math.random()));
             float yy = (float) (radius * (Math.random() - Math.random()));
             float zz = (float) (radius * (Math.random() - Math.random()));
-            if (player == null)
+            if (player == null) {
                 location.getWorld().spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
-            else
+            } else {
                 player.spawnParticle(Particle.REDSTONE, location, count, xx, yy, zz, 1, new Particle.DustOptions(Color.fromBGR(blue, green, red), size));
+            }
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ++i) {
                 float xx = (float) (radius * (Math.random() - Math.random()));
                 float yy = (float) (radius * (Math.random() - Math.random()));
                 float zz = (float) (radius * (Math.random() - Math.random()));
@@ -298,10 +301,11 @@ public class CompatibleParticleHandler {
             }
         } else {
             // WE NEED MAGIC!
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ++i) {
                 float xx = (float) (radius * (Math.random() - Math.random()));
                 float yy = (float) (radius * (Math.random() - Math.random()));
                 float zz = (float) (radius * (Math.random() - Math.random()));
+
                 Location at = location.clone().add(xx, yy, zz);
                 LegacyParticleEffects.createParticle(at, LegacyParticleEffects.Type.REDSTONE,
                         red / 255F, green / 255F, blue / 255F, 1F,
@@ -310,16 +314,18 @@ public class CompatibleParticleHandler {
         }
     }
 
-    public static void bonemealSmoke(Location l) {
-        final org.bukkit.World w = l.getWorld();
-        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_EAST);
-        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH);
-        w.playEffect(l, Effect.SMOKE, BlockFace.SOUTH_WEST);
-        w.playEffect(l, Effect.SMOKE, BlockFace.EAST);
-        w.playEffect(l, Effect.SMOKE, BlockFace.SELF);
-        w.playEffect(l, Effect.SMOKE, BlockFace.WEST);
-        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_EAST);
-        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH);
-        w.playEffect(l, Effect.SMOKE, BlockFace.NORTH_WEST);
+    public static void bonemealSmoke(Location loc) {
+        World world = loc.getWorld();
+        assert world != null;
+
+        world.playEffect(loc, Effect.SMOKE, BlockFace.SOUTH_EAST);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.SOUTH);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.SOUTH_WEST);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.EAST);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.SELF);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.WEST);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.NORTH_EAST);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.NORTH);
+        world.playEffect(loc, Effect.SMOKE, BlockFace.NORTH_WEST);
     }
 }
