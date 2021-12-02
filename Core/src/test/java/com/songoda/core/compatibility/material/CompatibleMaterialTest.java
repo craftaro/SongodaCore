@@ -1,6 +1,7 @@
 package com.songoda.core.compatibility.material;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;

@@ -1,6 +1,7 @@
 package com.songoda.core.compatibility.bukkit;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import com.songoda.core.compatibility.CompatibleSound;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
