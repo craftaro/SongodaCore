@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.nms.NmsManager;
 import com.songoda.core.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -234,9 +235,7 @@ public class ChatMessage {
                     packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)));
                 }
 
-                Object cbPlayer = cb_craftPlayer_getHandle.invoke(sender);
-                Object mcConnection = mc_entityPlayer_playerConnection.get(cbPlayer);
-                mc_playerConnection_sendPacket.invoke(mcConnection, packet);
+                NmsManager.getPlayer().sendPacket((Player) sender, packet);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 Bukkit.getLogger().log(Level.WARNING, "Problem preparing raw chat packets (disabling further packets)", ex);
                 enabled = false;
@@ -251,7 +250,7 @@ public class ChatMessage {
     private static boolean enabled = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_8);
 
     private static Class<?> mc_ChatMessageType;
-    private static Method mc_IChatBaseComponent_ChatSerializer_a, cb_craftPlayer_getHandle, mc_playerConnection_sendPacket;
+    private static Method mc_IChatBaseComponent_ChatSerializer_a, cb_craftPlayer_getHandle;
     private static Constructor mc_PacketPlayOutChat_new;
     private static Field mc_entityPlayer_playerConnection, mc_chatMessageType_Chat;
 
@@ -263,16 +262,13 @@ public class ChatMessage {
         if (enabled) {
             try {
                 final String version = ServerVersion.getServerVersionString();
-                Class<?> cb_craftPlayerClazz, mc_entityPlayerClazz, mc_playerConnectionClazz, mc_PacketInterface,
+                Class<?> cb_craftPlayerClazz, mc_entityPlayerClazz,
                         mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
 
                 cb_craftPlayerClazz = ClassMapping.CRAFT_PLAYER.getClazz();
                 cb_craftPlayer_getHandle = cb_craftPlayerClazz.getDeclaredMethod("getHandle");
                 mc_entityPlayerClazz = ClassMapping.ENTITY_PLAYER.getClazz();
                 mc_entityPlayer_playerConnection = mc_entityPlayerClazz.getDeclaredField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "b" : "playerConnection");
-                mc_playerConnectionClazz = ClassMapping.PLAYER_CONNECTION.getClazz();
-                mc_PacketInterface = ClassMapping.PACKET.getClazz();
-                mc_playerConnection_sendPacket = mc_playerConnectionClazz.getDeclaredMethod("sendPacket", mc_PacketInterface);
                 mc_IChatBaseComponent = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz();
                 mc_IChatBaseComponent_ChatSerializer = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz("ChatSerializer");
                 mc_IChatBaseComponent_ChatSerializer_a = mc_IChatBaseComponent_ChatSerializer.getMethod("a", String.class);
