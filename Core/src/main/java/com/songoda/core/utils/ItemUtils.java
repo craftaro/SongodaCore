@@ -5,6 +5,7 @@ import com.mojang.authlib.properties.Property;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -197,7 +198,6 @@ public class ItemUtils {
     static Class mc_ItemStack = ClassMapping.ITEM_STACK.getClazz();
     static Class mc_NBTTagCompound = ClassMapping.NBT_TAG_COMPOUND.getClazz();
     static Class mc_NBTTagList = ClassMapping.NBT_TAG_LIST.getClazz();
-    static Class mc_NBTBase = ClassMapping.NBT_BASE.getClazz();
     static Method mc_ItemStack_getTag;
     static Method mc_ItemStack_setTag;
     static Method mc_NBTTagCompound_set;
@@ -211,17 +211,15 @@ public class ItemUtils {
     static {
         if (cb_ItemStack != null) {
             try {
-                mc_ItemStack_getTag = mc_ItemStack.getDeclaredMethod("getTag");
-                mc_ItemStack_setTag = mc_ItemStack.getDeclaredMethod("setTag", mc_NBTTagCompound);
-                mc_NBTTagCompound_set = mc_NBTTagCompound.getDeclaredMethod("set", String.class, mc_NBTBase);
-                mc_NBTTagCompound_remove = mc_NBTTagCompound.getDeclaredMethod("remove", String.class);
-                mc_NBTTagCompound_setShort = mc_NBTTagCompound.getDeclaredMethod("setShort", String.class, short.class);
-                mc_NBTTagCompound_setString = mc_NBTTagCompound.getDeclaredMethod("setString", String.class, String.class);
-                cb_CraftItemStack_asNMSCopy = cb_ItemStack.getDeclaredMethod("asNMSCopy", ItemStack.class);
-                cb_CraftItemStack_asCraftMirror = cb_ItemStack.getDeclaredMethod("asCraftMirror", mc_ItemStack);
-                mc_NBTTagList_add = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_14)
-                        ? NMSUtils.getPrivateMethod(mc_NBTTagList, "a", mc_NBTBase)
-                        : mc_NBTTagList.getDeclaredMethod("add", mc_NBTBase);
+                mc_ItemStack_getTag = MethodMapping.MC_ITEM_STACK__GET_TAG.getMethod(mc_ItemStack);
+                mc_ItemStack_setTag = MethodMapping.MC_ITEM_STACK__SET_TAG.getMethod(mc_ItemStack);
+                mc_NBTTagCompound_set = MethodMapping.MC_NBT_TAG_COMPOUND__SET.getMethod(mc_NBTTagCompound);
+                mc_NBTTagCompound_remove = MethodMapping.MC_NBT_TAG_COMPOUND__REMOVE.getMethod(mc_NBTTagCompound);
+                mc_NBTTagCompound_setShort = MethodMapping.MC_NBT_TAG_COMPOUND__SET_SHORT.getMethod(mc_NBTTagCompound);
+                mc_NBTTagCompound_setString = MethodMapping.MC_NBT_TAG_COMPOUND__SET_STRING.getMethod(mc_NBTTagCompound);
+                cb_CraftItemStack_asNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(mc_ItemStack);
+                cb_CraftItemStack_asCraftMirror = MethodMapping.CB_ITEM_STACK__AS_CRAFT_MIRROR.getMethod(mc_ItemStack);
+                mc_NBTTagList_add = MethodMapping.MC_NBT_TAG_LIST__ADD.getMethod(mc_NBTTagList);
             } catch (Exception ex) {
                 Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -229,7 +227,7 @@ public class ItemUtils {
     }
 
     /**
-     * Make an item glow as if it contained an enchantment. <br>
+     * Make an item glow as if it contained an enchantment. <br>⁄
      * Tested working 1.8-1.14
      *
      * @param item itemstack to create a glowing copy of
