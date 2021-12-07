@@ -194,10 +194,10 @@ public class ItemUtils {
         return tool.getDurability() + requiredAmount <= tool.getType().getMaxDurability();
     }
 
-    static Class cb_ItemStack = NMSUtils.getCraftClass("inventory.CraftItemStack");
-    static Class mc_ItemStack = ClassMapping.ITEM_STACK.getClazz();
-    static Class mc_NBTTagCompound = ClassMapping.NBT_TAG_COMPOUND.getClazz();
-    static Class mc_NBTTagList = ClassMapping.NBT_TAG_LIST.getClazz();
+    static Class<?> cb_ItemStack = ClassMapping.CRAFT_ITEM_STACK.getClazz();
+    static Class<?> mc_ItemStack = ClassMapping.ITEM_STACK.getClazz();
+    static Class<?> mc_NBTTagCompound = ClassMapping.NBT_TAG_COMPOUND.getClazz();
+    static Class<?> mc_NBTTagList = ClassMapping.NBT_TAG_LIST.getClazz();
     static Method mc_ItemStack_getTag;
     static Method mc_ItemStack_setTag;
     static Method mc_NBTTagCompound_set;

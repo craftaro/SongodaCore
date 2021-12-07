@@ -22,7 +22,7 @@ public class SWorldBorder {
     static {
         try {
             worldBorderClass = ClassMapping.WORLD_BORDER.getClazz();
-            craftWorldClass = NMSUtils.getCraftClass("CraftWorld");
+            craftWorldClass = ClassMapping.CRAFT_WORLD.getClazz();
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)) {
                 Class<?> clientboundInitializeBorderPacketClass = ClassMapping.CLIENTBOUND_INITIALIZE_BORDER_PACKET.getClazz();
