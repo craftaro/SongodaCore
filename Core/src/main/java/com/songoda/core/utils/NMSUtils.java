@@ -8,6 +8,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class NMSUtils {
+    /**
+     * @deprecated Use {@link ClassMapping} instead
+     */
+    @Deprecated
     public static Class<?> getCraftClass(String className) {
         try {
             String fullName = "org.bukkit.craftbukkit." + ServerVersion.getServerVersionString() + "." + className;
