@@ -1117,7 +1117,7 @@ public class ItemUtils {
             case '7':
                 return CompatibleMaterial.LIGHT_GRAY_DYE;
             case '8':
-                return CompatibleMaterial.GREEN_DYE;
+                return CompatibleMaterial.GRAY_DYE;
             case 'a':
                 return CompatibleMaterial.LIME_DYE;
             case 'b':
