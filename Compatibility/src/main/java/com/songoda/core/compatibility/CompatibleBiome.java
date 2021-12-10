@@ -129,7 +129,7 @@ public enum CompatibleBiome {
             }
         }
 
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15) && ServerVersion.isServerVersionBelow(ServerVersion.V1_18)) {
             try {
                 Class<?> classBiomeBase = ClassMapping.BIOME_BASE.getClazz(),
                         classCraftChunk = ClassMapping.CRAFT_CHUNK.getClazz(),
@@ -207,7 +207,7 @@ public enum CompatibleBiome {
         Object biomeStorage = null;
         Object biomeBase = null;
 
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15) && ServerVersion.isServerVersionBelow(ServerVersion.V1_18)) {
             nmsChunk = methodGetHandle.invoke(chunk);
             biomeStorage = methodGetBiomeIndex.invoke(nmsChunk);
 
@@ -224,11 +224,15 @@ public enum CompatibleBiome {
         int chunkZ = chunk.getZ();
         for (int x = chunkX << 4; x < (chunkX << 4) + 16; x++) {
             for (int z = chunkZ << 4; z < (chunkZ << 4) + 16; z++) {
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
-                    for (int y = 0; y < world.getMaxHeight(); ++y) {
+                for (int y = 0; y < world.getMaxHeight(); ++y) {
+                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_18)) {
+                        chunk.getWorld().setBiome(x, y, z, getBiome());
+                    } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15) && ServerVersion.isServerVersionBelow(ServerVersion.V1_18)) {
                         methodSetBiome.invoke(biomeStorage, x >> 2, y >> 2, z >> 2, biomeBase);
                     }
+                }
 
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
                     continue;
                 }
 
@@ -236,7 +240,7 @@ public enum CompatibleBiome {
             }
         }
 
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15)) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_15) && ServerVersion.isServerVersionBelow(ServerVersion.V1_18)) {
             methodMarkDirty.invoke(nmsChunk);
         }
     }

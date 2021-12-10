@@ -1,6 +1,7 @@
 package com.songoda.core.world;
 
 import com.songoda.core.compatibility.ClassMapping;
+import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.utils.NMSUtils;
@@ -60,20 +61,19 @@ public class SWorldBorder {
                 NMSUtils.setField(worldBorder, "world", worldServer, false);
             }
 
-            Method setCenter = worldBorder.getClass().getMethod("setCenter", double.class, double.class);
+            Method setCenter = MethodMapping.WORLD_BOARDER__SET_CENTER.getMethod(ClassMapping.WORLD_BORDER.getClazz());
             setCenter.invoke(worldBorder, centerLocation.getX(), centerLocation.getZ());
 
-            Method setSize = worldBorder.getClass().getMethod("setSize", double.class);
+            Method setSize = MethodMapping.WORLD_BOARDER__SET_SIZE.getMethod(ClassMapping.WORLD_BORDER.getClazz());
             setSize.invoke(worldBorder, size);
 
-            Method setWarningTime = worldBorder.getClass().getMethod("setWarningTime", int.class);
+            Method setWarningTime = MethodMapping.WORLD_BOARDER__SET_WARNING_TIME.getMethod(ClassMapping.WORLD_BORDER.getClazz());
             setWarningTime.invoke(worldBorder, 0);
 
-            Method setWarningDistance = worldBorder.getClass().getMethod("setWarningDistance", int.class);
+            Method setWarningDistance = MethodMapping.WORLD_BOARDER__SET_WARNING_DISTANCE.getMethod(ClassMapping.WORLD_BORDER.getClazz());
             setWarningDistance.invoke(worldBorder, 0);
 
-            Method transitionSizeBetween = worldBorder.getClass().getMethod("transitionSizeBetween", double.class,
-                    double.class, long.class);
+            Method transitionSizeBetween = MethodMapping.WORLD_BOARDER__TRANSITION_SIZE_BETWEEN.getMethod(ClassMapping.WORLD_BORDER.getClazz());
 
             if (color == Color.Green) {
                 transitionSizeBetween.invoke(worldBorder, size - 0.1D, size, Long.MAX_VALUE);

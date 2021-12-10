@@ -17,7 +17,14 @@ public enum MethodMapping {
     CB_ITEM_STACK__AS_NMS_COPY("asNMSCopy", ItemStack.class),
     CB_ITEM_STACK__AS_CRAFT_MIRROR("asCraftMirror", ClassMapping.ITEM_STACK.getClazz()),
 
-    MC_NBT_TAG_LIST__ADD("a", "add", "add", ClassMapping.NBT_BASE.getClazz());
+    MC_NBT_TAG_LIST__ADD("a", "add", "add", ClassMapping.NBT_BASE.getClazz()),
+
+    WORLD_BOARDER__SET_CENTER("setCenter", "setCenter", "c", double.class, double.class),
+    WORLD_BOARDER__SET_SIZE("setSize", "setSize", "a", double.class),
+
+    WORLD_BOARDER__SET_WARNING_TIME("setWarningTime", "setWarningTime", "b", int.class),
+    WORLD_BOARDER__SET_WARNING_DISTANCE("setWarningDistance", "setWarningDistance", "c", int.class),
+    WORLD_BOARDER__TRANSITION_SIZE_BETWEEN("transitionSizeBetween", "transitionSizeBetween", "a", double.class, double.class, long.class);
 
     private final String _1_14;
     private final String _1_17;
