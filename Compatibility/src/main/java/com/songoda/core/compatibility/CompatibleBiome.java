@@ -170,10 +170,7 @@ public enum CompatibleBiome {
     }
 
     public boolean isCompatible() {
-        Version version = versions.getLast();
-        ServerVersion.isServerVersionAtLeast(version.version);
-
-        return true;
+        return getBiome() != null;
     }
 
     public List<Version> getVersions() {
@@ -181,10 +178,13 @@ public enum CompatibleBiome {
     }
 
     public Biome getBiome() {
-        for (Version version : versions) {
-            if (ServerVersion.isServerVersionAtLeast(version.version)) {
-                return Biome.valueOf(version.biome);
+        try {
+            for (Version version : versions) {
+                if (ServerVersion.isServerVersionAtLeast(version.version)) {
+                    return Biome.valueOf(version.biome);
+                }
             }
+        } catch (IllegalArgumentException ignore) { // This means the supporter biome server version is wrongly configured
         }
 
         return null;
