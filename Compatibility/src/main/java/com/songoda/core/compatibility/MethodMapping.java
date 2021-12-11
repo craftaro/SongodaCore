@@ -10,9 +10,9 @@ public enum MethodMapping {
     MC_ITEM_STACK__SET_TAG("setTag", "setTag", "c", ClassMapping.NBT_TAG_COMPOUND.getClazz()),
 
     MC_NBT_TAG_COMPOUND__SET("set", "set", "a", String.class, ClassMapping.NBT_BASE.getClazz()),
-    MC_NBT_TAG_COMPOUND__SET_SHORT("setShort", "setShort", "a", String.class),
+    MC_NBT_TAG_COMPOUND__SET_SHORT("setShort", "setShort", "a", String.class, short.class),
     MC_NBT_TAG_COMPOUND__SET_STRING("setString", "setString", "a", String.class, String.class),
-    MC_NBT_TAG_COMPOUND__REMOVE("remove", "remove", "r", String.class, short.class),
+    MC_NBT_TAG_COMPOUND__REMOVE("remove", "remove", "r", String.class),
 
     CB_ITEM_STACK__AS_NMS_COPY("asNMSCopy", "asNMSCopy", ItemStack.class),
     CB_ITEM_STACK__AS_CRAFT_MIRROR("asCraftMirror", "asCraftMirror", ClassMapping.ITEM_STACK.getClazz()),
