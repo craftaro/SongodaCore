@@ -44,7 +44,9 @@ public enum ClassMapping {
     CRAFT_ITEM_STACK("inventory", "CraftItemStack"),
     CRAFT_MAGIC_NUMBERS("util", "CraftMagicNumbers"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
-    CRAFT_WORLD("CraftWorld");
+    CRAFT_WORLD("CraftWorld"),
+
+    MOJANGSON_PARSER("nbt", "MojangsonParser");
 
     private final String packageName;
     private final String className;
