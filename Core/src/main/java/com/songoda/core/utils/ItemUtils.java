@@ -318,34 +318,6 @@ public class ItemUtils {
         return item;
     }
 
-    private static Class<?> mc_Item = ClassMapping.ITEM.getClazz();
-    private static Method mc_Item_getItem;
-    private static Field mc_Item_maxStackSize;
-
-    static {
-        if (mc_ItemStack != null) {
-            try {
-                mc_Item_getItem = mc_ItemStack.getDeclaredMethod("getItem");
-                mc_Item_maxStackSize = mc_Item.getDeclaredField("maxStackSize");
-                mc_Item_maxStackSize.setAccessible(true);
-            } catch (Exception ignore) {
-            }
-        }
-    }
-
-    public static ItemStack setMaxStack(ItemStack item, int max) {
-        if (item != null && mc_Item_maxStackSize != null) {
-            try {
-                Object objItemStack = mc_Item_getItem.invoke(cb_CraftItemStack_asNMSCopy.invoke(null, item));
-                mc_Item_maxStackSize.set(objItemStack, max);
-            } catch (ReflectiveOperationException ex) {
-                Bukkit.getLogger().log(Level.SEVERE, "Failed to set max stack size on item " + item, ex);
-            }
-        }
-
-        return item;
-    }
-
     public static ItemStack getPlayerSkull(OfflinePlayer player) {
         ItemStack head = CompatibleMaterial.PLAYER_HEAD.getItem();
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
