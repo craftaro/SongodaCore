@@ -2,6 +2,7 @@ package com.songoda.core.utils;
 
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -346,28 +347,20 @@ public class BlockUtils {
 
         try {
             if (chunkToNmsChunk == null) {
-                chunkToNmsChunk = loc.getChunk().getClass().getMethod("getHandle");
-                nmsChunkGetWorld = chunkToNmsChunk.getReturnType().getMethod("getWorld");
+                chunkToNmsChunk = MethodMapping.CB_GENERIC__GET_HANDLE.getMethod(ClassMapping.CRAFT_CHUNK.getClazz());
+                nmsChunkGetWorld = MethodMapping.MC_CHUNK__GET_WORLD.getMethod(chunkToNmsChunk.getReturnType());
 
-                Class<?> blockPositionClass;
-                try {
-                    craftBlockGetPosition = craftBlock.getClass().getMethod("getPosition");
-
-                    blockPositionClass = craftBlockGetPosition.getReturnType();
-                } catch (NoSuchMethodException ignore) {
-                    blockPositionClass = ClassMapping.BLOCK_POSITION.getClazz();
-
-                    blockPositionConstructor = blockPositionClass.getConstructor(double.class, double.class, double.class);
+                craftBlockGetPosition = MethodMapping.CB_BLOCK__GET_POSITION.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
+                if (craftBlockGetPosition == null) {
+                    blockPositionConstructor = ClassMapping.BLOCK_POSITION.getClazz().getConstructor(double.class, double.class, double.class);
                 }
 
-                nmsWorldUpdateAdjacentComparators = nmsChunkGetWorld.getReturnType().getMethod("updateAdjacentComparators", blockPositionClass, ClassMapping.BLOCK.getClazz());
+                nmsWorldUpdateAdjacentComparators = MethodMapping.WORLD__UPDATE_ADJACENT_COMPARATORS.getMethod(ClassMapping.WORLD.getClazz());
 
-                try {
-                    craftBlockBlockDataGetter = craftBlock.getClass().getMethod("getNMS");
-                    blockDataGetBlock = craftBlockBlockDataGetter.getReturnType().getMethod("getBlock");
-                } catch (NoSuchMethodException ignore) {
-                    craftMagicNumbersGetBlockByMaterial = ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz()
-                            .getMethod("getBlock", craftBlock.getType().getClass());
+                craftBlockBlockDataGetter = MethodMapping.CB_BLOCK__GET_NMS.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
+                blockDataGetBlock = MethodMapping.I_BLOCK_DATA__GET_BLOCK.getMethod(ClassMapping.I_BLOCK_DATA.getClazz());
+                if (craftBlockBlockDataGetter == null || blockDataGetBlock == null) {
+                    craftMagicNumbersGetBlockByMaterial = MethodMapping.CRAFT_MAGIC_NUMBERS__GET_BLOCK__MATERIAL.getMethod(ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz());
                 }
             }
 
@@ -389,7 +382,7 @@ public class BlockUtils {
             }
 
             nmsWorldUpdateAdjacentComparators.invoke(nmsWorld, blockPosition, nmsBlock);
-        } catch (ReflectiveOperationException ex) {
+        } catch (NullPointerException | ReflectiveOperationException ex) {
             ex.printStackTrace();
         }
     }
@@ -419,11 +412,11 @@ public class BlockUtils {
                 Class<?> clazzChunk = ClassMapping.CHUNK.getClazz();
 
                 getHandle = clazzCraftWorld.getMethod("getHandle");
-                getChunkAt = clazzWorld.getMethod("getChunkAt", int.class, int.class);
+                getChunkAt = MethodMapping.WORLD__GET_CHUNK_AT.getMethod(clazzWorld);
 
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-                    getBlockData = clazzBlock.getMethod("getBlockData");
-                    setType = clazzChunk.getMethod("setType", clazzBlockPosition, clazzIBlockData, boolean.class);
+                    getBlockData = MethodMapping.BLOCK__GET_BLOCK_DATA.getMethod(ClassMapping.BLOCK.getClazz());
+                    setType = MethodMapping.CHUNK__SET_BLOCK_STATE.getMethod(ClassMapping.CHUNK.getClazz());
                 } else {
                     getByCombinedId = clazzBlock.getMethod("getByCombinedId", int.class);
                     setType = clazzChunk.getMethod("a", clazzBlockPosition, clazzIBlockData);
