@@ -55,10 +55,8 @@ public class SWorldBorder {
             Object worldBorder = worldBorderClass.getConstructor().newInstance();
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
-                Object craftWorld = craftWorldClass.cast(centerLocation.getWorld());
-                Method getHandleMethod = craftWorld.getClass().getMethod("getHandle");
-                Object worldServer = getHandleMethod.invoke(craftWorld);
-                NMSUtils.setField(worldBorder, "world", worldServer, false);
+                Object nmsWorld = MethodMapping.CB_GENERIC__GET_HANDLE.getMethod(ClassMapping.CRAFT_WORLD.getClazz()).invoke(centerLocation.getWorld());
+                NMSUtils.setField(worldBorder, "world", nmsWorld, false);
             }
 
             Method setCenter = MethodMapping.WORLD_BOARDER__SET_CENTER.getMethod(ClassMapping.WORLD_BORDER.getClazz());
@@ -87,7 +85,7 @@ public class SWorldBorder {
             } else {
                 @SuppressWarnings({"unchecked", "rawtypes"})
                 Object packet = packetPlayOutWorldBorderConstructor.newInstance(worldBorder,
-                        Enum.valueOf((Class<Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
+                        Enum.valueOf((Class<? extends Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
                 NmsManager.getPlayer().sendPacket(player, packet);
             }
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {

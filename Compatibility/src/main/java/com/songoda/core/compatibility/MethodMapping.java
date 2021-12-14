@@ -1,5 +1,6 @@
 package com.songoda.core.compatibility;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
@@ -13,20 +14,28 @@ public enum MethodMapping {
     MC_NBT_TAG_COMPOUND__SET_STRING("setString", "setString", "a", String.class, String.class),
     MC_NBT_TAG_COMPOUND__REMOVE("remove", "remove", "r", String.class),
 
+    CB_GENERIC__GET_HANDLE("getHandle"),
+
+    CB_BLOCK__GET_NMS("getNMS"),
+    CB_BLOCK__GET_POSITION("getPosition"),
+
     CB_ITEM_STACK__AS_NMS_COPY("asNMSCopy", ItemStack.class),
     CB_ITEM_STACK__AS_CRAFT_MIRROR("asCraftMirror", ClassMapping.ITEM_STACK.getClazz()),
+
+    CRAFT_MAGIC_NUMBERS__GET_BLOCK__MATERIAL("getBlock", Material.class),
 
     MC_CHUNK__GET_WORLD("getWorld", "D"),
 
     MC_NBT_TAG_LIST__ADD("add", "a", "add", "c", ClassMapping.NBT_BASE.getClazz()),
 
+    I_BLOCK_DATA__GET_BLOCK("getBlock", "b"),
     BLOCK__GET_BLOCK_DATA("getBlockData", "n"),
 
     CHUNK__SET_BLOCK_STATE("setType", "setBlockState", ClassMapping.BLOCK_POSITION.getClazz(), ClassMapping.I_BLOCK_DATA.getClazz(), boolean.class, boolean.class),
 
     ITEM_STACK__SAVE("save", "b", ClassMapping.NBT_TAG_COMPOUND.getClazz()),
-    ITEM_STACK__GET_ITEM("getItem","c"),
-    ITEM_STACK__GET_MAX_STACK_SIZE("getMaxStackSize","l"),
+    ITEM_STACK__GET_ITEM("getItem", "c"),
+    ITEM_STACK__GET_MAX_STACK_SIZE("getMaxStackSize", "l"),
 
     WORLD__UPDATE_ADJACENT_COMPARATORS("updateAdjacentComparators", "c", ClassMapping.BLOCK_POSITION.getClazz(), ClassMapping.BLOCK.getClazz()),
     WORLD__GET_CHUNK_AT("getChunkAt", "d", int.class, int.class),
@@ -101,14 +110,14 @@ public enum MethodMapping {
             }
 
             try {
-                Method method = clazz.getDeclaredMethod(methodName, paramaters);
+                Method method = clazz.getMethod(methodName, paramaters);
                 method.setAccessible(true);
 
                 return method;
             } catch (NullPointerException | NoSuchMethodException ex) {
                 if (saneFallback != null && !saneFallback.equals(methodName)) {
                     try {
-                        Method method = clazz.getDeclaredMethod(saneFallback, paramaters);
+                        Method method = clazz.getMethod(saneFallback, paramaters);
                         method.setAccessible(true);
 
                         return method;
