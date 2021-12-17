@@ -45,7 +45,7 @@ public class GuiLootableEditor extends Gui {
                     gui.setAction((event1 -> {
                         try {
                             lootable.registerLoot(new LootBuilder().setMaterial(CompatibleMaterial
-                                    .valueOf(gui.getInputText().trim())).build());
+                                    .valueOf(gui.getInputText().trim().toUpperCase())).build());
                         } catch (IllegalArgumentException ex) {
                             event.player.sendMessage("That is not a valid material.");
                         }
