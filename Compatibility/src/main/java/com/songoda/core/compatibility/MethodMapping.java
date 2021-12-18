@@ -14,21 +14,24 @@ public enum MethodMapping {
     MC_NBT_TAG_COMPOUND__SET_STRING("setString", "setString", "a", String.class, String.class),
     MC_NBT_TAG_COMPOUND__REMOVE("remove", "remove", "r", String.class),
 
+    MC_NBT_TAG_LIST__ADD("add", "a", "add", "a", ClassMapping.NBT_BASE.getClazz()),
+
+    MC_CHUNK__GET_WORLD("getWorld", "D"),
+
     CB_GENERIC__GET_HANDLE("getHandle"),
 
-    CB_BLOCK__GET_NMS("getNMS"),
+    CB_BLOCK__GET_NMS("getNMSBlock", "getNMS"),
     CB_BLOCK__GET_POSITION("getPosition"),
+
+    CB_BLOCK_DATA__GET_STATE("getState"),
 
     CB_ITEM_STACK__AS_NMS_COPY("asNMSCopy", ItemStack.class),
     CB_ITEM_STACK__AS_CRAFT_MIRROR("asCraftMirror", ClassMapping.ITEM_STACK.getClazz()),
 
     CRAFT_MAGIC_NUMBERS__GET_BLOCK__MATERIAL("getBlock", Material.class),
 
-    MC_CHUNK__GET_WORLD("getWorld", "D"),
-
-    MC_NBT_TAG_LIST__ADD("add", "a", "add", "c", ClassMapping.NBT_BASE.getClazz()),
-
     I_BLOCK_DATA__GET_BLOCK("getBlock", "b"),
+
     BLOCK__GET_BLOCK_DATA("getBlockData", "n"),
 
     CHUNK__SET_BLOCK_STATE("setType", "setBlockState", ClassMapping.BLOCK_POSITION.getClazz(), ClassMapping.I_BLOCK_DATA.getClazz(), boolean.class, boolean.class),
@@ -42,7 +45,6 @@ public enum MethodMapping {
 
     WORLD_BOARDER__SET_CENTER("setCenter", "setCenter", "setCenter", "c", double.class, double.class),
     WORLD_BOARDER__SET_SIZE("setSize", "setSize", "setSize", "a", double.class),
-
     WORLD_BOARDER__SET_WARNING_TIME("setWarningTime", "setWarningTime", "setWarningTime", "b", int.class),
     WORLD_BOARDER__SET_WARNING_DISTANCE("setWarningDistance", "setWarningDistance", "setWarningDistance", "c", int.class),
     WORLD_BOARDER__TRANSITION_SIZE_BETWEEN("transitionSizeBetween", "transitionSizeBetween", "transitionSizeBetween", "a", double.class, double.class, long.class),
