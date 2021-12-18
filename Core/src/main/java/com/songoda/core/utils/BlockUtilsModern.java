@@ -2,6 +2,7 @@ package com.songoda.core.utils;
 
 import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.ClassMapping;
+import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -95,15 +96,15 @@ public class BlockUtilsModern {
             clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
             clazzCraftBlock = ClassMapping.CRAFT_BLOCK.getClazz();
 
-            craftWorld_getHandle = clazzCraftWorld.getMethod("getHandle");
-            craftBlock_getPostition = clazzCraftBlock.getDeclaredMethod("getPosition");
+            craftWorld_getHandle = MethodMapping.CB_GENERIC__GET_HANDLE.getMethod(clazzCraftWorld);
+            craftBlock_getPostition = MethodMapping.CB_BLOCK__GET_POSITION.getMethod(clazzCraftBlock);
 
-            craftBlock_getNMS = clazzCraftBlock.getDeclaredMethod("getNMS");
+            craftBlock_getNMS = MethodMapping.CB_BLOCK__GET_NMS.getMethod(clazzCraftBlock);
             Class<?> clazzBlockData = ClassMapping.BLOCK_BASE.getClazz("BlockData");
-            nmsBlockData_getBlock = clazzBlockData.getDeclaredMethod("getBlock");
+            nmsBlockData_getBlock = MethodMapping.I_BLOCK_DATA__GET_BLOCK.getMethod(clazzBlockData);
 
             Class<?> clazzCraftBlockData = ClassMapping.CRAFT_BLOCK_DATA.getClazz();
-            craftBlockData_getState = clazzCraftBlockData.getDeclaredMethod("getState");
+            craftBlockData_getState = MethodMapping.CB_BLOCK_DATA__GET_STATE.getMethod(clazzCraftBlockData);
 
             Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
             Class<?> clazzBlockState = ClassMapping.I_BLOCK_DATA.getClazz();
@@ -112,7 +113,6 @@ public class BlockUtilsModern {
             clazzButtonBlock = ClassMapping.BLOCK_BUTTON_ABSTRACT.getClazz();
             clazzPressurePlateBlock = ClassMapping.BLOCK_PRESSURE_PLATE_ABSTRACT.getClazz();
 
-            // nmsLever_updateNeighbours, nmsButton_updateNeighbours, nmsPlate_updateNeighbours
             nmsLever_updateNeighbours = clazzLeverBlock.getDeclaredMethod(ServerVersion.isServerVersionAbove(ServerVersion.V1_13)
                     ? "e" : "b", clazzBlockState, clazzWorld, clazzBlockPos);
             nmsLever_updateNeighbours.setAccessible(true);
