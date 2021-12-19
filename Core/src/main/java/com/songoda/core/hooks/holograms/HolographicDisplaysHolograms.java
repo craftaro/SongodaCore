@@ -7,10 +7,14 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class HolographicDisplaysHolograms extends Holograms {
+
+    private final Map<String, Hologram> holograms = new HashMap<>();
+
     public HolographicDisplaysHolograms(Plugin plugin) {
         super(plugin);
     }
@@ -31,80 +35,68 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     @Override
-    public void createHologram(Location location, List<String> lines) {
-        createAt(fixLocation(location), lines);
+    public void createHologram(String id, Location location, List<String> lines) {
+        createAt(id, location, lines);
     }
 
     @Override
-    public void removeHologram(Location location) {
-        location = fixLocation(location);
-
-        for (Hologram hologram : HologramsAPI.getHolograms(plugin)) {
-            if (hologram.getX() != location.getX()
-                    || hologram.getY() != location.getY()
-                    || hologram.getZ() != location.getZ()) {
-                continue;
-            }
-
+    public void removeHologram(String id) {
+        Hologram hologram = holograms.remove(id);
+        if (hologram != null) {
             hologram.delete();
         }
     }
 
     @Override
-    public void updateHologram(Location location, List<String> lines) {
-        bulkUpdateHolograms(Collections.singletonMap(location, lines));
+    public void updateHologram(String id, List<String> lines) {
+        bulkUpdateHolograms(Collections.singletonMap(id, lines));
     }
 
     @Override
-    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
-        Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
-
-        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
-            Location location = fixLocation(entry.getKey());
+    public void bulkUpdateHolograms(Map<String, List<String>> hologramData) {
+        for (Map.Entry<String, List<String>> entry : hologramData.entrySet()) {
+            String id = entry.getKey();
             List<String> lines = entry.getValue();
 
-            for (Hologram hologram : holograms) {
-                if (hologram.getX() != location.getX()
-                        || hologram.getY() != location.getY()
-                        || hologram.getZ() != location.getZ()) {
-                    continue;
+            Hologram hologram = holograms.get(id);
+
+            // only update if there is a change to the text
+            boolean isChanged = lines.size() != hologram.size();
+
+            if (!isChanged) {
+                // double-check the lines
+                for (int i = 0; !isChanged && i < lines.size(); ++i) {
+                    isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
                 }
-
-                // only update if there is a change to the text
-                boolean isChanged = lines.size() != hologram.size();
-
-                if (!isChanged) {
-                    // double-check the lines
-                    for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                        isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
-                    }
-                }
-
-                if (isChanged) {
-                    hologram.clearLines();
-
-                    for (String line : lines) {
-                        hologram.appendTextLine(line);
-                    }
-                }
-
-                return;
             }
 
-            createAt(location, lines);
+            if (isChanged) {
+                hologram.clearLines();
+
+                for (String line : lines) {
+                    hologram.appendTextLine(line);
+                }
+            }
         }
     }
 
-    private void createAt(Location location, List<String> lines) {
+    private void createAt(String id, Location location, List<String> lines) {
         Hologram hologram = HologramsAPI.createHologram(plugin, location);
 
         for (String line : lines) {
             hologram.appendTextLine(line);
         }
+
+        holograms.put(id, hologram);
     }
 
     @Override
     public void removeAllHolograms() {
-        HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
+        holograms.values().forEach(Hologram::delete);
+    }
+
+    @Override
+    public boolean isHologramLoaded(String id) {
+        return holograms.get(id) != null;
     }
 }

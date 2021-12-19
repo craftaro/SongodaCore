@@ -11,10 +11,11 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HologramsHolograms extends Holograms {
-    HologramPlugin hologramPlugin;
-    HashSet<String> ourHolograms = new HashSet<>();
+    private final HologramPlugin hologramPlugin;
+    private final Set<String> ourHolograms = new HashSet<>();
 
     public HologramsHolograms(Plugin plugin) {
         super(plugin);
@@ -38,15 +39,12 @@ public class HologramsHolograms extends Holograms {
     }
 
     @Override
-    public void createHologram(Location location, List<String> lines) {
-        createAt(fixLocation(location), lines);
+    public void createHologram(String id, Location location, List<String> lines) {
+        createAt(id, fixLocation(location), lines);
     }
 
     @Override
-    public void removeHologram(Location location) {
-        location = fixLocation(location);
-
-        final String id = locStr(location);
+    public void removeHologram(String id) {
         Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
 
         if (hologram != null) {
@@ -72,9 +70,13 @@ public class HologramsHolograms extends Holograms {
     }
 
     @Override
-    public void updateHologram(Location location, List<String> lines) {
-        location = fixLocation(location);
-        Hologram hologram = hologramPlugin.getHologramManager().getHologram(locStr(location));
+    public boolean isHologramLoaded(String id) {
+        return hologramPlugin.getHologramManager().getHologram(id) != null;
+    }
+
+    @Override
+    public void updateHologram(String id, List<String> lines) {
+        Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
 
         if (hologram != null) {
             hologram.spawn();
@@ -100,24 +102,16 @@ public class HologramsHolograms extends Holograms {
 
             return;
         }
-
-        createAt(location, lines);
     }
 
     @Override
-    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
-        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
+    public void bulkUpdateHolograms(Map<String, List<String>> hologramData) {
+        for (Map.Entry<String, List<String>> entry : hologramData.entrySet()) {
             updateHologram(entry.getKey(), entry.getValue());
         }
     }
 
-    private String locStr(Location loc) {
-        return String.format("%s-%d-%d-%d", loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-    }
-
-    private void createAt(Location location, List<String> lines) {
-        final String id = locStr(location);
-
+    private void createAt(String id, Location location, List<String> lines) {
         Hologram hologram = new Hologram(id, location);
 
         for (String line : lines) {

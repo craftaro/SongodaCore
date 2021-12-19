@@ -58,15 +58,12 @@ public class CMIHolograms extends Holograms {
     }
 
     @Override
-    public void createHologram(Location location, List<String> lines) {
-        createAt(fixLocation(location), lines);
+    public void createHologram(String id, Location location, List<String> lines) {
+        createAt(id, fixLocation(location), lines);
     }
 
     @Override
-    public void removeHologram(Location location) {
-        location = fixLocation(location);
-
-        final String id = locStr(location);
+    public void removeHologram(String id) {
         CMIHologram holo = cmiHologramManager.getByName(id);
 
         if (holo != null) {
@@ -90,9 +87,13 @@ public class CMIHolograms extends Holograms {
     }
 
     @Override
-    public void updateHologram(Location location, List<String> lines) {
-        location = fixLocation(location);
-        CMIHologram holo = cmiHologramManager.getByName(locStr(location));
+    public boolean isHologramLoaded(String id) {
+        return cmiHologramManager.getByName(id) != null;
+    }
+
+    @Override
+    public void updateHologram(String id, List<String> lines) {
+        CMIHologram holo = cmiHologramManager.getByName(id);
 
         if (holo != null) {
             // only update if there is a change to the text
@@ -123,24 +124,16 @@ public class CMIHolograms extends Holograms {
 
             return;
         }
-
-        createAt(location, lines);
     }
 
     @Override
-    public void bulkUpdateHolograms(Map<Location, List<String>> hologramData) {
-        for (Map.Entry<Location, List<String>> entry : hologramData.entrySet()) {
+    public void bulkUpdateHolograms(Map<String, List<String>> hologramData) {
+        for (Map.Entry<String, List<String>> entry : hologramData.entrySet()) {
             updateHologram(entry.getKey(), entry.getValue());
         }
     }
 
-    private String locStr(Location loc) {
-        return String.format("%s-%d-%d-%d", loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-    }
-
-    private void createAt(Location location, List<String> lines) {
-        final String id = locStr(location);
-
+    private void createAt(String id, Location location, List<String> lines) {
         CMIHologram holo = new CMIHologram(id, location);
         holo.setLines(lines);
 
