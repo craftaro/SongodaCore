@@ -5,6 +5,7 @@ import com.songoda.core.hooks.economies.PlayerPointsEconomy;
 import com.songoda.core.hooks.economies.ReserveEconomy;
 import com.songoda.core.hooks.economies.VaultEconomy;
 import com.songoda.core.hooks.holograms.CMIHolograms;
+import com.songoda.core.hooks.holograms.DecentHologramsHolograms;
 import com.songoda.core.hooks.holograms.Holograms;
 import com.songoda.core.hooks.holograms.HologramsHolograms;
 import com.songoda.core.hooks.holograms.HolographicDisplaysHolograms;
@@ -44,6 +45,7 @@ public final class PluginHook<T extends Class> {
     public static final PluginHook HOLO_DISPLAYS = new PluginHook(Holograms.class, "HolographicDisplays", HolographicDisplaysHolograms.class);
     public static final PluginHook HOLO_HOLOGRAMS = new PluginHook(Holograms.class, "Holograms", HologramsHolograms.class);
     public static final PluginHook HOLO_CMI = new PluginHook(Holograms.class, "CMI", CMIHolograms.class);
+    public static final PluginHook HOLO_DECENTHOLOGRAMS = new PluginHook(Holograms.class, "DecentHolograms", DecentHologramsHolograms.class);
     public static final PluginHook LOG_CORE_PROTECT = new PluginHook(Log.class, "CoreProtect", CoreProtectLog.class);
     public static final PluginHook PROTECTION_GRIEFPREVENTION = new PluginHook(Protection.class, "GriefPrevention", GriefPreventionProtection.class);
     public static final PluginHook PROTECTION_LANDS = new PluginHook(Protection.class, "Lands", LandsProtection.class);

@@ -44,21 +44,23 @@ public abstract class Holograms implements Hook {
 
     protected abstract double defaultHeightOffset();
 
-    public void createHologram(Location location, String line) {
-        createHologram(location, Collections.singletonList(line));
+    public void createHologram(String id, Location location, String line) {
+        createHologram(id, location, Collections.singletonList(line));
     }
 
-    public abstract void createHologram(Location location, List<String> lines);
+    public abstract void createHologram(String id, Location location, List<String> lines);
 
-    public abstract void removeHologram(Location location);
+    public abstract void removeHologram(String id);
 
-    public void updateHologram(Location location, String line) {
-        updateHologram(location, Collections.singletonList(line));
+    public void updateHologram(String id, String line) {
+        updateHologram(id, Collections.singletonList(line));
     }
 
-    public abstract void updateHologram(Location location, List<String> lines);
+    public abstract void updateHologram(String id, List<String> lines);
 
-    public abstract void bulkUpdateHolograms(Map<Location, List<String>> hologramData);
+    public abstract void bulkUpdateHolograms(Map<String, List<String>> hologramData);
 
     public abstract void removeAllHolograms();
+
+    public abstract boolean isHologramLoaded(String id);
 }

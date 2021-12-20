@@ -47,21 +47,21 @@ public class HologramManager {
         return manager.getCurrentHook();
     }
 
-    public static void createHologram(Location location, String line) {
+    public static void createHologram(String id, Location location, String line) {
         if (manager.isEnabled()) {
-            manager.getCurrentHook().createHologram(location, line);
+            manager.getCurrentHook().createHologram(id, location, line);
         }
     }
 
-    public static void createHologram(Location location, List<String> lines) {
+    public static void createHologram(String id, Location location, List<String> lines) {
         if (manager.isEnabled()) {
-            manager.getCurrentHook().createHologram(location, lines);
+            manager.getCurrentHook().createHologram(id, location, lines);
         }
     }
 
-    public static void removeHologram(Location location) {
+    public static void removeHologram(String id) {
         if (manager.isEnabled()) {
-            manager.getCurrentHook().removeHologram(location);
+            manager.getCurrentHook().removeHologram(id);
         }
     }
 
@@ -71,21 +71,29 @@ public class HologramManager {
         }
     }
 
-    public static void updateHologram(Location location, String line) {
+    public static void updateHologram(String id, String line) {
         if (manager.isEnabled()) {
-            manager.getCurrentHook().updateHologram(location, line);
+            manager.getCurrentHook().updateHologram(id, line);
         }
     }
 
-    public static void updateHologram(Location location, List<String> lines) {
+    public static void updateHologram(String id, List<String> lines) {
         if (manager.isEnabled()) {
-            manager.getCurrentHook().updateHologram(location, lines);
+            manager.getCurrentHook().updateHologram(id, lines);
         }
     }
 
-    public static void bulkUpdateHolograms(Map<Location, List<String>> holograms) {
+    public static void bulkUpdateHolograms(Map<String, List<String>> holograms) {
         if (manager.isEnabled()) {
             manager.getCurrentHook().bulkUpdateHolograms(holograms);
         }
+    }
+
+    public static boolean isHologramLoaded(String id) {
+        if (manager.isEnabled()) {
+            return manager.getCurrentHook().isHologramLoaded(id);
+        }
+
+        return false;
     }
 }
