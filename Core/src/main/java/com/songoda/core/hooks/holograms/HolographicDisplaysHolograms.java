@@ -2,10 +2,10 @@ package com.songoda.core.hooks.holograms;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +14,13 @@ import java.util.Map;
 public class HolographicDisplaysHolograms extends Holograms {
 
     private final Map<String, Hologram> holograms = new HashMap<>();
+    private final String textLineFormat;
 
     public HolographicDisplaysHolograms(Plugin plugin) {
         super(plugin);
+        String version = Bukkit.getPluginManager().getPlugin("HolographicDisplays").getDescription().getVersion();
+
+        this.textLineFormat = version.startsWith("3") ? "TextLine{text=%s}" : "CraftTextLine [text=%s]";
     }
 
     @Override
@@ -66,7 +70,7 @@ public class HolographicDisplaysHolograms extends Holograms {
             if (!isChanged) {
                 // double-check the lines
                 for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                    isChanged = !hologram.getLine(i).toString().equals("CraftTextLine [text=" + lines.get(i) + "]");
+                    isChanged = !hologram.getLine(i).toString().equals(String.format(textLineFormat, lines.get(i)));
                 }
             }
 
@@ -81,6 +85,11 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     private void createAt(String id, Location location, List<String> lines) {
+        if (holograms.containsKey(id)) {
+            return;
+        }
+
+        location = fixLocation(location);
         Hologram hologram = HologramsAPI.createHologram(plugin, location);
 
         for (String line : lines) {
