@@ -202,9 +202,9 @@ public class ItemUtils {
     static Method mc_ItemStack_setTag;
     static Method mc_NBTTagCompound_set;
     static Method mc_NBTTagCompound_remove;
-    static Method mc_NBTTagCompound_setShort;
-    static Method mc_NBTTagCompound_setString;
-    static Method mc_NBTTagList_add;
+//    static Method mc_NBTTagCompound_setShort;
+//    static Method mc_NBTTagCompound_setString;
+//    static Method mc_NBTTagList_add;
     static Method cb_CraftItemStack_asNMSCopy;
     static Method cb_CraftItemStack_asCraftMirror;
 
@@ -215,11 +215,11 @@ public class ItemUtils {
                 mc_ItemStack_setTag = MethodMapping.MC_ITEM_STACK__SET_TAG.getMethod(mc_ItemStack);
                 mc_NBTTagCompound_set = MethodMapping.MC_NBT_TAG_COMPOUND__SET.getMethod(mc_NBTTagCompound);
                 mc_NBTTagCompound_remove = MethodMapping.MC_NBT_TAG_COMPOUND__REMOVE.getMethod(mc_NBTTagCompound);
-                mc_NBTTagCompound_setShort = MethodMapping.MC_NBT_TAG_COMPOUND__SET_SHORT.getMethod(mc_NBTTagCompound);
-                mc_NBTTagCompound_setString = MethodMapping.MC_NBT_TAG_COMPOUND__SET_STRING.getMethod(mc_NBTTagCompound);
+//                mc_NBTTagCompound_setShort = MethodMapping.MC_NBT_TAG_COMPOUND__SET_SHORT.getMethod(mc_NBTTagCompound);
+//                mc_NBTTagCompound_setString = MethodMapping.MC_NBT_TAG_COMPOUND__SET_STRING.getMethod(mc_NBTTagCompound);
                 cb_CraftItemStack_asNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(cb_ItemStack);
                 cb_CraftItemStack_asCraftMirror = MethodMapping.CB_ITEM_STACK__AS_CRAFT_MIRROR.getMethod(cb_ItemStack);
-                mc_NBTTagList_add = MethodMapping.MC_NBT_TAG_LIST__ADD.getMethod(mc_NBTTagList);
+//                mc_NBTTagList_add = MethodMapping.MC_NBT_TAG_LIST__ADD.getMethod(mc_NBTTagList);
             } catch (Exception ex) {
                 Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
