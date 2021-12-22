@@ -41,7 +41,9 @@ public class SSpawnerImpl implements SSpawner {
         NBTTagCompound compound = data.b();
 
         String name = type.name().toLowerCase().replace("snowman", "snow_golem")
-                .replace("mushroom_cow", "mooshroom");
+                .replace("mushroom_cow", "mooshroom")
+                .replace("iron_golem", "villager_golem");;
+
         compound.setString("id", "minecraft:" + name);
 
         short spawnRange = 4;
