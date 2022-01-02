@@ -50,7 +50,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0-SNAPSHOT</version>
 
                 <executions>
                     <execution>
@@ -71,6 +71,13 @@
                                     <include>com.zaxxer:HikariCP</include>
                                 </includes>
                             </artifactSet>
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.zaxxer</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.com.zaxxer</shadedPattern>
+                                </relocation>
+                            </relocations>
 
                             <filters>
                                 <filter>
