@@ -18,6 +18,7 @@ import com.songoda.core.hooks.protection.Protection;
 import com.songoda.core.hooks.protection.RedProtectProtection;
 import com.songoda.core.hooks.protection.ResidenceProtection;
 import com.songoda.core.hooks.protection.UltimateClaimsProtection;
+import com.songoda.core.hooks.stackers.RoseStacker;
 import com.songoda.core.hooks.stackers.StackMob;
 import com.songoda.core.hooks.stackers.Stacker;
 import com.songoda.core.hooks.stackers.UltimateStacker;
@@ -42,6 +43,7 @@ public final class PluginHook<T extends Class> {
     public static final PluginHook STACKER_ULTIMATE = new PluginHook(Stacker.class, "UltimateStacker", UltimateStacker.class);
     public static final PluginHook STACKER_WILD = new PluginHook(Stacker.class, "WildStacker", WildStacker.class);
     public static final PluginHook STACKER_STACK_MOB = new PluginHook(Stacker.class, "StackMob", StackMob.class);
+    public static final PluginHook STACKER_ROSE = new PluginHook(Stacker.class, "RoseStacker", RoseStacker.class);
     public static final PluginHook HOLO_DISPLAYS = new PluginHook(Holograms.class, "HolographicDisplays", HolographicDisplaysHolograms.class);
     public static final PluginHook HOLO_HOLOGRAMS = new PluginHook(Holograms.class, "Holograms", HologramsHolograms.class);
     public static final PluginHook HOLO_CMI = new PluginHook(Holograms.class, "CMI", CMIHolograms.class);

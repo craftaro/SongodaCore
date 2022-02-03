@@ -379,6 +379,13 @@
             <version>2.2.5</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>dev.rosewood</groupId>
+            <artifactId>rosestacker</artifactId>
+            <version>1.4.2</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- End Plugin Hooks -->
 
         <dependency>
