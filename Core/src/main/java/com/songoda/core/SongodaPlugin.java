@@ -218,7 +218,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
      *
      * @param th The error(s) that occurred
      */
-    protected void criticalErrorOnPluginStartup(Throwable... th) {
+    protected void criticalErrorOnPluginStartup(Throwable th) {
         Bukkit.getLogger().log(Level.SEVERE,
                 String.format(
                         "Unexpected error while loading %s v%s c%s: Disabling plugin!",
