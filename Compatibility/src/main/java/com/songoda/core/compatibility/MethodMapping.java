@@ -16,7 +16,7 @@ public enum MethodMapping {
 
     MC_NBT_TAG_LIST__ADD("add", "a", "add", "a", ClassMapping.NBT_BASE.getClazz()),
 
-    MC_CHUNK__GET_WORLD("getWorld", "D"),
+    MC_CHUNK__GET_WORLD("getWorld", "getWorld", "D"),
 
     CB_GENERIC__GET_HANDLE("getHandle"),
 
