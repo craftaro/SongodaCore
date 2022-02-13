@@ -32,6 +32,9 @@ public enum CompatibleMaterial {
      DARK_OAK_DOOR_ITEM(431),
      */
 
+    /* 1.18 */
+    MUSIC_DISC_OTHERSIDE(),
+
     /* 1.17 */
     AMETHYST_BLOCK(),
     AMETHYST_CLUSTER(),
