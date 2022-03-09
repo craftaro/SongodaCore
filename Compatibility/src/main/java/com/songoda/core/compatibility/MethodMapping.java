@@ -55,42 +55,42 @@ public enum MethodMapping {
     private final String _1_14;
     private final String _1_17;
     private final String _1_18;
-    private final Class<?>[] paramaters;
+    private final Class<?>[] parameters;
 
-    MethodMapping(String saneFallback, String _1_14, String _1_17, String _1_18, Class<?>... paramaters) {
+    MethodMapping(String saneFallback, String _1_14, String _1_17, String _1_18, Class<?>... parameters) {
         this.saneFallback = saneFallback;
 
         this._1_14 = _1_14;
         this._1_17 = _1_17;
         this._1_18 = _1_18;
-        this.paramaters = paramaters;
+        this.parameters = parameters;
     }
 
-    MethodMapping(String saneFallback, String _1_17, String _1_18, Class<?>... paramaters) {
+    MethodMapping(String saneFallback, String _1_17, String _1_18, Class<?>... parameters) {
         this.saneFallback = saneFallback;
 
         this._1_14 = null;
         this._1_17 = _1_17;
         this._1_18 = _1_18;
-        this.paramaters = paramaters;
+        this.parameters = parameters;
     }
 
-    MethodMapping(String saneFallback, String _1_18, Class<?>... paramaters) {
+    MethodMapping(String saneFallback, String _1_18, Class<?>... parameters) {
         this.saneFallback = saneFallback;
 
         this._1_14 = null;
         this._1_17 = null;
         this._1_18 = _1_18;
-        this.paramaters = paramaters;
+        this.parameters = parameters;
     }
 
-    MethodMapping(String saneFallback, Class<?>... paramaters) {
+    MethodMapping(String saneFallback, Class<?>... parameters) {
         this.saneFallback = saneFallback;
 
         this._1_14 = null;
         this._1_17 = null;
         this._1_18 = null;
-        this.paramaters = paramaters;
+        this.parameters = parameters;
     }
 
     public Method getMethod(Class<?> clazz) {
@@ -112,14 +112,14 @@ public enum MethodMapping {
             }
 
             try {
-                Method method = clazz.getMethod(methodName, paramaters);
+                Method method = clazz.getMethod(methodName, parameters);
                 method.setAccessible(true);
 
                 return method;
             } catch (NullPointerException | NoSuchMethodException ex) {
                 if (saneFallback != null && !saneFallback.equals(methodName)) {
                     try {
-                        Method method = clazz.getMethod(saneFallback, paramaters);
+                        Method method = clazz.getMethod(saneFallback, parameters);
                         method.setAccessible(true);
 
                         return method;
