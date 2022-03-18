@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -79,6 +80,16 @@ public class DataManagerAbstract {
     @Deprecated
     public void async(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
+    }
+    
+    /**
+     * Queue a task to be run asynchronously with all the
+     * advantages of CompletableFuture api <br>
+     *
+     * @param runnable task to run
+     */
+    public CompletableFuture<Void> asyncFuture(Runnable runnable) {
+        return CompletableFuture.runAsync(runnable);
     }
 
     /**
