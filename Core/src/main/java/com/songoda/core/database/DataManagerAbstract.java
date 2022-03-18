@@ -81,7 +81,7 @@ public class DataManagerAbstract {
     public void async(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
     }
-    
+
     /**
      * Queue a task to be run asynchronously with all the
      * advantages of CompletableFuture api <br>
@@ -89,7 +89,7 @@ public class DataManagerAbstract {
      * @param runnable task to run
      */
     public CompletableFuture<Void> asyncFuture(Runnable runnable) {
-        return CompletableFuture.runAsync(runnable);
+        return CompletableFuture.runAsync(runnable, this.asyncPool);
     }
 
     /**
