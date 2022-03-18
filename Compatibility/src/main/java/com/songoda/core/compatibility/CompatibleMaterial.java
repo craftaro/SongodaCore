@@ -1277,7 +1277,7 @@ public enum CompatibleMaterial {
     YELLOW_WOOL("WOOL", (byte) 4),
     ZOMBIE_HEAD("SKULL_ITEM", (byte) 2),
     ZOMBIE_HORSE_SPAWN_EGG("MONSTER_EGG", (byte) 29),
-    ZOMBIE_PIGMAN_SPAWN_EGG("MONSTER_EGG", (byte) 57),
+    ZOMBIE_PIGMAN_SPAWN_EGG("MONSTER_EGG", (byte) 57),  // FIXME: The name changed in newer versions (nether update maybe?)
     ZOMBIE_SPAWN_EGG("MONSTER_EGG", (byte) 54),
     ZOMBIE_VILLAGER_SPAWN_EGG("MONSTER_EGG", (byte) 27),
     ZOMBIE_WALL_HEAD("SKULL", (byte) 2),
