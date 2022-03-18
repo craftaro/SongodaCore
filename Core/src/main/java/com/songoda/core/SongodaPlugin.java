@@ -4,6 +4,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -25,6 +26,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     protected ConsoleCommandSender console = Bukkit.getConsoleSender();
     private boolean emergencyStop = false;
+
+    static {
+        /* NBT-API */
+        MinecraftVersion.getLogger().setLevel(Level.WARNING);
+        MinecraftVersion.disableUpdateCheck();
+    }
 
     public abstract void onPluginLoad();
 
@@ -218,7 +225,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
      *
      * @param th The error(s) that occurred
      */
-    protected void criticalErrorOnPluginStartup(Throwable... th) {
+    protected void criticalErrorOnPluginStartup(Throwable th) {
         Bukkit.getLogger().log(Level.SEVERE,
                 String.format(
                         "Unexpected error while loading %s v%s c%s: Disabling plugin!",

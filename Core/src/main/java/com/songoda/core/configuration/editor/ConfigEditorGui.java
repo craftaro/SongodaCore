@@ -131,10 +131,17 @@ public class ConfigEditorGui extends SimplePagedGui {
                             paged.setItem(4, configItem(CompatibleMaterial.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
                             int i = 9;
                             for (CompatibleMaterial mat : CompatibleMaterial.getAllValidItemMaterials()) {
-                                paged.setButton(i++, GuiUtils.createButtonItem(mat, mat.name()), ClickType.LEFT, (matEvent) -> {
-                                    setMaterial(event.slot, settingKey, matEvent.clickedItem);
-                                    matEvent.player.closeInventory();
-                                });
+                                try {
+                                    ItemStack buttonItem = GuiUtils.createButtonItem(mat, mat.name());
+                                    if (!buttonItem.getType().isItem()) continue;
+
+                                    paged.setButton(i++, buttonItem, ClickType.LEFT, (matEvent) -> {
+                                        setMaterial(event.slot, settingKey, matEvent.clickedItem);
+                                        matEvent.player.closeInventory();
+                                    });
+                                } catch (IllegalArgumentException ex) {
+                                    // FIXME: CompatibleMaterial is not working properly for 'ZOMBIE_PIGMAN_SPAWN_EGG'
+                                }
                             }
                             event.manager.showGUI(event.player, paged);
                         });

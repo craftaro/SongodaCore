@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.songoda</groupId>
         <artifactId>SongodaCore-Modules</artifactId>
-        <version>2.6.11</version>
+        <version>2.6.12</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -69,6 +69,7 @@
                                 <includes>
                                     <include>com.songoda:*</include>
                                     <include>com.zaxxer:HikariCP</include>
+                                    <include>de.tr7zw:item-nbt-api</include>
                                 </includes>
                             </artifactSet>
 
@@ -76,6 +77,11 @@
                                 <relocation>
                                     <pattern>com.zaxxer</pattern>
                                     <shadedPattern>com.songoda.core.third_party.com.zaxxer</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.de.tr7zw.nbtapi</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -85,6 +91,7 @@
 
                                     <includes>
                                         <include>com/</include>
+                                        <include>de/tr7zw/</include>
                                         <include>META-INF/MANIFEST.MF</include>
                                         <include>META-INF/maven/com.songoda/SongodaCore/</include>
                                     </includes>
@@ -109,6 +116,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-Compatibility</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.9.2</version>
             <scope>compile</scope>
         </dependency>
 
@@ -220,6 +234,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-NMS-v1_18_R1</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SongodaCore-NMS-v1_18_R2</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
