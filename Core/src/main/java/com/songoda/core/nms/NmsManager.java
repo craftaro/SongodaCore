@@ -121,6 +121,12 @@ public class NmsManager {
                 nbt = new com.songoda.core.nms.v1_18_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_18_R1.world.WorldCoreImpl();
                 break;
+            case "v1_18_R2":
+                player = new com.songoda.core.nms.v1_18_R2.entity.NMSPlayerImpl();
+                anvil = new com.songoda.core.nms.v1_18_R2.anvil.AnvilCore();
+                nbt = new com.songoda.core.nms.v1_18_R2.nbt.NBTCoreImpl();
+                world = new com.songoda.core.nms.v1_18_R2.world.WorldCoreImpl();
+                break;
             default:
                 Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version: version {0} not found", serverPackageVersion);
 

@@ -13,32 +13,34 @@ jobs:
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
-      # Setup Java
-      - uses: actions/setup-java@v2
-        if: ${{ env.SONAR_TOKEN != null }}
-        with:
-          java-version: 17
-          distribution: adopt
-
       # Checkout project files
       - uses: actions/checkout@v2
         if: ${{ env.SONAR_TOKEN != null }}
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      # Caches
-      - name: 'Cache: Maven'
-        uses: actions/cache@v2
+      # Setup Java
+      - uses: actions/setup-java@v2
         if: ${{ env.SONAR_TOKEN != null }}
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          java-version: 17
+          distribution: adopt
+          cache: maven
+
+      # Cache
       - name: 'Cache: SonarCloud'
+        if: ${{ env.SONAR_TOKEN != null }}
         uses: actions/cache@v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
+
+      # Build Spigot 1.18.2 (remapped)
+      - uses: SpraxDev/Action-SpigotMC@v4
+        if: ${{ env.SONAR_TOKEN != null }}
+        with:
+          versions: 1.18.2
+          remapped: true
 
       - name: Analyze project
         if: ${{ env.SONAR_TOKEN != null }}

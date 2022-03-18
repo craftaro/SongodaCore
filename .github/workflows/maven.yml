@@ -14,22 +14,21 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      # Checkout project files
+      - uses: actions/checkout@v2
+
       # Setup Java
       - uses: actions/setup-java@v2
         with:
           java-version: 17
           distribution: adopt
+          cache: maven
 
-      # Checkout project files
-      - uses: actions/checkout@v2
-
-      # Caches
-      - name: 'Cache: Maven'
-        uses: actions/cache@v2
+      # Build Spigot 1.18.2 (remapped)
+      - uses: SpraxDev/Action-SpigotMC@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          versions: 1.18.2
+          remapped: true
 
       # Build project
       - name: Build with Maven
