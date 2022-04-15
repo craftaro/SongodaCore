@@ -107,6 +107,20 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.7.5</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>0.14</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 
@@ -181,6 +195,13 @@
             <artifactId>MockBukkit-v1.17</artifactId>
             <version>1.10.3</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>1.7.5</version>
+            <type>maven-plugin</type>
         </dependency>
     </dependencies>
 </project>
