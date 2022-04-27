@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     steps:
       # Checkout project files
       - uses: actions/checkout@v2
