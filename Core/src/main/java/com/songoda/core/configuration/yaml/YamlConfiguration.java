@@ -117,6 +117,8 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
                 value = ((Float) value).doubleValue();
             } else if (value instanceof Character) {
                 value = ((Character) value).toString();
+            } else if (value.getClass().isEnum()) {
+                value = ((Enum<?>) value).name();
             } else if (value.getClass().isArray()) {
                 if (value instanceof int[]) {
                     value = Arrays.asList(ArrayUtils.toObject((int[]) value));

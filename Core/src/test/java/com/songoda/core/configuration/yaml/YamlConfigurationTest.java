@@ -290,6 +290,16 @@ class YamlConfigurationTest {
     }
 
     @Test
+    void testSetterWithEnumValue() {
+        final YamlConfiguration cfg = new YamlConfiguration();
+
+        assertNull(cfg.set("primitives.enum", TestEnum.ENUM_VALUE));
+
+        assertInstanceOf(String.class, cfg.get("primitives.enum"));
+        assertEquals(TestEnum.ENUM_VALUE, TestEnum.valueOf((String) cfg.get("primitives.enum")));
+    }
+
+    @Test
     void testSetterWithBooleanArrayValue() {
         final YamlConfiguration cfg = new YamlConfiguration();
 
@@ -565,5 +575,14 @@ class YamlConfigurationTest {
         assertEquals("Level3-Comment", currentNodeComment.get());
 
         assertEquals(expectedYaml, cfg.toYamlString());
+    }
+
+    private enum TestEnum {
+        ENUM_VALUE;
+
+        @Override
+        public String toString() {
+            return "#toString(): " + super.toString();
+        }
     }
 }
