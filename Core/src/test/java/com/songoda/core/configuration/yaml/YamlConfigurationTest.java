@@ -5,13 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -508,25 +505,6 @@ class YamlConfigurationTest {
         assertNotEquals(firstToString, secondToString);
         assertTrue(secondToString.contains(YamlConfiguration.class.getSimpleName()));
         assertTrue(secondToString.contains(cfg.values.toString()));
-    }
-
-    @Test
-    void testSaveAndLoadToFile() throws IOException {
-        final YamlConfiguration cfg = new YamlConfiguration();
-        cfg.load(new StringReader(inputYaml));
-
-        File tmpFile = Files.createTempFile(this.getClass().getName(), "yml").toFile();
-        tmpFile.deleteOnExit();
-
-        cfg.save(tmpFile);
-
-        assertArrayEquals(expectedOutYaml.getBytes(StandardCharsets.UTF_8), Files.readAllBytes(tmpFile.toPath()));
-
-        final YamlConfiguration loadedCfg = new YamlConfiguration();
-        loadedCfg.set("should-be-overwritten", "foo");
-        loadedCfg.load(tmpFile);
-
-        assertEquals(cfg.values, loadedCfg.values);
     }
 
     @Test

@@ -60,17 +60,6 @@ public interface IConfiguration {
     void reset();
 
     /**
-     * This method does the same as {@link #load(Reader)} but takes in a File.
-     * By default, this implementation wraps the given file in a {@link FileReader} and calls {@link #load(Reader)}.
-     *
-     * @throws FileNotFoundException Thrown by {@link FileReader#FileReader(File)}
-     * @see #load(Reader)
-     */
-    default void load(File file) throws IOException {
-        load(new FileReader(file));
-    }
-
-    /**
      * This method parses and loads the configuration and stores them as key-value pairs in memory.
      * Keys that are not loaded with this call but still exist in memory, are removed.
      * Additional data may be read depending on the implementation (e.g. comments).
@@ -78,17 +67,6 @@ public interface IConfiguration {
      * @see #reset()
      */
     void load(Reader reader) throws IOException;
-
-    /**
-     * This method does the same as {@link #save(Writer)} but takes in a File.
-     * By default, this implementation wraps the given file in a {@link FileWriter} and calls {@link #save(Writer)}.
-     *
-     * @throws FileNotFoundException Thrown by {@link FileWriter#FileWriter(File)}
-     * @see #load(Reader)
-     */
-    default void save(File file) throws IOException {
-        save(new FileWriter(file));
-    }
 
     /**
      * This method serializes the key-value pairs in memory and writes them to the given writer.
