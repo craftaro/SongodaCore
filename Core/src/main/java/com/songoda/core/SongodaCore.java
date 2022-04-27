@@ -3,6 +3,7 @@ package com.songoda.core;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.core.LocaleModule;
 import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
@@ -233,7 +234,7 @@ public class SongodaCore {
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
 
         // don't forget to check for language pack updates ;)
-//        info.addModule(new LocaleModule());
+        info.addModule(new LocaleModule());
         registeredPlugins.add(info);
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }

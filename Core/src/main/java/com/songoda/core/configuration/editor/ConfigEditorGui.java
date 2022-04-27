@@ -1,6 +1,7 @@
 package com.songoda.core.configuration.editor;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
@@ -26,10 +27,7 @@ import java.util.logging.Level;
 
 /**
  * Edit a configuration file for a specific plugin
- *
- * @deprecated Needs a recode in another package
  */
-@Deprecated
 public class ConfigEditorGui extends SimplePagedGui {
     final JavaPlugin plugin;
     final String file;
@@ -275,9 +273,9 @@ public class ConfigEditorGui extends SimplePagedGui {
                 plugin.getLogger().log(Level.SEVERE, "Failed to save config changes to " + file, ex);
                 return;
             }
-        }/* else if (config instanceof Config) {
+        } else if (config instanceof Config) {
             ((Config) config).save();
-        }*/ else {
+        } else {
             player.sendMessage(ChatColor.RED + "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
             plugin.getLogger().log(Level.WARNING, "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
             return;
