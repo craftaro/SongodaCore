@@ -26,13 +26,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Random;
 
 public class BBaseSpawnerImpl implements BBaseSpawner {
     private final CreatureSpawner bukkitSpawner;
     private final BaseSpawner spawner;
-
-    private static final Random spawnerRandom = new Random();   // Field random in BaseSpawner is private - We use one random for *all* our spawners (should be fine, right?)
 
     public BBaseSpawnerImpl(CreatureSpawner bukkitSpawner, BaseSpawner spawner) {
         this.bukkitSpawner = bukkitSpawner;
