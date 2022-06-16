@@ -11,6 +11,6 @@ public class MathUtils {
     }
 
     public static double eval(String toParse, String warningMessage) {
-        return cache.computeIfAbsent(toParse, t -> new Eval(toParse, "[" + warningMessage + "]").parse());
+        return cache.computeIfAbsent(toParse, t -> new Eval(toParse, warningMessage).parse());
     }
 }
