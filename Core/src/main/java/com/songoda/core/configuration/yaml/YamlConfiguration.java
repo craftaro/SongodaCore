@@ -183,9 +183,12 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
     @Override
     public void load(Reader reader) {
         Object yamlData = this.yaml.load(reader);
+        if (yamlData == null) {
+            yamlData = Collections.emptyMap();
+        }
 
         if (!(yamlData instanceof Map)) {
-            throw new IllegalStateException("The YAML file does not have the expected tree structure");
+            throw new IllegalStateException("The YAML file does not have the expected tree structure: " + yamlData.getClass().getName());
         }
 
         synchronized (this.values) {

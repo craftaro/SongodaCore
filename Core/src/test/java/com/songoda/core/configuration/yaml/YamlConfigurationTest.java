@@ -104,6 +104,16 @@ class YamlConfigurationTest {
     }
 
     @Test
+    void testYamlParserWithEmptyFile() {
+        final YamlConfiguration cfg = new YamlConfiguration();
+        cfg.load(new StringReader(""));
+        assertTrue(cfg.getKeys("").isEmpty());
+
+        cfg.load(new StringReader("\n"));
+        assertTrue(cfg.getKeys("").isEmpty());
+    }
+
+    @Test
     void testYamlParserWithDuplicateKeys() {
         assertThrowsExactly(DuplicateKeyException.class,
                 () -> new YamlConfiguration().load(new StringReader("test: value1\ntest: value2")));
@@ -524,7 +534,7 @@ class YamlConfigurationTest {
         IllegalStateException exception = assertThrowsExactly(IllegalStateException.class,
                 () -> cfg.load(new StringReader("Hello world")));
 
-        assertEquals("The YAML file does not have the expected tree structure", exception.getMessage());
+        assertEquals("The YAML file does not have the expected tree structure: java.lang.String", exception.getMessage());
     }
 
     @Test
