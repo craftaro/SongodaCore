@@ -47,7 +47,8 @@ class YamlConfigurationTest {
             "    - 1\n" +
             "    - 2\n" +
             "    - 3\n";
-    static final String expectedOutYaml = "primitives:\n" +
+    static final String expectedOutYaml = "foo: bar\n" +
+            "primitives:\n" +
             "  int: " + Integer.MIN_VALUE + "\n" +
             "  long: " + Long.MIN_VALUE + "\n" +
             "  float: " + Float.MIN_VALUE + "\n" +
@@ -69,8 +70,7 @@ class YamlConfigurationTest {
             "  set:\n" +
             "    - 1\n" +
             "    - 2\n" +
-            "    - 3\n" +
-            "foo: bar\n";
+            "    - 3\n";
 
     @Test
     void testYamlParser() {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
     protected @Nullable Supplier<String> headerComment;
 
     public YamlConfiguration() {
-        this(new HashMap<>(), new HashMap<>());
+        this(new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
     protected YamlConfiguration(@NotNull Map<String, Object> values, @NotNull Map<String, Supplier<String>> nodeComments) {
