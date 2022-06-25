@@ -245,11 +245,11 @@ class YamlConfigurationTest {
         assertEquals("bar", cfg.set("foo", "bar"));
         assertNull(cfg.set("bar.baz", "foz"));
 
-        assertEquals("bar", cfg.getOrDefault("foo", "baz"));
-        assertEquals("foz", cfg.getOrDefault("bar.baz", "baz"));
+        assertEquals("bar", cfg.getOr("foo", "baz"));
+        assertEquals("foz", cfg.getOr("bar.baz", "baz"));
 
-        assertEquals("default", cfg.getOrDefault("foo.bar", "default"));
-        assertEquals("default", cfg.getOrDefault("bar.baz.foo", "default"));
+        assertEquals("default", cfg.getOr("foo.bar", "default"));
+        assertEquals("default", cfg.getOr("bar.baz.foo", "default"));
     }
 
     @Test

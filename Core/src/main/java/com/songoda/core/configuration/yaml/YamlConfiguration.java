@@ -84,7 +84,7 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
 
     @Override
     @Contract(pure = true, value = "null,_ -> param2")
-    public @Nullable Object getOrDefault(String key, @Nullable Object defaultValue) {
+    public @Nullable Object getOr(String key, @Nullable Object defaultValue) {
         Object value = get(key);
 
         return value == null ? defaultValue : value;

@@ -3,10 +3,6 @@ package com.songoda.core.configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -34,7 +30,7 @@ public interface IConfiguration {
      * but returns the given default value if the key doesn't exist or the value is null.
      */
     @Nullable
-    Object getOrDefault(String key, @Nullable Object defaultValue);
+    Object getOr(String key, @Nullable Object defaultValue);
 
     /**
      * This method sets a given key to a given value in memory.
