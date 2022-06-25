@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
+// TODO: Allow registering own custom value converter (e.g. Bukkit-Location to Map and back)
+//       + move the huge block from #set into such a converter and register it by default
 public class YamlConfiguration implements IConfiguration, HeaderCommentable, NodeCommentable {
     protected final @NotNull Yaml yaml;
     protected final @NotNull DumperOptions yamlDumperOptions;
