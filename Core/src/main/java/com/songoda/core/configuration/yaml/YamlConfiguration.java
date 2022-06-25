@@ -96,6 +96,10 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
             return Collections.emptySet();
         }
 
+        if (key.equals("")) {
+            return Collections.unmodifiableSet(this.values.keySet());
+        }
+
         Map<String, ?> innerMap = null;
 
         try {
@@ -260,8 +264,8 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
     @Override
     public String toString() {
         return "YamlConfiguration{" +
-                "values=" + values +
-                ", headerComment=" + headerComment +
+                "values=" + this.values +
+                ", headerComment=" + this.headerComment +
                 '}';
     }
 

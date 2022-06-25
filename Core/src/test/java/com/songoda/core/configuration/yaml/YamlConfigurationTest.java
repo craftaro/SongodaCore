@@ -274,7 +274,7 @@ class YamlConfigurationTest {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
-        assertTrue(cfg.getKeys("").isEmpty());
+        assertEquals(2, cfg.getKeys("").size());
         assertTrue(cfg.getKeys(null).isEmpty());
 
         assertTrue(cfg.getKeys("primitives.map.key.non-existing-subkey").isEmpty());
