@@ -31,6 +31,7 @@ public enum ClassMapping {
     PERSISTENT_ENTITY_SECTION_MANAGER("world.level.entity", "PersistentEntitySectionManager"),
     PACKET("network.protocol", "Packet"),
     PACKET_PLAY_OUT_CHAT("network.protocol.game", "PacketPlayOutChat"),
+    /* 1.19 Packet */ CLIENTBOUND_SYSTEM_CHAT("network.protocol.game", "ClientboundSystemChatPacket"),
     PACKET_PLAY_OUT_WORLD_BORDER("PacketPlayOutWorldBorder"), // Removed in 1.17
     PLAYER_CONNECTION("server.network", "PlayerConnection"),
     WORLD("world.level", "World"),
@@ -46,6 +47,7 @@ public enum ClassMapping {
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld"),
 
+    RANDOM_SOURCE("util", "RandomSource"),
     MOJANGSON_PARSER("nbt", "MojangsonParser");
 
     private final String packageName;

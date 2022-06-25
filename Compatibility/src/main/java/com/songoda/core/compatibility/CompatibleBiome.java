@@ -21,6 +21,10 @@ import java.util.Set;
  * Biomes that are compatible with server versions 1.7+
  */
 public enum CompatibleBiome {
+    /* 1.19 */
+    MANGROVE_SWAMP(ServerVersion.V1_19),
+    DEEP_DARK(ServerVersion.V1_19),
+
     /* 1.17 */
     DRIPSTONE_CAVES(ServerVersion.V1_17),
     LUSH_CAVES(ServerVersion.V1_17),
