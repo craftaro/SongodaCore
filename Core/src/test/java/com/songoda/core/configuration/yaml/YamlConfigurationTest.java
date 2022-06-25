@@ -140,6 +140,19 @@ class YamlConfigurationTest {
     }
 
     @Test
+    void testYamlWriterWithNullValue() throws IOException {
+        final YamlConfiguration cfg = new YamlConfiguration();
+        final StringWriter stringWriter = new StringWriter(1);
+
+        cfg.set("null-value", null);
+        cfg.set("nested.null-value", null);
+        cfg.save(stringWriter);
+
+        assertEquals("", stringWriter.toString());
+        assertEquals("", cfg.toYamlString());
+    }
+
+    @Test
     void testYamlWriterWithNoData() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         final StringWriter stringWriter = new StringWriter(inputYaml.length());
@@ -237,6 +250,16 @@ class YamlConfigurationTest {
 
         assertNull(cfg.set("primitives.map.key", "value"));
         assertEquals("value", cfg.get("primitives.map.key"));
+    }
+
+    @Test
+    void testSetterWithNullValue() {
+        final YamlConfiguration cfg = new YamlConfiguration();
+
+        assertNull(cfg.set("foo.bar.null", "not-null-string"));
+        assertEquals("not-null-string", cfg.set("foo.bar.null", null));
+
+        assertNull(cfg.get("foo.bar.null"));
     }
 
     @Test

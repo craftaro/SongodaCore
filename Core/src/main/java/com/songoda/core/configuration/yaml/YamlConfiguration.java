@@ -209,6 +209,8 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
         String headerCommentLines = generateHeaderCommentLines();
         writer.write(headerCommentLines);
 
+        cleanValuesMap(this.values);
+
         if (this.values.size() > 0) {
             if (headerCommentLines.length() > 0) {
                 writer.write(this.yamlDumperOptions.getLineBreak().getString());
@@ -341,6 +343,25 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
 
             currentMap = (Map<String, ?>) currentValue;
             ++currentKeyIndex;
+        }
+    }
+
+    /**
+     * This takes a map and removes all keys that have a value of null.<br>
+     * Additionally, if the value is a {@link Map}, it will be recursively cleaned too.<br>
+     * {@link Map}s that are or get empty, will be removed (recursively).<br>
+     */
+    protected void cleanValuesMap(Map<?, ?> map) {
+        for (Object key : map.keySet().toArray()) {
+            Object value = map.get(key);
+
+            if (value instanceof Map) {
+                cleanValuesMap((Map<?, ?>) value);
+            }
+
+            if (value == null || (value instanceof Map && ((Map<?, ?>) value).isEmpty())) {
+                map.remove(key);
+            }
         }
     }
 }
