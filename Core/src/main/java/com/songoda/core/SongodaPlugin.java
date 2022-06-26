@@ -217,15 +217,16 @@ public abstract class SongodaPlugin extends JavaPlugin {
     /**
      * Use {@link SongodaYamlConfig} instead.
      */
-    @NotNull
+    @Deprecated
     @Override
-    public FileConfiguration getConfig() {
+    public @NotNull FileConfiguration getConfig() {
         return super.getConfig();
     }
 
     /**
      * Use {@link SongodaYamlConfig} instead.
      */
+    @Deprecated
     @Override
     public void reloadConfig() {
     }
@@ -233,6 +234,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     /**
      * Use {@link SongodaYamlConfig} instead.
      */
+    @Deprecated
     @Override
     public void saveConfig() {
     }
