@@ -70,6 +70,7 @@
                                     <include>com.songoda:*</include>
                                     <include>com.zaxxer:HikariCP</include>
                                     <include>de.tr7zw:item-nbt-api</include>
+                                    <include>net.kyori:*</include>
                                 </includes>
                             </artifactSet>
 
@@ -83,6 +84,11 @@
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
                                     <shadedPattern>com.songoda.core.third_party.de.tr7zw.nbtapi</shadedPattern>
                                 </relocation>
+
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.net.kyori</shadedPattern>
+                                </relocation>
                             </relocations>
 
                             <filters>
@@ -92,6 +98,7 @@
                                     <includes>
                                         <include>com/</include>
                                         <include>de/tr7zw/</include>
+                                        <include>net/kyori/</include>
                                         <include>META-INF/MANIFEST.MF</include>
                                         <include>META-INF/maven/com.songoda/SongodaCore/</include>
                                     </includes>
@@ -123,6 +130,20 @@
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
             <version>2.9.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.11.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.1.1</version>
             <scope>compile</scope>
         </dependency>
 
