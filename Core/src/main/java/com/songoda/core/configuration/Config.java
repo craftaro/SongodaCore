@@ -1,7 +1,7 @@
 package com.songoda.core.configuration;
 
 import com.songoda.core.utils.TextUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConstructor;
