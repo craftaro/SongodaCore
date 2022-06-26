@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO: Allow registering load-Listeners
 public class SongodaYamlConfig extends YamlConfiguration {
     protected final String cannotCreateBackupCopyExceptionPrefix = "Unable to create backup copy of config file: ";
 

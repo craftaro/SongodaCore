@@ -1,15 +1,16 @@
 package com.songoda.core;
 
-import com.songoda.core.configuration.Config;
+import com.songoda.core.configuration.songoda.SongodaYamlConfig;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,6 @@ import java.util.logging.Level;
  */
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
-    protected Config config = new Config(this);
     protected long dataLoadDelay = 20L;
 
     private boolean emergencyStop = false;
@@ -41,36 +41,14 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public abstract void onDataLoad();
 
     /**
-     * Called after reloadConfig() is called
+     * All the configuration files belonging to the plugin.<br>
+     * This might for example be used for the ingame config editor.<br>
+     * <br>
+     * Do not include *storage* files here or anything similar that does not intend external modification and access.<br>
+     * <br>
+     * Do not include language files if you are using the Core's localization system.
      */
-    public abstract void onConfigReload();
-
-    /**
-     * Any other plugin configuration files used by the plugin.
-     *
-     * @return a list of Configs that are used in addition to the main config.
-     */
-    public abstract List<Config> getExtraConfig();
-
-    @Override
-    public FileConfiguration getConfig() {
-        return config.getFileConfig();
-    }
-
-    public Config getCoreConfig() {
-        return config;
-    }
-
-    @Override
-    public void reloadConfig() {
-        config.load();
-        onConfigReload();
-    }
-
-    @Override
-    public void saveConfig() {
-        config.save();
-    }
+    public abstract List<SongodaYamlConfig> getConfigs();
 
     @Override
     public final void onLoad() {
@@ -234,5 +212,28 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ), th);
 
         emergencyStop();
+    }
+
+    /**
+     * Use {@link SongodaYamlConfig} instead.
+     */
+    @NotNull
+    @Override
+    public FileConfiguration getConfig() {
+        return super.getConfig();
+    }
+
+    /**
+     * Use {@link SongodaYamlConfig} instead.
+     */
+    @Override
+    public void reloadConfig() {
+    }
+
+    /**
+     * Use {@link SongodaYamlConfig} instead.
+     */
+    @Override
+    public void saveConfig() {
     }
 }

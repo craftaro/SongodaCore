@@ -35,7 +35,7 @@ public class PluginConfigGui extends SimplePagedGui {
 
         // collect list of plugins
         configs.put(plugin.getCoreConfig().getFile().getName(), plugin.getCoreConfig());
-        List<Config> more = plugin.getExtraConfig();
+        List<Config> more = plugin.getConfigs();
         if (more != null && !more.isEmpty()) {
             for (Config cfg : more) {
                 configs.put(cfg.getFile().getName(), cfg);
