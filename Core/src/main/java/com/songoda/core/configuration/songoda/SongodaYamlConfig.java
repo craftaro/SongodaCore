@@ -79,7 +79,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
 
             return true;
         } catch (IOException e) {
-            this.logger.log(Level.FINER, "Failed to load config file: " + this.file.getPath(), e);
+            this.logger.log(Level.SEVERE, "Failed to load config file: " + this.file.getPath(), e);
         }
 
         return false;
@@ -235,7 +235,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
                     StandardCopyOption.REPLACE_EXISTING
             );
 
-            this.logger.warning("Created backup copy of config file '" + this.file.getPath() + "' to '" + targetPath + "'");
+            this.logger.info("Created backup copy of config file '" + this.file.getPath() + "' to '" + targetPath + "'");
         } catch (IOException ex) {
             throw new IOException(this.cannotCreateBackupCopyExceptionPrefix + this.file.getPath(), ex);
         }
