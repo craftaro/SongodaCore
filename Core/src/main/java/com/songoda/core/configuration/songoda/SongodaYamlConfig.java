@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 public class SongodaYamlConfig extends YamlConfiguration {
     protected final String cannotCreateBackupCopyExceptionPrefix = "Unable to create backup copy of config file: ";
 
-    protected final @NotNull File file;
+    public final @NotNull File file;
     protected final @NotNull Logger logger;
 
     private int targetVersion;
@@ -129,6 +129,8 @@ public class SongodaYamlConfig extends YamlConfiguration {
     }
 
     public void save() throws IOException {
+        Files.createDirectories(this.file.toPath().getParent());
+
         try (Writer writer = new FileWriter(this.file)) {
             super.save(writer);
         } catch (IOException e) {

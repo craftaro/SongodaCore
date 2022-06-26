@@ -61,6 +61,17 @@ class SongodaYamlConfigTest {
     }
 
     @Test
+    void testSaveToNonExistingSubDirectory() throws IOException {
+        File configFile = new File(this.tmpDir.toFile(), "testSaveToNonExistingSubDirectory/config.yml");
+
+        SongodaYamlConfig cfg = new SongodaYamlConfig(configFile);
+        cfg.set("test-key", "bar");
+        cfg.save();
+
+        assertEquals("test-key: bar\n", new String(Files.readAllBytes(configFile.toPath())));
+    }
+
+    @Test
     void testWithVersion() throws IOException {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
         cfg.withVersion("version-key", 1, null);
