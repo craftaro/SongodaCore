@@ -52,11 +52,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
         super();
 
         this.file = Objects.requireNonNull(file);
-
-        if (logger == null) {
-            logger = Logger.getLogger(getClass().getName());
-        }
-        this.logger = logger;
+        this.logger = logger != null ? logger : Logger.getLogger(getClass().getName());
     }
 
     /**
