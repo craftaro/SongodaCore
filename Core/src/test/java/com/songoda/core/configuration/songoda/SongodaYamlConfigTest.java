@@ -10,22 +10,32 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SongodaYamlConfigTest {
+    Path tmpDir;
     Path cfg;
 
     @BeforeEach
     void setUp() throws IOException {
-        this.cfg = createTmpFile();
+        this.tmpDir = Files.createTempDirectory("SongodaYamlConfigTest");
+
+        this.cfg = Files.createTempFile(this.tmpDir, "config", ".yml");
+        this.tmpDir.toFile().deleteOnExit();
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.deleteIfExists(this.cfg);
+        try (Stream<Path> stream = Files.walk(this.tmpDir)) {
+            stream
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile).forEach(File::delete);
+        }
     }
 
     @Test
@@ -115,20 +125,12 @@ class SongodaYamlConfigTest {
     }
 
     @Test
-    void testDefaultValueAppliedAfterLoadNullValue() throws IOException {
+    void testDefaultValueAppliedAfterLoadNullValue() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
         ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
 
         cfg.init();
 
         assertEquals("value", entry.get());
-    }
-
-    private Path createTmpFile() throws IOException {
-        Path path = Files.createTempFile("SongodaYamlConfigTest", "yml");
-        File file = path.toFile();
-        file.deleteOnExit();
-
-        return path;
     }
 }
