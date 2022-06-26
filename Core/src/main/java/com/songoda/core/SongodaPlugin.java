@@ -48,7 +48,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * <br>
      * Do not include language files if you are using the Core's localization system.
      */
-    public abstract List<SongodaYamlConfig> getConfigs();
+    public abstract @NotNull List<SongodaYamlConfig> getConfigs();
 
     @Override
     public final void onLoad() {
@@ -81,6 +81,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
             // plugin setup
             onPluginEnable();
+
+            if (this.emergencyStop) {
+                return;
+            }
 
             // Load Data.
             Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, this.dataLoadDelay);
@@ -205,7 +209,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     protected void criticalErrorOnPluginStartup(Throwable th) {
         Bukkit.getLogger().log(Level.SEVERE,
                 String.format(
-                        "Unexpected error while loading %s v%s c%s: Disabling plugin!",
+                        "Unexpected error while loading %s v%s (core v%s): Disabling plugin!",
                         getDescription().getName(),
                         getDescription().getVersion(),
                         SongodaCore.getCoreLibraryVersion()
