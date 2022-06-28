@@ -226,7 +226,9 @@ public class ChatMessage {
                 textList.addAll(this.textList);
 
                 Object packet;
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), 0);
+                }else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     packet = mc_PacketPlayOutChat_new.newInstance(
                             mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)),
                             mc_chatMessageType_Chat.get(null),
@@ -272,9 +274,11 @@ public class ChatMessage {
                 mc_IChatBaseComponent = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz();
                 mc_IChatBaseComponent_ChatSerializer = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz("ChatSerializer");
                 mc_IChatBaseComponent_ChatSerializer_a = mc_IChatBaseComponent_ChatSerializer.getMethod("a", String.class);
-                mc_PacketPlayOutChat = ClassMapping.PACKET_PLAY_OUT_CHAT.getClazz();
+                mc_PacketPlayOutChat = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19) ? ClassMapping.CLIENTBOUND_SYSTEM_CHAT.getClazz() : ClassMapping.PACKET_PLAY_OUT_CHAT.getClazz();
 
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
+                    mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Integer.TYPE);
+                } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
                     mc_chatMessageType_Chat = mc_ChatMessageType.getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "a" : "CHAT");
                     mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, mc_ChatMessageType, UUID.class);

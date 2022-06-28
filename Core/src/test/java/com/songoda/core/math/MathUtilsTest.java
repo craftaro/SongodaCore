@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MathUtilsTest {
     private final String warningMessage = "MathTest";
-    private final String warningMessageExpectedStart = "[" + warningMessage + "] ";
+    private final String warningMessageExpectedStart = warningMessage + " ";
 
     @Test
     void eval() {

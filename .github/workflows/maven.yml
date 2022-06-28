@@ -24,10 +24,10 @@ jobs:
           distribution: adopt
           cache: maven
 
-      # Build Spigot 1.18.2 (remapped)
+      # Build remapped Spigot versions
       - uses: SpraxDev/Action-SpigotMC@v4
         with:
-          versions: 1.18.2
+          versions: 1.18.2, 1.19
           remapped: true
 
       # Build project
