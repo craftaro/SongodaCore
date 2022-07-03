@@ -227,7 +227,7 @@ public class ChatMessage {
 
                 Object packet;
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), 0);
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), 1);
                 }else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     packet = mc_PacketPlayOutChat_new.newInstance(
                             mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)),
