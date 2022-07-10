@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <core_version>2.6.13</core_version>
-        <revision>${core_version}</revision> <!-- Gets overwritten by profiles -->
+        <revision>2.6.13${revision_suffix}</revision>
+        <revision_suffix/>  <!-- Gets overwritten by profiles -->
 
         <java.version>1.8</java.version>
         <java.release>8</java.release>
@@ -23,6 +23,40 @@
         <sonar.junit.reportPaths>target/surefire-reports/*.xml</sonar.junit.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>snapshot</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <revision_suffix>-SNAPSHOT</revision_suffix>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>snapshot-github</id>
+            <activation>
+                <property>
+                    <name>env.GITHUB_RUN_NUMBER</name>
+                </property>
+            </activation>
+
+            <properties>
+                <revision_suffix>-b${env.GITHUB_RUN_NUMBER}</revision_suffix>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>release</id>
+
+            <properties>
+                <revision_suffix/>
+            </properties>
+        </profile>
+    </profiles>
 
     <modules>
         <module>Core</module>
