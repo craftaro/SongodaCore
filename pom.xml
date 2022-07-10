@@ -6,13 +6,13 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore-Modules</artifactId>
-    <version>2.6.13</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z' to update version recursively -->
-    <!-- Change version in com.songoda.core.SongodaCore too -->
-
     <properties>
+        <core_version>2.6.13</core_version>
+        <revision>${core_version}</revision> <!-- Gets overwritten by profiles -->
+
         <java.version>1.8</java.version>
         <java.release>8</java.release>
 
