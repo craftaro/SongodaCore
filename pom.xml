@@ -114,6 +114,12 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+
+                <configuration>
+                    <environmentVariables>
+                        <TESTS_RUN_WITH_MAVEN>true</TESTS_RUN_WITH_MAVEN>
+                    </environmentVariables>
+                </configuration>
             </plugin>
 
             <plugin>
