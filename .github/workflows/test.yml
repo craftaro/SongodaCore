@@ -1,0 +1,30 @@
+name: On Commit (master, dev, PRs)
+
+on:
+  push:
+    branches: [ master, development ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        id: github_context_step
+        run: echo '${{ toJSON(github) }}'
+      - name: Dump job context
+        run: echo '${{ toJSON(job) }}'
+      - name: Dump steps context
+        run: echo '${{ toJSON(steps) }}'
+      - name: Dump runner context
+        run: echo '${{ toJSON(runner) }}'
+      - name: Dump strategy context
+        run: echo '${{ toJSON(strategy) }}'
+      - name: Dump matrix context
+        run: echo '${{ toJSON(matrix) }}'
+
+# github.sha    # The SHA of the commit that was pushed
+# github.run_id # The unique ID of the GitHub run (repo or maybe even github wide)
+# github.run_number # The run number (re-run does not change this)
+# github.run_attempt # The attempt number (re-run increments by one, but always starts at 1)
