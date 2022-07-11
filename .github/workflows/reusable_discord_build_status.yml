@@ -9,9 +9,11 @@ on:
 
 jobs:
   send:
+    name: Send
     runs-on: ubuntu-latest
     steps:
-      - uses: nobrayner/discord-webhook@v1
+      - name: Send 2
+        uses: nobrayner/discord-webhook@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.webhook_url }}
