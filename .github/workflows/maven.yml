@@ -44,7 +44,6 @@ jobs:
     needs: # make sure the notification is sent AFTER the jobs you want included have completed
       - build
     if: ${{ always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
-    continue-on-error: true
     uses: ./.github/workflows/reusable_discord_build_status.yml
-      secrets:
-        webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+    secrets:
+      webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
