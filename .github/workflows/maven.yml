@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checkout project files
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare_workspace.yml
+      - uses: ./.github/actions/prepare_workspace
 
       # Build project
       - name: Build with Maven
