@@ -45,17 +45,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: # make sure the notification is sent AFTER the jobs you want included have completed
       - build
-    if: ${{ always() }}
+    if: ${{ always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
+    continue-on-error: true
 
     steps:
       - uses: nobrayner/discord-webhook@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: '`${{ github.ref }}`@`${{ github.repository }}` – ${{ github.workflow }}'
-#          description: '`${{ github.workflow }}`{{STATUS}}'
+#          title: ''
+          description: '`${{ github.ref }}`@`${{ github.repository }}` – ${{ github.workflow }}'
           username: OctoAgent
-          avatar-url: https://octodex.github.com/images/constructocat2.jpg
+          avatar-url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
           include-details: true
       ##
       # Discord Webhook
