@@ -1,3 +1,5 @@
+name: Discord Build Status
+
 on:
   workflow_call:
     secrets:
@@ -6,33 +8,16 @@ on:
         description: The Discord Webhook URL to send the message to.
 
 jobs:
-    send_discord_webhook:
-      name: Send Discord webhook
-      runs-on: ubuntu-latest
-      steps:
-        - uses: nobrayner/discord-webhook@v1
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            discord-webhook: ${{ secrets.webhook_url }}
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          discord-webhook: ${{ secrets.webhook_url }}
 
-            username: OctoAgent
-            avatar-url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+          username: OctoAgent
+          avatar-url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
 
-            description: 'at `${{ github.ref }}`'
-            include-details: true
-
-#
-  #      - name: 'Discord Webhook (Success)'
-  #        if: ${{ success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
-  #        continue-on-error: true
-  #        run: |
-  #          curl -X POST --data "{\"content\":null,\"embeds\":[{\"title\":\"Build succeeded!\",\"description\":\"The build with the ID #$GITHUB_RUN_NUMBER has succeeded!\",\"url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"color\":5490477,\"fields\":[{\"name\":\"Branch\",\"value\":\"$GITHUB_REF\",\"inline\":true}],\"author\":{\"name\":\"$GITHUB_REPOSITORY\",\"url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\",\"icon_url\":\"$GITHUB_SERVER_URL/songoda.png\"},\"footer\":{\"text\":\"Initiated by $GITHUB_ACTOR\",\"icon_url\":\"$GITHUB_SERVER_URL/$GITHUB_ACTOR.png\"}}],\"username\":\"OctoAgent\",\"avatar_url\":\"https://github.githubassets.com/images/modules/logos_page/Octocat.png\"}" --header 'Content-Type: application/json' $DISCORD_WEBHOOK
-  #        env:
-  #          DISCORD_WEBHOOK: ${{ secrets.DISCORD_BUILD_STATUS_WEBHOOK }}
-  #      - name: 'Discord Webhook (Failure)'
-  #        if: ${{ failure() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
-  #        continue-on-error: true
-  #        run: |
-  #          curl -X POST --data "{\"content\":null,\"embeds\":[{\"title\":\"Build failed!\",\"description\":\"The build with the ID #$GITHUB_RUN_NUMBER has failed!\",\"url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"color\":15611419,\"fields\":[{\"name\":\"Branch\",\"value\":\"$GITHUB_REF\",\"inline\":true}],\"author\":{\"name\":\"$GITHUB_REPOSITORY\",\"url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\",\"icon_url\":\"$GITHUB_SERVER_URL/songoda.png\"},\"footer\":{\"text\":\"Initiated by $GITHUB_ACTOR\",\"icon_url\":\"$GITHUB_SERVER_URL/$GITHUB_ACTOR.png\"}}],\"username\":\"OctoAgent\",\"avatar_url\":\"https://github.githubassets.com/images/modules/logos_page/Octocat.png\"}" --header "Content-Type:application/json" $DISCORD_WEBHOOK
-  #        env:
-  #          DISCORD_WEBHOOK: ${{ secrets.DISCORD_BUILD_STATUS_WEBHOOK }}
+          description: 'at `${{ github.ref }}`'
+          include-details: true
