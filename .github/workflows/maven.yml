@@ -52,8 +52,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: `${{ github.ref }}`@`${{ github.repository }}` – ${{ github.workflow }}
-#          description: `${{ github.workflow }}`{{STATUS}}
+          title: '`${{ github.ref }}`@`${{ github.repository }}` – ${{ github.workflow }}'
+#          description: '`${{ github.workflow }}`{{STATUS}}'
           username: OctoAgent
           avatar-url: https://octodex.github.com/images/constructocat2.jpg
           include-details: true
