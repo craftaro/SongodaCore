@@ -11,8 +11,21 @@ runs:
         distribution: adopt
         cache: maven
 
+    # TODO: move this hotfix to SpraxDev/Action-SpigotMC
+    - name: Temporally set git username and email
+      shell: sh
+      run: |
+        git config --global user.name "GitHub Runner on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)"
+        git config --global user.email "contact@example.com"
+
     # Build remapped Spigot versions
     - uses: SpraxDev/Action-SpigotMC@v4
       with:
         versions: 1.18.2, 1.19
         remapped: true
+
+    - name: Restore git user name and email
+      shell: sh
+      run: |
+        git config --global --unset user.name
+        git config --global --unset user.email
