@@ -10,12 +10,23 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  Build:
+  Test:
     runs-on: ubuntu-latest
     steps:
-      # Checkout project files
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare_workspace
+      - name: Prepare Workspace
+        uses: ./.github/actions/prepare_workspace
+
+      - name: Run tests
+        run: 'mvn -B clean test'
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: [ Test ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare Workspace
+        uses: ./.github/actions/prepare_workspace
 
       # Build project
       - name: Build with Maven
@@ -30,7 +41,8 @@ jobs:
 
   discord_webhook:
     needs: # make sure the notification is sent AFTER the jobs you want included have completed
-      - build
+      - Test
+      - Build
     if: ${{ always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
     uses: ./.github/workflows/reusable_discord_build_status.yml
     secrets:
