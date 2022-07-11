@@ -10,24 +10,12 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       # Checkout project files
       - uses: actions/checkout@v2
-
-      # Setup Java
-      - uses: actions/setup-java@v2
-        with:
-          java-version: 17
-          distribution: adopt
-          cache: maven
-
-      # Build remapped Spigot versions
-      - uses: SpraxDev/Action-SpigotMC@v4
-        with:
-          versions: 1.18.2, 1.19
-          remapped: true
+      - uses: ./.github/actions/prepare_workspace.yml
 
       # Build project
       - name: Build with Maven

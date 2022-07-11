@@ -1,0 +1,18 @@
+name: Prepare Workspace
+description: Prepares the workspace for compilation
+
+runs:
+  using: composite
+  steps:
+    # Setup Java
+    - uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: adopt
+        cache: maven
+
+    # Build remapped Spigot versions
+    - uses: SpraxDev/Action-SpigotMC@v4
+      with:
+        versions: 1.18.2, 1.19
+        remapped: true
