@@ -53,10 +53,11 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-#          title: ''
-          description: '`${{ github.ref }}`@`${{ github.repository }}` – ${{ github.workflow }}'
+
           username: OctoAgent
           avatar-url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+
+          description: 'at `${{ github.ref }}`'
           include-details: true
       ##
       # Discord Webhook
