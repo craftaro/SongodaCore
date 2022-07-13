@@ -142,7 +142,7 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
         this.customTitle = title;
 
         try {
-            mc_Container_title.set(this, new TranslatableComponent(customTitle != null ? customTitle : ""));
+            mc_Container_title.set(this, MutableComponent.create(new TranslatableContents(customTitle != null ? customTitle : "")));
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
         }

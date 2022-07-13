@@ -1,17 +1,20 @@
 package com.songoda.core.hooks.stackers;
 
+import com.bgsoftware.wildstacker.WildStackerPlugin;
 import com.bgsoftware.wildstacker.api.WildStackerAPI;
+import com.bgsoftware.wildstacker.api.enums.SpawnCause;
 import com.bgsoftware.wildstacker.api.objects.StackedEntity;
+import com.bgsoftware.wildstacker.utils.GeneralUtils;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
 public class WildStacker extends Stacker {
-    final Plugin plugin;
+    private final WildStackerPlugin plugin;
 
-    public WildStacker(Plugin plugin) {
-        this.plugin = plugin;
+    public WildStacker() {
+        this.plugin = WildStackerPlugin.getPlugin();
     }
 
     @Override
@@ -68,12 +71,6 @@ public class WildStacker extends Stacker {
 
     @Override
     public int getMinStackSize(EntityType type) {
-        int min = plugin.getConfig().getInt("entities.minimum-limits." + type.name(), -1);
-
-        if (min == -1) {
-            min = plugin.getConfig().getInt("entities.minimum-limits.all", -1);
-        }
-
-        return min == -1 ? 0 : min;
+        return plugin.getSettings().minimumRequiredEntities.getOrDefault(type, SpawnCause.DEFAULT, 0);
     }
 }
