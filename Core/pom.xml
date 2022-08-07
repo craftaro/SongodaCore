@@ -21,13 +21,38 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
 
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
 
                     <release>${java.release}</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>de.m3y.maven</groupId>
+                <artifactId>inject-maven-plugin</artifactId>
+                <version>1.3</version>
+
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+
+                        <goals>
+                            <goal>inject</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <injections>
+                        <injection>
+                            <value>${project.version}</value>
+                            <pointCut>com.songoda.core.SongodaCoreConstants.getCoreVersion</pointCut>
+                        </injection>
+                    </injections>
                 </configuration>
             </plugin>
 
@@ -63,7 +88,7 @@
 
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
 
                             <artifactSet>
                                 <includes>
@@ -91,16 +116,21 @@
                                 </relocation>
                             </relocations>
 
+                            <artifactSet>
+                                <includes>
+                                    <include>com.songoda:*</include>
+                                    <include>com.zaxxer:HikariCP</include>
+                                    <include>org.apache.commons:commons-text</include>
+                                    <include>org.apache.commons:commons-lang3</include>
+                                    <include>de.tr7zw:item-nbt-api</include>
+                                </includes>
+                            </artifactSet>
+
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
-
                                     <includes>
-                                        <include>com/</include>
-                                        <include>de/tr7zw/</include>
-                                        <include>net/kyori/</include>
-                                        <include>META-INF/MANIFEST.MF</include>
-                                        <include>META-INF/maven/com.songoda/SongodaCore/</include>
+                                        <include>**/*.class</include>
                                     </includes>
                                 </filter>
                             </filters>

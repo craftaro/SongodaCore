@@ -47,13 +47,18 @@ public class SongodaCore {
     /**
      * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
+     *
+     * @deprecated The Core's version should be used instead as it uses Semantic Versioning
      */
+    @Deprecated
     private final static int coreRevision = 9;
 
     /**
      * @since coreRevision 6
+     * @deprecated Is being replaced by {@link SongodaCoreConstants#getCoreVersion()} which is automatically kept up to date.
      */
-    private final static String coreVersion = "2.6.12";
+    @Deprecated
+    private final static String coreVersion = SongodaCoreConstants.getCoreVersion();
 
     /**
      * This is specific to the website api
@@ -74,7 +79,7 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
-        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), coreVersion);
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), SongodaCoreConstants.getCoreVersion());
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
@@ -89,13 +94,23 @@ public class SongodaCore {
                     try {
                         // test to see if we're up-to-date
                         int otherVersion;
+                        int ownVersion;
+
                         try {
-                            otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            otherVersion = (int) clazz.getMethod("getCoreMajorVersion").invoke(null);
+                            ownVersion = getCoreMajorVersion();
                         } catch (Exception ignore) {
-                            otherVersion = -1;
+                            try {
+                                otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            } catch (Exception ignore2) {
+                                otherVersion = -1;
+                            }
+
+                            ownVersion = getCoreVersion();
                         }
 
-                        if (otherVersion >= getCoreVersion()) {
+
+                        if (otherVersion >= ownVersion) {
                             // use the active service
                             // assuming that the other is greater than R6 if we get here ;)
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
@@ -264,12 +279,25 @@ public class SongodaCore {
         return new ArrayList<>(registeredPlugins);
     }
 
+    /**
+     * @deprecated Use {@link #getCoreMajorVersion()} instead, but careful, coreRevision is at 9 while major version is at 2
+     */
+    @Deprecated
     public static int getCoreVersion() {
         return coreRevision;
     }
 
     public static String getCoreLibraryVersion() {
-        return coreVersion;
+        return SongodaCoreConstants.getCoreVersion();
+    }
+
+    public static int getCoreMajorVersion() {
+        String fullVersion = getCoreLibraryVersion();
+        if (fullVersion.contains(".")) {
+            return Integer.parseInt(fullVersion.substring(0, fullVersion.indexOf(".")));
+        }
+
+        return -1;
     }
 
     public static int getUpdaterVersion() {

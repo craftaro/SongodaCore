@@ -6,45 +6,38 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 
+permissions: read-all
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  SONAR_PROJECT_KEY: songoda_SongodaCore
+
 jobs:
-  build:
-    name: Build
+  Analyze:
     runs-on: ubuntu-latest
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
-      # Checkout project files
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: ${{ env.SONAR_TOKEN != null }}
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
 
-      # Setup Java
-      - uses: actions/setup-java@v2
+      - name: Prepare Workspace
         if: ${{ env.SONAR_TOKEN != null }}
-        with:
-          java-version: 17
-          distribution: adopt
-          cache: maven
+        uses: ./.github/actions/setup_project_workspace
 
-      # Cache
       - name: 'Cache: SonarCloud'
         if: ${{ env.SONAR_TOKEN != null }}
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
-
-      # Build Spigot 1.18.2 (remapped)
-      - uses: SpraxDev/Action-SpigotMC@v4
-        if: ${{ env.SONAR_TOKEN != null }}
-        with:
-          versions: 1.18.2
-          remapped: true
-
       - name: Analyze project
         if: ${{ env.SONAR_TOKEN != null }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=songoda_SongodaCore
+        run: >
+          mvn -B \
+            verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            "-Dsonar.projectKey=$SONAR_PROJECT_KEY"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
