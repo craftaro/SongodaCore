@@ -39,6 +39,7 @@ public class SQLiteConnector implements DatabaseConnector {
         }
     }
 
+    @Deprecated
     @Override
     public void connect(ConnectionCallback callback) {
         if (this.connection == null) {
@@ -55,5 +56,21 @@ public class SQLiteConnector implements DatabaseConnector {
             this.plugin.getLogger().severe("An error occurred executing an SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public Connection getConnection() {
+        try {
+            if (this.connection == null || this.connection.isClosed()) {
+                try {
+                    this.connection = DriverManager.getConnection(this.connectionString);
+                } catch (SQLException ex) {
+                    this.plugin.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return this.connection;
     }
 }
