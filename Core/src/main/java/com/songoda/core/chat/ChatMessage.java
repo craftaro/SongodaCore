@@ -227,7 +227,7 @@ public class ChatMessage {
 
                 Object packet;
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), 1);
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), mc_PacketPlayOutChat_new_1_19_0 ? 1 : true);
                 }else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     packet = mc_PacketPlayOutChat_new.newInstance(
                             mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)),
@@ -255,6 +255,7 @@ public class ChatMessage {
     private static Method mc_IChatBaseComponent_ChatSerializer_a, cb_craftPlayer_getHandle;
     private static Constructor mc_PacketPlayOutChat_new;
     private static Field mc_entityPlayer_playerConnection, mc_chatMessageType_Chat;
+    private static boolean mc_PacketPlayOutChat_new_1_19_0 = false;
 
     static {
         init();
@@ -277,7 +278,12 @@ public class ChatMessage {
                 mc_PacketPlayOutChat = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19) ? ClassMapping.CLIENTBOUND_SYSTEM_CHAT.getClazz() : ClassMapping.PACKET_PLAY_OUT_CHAT.getClazz();
 
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Integer.TYPE);
+                    try {
+                        mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Boolean.TYPE);
+                    } catch (NoSuchMethodException ex) {
+                        mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Integer.TYPE);
+                        mc_PacketPlayOutChat_new_1_19_0 = true;
+                    }
                 } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
                     mc_chatMessageType_Chat = mc_ChatMessageType.getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "a" : "CHAT");
