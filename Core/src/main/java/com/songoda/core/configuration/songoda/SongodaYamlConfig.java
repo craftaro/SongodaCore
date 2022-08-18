@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // TODO: Allow registering load-Listeners
+// TODO: Provide method to only save if changed
 public class SongodaYamlConfig extends YamlConfiguration {
     protected final String cannotCreateBackupCopyExceptionPrefix = "Unable to create backup copy of config file: ";
 
@@ -79,6 +80,10 @@ public class SongodaYamlConfig extends YamlConfiguration {
         }
 
         return false;
+    }
+
+    public ConfigEntry getAsEntry(String key) {
+        return new ConfigEntry(this, key);
     }
 
     protected void registerConfigEntry(ConfigEntry entry) {
@@ -138,7 +143,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
     public void load(Reader reader) {
         super.load(reader);
 
-        // The interface does not allow to throw an exception, so we log it instead.
+        // FIXME: The interface does not allow to throw an exception, so we log it instead.
         try {
             upgradeOldConfigVersion();
         } catch (IOException ex) {
