@@ -7,7 +7,7 @@ import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -92,7 +92,10 @@ public class ItemUtils {
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
             methodAsNMSCopy = clazzCraftItemStack.getMethod("asNMSCopy", ItemStack.class);
 
-            if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
+                Class<?> clazzRandomSource = ClassMapping.RANDOM_SOURCE.getClazz();
+                methodA = clazzEnchantmentManager.getMethod("a", clazzRandomSource.getMethod("c").getReturnType(), clazzItemStack, int.class, boolean.class);
+            }else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
             } else {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);

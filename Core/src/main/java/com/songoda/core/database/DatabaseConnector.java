@@ -29,4 +29,6 @@ public interface DatabaseConnector {
     interface ConnectionCallback {
         void accept(Connection connection) throws SQLException;
     }
+
+    Connection getConnection();
 }

@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class McMMOHandler {
                 mcmmo_PerksUtils_handleLuckyPerks = mcmmo_PerksUtils.getDeclaredMethod("handleLuckyPerks", Player.class, mcmmo_SkillType);
                 mcmmo_SecondaryAbility = Class.forName("com.gmail.nossr50.datatypes.skills.SecondaryAbility");
                 mcmmo_SecondaryAbility_valueOf = mcmmo_SecondaryAbility.getDeclaredMethod("valueOf", String.class);
-                mcmmo_Permissions_secondaryAbilityEnabled = com.gmail.nossr50.util.Permissions.class.getDeclaredMethod("secondaryAbilityEnabled", Player.class, mcmmo_SecondaryAbility);
+                mcmmo_Permissions_secondaryAbilityEnabled = com.gmail.nossr50.util.Permissions.class.getDeclaredMethod("secondaryAbilityEnabled", Permissible.class, mcmmo_SecondaryAbility);
                 mcmmo_SkillUtils_activationSuccessful = com.gmail.nossr50.util.skills.SkillUtils.class.getDeclaredMethod("activationSuccessful", mcmmo_SecondaryAbility, Player.class, int.class, int.class);
 
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {

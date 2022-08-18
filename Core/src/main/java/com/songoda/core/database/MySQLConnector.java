@@ -12,7 +12,7 @@ public class MySQLConnector implements DatabaseConnector {
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL) {
+    public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL, int poolSize) {
         this.plugin = plugin;
 
         plugin.getLogger().info("connecting to " + hostname + " : " + port);
@@ -21,7 +21,7 @@ public class MySQLConnector implements DatabaseConnector {
         config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
         config.setUsername(username);
         config.setPassword(password);
-        config.setMaximumPoolSize(3);
+        config.setMaximumPoolSize(poolSize);
 
         try {
             this.hikari = new HikariDataSource(config);
@@ -41,6 +41,7 @@ public class MySQLConnector implements DatabaseConnector {
         this.hikari.close();
     }
 
+    @Deprecated
     @Override
     public void connect(ConnectionCallback callback) {
         try (Connection connection = this.hikari.getConnection()) {
@@ -49,5 +50,15 @@ public class MySQLConnector implements DatabaseConnector {
             this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public Connection getConnection() {
+        try {
+            return this.hikari.getConnection();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

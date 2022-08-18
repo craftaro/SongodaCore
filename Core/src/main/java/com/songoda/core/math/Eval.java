@@ -32,7 +32,7 @@ public class Eval {
 
         double x = parseExpression();
         if (pos < toParse.length()) {
-            throw new RuntimeException(warningMessage + "Unexpected: " + (char) ch);
+            throw new RuntimeException(warningMessage + "Unexpected: '" + (char) ch + "' at position " + pos + " in '" + this.toParse + "'");
         }
 
         return x;
