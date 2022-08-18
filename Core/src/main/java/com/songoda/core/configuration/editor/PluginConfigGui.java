@@ -2,7 +2,6 @@ package com.songoda.core.configuration.editor;
 
 import com.songoda.core.SongodaPlugin;
 import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.gui.SimplePagedGui;
@@ -33,14 +32,18 @@ public class PluginConfigGui extends SimplePagedGui {
 
         this.plugin = plugin;
 
+        // FIXME: Add SongodaCore config
+        // FIXME: Add plugin configs
+        plugin.getLogger().warning("Loading configs for " + plugin.getName() + " is not supported at the moment.");
+
         // collect list of plugins
-        configs.put(plugin.getCoreConfig().getFile().getName(), plugin.getCoreConfig());
-        List<Config> more = plugin.getConfigs();
-        if (more != null && !more.isEmpty()) {
-            for (Config cfg : more) {
-                configs.put(cfg.getFile().getName(), cfg);
-            }
-        }
+//        configs.put(plugin.getCoreConfig().getFile().getName(), plugin.getCoreConfig());
+//        List<Config> more = plugin.getConfigs();
+//        if (more != null && !more.isEmpty()) {
+//            for (Config cfg : more) {
+//                configs.put(cfg.getFile().getName(), cfg);
+//            }
+//        }
 
         init();
     }

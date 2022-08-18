@@ -2,7 +2,6 @@ package com.songoda.core;
 
 import com.songoda.core.configuration.songoda.SongodaYamlConfig;
 import com.songoda.core.database.DataManagerAbstract;
-import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
@@ -21,7 +20,7 @@ import java.util.logging.Level;
  * Must not have two instances of Metrics enabled!
  */
 public abstract class SongodaPlugin extends JavaPlugin {
-    protected Locale locale;
+//    protected Locale locale;
     protected long dataLoadDelay = 20L;
 
     private boolean emergencyStop = false;
@@ -77,7 +76,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ChatColor.GREEN, "Enabling", ChatColor.GRAY));
 
         try {
-            this.locale = Locale.loadDefaultLocale(this, "en_US");
+//            this.locale = Locale.loadDefaultLocale(this, "en_US");
 
             // plugin setup
             onPluginEnable();
@@ -131,32 +130,32 @@ public abstract class SongodaPlugin extends JavaPlugin {
         console.sendMessage(" "); // blank line to separate chatter
     }
 
-    public Locale getLocale() {
-        return this.locale;
-    }
+//    public Locale getLocale() {
+//        return this.locale;
+//    }
 
-    /**
-     * Set the plugin's locale to a specific language
-     *
-     * @param localeName locale to use, eg "en_US"
-     * @param reload     optionally reload the loaded locale if the locale didn't
-     *                   change
-     *
-     * @return true if the locale exists and was loaded successfully
-     */
-    public boolean setLocale(String localeName, boolean reload) {
-        if (this.locale != null && this.locale.getName().equals(localeName)) {
-            return !reload || this.locale.reloadMessages();
-        }
-
-        Locale l = Locale.loadLocale(this, localeName);
-        if (l != null) {
-            this.locale = l;
-            return true;
-        }
-
-        return false;
-    }
+//    /**
+//     * Set the plugin's locale to a specific language
+//     *
+//     * @param localeName locale to use, eg "en_US"
+//     * @param reload     optionally reload the loaded locale if the locale didn't
+//     *                   change
+//     *
+//     * @return true if the locale exists and was loaded successfully
+//     */
+//    public boolean setLocale(String localeName, boolean reload) {
+//        if (this.locale != null && this.locale.getName().equals(localeName)) {
+//            return !reload || this.locale.reloadMessages();
+//        }
+//
+//        Locale l = Locale.loadLocale(this, localeName);
+//        if (l != null) {
+//            this.locale = l;
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     protected void shutdownDataManager(DataManagerAbstract dataManager) {
         // 3 minutes is overkill, but we just want to make sure
