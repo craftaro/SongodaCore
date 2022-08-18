@@ -2,8 +2,8 @@ package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.configuration.Config;
-import com.songoda.core.configuration.ConfigSection;
+import com.songoda.core.configuration.songoda.ConfigEntry;
+import com.songoda.core.configuration.songoda.SongodaYamlConfig;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.utils.TextUtils;
 import org.bukkit.Bukkit;
@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,70 +46,89 @@ public class CustomizableGui extends Gui {
                 localeFolder.mkdir();
             }
 
-            Config config = new Config(plugin, "gui/" + guiKey + ".yml");
-            config.load();
-
-            if (!config.isConfigurationSection("overrides")) {
-                config.setDefault("overrides.example.item", CompatibleMaterial.STONE.name(),
-                                "This is the icon material you would like to replace",
-                                "the current material with.")
-                        .setDefault("overrides.example.position", 5,
-                                "This is the current position of the icon you would like to move.",
-                                "The number represents the cell the icon currently resides in.")
-                        .setDefaultComment("overrides.example",
-                                "This is just an example and does not override to any items",
-                                "in this GUI.")
-                        .setDefaultComment("overrides",
-                                "For information on how to apply overrides please visit",
-                                "https://wiki.songoda.com/Gui");
-
-                config.saveChanges();
+            SongodaYamlConfig config = new SongodaYamlConfig(new File(plugin.getDataFolder(), "gui/" + guiKey + ".yml"));
+            try {
+                config.load();
+            } catch (IOException ex) {
+                // FIXME
+                throw new RuntimeException(ex);
             }
 
-            if (!config.isConfigurationSection("disabled")) {
-                config.setDefault("disabled", Arrays.asList("example3", "example4", "example5"),
-                        "All keys on this list will be disabled. You can add any items key here",
-                        "if you no longer want that item in the GUI.");
+            config.setNodeComment("overrides", "For information on how to apply overrides please visit\n" +
+                    "https://wiki.songoda.com/Gui");
+            config.setNodeComment("overrides.example", "This is just an example and does not override to any items in this GUI.");
 
-                config.saveChanges();
+            new ConfigEntry(config, "overrides.example.item", CompatibleMaterial.STONE)
+                    .withComment("This is the icon material you would like to replace\n" +
+                            "the current material with.");
+            new ConfigEntry(config, "overrides.example.position", 5)
+                    .withComment("This is the current position of the icon you would like to move.\n" +
+                            "The number represents the cell the icon currently resides in.");
+
+            ConfigEntry disabledGuis = new ConfigEntry(config, "disabled", Arrays.asList("example3", "example4", "example5"))
+                    .withComment("All keys on this list will be disabled. You can add any items key here\n" +
+                            "if you no longer want that item in the GUI.");
+
+            try {
+                config.save();
+            } catch (IOException ex) {
+                // FIXME
+                throw new RuntimeException(ex);
             }
 
             CustomContent customContent = loadedGuis.computeIfAbsent(guiKey, g -> new CustomContent(guiKey));
             loadedGuis.put(guiKey, customContent);
             this.customContent = customContent;
 
-            int rows = config.getInt("overrides.__ROWS__", -1);
+            int rows = config.getAsEntry("overrides.__ROWS__").getInt(-1);
             if (rows != -1) {
                 customContent.setRows(rows);
             }
 
-            for (ConfigSection section : config.getSections("overrides")) {
-                if (section.contains("row") ||
-                        section.contains("col") ||
-                        section.contains("mirrorrow") ||
-                        section.contains("mirrorcol")) {
-                    if (section.contains("mirrorrow") || section.contains("mirrorcol")) {
-                        customContent.addButton(section.getNodeKey(), section.getInt("row", -1),
-                                section.getInt("col", -1),
-                                section.getBoolean("mirrorrow", false),
-                                section.getBoolean("mirrorcol", false),
-                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
-                    } else {
-                        customContent.addButton(section.getNodeKey(), section.getInt("row", -1),
-                                section.getInt("col", -1),
-                                section.getString("title", null),
-                                section.isSet("lore") ? section.getStringList("lore") : null,
-                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
-                    }
+            for (String overrideKey : config.getKeys("overrides")) {
+                String keyPrefix = "overrides." + overrideKey;
+
+                ConfigEntry title = config.getAsEntry(keyPrefix + ".title");
+
+                ConfigEntry position = config.getAsEntry(keyPrefix + ".position");
+
+                ConfigEntry row = config.getAsEntry(keyPrefix + ".row");
+                ConfigEntry col = config.getAsEntry(keyPrefix + ".col");
+
+                ConfigEntry mirrorRow = config.getAsEntry(keyPrefix + ".mirrorrow");
+                ConfigEntry mirrorCol = config.getAsEntry(keyPrefix + ".mirrorcol");
+
+                ConfigEntry item = config.getAsEntry(keyPrefix + ".item");
+                ConfigEntry lore = config.getAsEntry(keyPrefix + ".lore");
+
+                boolean configHasRowOrColSet = row.has() || col.has();
+                boolean configHasMirrorRowOrColSet = mirrorRow.has() || mirrorCol.has();
+
+                if (configHasMirrorRowOrColSet) {
+                    customContent.addButton(overrideKey,
+                            row.getInt(-1),
+                            col.getInt(-1),
+                            mirrorRow.getBoolean(),
+                            mirrorCol.getBoolean(),
+                            item.getMaterial());
+                } else if (configHasRowOrColSet) {
+                    customContent.addButton(overrideKey,
+                            row.getInt(-1),
+                            col.getInt(-1),
+                            title.getString(),
+                            lore.getStringList(),
+                            item.getMaterial());
                 } else {
-                    customContent.addButton(section.getNodeKey(), section.getString("position", "-1"),
-                            section.getString("title", null),
-                            section.isSet("lore") ? section.getStringList("lore") : null,
-                            section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
+                    customContent.addButton(overrideKey,
+                            position.getString("-1"),
+                            title.getString(),
+                            lore.getStringList(),
+                            item.getMaterial());
+
                 }
             }
 
-            for (String disabled : config.getStringList("disabled")) {
+            for (String disabled : disabledGuis.getStringList(Collections.emptyList())) {
                 customContent.disableButton(disabled);
             }
         } else {
