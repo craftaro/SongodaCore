@@ -4,11 +4,15 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -133,6 +137,26 @@ class ConfigEntryTest {
         assertTrue(entry.getBoolean(true));
     }
 
+    @Test
+    void testGetStringList() {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
+        ConfigEntry entry = new ConfigEntry(cfg, "key");
+
+        final List<String> fallbackValue = Collections.unmodifiableList(new LinkedList<>());
+
+        entry.set(null);
+        assertNull(entry.getStringList());
+        assertSame(fallbackValue, entry.getStringList(fallbackValue));
+
+        entry.set(Collections.singletonList("value"));
+        assertEquals(Collections.singletonList("value"), entry.getStringList());
+
+        entry.set(new String[] {"value2"});
+        assertEquals(Collections.singletonList("value2"), entry.getStringList());
+
+        entry.set("string-value");
+        assertNull(entry.getStringList());
+    }
 
     @Test
     void testGetMaterial() {
