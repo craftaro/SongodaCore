@@ -123,6 +123,7 @@ public class ConfigEntry {
         return value != null ? value.toString() : null;
     }
 
+    @Contract("!null -> !null")
     public @Nullable String getString(String fallbackValue) {
         Object value = get();
 
