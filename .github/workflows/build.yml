@@ -90,4 +90,4 @@ jobs:
         uses: songoda/GH-Commons/.github/actions/discord_send_job_results@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook_url: ${{ secrets.DISCORD_BUILD_STATUS_WEBHOOK }}
