@@ -62,11 +62,13 @@ public class SongodaCore {
     /**
      * This is specific to the website api
      */
+    @Deprecated
     private final static int updaterVersion = 1;
 
     private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE = null;
+
     private JavaPlugin piggybackedPlugin;
     private CommandManager commandManager;
     private EventListener loginListener;
@@ -233,6 +235,7 @@ public class SongodaCore {
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
+    @Deprecated
     private void update(PluginInfo plugin) {
         try {
             URL url = new URL("https://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()

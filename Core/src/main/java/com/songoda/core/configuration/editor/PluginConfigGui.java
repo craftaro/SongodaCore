@@ -18,7 +18,10 @@ import java.util.Map;
 
 /**
  * Edit all configuration files for a specific plugin
+ *
+ * @deprecated Needs a recode in another package
  */
+@Deprecated
 public class PluginConfigGui extends SimplePagedGui {
     final JavaPlugin plugin;
     LinkedHashMap<String, MemoryConfiguration> configs = new LinkedHashMap<>();

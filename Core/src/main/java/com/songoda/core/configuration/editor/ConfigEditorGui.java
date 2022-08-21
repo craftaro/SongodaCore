@@ -26,7 +26,10 @@ import java.util.logging.Level;
 
 /**
  * Edit a configuration file for a specific plugin
+ *
+ * @deprecated Needs a recode in another package
  */
+@Deprecated
 public class ConfigEditorGui extends SimplePagedGui {
     final JavaPlugin plugin;
     final String file;
