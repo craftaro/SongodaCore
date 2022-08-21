@@ -15,15 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class YamlConfigurationTest {
     static final String inputYaml = "foo: bar\n" +
@@ -73,7 +65,7 @@ class YamlConfigurationTest {
             "    - 3\n";
 
     @Test
-    void testYamlParser() {
+    void testYamlParser() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -104,7 +96,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testYamlParserWithEmptyFile() {
+    void testYamlParserWithEmptyFile() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(""));
         assertTrue(cfg.getKeys("").isEmpty());
@@ -263,7 +255,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testGetNonExistingNestedKey() {
+    void testGetNonExistingNestedKey() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -271,7 +263,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testGetOrDefault() {
+    void testGetOrDefault() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -293,7 +285,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testGetKeys() {
+    void testGetKeys() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -485,7 +477,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testReset() {
+    void testReset() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -501,7 +493,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testUnset() {
+    void testUnset() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
         cfg.load(new StringReader(inputYaml));
 
@@ -533,7 +525,7 @@ class YamlConfigurationTest {
     }
 
     @Test
-    void testToString() {
+    void testToString() throws IOException {
         final YamlConfiguration cfg = new YamlConfiguration();
 
         String firstToString = cfg.toString();

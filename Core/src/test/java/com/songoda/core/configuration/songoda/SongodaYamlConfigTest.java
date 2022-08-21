@@ -1,7 +1,7 @@
 package com.songoda.core.configuration.songoda;
 
+import com.songoda.core.configuration.ConfigEntry;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +13,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SongodaYamlConfigTest {
     Path tmpDir;
@@ -97,15 +95,15 @@ class SongodaYamlConfigTest {
     @Test
     void testWithNegativeVersion() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
-        Assertions.assertThrows(IllegalArgumentException.class, () -> cfg.withVersion("version-key", -1, null));
+        assertThrows(IllegalArgumentException.class, () -> cfg.withVersion("version-key", -1, null));
     }
 
     @Test
-    void testWithTooNewVersion() {
+    void testLoadWithTooNewVersion() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile())
                 .withVersion(1);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> cfg.load(new StringReader("version: 10\n")));
+        assertThrows(IllegalStateException.class, () -> cfg.load(new StringReader("version: 10\n")));
     }
 
     @Test
@@ -114,6 +112,14 @@ class SongodaYamlConfigTest {
                 .withVersion(2);
 
         assertFalse(cfg.upgradeOldConfigVersion());
+    }
+
+    @Test
+    void testWithNewerVersion() {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile())
+                .withVersion(5);
+
+        assertThrows(IllegalStateException.class, cfg::upgradeOldConfigVersionByOne);
     }
 
     @Test
@@ -136,12 +142,46 @@ class SongodaYamlConfigTest {
     }
 
     @Test
-    void testDefaultValueAppliedAfterLoadNullValue() {
+    void testCreateEntryAppliesDefaultValueForNullValue() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
-        ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
+        ConfigEntry entry = cfg.createEntry("key", "value");
 
         cfg.init();
 
         assertEquals("value", entry.get());
+    }
+
+    @Test
+    void testCreateDuplicateEntry() {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
+        ConfigEntry entry = cfg.createEntry("key", null);
+
+        assertThrows(IllegalArgumentException.class, () -> cfg.createEntry("key", "other-value"));
+
+        assertNull(entry.get());
+    }
+
+    @Test
+    void testReadOnlyEntry() {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
+        ConfigEntry entry = cfg.createEntry("key", "default-value");
+        ConfigEntry readOnlyConfigEntry = cfg.getReadEntry("key");
+
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.set("new-value"));
+        assertEquals("default-value", entry.get());
+
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.setDefaultValue("new-default-value"));
+        assertEquals("default-value", entry.get());
+
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.withComment("test-comment"));
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.withComment(() -> "test-comment"));
+
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.withUpgradeStep(10, "new-key"));
+        assertThrows(UnsupportedOperationException.class, () -> readOnlyConfigEntry.withUpgradeStep(10, "new-key", (o) -> "new-value"));
+
+        assertEquals("default-value", entry.get());
+
+        entry.set("new-value");
+        assertEquals("new-value", readOnlyConfigEntry.get());
     }
 }

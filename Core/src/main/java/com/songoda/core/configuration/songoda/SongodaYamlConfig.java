@@ -1,5 +1,8 @@
 package com.songoda.core.configuration.songoda;
 
+import com.songoda.core.configuration.ConfigEntry;
+import com.songoda.core.configuration.ReadOnlyConfigEntry;
+import com.songoda.core.configuration.yaml.YamlConfigEntry;
 import com.songoda.core.configuration.yaml.YamlConfiguration;
 import com.songoda.core.utils.Pair;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +27,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO: replace all config related exceptions with custom exceptions
 // TODO: Allow registering load-Listeners
 // TODO: Provide method to only save if changed
 public class SongodaYamlConfig extends YamlConfiguration {
@@ -82,20 +86,26 @@ public class SongodaYamlConfig extends YamlConfiguration {
         return false;
     }
 
-    public ConfigEntry getAsEntry(String key) {
-        return new ConfigEntry(this, key);
+    public ReadOnlyConfigEntry getReadEntry(@NotNull String key) {
+        return new ReadOnlyConfigEntry(this, key);
     }
 
-    protected void registerConfigEntry(ConfigEntry entry) {
-        this.configEntries.put(entry.key, entry);
+    public ConfigEntry createEntry(@NotNull String key) {
+        return createEntry(key, null);
     }
 
-    public void unregisterConfigEntry(ConfigEntry entry) {
-        unregisterConfigEntry(entry.key);
-    }
+    public ConfigEntry createEntry(@NotNull String key, @Nullable Object defaultValue) {
+        ConfigEntry entry = new YamlConfigEntry(this, key, defaultValue);
 
-    public void unregisterConfigEntry(String key) {
-        this.configEntries.remove(key);
+        if (this.configEntries.putIfAbsent(key, entry) != null) {
+            throw new IllegalArgumentException("Entry already exists for key: " + key);
+        }
+
+        if (entry.get() == null) {
+            entry.set(defaultValue);
+        }
+
+        return entry;
     }
 
     public SongodaYamlConfig withVersion(int version) {
@@ -113,7 +123,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
 
         this.targetVersion = version;
 
-        this.versionEntry = new ConfigEntry(this, key, 0);
+        this.versionEntry = new YamlConfigEntry(this, key, 0);
         this.versionEntry.withComment(comment);
         this.versionEntry.set(this.targetVersion);
 
@@ -196,18 +206,18 @@ public class SongodaYamlConfig extends YamlConfiguration {
         }
 
         for (ConfigEntry entry : this.configEntries.values()) {
-            if (entry.upgradeStepsForVersion == null) {
+            if (entry.getUpgradeSteps() == null) {
                 continue;
             }
 
-            Pair<@Nullable String, @Nullable Function<Object, Object>> upgradeStep = entry.upgradeStepsForVersion.get(currentVersion);
+            Pair<@Nullable String, @Nullable Function<Object, Object>> upgradeStep = entry.getUpgradeSteps().get(currentVersion);
             if (upgradeStep == null) {
                 continue;
             }
 
             String oldEntryKey = upgradeStep.getFirst();
             if (oldEntryKey == null) {
-                oldEntryKey = entry.key;
+                oldEntryKey = entry.getKey();
             }
 
             Object newValue = get(oldEntryKey);

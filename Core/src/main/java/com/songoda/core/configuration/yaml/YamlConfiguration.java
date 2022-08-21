@@ -87,10 +87,10 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
 
     @Override
     @Contract(pure = true, value = "null,_ -> param2")
-    public @Nullable Object getOr(String key, @Nullable Object defaultValue) {
+    public @Nullable Object getOr(String key, @Nullable Object fallbackValue) {
         Object value = get(key);
 
-        return value == null ? defaultValue : value;
+        return value == null ? fallbackValue : value;
     }
 
     public @NotNull Set<String> getKeys(String key) {
@@ -187,7 +187,7 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
     }
 
     @Override
-    public void load(Reader reader) {
+    public void load(Reader reader) throws IOException {
         Object yamlData = this.yaml.load(reader);
         if (yamlData == null) {
             yamlData = Collections.emptyMap();

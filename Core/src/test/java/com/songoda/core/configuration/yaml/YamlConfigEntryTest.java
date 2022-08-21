@@ -1,6 +1,9 @@
-package com.songoda.core.configuration.songoda;
+package com.songoda.core.configuration.yaml;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.ConfigEntry;
+import com.songoda.core.configuration.songoda.SongodaYamlConfig;
+import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,11 +19,24 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ConfigEntryTest {
+class YamlConfigEntryTest {
+    @Test
+    void testGetKey() {
+        ConfigEntry entry = new YamlConfigEntry(new YamlConfiguration(), "key-1", null);
+        assertEquals("key-1", entry.getKey());
+    }
+
+    @Test
+    void testGetConfig() {
+        YamlConfiguration config = new YamlConfiguration();
+        ConfigEntry entry = new YamlConfigEntry(config, "key-1", null);
+        assertSame(config, entry.getConfig());
+    }
+
     @Test
     void testGetDefaultValue() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
+        ConfigEntry entry = cfg.createEntry("key", "value");
 
         assertEquals("value", entry.getDefaultValue());
 
@@ -31,7 +47,7 @@ class ConfigEntryTest {
     @Test
     void testGetOr() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
+        ConfigEntry entry = cfg.createEntry("key", "value");
 
         assertEquals("value", entry.getOr("invalid"));
 
@@ -42,7 +58,7 @@ class ConfigEntryTest {
     @Test
     void testGetString() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         entry.set("value");
         assertEquals("value", entry.getString());
@@ -52,8 +68,8 @@ class ConfigEntryTest {
 
         entry.set(null);
         assertNull(entry.getString());
-        assertNull(entry.getString(null));
-        assertEquals("12", entry.getString("12"));
+        assertNull(entry.getStringOr(null));
+        assertEquals("12", entry.getStringOr("12"));
 
         entry.set(10.5);
         assertEquals("10.5", entry.getString());
@@ -68,7 +84,7 @@ class ConfigEntryTest {
     @Test
     void testGetInt() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         entry.set(1.0);
         assertEquals(1, entry.getInt());
@@ -84,13 +100,13 @@ class ConfigEntryTest {
 
         entry.set(null);
         assertEquals(0, entry.getInt());
-        assertEquals(11, entry.getInt(11));
+        assertEquals(11, entry.getIntOr(11));
     }
 
     @Test
     void testGetDouble() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         entry.set(1.0);
         assertEquals(1.0, entry.getDouble());
@@ -106,13 +122,13 @@ class ConfigEntryTest {
 
         entry.set(null);
         assertEquals(0.0, entry.getDouble());
-        assertEquals(11.5, entry.getDouble(11.5));
+        assertEquals(11.5, entry.getDoubleOr(11.5));
     }
 
     @Test
     void testGetBoolean() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         entry.set(false);
         assertFalse(entry.getBoolean());
@@ -134,19 +150,19 @@ class ConfigEntryTest {
 
         entry.set(null);
         assertFalse(entry.getBoolean());
-        assertTrue(entry.getBoolean(true));
+        assertTrue(entry.getBooleanOr(true));
     }
 
     @Test
     void testGetStringList() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         final List<String> fallbackValue = Collections.unmodifiableList(new LinkedList<>());
 
         entry.set(null);
         assertNull(entry.getStringList());
-        assertSame(fallbackValue, entry.getStringList(fallbackValue));
+        assertSame(fallbackValue, entry.getStringListOr(fallbackValue));
 
         entry.set(Collections.singletonList("value"));
         assertEquals(Collections.singletonList("value"), entry.getStringList());
@@ -161,7 +177,7 @@ class ConfigEntryTest {
     @Test
     void testGetMaterial() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key");
+        ConfigEntry entry = cfg.createEntry("key", null);
 
         entry.set("LOG");
         assertEquals(CompatibleMaterial.BIRCH_LOG, entry.getMaterial());
@@ -174,13 +190,19 @@ class ConfigEntryTest {
 
         entry.set(null);
         assertNull(entry.getMaterial());
-        assertEquals(CompatibleMaterial.ACACIA_BOAT, entry.getMaterial(CompatibleMaterial.ACACIA_BOAT));
+        assertEquals(CompatibleMaterial.ACACIA_BOAT, entry.getMaterialOr(CompatibleMaterial.ACACIA_BOAT));
+
+        entry.set(CompatibleMaterial.GRASS);
+        assertEquals(CompatibleMaterial.GRASS, entry.getMaterial());
+
+        entry.set(Material.GRASS);
+        assertEquals(CompatibleMaterial.GRASS, entry.getMaterial());
     }
 
     @Test
     void testInvalidWithUpgradeNull() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
+        ConfigEntry entry = cfg.createEntry("key", "value");
 
         assertThrows(IllegalArgumentException.class, () -> entry.withUpgradeStep(1, null, null));
     }
@@ -188,28 +210,29 @@ class ConfigEntryTest {
     @Test
     void testEqualsAndHashCode() {
         SongodaYamlConfig cfg = new SongodaYamlConfig(new File("ConfigEntryTest.yml"));
-        ConfigEntry entry = new ConfigEntry(cfg, "key", "value");
+        ConfigEntry entry = cfg.createEntry("key", "value");
 
         assertEquals(entry, entry);
         assertEquals(entry.hashCode(), entry.hashCode());
 
-        ConfigEntry other = new ConfigEntry(cfg, "key", "value");
+
+        ConfigEntry other = new YamlConfigEntry(cfg, "key", "value");
         assertEquals(entry, other);
         assertEquals(entry.hashCode(), other.hashCode());
 
-        other = new ConfigEntry(cfg, "key", "value2");
+        other = new YamlConfigEntry(cfg, "key", "value2");
         assertNotEquals(entry, other);
         assertNotEquals(entry.hashCode(), other.hashCode());
 
-        other = new ConfigEntry(cfg, "key2", "value");
+        other = new YamlConfigEntry(cfg, "key2", "value");
         assertNotEquals(entry, other);
         assertNotEquals(entry.hashCode(), other.hashCode());
 
-        other = new ConfigEntry(cfg, "key", "value2");
+        other = new YamlConfigEntry(cfg, "key", "value2");
         assertNotEquals(entry, other);
         assertNotEquals(entry.hashCode(), other.hashCode());
 
-        other = new ConfigEntry(cfg, "key2", "value2");
+        other = new YamlConfigEntry(cfg, "key2", "value2");
         assertNotEquals(entry, other);
         assertNotEquals(entry.hashCode(), other.hashCode());
     }

@@ -2,7 +2,7 @@ package com.songoda.core.gui;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.configuration.songoda.ConfigEntry;
+import com.songoda.core.configuration.ConfigEntry;
 import com.songoda.core.configuration.songoda.SongodaYamlConfig;
 import com.songoda.core.gui.methods.Clickable;
 import com.songoda.core.utils.TextUtils;
@@ -58,14 +58,14 @@ public class CustomizableGui extends Gui {
                     "https://wiki.songoda.com/Gui");
             config.setNodeComment("overrides.example", "This is just an example and does not override to any items in this GUI.");
 
-            new ConfigEntry(config, "overrides.example.item", CompatibleMaterial.STONE)
+            config.createEntry("overrides.example.item", CompatibleMaterial.STONE)
                     .withComment("This is the icon material you would like to replace\n" +
                             "the current material with.");
-            new ConfigEntry(config, "overrides.example.position", 5)
+            config.createEntry("overrides.example.position", 5)
                     .withComment("This is the current position of the icon you would like to move.\n" +
                             "The number represents the cell the icon currently resides in.");
 
-            ConfigEntry disabledGuis = new ConfigEntry(config, "disabled", Arrays.asList("example3", "example4", "example5"))
+            ConfigEntry disabledGuis = config.createEntry("disabled", Arrays.asList("example3", "example4", "example5"))
                     .withComment("All keys on this list will be disabled. You can add any items key here\n" +
                             "if you no longer want that item in the GUI.");
 
@@ -80,7 +80,7 @@ public class CustomizableGui extends Gui {
             loadedGuis.put(guiKey, customContent);
             this.customContent = customContent;
 
-            int rows = config.getAsEntry("overrides.__ROWS__").getInt(-1);
+            int rows = config.getReadEntry("overrides.__ROWS__").getIntOr(-1);
             if (rows != -1) {
                 customContent.setRows(rows);
             }
@@ -88,39 +88,39 @@ public class CustomizableGui extends Gui {
             for (String overrideKey : config.getKeys("overrides")) {
                 String keyPrefix = "overrides." + overrideKey;
 
-                ConfigEntry title = config.getAsEntry(keyPrefix + ".title");
+                ConfigEntry title = config.getReadEntry(keyPrefix + ".title");
 
-                ConfigEntry position = config.getAsEntry(keyPrefix + ".position");
+                ConfigEntry position = config.getReadEntry(keyPrefix + ".position");
 
-                ConfigEntry row = config.getAsEntry(keyPrefix + ".row");
-                ConfigEntry col = config.getAsEntry(keyPrefix + ".col");
+                ConfigEntry row = config.getReadEntry(keyPrefix + ".row");
+                ConfigEntry col = config.getReadEntry(keyPrefix + ".col");
 
-                ConfigEntry mirrorRow = config.getAsEntry(keyPrefix + ".mirrorrow");
-                ConfigEntry mirrorCol = config.getAsEntry(keyPrefix + ".mirrorcol");
+                ConfigEntry mirrorRow = config.getReadEntry(keyPrefix + ".mirrorrow");
+                ConfigEntry mirrorCol = config.getReadEntry(keyPrefix + ".mirrorcol");
 
-                ConfigEntry item = config.getAsEntry(keyPrefix + ".item");
-                ConfigEntry lore = config.getAsEntry(keyPrefix + ".lore");
+                ConfigEntry item = config.getReadEntry(keyPrefix + ".item");
+                ConfigEntry lore = config.getReadEntry(keyPrefix + ".lore");
 
                 boolean configHasRowOrColSet = row.has() || col.has();
                 boolean configHasMirrorRowOrColSet = mirrorRow.has() || mirrorCol.has();
 
                 if (configHasMirrorRowOrColSet) {
                     customContent.addButton(overrideKey,
-                            row.getInt(-1),
-                            col.getInt(-1),
+                            row.getIntOr(-1),
+                            col.getIntOr(-1),
                             mirrorRow.getBoolean(),
                             mirrorCol.getBoolean(),
                             item.getMaterial());
                 } else if (configHasRowOrColSet) {
                     customContent.addButton(overrideKey,
-                            row.getInt(-1),
-                            col.getInt(-1),
+                            row.getIntOr(-1),
+                            col.getIntOr(-1),
                             title.getString(),
                             lore.getStringList(),
                             item.getMaterial());
                 } else {
                     customContent.addButton(overrideKey,
-                            position.getString("-1"),
+                            position.getStringOr("-1"),
                             title.getString(),
                             lore.getStringList(),
                             item.getMaterial());
@@ -128,7 +128,7 @@ public class CustomizableGui extends Gui {
                 }
             }
 
-            for (String disabled : disabledGuis.getStringList(Collections.emptyList())) {
+            for (String disabled : disabledGuis.getStringListOr(Collections.emptyList())) {
                 customContent.disableButton(disabled);
             }
         } else {

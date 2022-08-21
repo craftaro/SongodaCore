@@ -1,5 +1,6 @@
 package com.songoda.core.configuration.songoda;
 
+import com.songoda.core.configuration.ConfigEntry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SongodaYamlConfigRoundtripTest {
     Path cfg;
@@ -42,10 +41,10 @@ class SongodaYamlConfigRoundtripTest {
         SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile())
                 .withVersion(3);
 
-        ConfigEntry cmdFooSuccess = new ConfigEntry(cfg, "command.foo.success", "Default success value")
+        ConfigEntry cmdFooSuccess = cfg.createEntry("command.foo.success", "Default success value")
                 .withComment("This message is shown when the 'foo' command succeeds.")
                 .withUpgradeStep(1, "messages.fooSuccess");
-        ConfigEntry range = new ConfigEntry(cfg, "range")
+        ConfigEntry range = cfg.createEntry("range")
                 .withComment("This is the range of the 'foo' command")
                 .withUpgradeStep(1, null, o -> {
                     if (o == null) {
@@ -55,7 +54,7 @@ class SongodaYamlConfigRoundtripTest {
                     return o;
                 })
                 .withUpgradeStep(2, null, o -> o + " blocks");
-        ConfigEntry incrementer = new ConfigEntry(cfg, "incrementer", 0)
+        ConfigEntry incrementer = cfg.createEntry("incrementer", 0)
                 .withComment("This is the incrementer of the 'foo' command")
                 .withUpgradeStep(1, null, o -> {
                     if (o == null) {
@@ -65,6 +64,8 @@ class SongodaYamlConfigRoundtripTest {
                     return (int) o + 1;
                 })
                 .withUpgradeStep(3, null, (o) -> "text");
+        ConfigEntry entryWithoutUpgradeStep = cfg.createEntry("entryWithoutUpgradeStep", "Default value")
+                .withComment("This is the entry without an upgrade step");
 
         assertTrue(cfg.init());
 
@@ -79,6 +80,9 @@ class SongodaYamlConfigRoundtripTest {
         assertTrue(incrementer.has());
         assertEquals(cfg.get("incrementer"), incrementer.get());
 
+        assertTrue(entryWithoutUpgradeStep.has());
+        assertEquals(cfg.get("entryWithoutUpgradeStep"), entryWithoutUpgradeStep.get());
+
         assertEquals("# Don't touch this – it's used to track the version of the config.\n" +
                 "version: 3\n" +
                 "command:\n" +
@@ -88,6 +92,8 @@ class SongodaYamlConfigRoundtripTest {
                 "# This is the range of the 'foo' command\n" +
                 "range: 10 blocks\n" +
                 "# This is the incrementer of the 'foo' command\n" +
-                "incrementer: 0\n", new String(Files.readAllBytes(this.cfg)));
+                "incrementer: 0\n" +
+                "# This is the entry without an upgrade step\n" +
+                "entryWithoutUpgradeStep: Default value\n", new String(Files.readAllBytes(this.cfg)));
     }
 }
