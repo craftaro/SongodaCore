@@ -150,21 +150,10 @@ public class SongodaYamlConfig extends YamlConfiguration {
     }
 
     @Override
-    public void load(Reader reader) {
+    public void load(Reader reader) throws IOException {
         super.load(reader);
 
-        // FIXME: The interface does not allow to throw an exception, so we log it instead.
-        try {
-            upgradeOldConfigVersion();
-        } catch (IOException ex) {
-            if (ex.getMessage().startsWith(this.cannotCreateBackupCopyExceptionPrefix)) {
-                // Failed to create backup copy, but we can still continue.
-                this.logger.log(Level.SEVERE, null, ex);
-            } else {
-                // This is a real unexpected exception, so we rethrow it.
-                throw new IllegalStateException(ex);
-            }
-        }
+        upgradeOldConfigVersion();
 
         for (ConfigEntry entry : this.configEntries.values()) {
             if (entry.get() == null && entry.getDefaultValue() != null) {
