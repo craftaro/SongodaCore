@@ -211,7 +211,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                         "Unexpected error while loading %s v%s (core v%s): Disabling plugin!",
                         getDescription().getName(),
                         getDescription().getVersion(),
-                        SongodaCore.getCoreLibraryVersion()
+                        SongodaCore.getVersion()
                 ), th);
 
         emergencyStop();

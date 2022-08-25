@@ -77,17 +77,10 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${nms.ver}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>${nms.ver}</version>
-            <scope>provided</scope>
             <classifier>remapped-mojang</classifier>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

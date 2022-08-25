@@ -281,6 +281,10 @@ public class SongodaCore {
         return new ArrayList<>(registeredPlugins);
     }
 
+    public static String getVersion() {
+        return SongodaCoreConstants.getCoreVersion();
+    }
+
     /**
      * @deprecated Use {@link #getCoreMajorVersion()} instead, but careful, coreRevision is at 9 while major version is at 2
      */
@@ -289,12 +293,13 @@ public class SongodaCore {
         return coreRevision;
     }
 
+    @Deprecated
     public static String getCoreLibraryVersion() {
         return SongodaCoreConstants.getCoreVersion();
     }
 
     public static int getCoreMajorVersion() {
-        String fullVersion = getCoreLibraryVersion();
+        String fullVersion = getVersion();
         if (fullVersion.contains(".")) {
             return Integer.parseInt(fullVersion.substring(0, fullVersion.indexOf(".")));
         }
