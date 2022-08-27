@@ -44,7 +44,7 @@ public class WorldCoreImpl implements WorldCore {
 
     @Override
     public SWorld getWorld(World world) {
-        return new SWorldImpl();
+        return new SWorldImpl(world);
     }
 
     @Override
