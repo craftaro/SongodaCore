@@ -328,65 +328,6 @@ public class BlockUtils {
         return null;
     }
 
-    /* Only to be used by #updateAdjacentComparators */
-    private static Method chunkToNmsChunk, nmsChunkGetWorld, craftBlockGetPosition, craftBlockBlockDataGetter, blockDataGetBlock, craftMagicNumbersGetBlockByMaterial, nmsWorldUpdateAdjacentComparators;
-    /* Only to be used by #updateAdjacentComparators */
-    private static Constructor<?> blockPositionConstructor;
-
-    /**
-     * Manually trigger the updateAdjacentComparators method for containers
-     *
-     * @param loc The Location of the container
-     */
-    public static void updateAdjacentComparators(Location loc) {
-        if (loc == null || loc.getWorld() == null) {
-            return;
-        }
-
-        Block craftBlock = loc.getBlock();
-
-        try {
-            if (chunkToNmsChunk == null) {
-                chunkToNmsChunk = MethodMapping.CB_GENERIC__GET_HANDLE.getMethod(ClassMapping.CRAFT_CHUNK.getClazz());
-                nmsChunkGetWorld = MethodMapping.MC_CHUNK__GET_WORLD.getMethod(chunkToNmsChunk.getReturnType());
-
-                craftBlockGetPosition = MethodMapping.CB_BLOCK__GET_POSITION.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
-                if (craftBlockGetPosition == null) {
-                    blockPositionConstructor = ClassMapping.BLOCK_POSITION.getClazz().getConstructor(double.class, double.class, double.class);
-                }
-
-                nmsWorldUpdateAdjacentComparators = MethodMapping.WORLD__UPDATE_ADJACENT_COMPARATORS.getMethod(ClassMapping.WORLD.getClazz());
-
-                craftBlockBlockDataGetter = MethodMapping.CB_BLOCK__GET_NMS.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
-                blockDataGetBlock = MethodMapping.I_BLOCK_DATA__GET_BLOCK.getMethod(ClassMapping.I_BLOCK_DATA.getClazz());
-                if (craftBlockBlockDataGetter == null || blockDataGetBlock == null) {
-                    craftMagicNumbersGetBlockByMaterial = MethodMapping.CRAFT_MAGIC_NUMBERS__GET_BLOCK__MATERIAL.getMethod(ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz());
-                }
-            }
-
-            Object nmsChunk = chunkToNmsChunk.invoke(loc.getChunk());
-            Object nmsWorld = nmsChunkGetWorld.invoke(nmsChunk);
-
-            Object blockPosition;
-            if (craftBlockGetPosition != null) {
-                blockPosition = craftBlockGetPosition.invoke(craftBlock);
-            } else {
-                blockPosition = blockPositionConstructor.newInstance(loc.getX(), loc.getY(), loc.getZ());
-            }
-
-            Object nmsBlock;
-            if (craftBlockBlockDataGetter != null) {
-                nmsBlock = blockDataGetBlock.invoke(craftBlockBlockDataGetter.invoke(craftBlock));
-            } else {
-                nmsBlock = craftMagicNumbersGetBlockByMaterial.invoke(null, craftBlock.getType());
-            }
-
-            nmsWorldUpdateAdjacentComparators.invoke(nmsWorld, blockPosition, nmsBlock);
-        } catch (NullPointerException | ReflectiveOperationException ex) {
-            ex.printStackTrace();
-        }
-    }
-
     /* Only to be used by #setBlockFast */
     private static Class<?> clazzIBlockData, clazzBlocks, clazzCraftWorld, clazzBlockPosition;
     /* Only to be used by #setBlockFast */

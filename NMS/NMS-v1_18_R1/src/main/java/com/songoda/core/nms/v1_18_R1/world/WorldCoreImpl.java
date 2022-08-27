@@ -12,6 +12,7 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.util.profiling.GameProfilerFiller;
 import net.minecraft.world.level.ChunkCoordIntPair;
 import net.minecraft.world.level.MobSpawnerAbstract;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.chunk.ChunkSection;
@@ -20,7 +21,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_18_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -92,5 +98,16 @@ public class WorldCoreImpl implements WorldCore {
         }
 
         gameprofilerfiller.c();
+    }
+
+    @Override
+    public void updateAdjacentComparators(@NotNull Location loc) {
+        Objects.requireNonNull(loc.getWorld());
+
+        WorldServer serverLevel = ((CraftWorld) loc.getWorld()).getHandle();
+        BlockPosition blockPos = new BlockPosition(loc.getX(), loc.getY(), loc.getZ());
+        Block nmsBlock = ((CraftBlock) loc.getBlock()).getNMS().b();
+
+        serverLevel.c(blockPos, nmsBlock);
     }
 }
