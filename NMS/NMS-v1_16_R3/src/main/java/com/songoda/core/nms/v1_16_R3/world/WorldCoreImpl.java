@@ -30,11 +30,6 @@ import java.util.Objects;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
-    public SSpawner getSpawner(CreatureSpawner spawner) {
-        return new SSpawnerImpl(spawner.getLocation());
-    }
-
-    @Override
     public SSpawner getSpawner(Location location) {
         return new SSpawnerImpl(location);
     }

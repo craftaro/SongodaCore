@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 
 public interface WorldCore {
-    SSpawner getSpawner(CreatureSpawner spawner);
-
     SSpawner getSpawner(Location location);
 
     SItemStack getItemStack(ItemStack item);
