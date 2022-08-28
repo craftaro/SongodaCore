@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public interface WorldCore {
+    SSpawner getSpawner(CreatureSpawner spawner);
+
     SSpawner getSpawner(Location location);
 
     SItemStack getItemStack(ItemStack item);

@@ -478,7 +478,7 @@ public class ItemUtils {
 
     /**
      * Quickly check to see if the two items use the same material. <br />
-     * NOTE: Does not check metadata; only checks the item material.
+     * NOTE: Does not check meta data; only checks the item material.
      *
      * @param is1 first item to compare
      * @param is2 item to compare against
