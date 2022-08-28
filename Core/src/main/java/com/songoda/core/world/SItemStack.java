@@ -3,7 +3,7 @@ package com.songoda.core.world;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.Nms;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -18,12 +18,12 @@ public class SItemStack {
 
     public SItemStack(ItemStack item) {
         this.item = item;
-        this.sItem = NmsManager.getWorld().getItemStack(item);
+        this.sItem = Nms.getImplementations().getWorld().getItemStack(item);
     }
 
     public SItemStack(CompatibleHand hand, Player player) {
         this.item = hand.getItem(player);
-        this.sItem = NmsManager.getWorld().getItemStack(item);
+        this.sItem = Nms.getImplementations().getWorld().getItemStack(item);
     }
 
     public ItemStack addDamage(Player player, int damage) {
@@ -49,7 +49,7 @@ public class SItemStack {
         int durability;
 
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
-                ? NmsManager.getNbt().of(item).has("Unbreakable")
+                ? Nms.getImplementations().getNbt().of(item).has("Unbreakable")
                 : item.getItemMeta().isUnbreakable()) {
             return item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
