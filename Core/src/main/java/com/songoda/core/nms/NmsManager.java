@@ -26,133 +26,133 @@ public class NmsManager {
                 anvil = new com.songoda.core.nms.v1_8_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_8_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_8_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_8_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_8_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_8_R2":
                 player = new com.songoda.core.nms.v1_8_R2.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_8_R2.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_8_R2.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_8_R2.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_8_R2.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_8_R2.world.NmsWorldBorderImpl();
                 break;
             case "v1_8_R3":
                 player = new com.songoda.core.nms.v1_8_R3.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_8_R3.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_8_R3.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_8_R3.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_8_R3.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_8_R3.world.NmsWorldBorderImpl();
                 break;
             case "v1_9_R1":
                 player = new com.songoda.core.nms.v1_9_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_9_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_9_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_9_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_9_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_9_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_9_R2":
                 player = new com.songoda.core.nms.v1_9_R2.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_9_R2.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_9_R2.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_9_R2.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_9_R2.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_9_R2.world.NmsWorldBorderImpl();
                 break;
             case "v1_10_R1":
                 player = new com.songoda.core.nms.v1_10_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_10_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_10_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_10_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_10_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_10_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_11_R1":
                 player = new com.songoda.core.nms.v1_11_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_11_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_11_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_11_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_11_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_11_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_12_R1":
                 player = new com.songoda.core.nms.v1_12_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_12_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_12_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_12_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_12_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_12_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_13_R1":
                 player = new com.songoda.core.nms.v1_13_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_13_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_13_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_13_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_13_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_13_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_13_R2":
                 player = new com.songoda.core.nms.v1_13_R2.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_13_R2.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_13_R2.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_13_R2.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_13_R2.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_13_R2.world.NmsWorldBorderImpl();
                 break;
             case "v1_14_R1":
                 player = new com.songoda.core.nms.v1_14_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_14_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_14_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_14_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_14_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_14_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_15_R1":
                 player = new com.songoda.core.nms.v1_15_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_15_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_15_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_15_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_15_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_15_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_16_R1":
                 player = new com.songoda.core.nms.v1_16_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_16_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_16_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_16_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_16_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_16_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_16_R2":
                 player = new com.songoda.core.nms.v1_16_R2.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_16_R2.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_16_R2.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_16_R2.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_16_R2.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_16_R2.world.NmsWorldBorderImpl();
                 break;
             case "v1_16_R3":
                 player = new com.songoda.core.nms.v1_16_R3.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_16_R3.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_16_R3.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_16_R3.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_16_R3.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_16_R3.world.NmsWorldBorderImpl();
                 break;
             case "v1_17_R1":
                 player = new com.songoda.core.nms.v1_17_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_17_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_17_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_17_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_17_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_17_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_18_R1":
                 player = new com.songoda.core.nms.v1_18_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_18_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_18_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_18_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_18_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_18_R1.world.NmsWorldBorderImpl();
                 break;
             case "v1_18_R2":
                 player = new com.songoda.core.nms.v1_18_R2.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_18_R2.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_18_R2.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_18_R2.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_18_R2.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_18_R2.world.NmsWorldBorderImpl();
                 break;
             case "v1_19_R1":
                 player = new com.songoda.core.nms.v1_19_R1.entity.NMSPlayerImpl();
                 anvil = new com.songoda.core.nms.v1_19_R1.anvil.AnvilCore();
                 nbt = new com.songoda.core.nms.v1_19_R1.nbt.NBTCoreImpl();
                 world = new com.songoda.core.nms.v1_19_R1.world.WorldCoreImpl();
-                worldBorder = new com.songoda.core.nms.v1_19_R1.world.NmsWorldBorderImpl(player);
+                worldBorder = new com.songoda.core.nms.v1_19_R1.world.NmsWorldBorderImpl();
                 break;
             default:
                 Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version: version {0} not found", serverPackageVersion);
