@@ -25,15 +25,15 @@ public class NmsWorldBorderImpl implements NmsWorldBorder {
         WorldBorder worldBorder = new WorldBorder();
         worldBorder.world = ((CraftWorld) center.getWorld()).getHandle();
 
-        worldBorder.c(center.getX(), center.getZ());    // setCenter
-        worldBorder.a(size);    // setSize
-        worldBorder.b(0);   // setWarningTime
-        worldBorder.c(0);   // setWarningDistance
+        worldBorder.setCenter(center.getX(), center.getZ());
+        worldBorder.setSize(size);
+        worldBorder.setWarningTime(0);
+        worldBorder.setWarningBlocks(0);
 
         if (color == BorderColor.GREEN) {
-            worldBorder.a(size - 0.1D, size, Long.MAX_VALUE);   // transitionSizeBetween
+            worldBorder.lerpSizeBetween(size - 0.1D, size, Long.MAX_VALUE);
         } else if (color == BorderColor.RED) {
-            worldBorder.a(size, size - 1.0D, Long.MAX_VALUE);   // transitionSizeBetween
+            worldBorder.lerpSizeBetween(size, size - 1.0D, Long.MAX_VALUE);
         }
 
         this.nmsPlayer.sendPacket(player, new ClientboundInitializeBorderPacket(worldBorder));

@@ -4,15 +4,14 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.nms.world.SSpawner;
 import com.songoda.core.nms.world.SpawnedEntity;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.DifficultyDamageScaler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityInsentient;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.EnumMobSpawn;
-import net.minecraft.world.level.MobSpawnerData;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.SpawnData;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
@@ -37,35 +36,35 @@ public class SSpawnerImpl implements SSpawner {
     }
 
     @Override
-    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned,
-                                    Set<CompatibleMaterial> canSpawnOn) {
-        MobSpawnerData data = new MobSpawnerData();
-        NBTTagCompound compound = data.a();
+    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<CompatibleMaterial> canSpawnOn) {
+        SpawnData data = new SpawnData();
+        CompoundTag compound = data.getEntityToSpawn();
 
-        String name = type.name().toLowerCase().replace("snowman", "snow_golem")
+        String name = type.name().toLowerCase()
+                .replace("snowman", "snow_golem")
                 .replace("mushroom_cow", "mooshroom");
-        compound.a("id", "minecraft:" + name);
+        compound.putString("id", "minecraft:" + name);
 
         short spawnRange = 4;
         for (int i = 0; i < 50; i++) {
             assert spawnerLocation.getWorld() != null;
-            WorldServer world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
+            ServerLevel world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
 
-            Random random = world.r_();
+            Random random = world.getRandom();
             double x = spawnerLocation.getX() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
             double y = spawnerLocation.getY() + random.nextInt(3) - 1;
             double z = spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
 
-            Optional<Entity> optionalEntity = EntityTypes.a(compound, world);
+            Optional<Entity> optionalEntity = net.minecraft.world.entity.EntityType.create(compound, world);
             if (optionalEntity.isEmpty()) continue;
 
             Entity entity = optionalEntity.get();
-            entity.e(x, y, z);
+            entity.setPos(x, y, z);
 
-            BlockPosition position = entity.cW();
-            DifficultyDamageScaler damageScaler = world.d_(position);
+            BlockPos position = entity.blockPosition();
+            DifficultyInstance damageScaler = world.getCurrentDifficultyAt(position);
 
-            if (!(entity instanceof EntityInsentient entityInsentient)) {
+            if (!(entity instanceof Mob entityInsentient)) {
                 continue;
             }
 
@@ -75,7 +74,7 @@ public class SSpawnerImpl implements SSpawner {
                 continue;
             }
 
-            entityInsentient.a(world, damageScaler, EnumMobSpawn.c, null, null);
+            entityInsentient.finalizeSpawn(world, damageScaler, MobSpawnType.SPAWNER, null, null);
 
             LivingEntity craftEntity = (LivingEntity) entity.getBukkitEntity();
 
@@ -103,9 +102,8 @@ public class SSpawnerImpl implements SSpawner {
         return null;
     }
 
-    private boolean canSpawn(WorldServer world, EntityInsentient entityInsentient, Location location,
-                             Set<CompatibleMaterial> canSpawnOn) {
-        if (!world.a(entityInsentient, entityInsentient.cw())) {
+    private boolean canSpawn(ServerLevel world, Mob entityInsentient, Location location, Set<CompatibleMaterial> canSpawnOn) {
+        if (!world.noCollision(entityInsentient, entityInsentient.getBoundingBox())) {
             return false;
         }
 

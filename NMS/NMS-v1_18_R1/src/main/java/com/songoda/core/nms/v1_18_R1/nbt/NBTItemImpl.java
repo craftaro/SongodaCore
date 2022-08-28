@@ -1,22 +1,22 @@
 package com.songoda.core.nms.v1_18_R1.nbt;
 
 import com.songoda.core.nms.nbt.NBTItem;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
-import org.bukkit.inventory.ItemStack;
 
 public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
-    private final net.minecraft.world.item.ItemStack nmsItem;
+    private final ItemStack nmsItem;
 
-    public NBTItemImpl(net.minecraft.world.item.ItemStack nmsItem) {
-        super(nmsItem != null && nmsItem.r() ? nmsItem.s() : new NBTTagCompound());
+    public NBTItemImpl(ItemStack nmsItem) {
+        super(nmsItem != null && nmsItem.hasTag() ? nmsItem.getTag() : new CompoundTag());
 
         this.nmsItem = nmsItem;
     }
 
-    public ItemStack finish() {
+    public org.bukkit.inventory.ItemStack finish() {
         if (nmsItem == null) {
-            return CraftItemStack.asBukkitCopy(net.minecraft.world.item.ItemStack.a(compound));
+            return CraftItemStack.asBukkitCopy(ItemStack.of(compound));
         }
 
         return CraftItemStack.asBukkitCopy(nmsItem);

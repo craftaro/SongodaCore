@@ -1,10 +1,10 @@
 package com.songoda.core.nms.v1_18_R1.world;
 
 import com.songoda.core.nms.world.SWorld;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.level.block.state.IBlockData;
-import net.minecraft.world.level.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -26,10 +26,10 @@ public class SWorldImpl implements SWorld {
     public List<LivingEntity> getLivingEntities() {
         List<LivingEntity> result = new ArrayList<>();
 
-        WorldServer worldServer = ((CraftWorld) this.world).getHandle();
-        LevelEntityGetter<net.minecraft.world.entity.Entity> entities = worldServer.P.d();
+        ServerLevel worldServer = ((CraftWorld) this.world).getHandle();
+        LevelEntityGetter<net.minecraft.world.entity.Entity> entities = worldServer.entityManager.getEntityGetter();
 
-        entities.a().forEach((mcEnt) -> {
+        entities.getAll().forEach((mcEnt) -> {
             org.bukkit.entity.Entity bukkitEntity = mcEnt.getBukkitEntity();
 
             if (bukkitEntity instanceof LivingEntity && bukkitEntity.isValid()) {
@@ -42,10 +42,10 @@ public class SWorldImpl implements SWorld {
 
     @Override
     public void setBlockFast(int x, int y, int z, Material material) {
-        WorldServer serverLevel = ((CraftWorld) this.world).getHandle();
-        Chunk levelChunk = serverLevel.getChunkIfLoaded(x >> 4, z >> 4);
-        IBlockData blockState = ((CraftBlockData) material.createBlockData()).getState();
+        ServerLevel serverLevel = ((CraftWorld) this.world).getHandle();
+        LevelChunk levelChunk = serverLevel.getChunkIfLoaded(x >> 4, z >> 4);
+        BlockState blockState = ((CraftBlockData) material.createBlockData()).getState();
 
-        levelChunk.a(new BlockPosition(x & 0xF, y, z & 0xF), blockState, true);
+        levelChunk.setBlockState(new BlockPos(x & 0xF, y, z & 0xF), blockState, true);
     }
 }

@@ -8,6 +8,6 @@ import org.bukkit.entity.Player;
 public class NMSPlayerImpl implements NMSPlayer {
     @Override
     public void sendPacket(Player p, Object packet) {
-        ((CraftPlayer) p).getHandle().b.a((Packet<?>) packet);
+        ((CraftPlayer) p).getHandle().connection.send((Packet<?>) packet);
     }
 }

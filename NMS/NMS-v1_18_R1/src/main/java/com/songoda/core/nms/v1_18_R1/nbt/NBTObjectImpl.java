@@ -2,71 +2,71 @@ package com.songoda.core.nms.v1_18_R1.nbt;
 
 import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTObject;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.Set;
 
 public class NBTObjectImpl implements NBTObject {
-    private final NBTTagCompound compound;
+    private final CompoundTag compound;
     private final String tag;
 
-    public NBTObjectImpl(NBTTagCompound compound, String tag) {
+    public NBTObjectImpl(CompoundTag compound, String tag) {
         this.compound = compound;
         this.tag = tag;
     }
 
     @Override
     public String asString() {
-        return compound.l(tag);
+        return compound.getString(tag);
     }
 
     @Override
     public boolean asBoolean() {
-        return compound.q(tag);
+        return compound.getBoolean(tag);
     }
 
     @Override
     public int asInt() {
-        return compound.h(tag);
+        return compound.getInt(tag);
     }
 
     @Override
     public double asDouble() {
-        return compound.k(tag);
+        return compound.getDouble(tag);
     }
 
     @Override
     public long asLong() {
-        return compound.i(tag);
+        return compound.getLong(tag);
     }
 
     @Override
     public short asShort() {
-        return compound.g(tag);
+        return compound.getShort(tag);
     }
 
     @Override
     public byte asByte() {
-        return compound.f(tag);
+        return compound.getByte(tag);
     }
 
     @Override
     public int[] asIntArray() {
-        return compound.n(tag);
+        return compound.getIntArray(tag);
     }
 
     @Override
     public byte[] asByteArray() {
-        return compound.m(tag);
+        return compound.getByteArray(tag);
     }
 
     @Override
     public NBTCompound asCompound() {
-        return new NBTCompoundImpl(compound.p(tag));
+        return new NBTCompoundImpl(compound.getCompound(tag));
     }
 
     @Override
     public Set<String> getKeys() {
-        return compound.d();
+        return compound.getAllKeys();
     }
 }
