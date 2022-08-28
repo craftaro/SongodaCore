@@ -68,10 +68,10 @@
         <java.version>17</java.version>
         <java.release>17</java.release>
 
-        <nms.ver>1.19.2-R0.1-SNAPSHOT</nms.ver>
+        <nms.ver>1.19-R0.1-SNAPSHOT</nms.ver>
     </properties>
 
-    <artifactId>SongodaCore-NMS-v1_19_R1</artifactId>
+    <artifactId>SongodaCore-NMS-v1_19_0</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -81,13 +81,6 @@
             <version>${nms.ver}</version>
             <classifier>remapped-mojang</classifier>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <scope>compile</scope>
-            <version>${project.version}</version>
-            <artifactId>SongodaCore-NMS-v1_19_0</artifactId>
-            <groupId>${project.groupId}</groupId>
         </dependency>
 
         <dependency>

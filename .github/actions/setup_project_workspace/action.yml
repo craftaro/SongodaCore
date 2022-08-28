@@ -19,5 +19,5 @@ runs:
 
     - uses: SpraxDev/Action-SpigotMC@v4
       with:
-        versions: 1.18.1, 1.18.2, 1.19
+        versions: 1.18.1, 1.18.2, 1.19, 1.19.2
         remapped: true

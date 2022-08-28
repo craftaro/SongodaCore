@@ -1,4 +1,4 @@
-package com.songoda.core.nms.v1_19_R1.anvil;
+package com.songoda.core.nms.v1_19_0.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
