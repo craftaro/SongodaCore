@@ -68,10 +68,10 @@
         <java.version>17</java.version>
         <java.release>17</java.release>
 
-        <nms.ver>1.18.2-R0.1-SNAPSHOT</nms.ver>
+        <nms.ver>1.19.2-R0.1-SNAPSHOT</nms.ver>
     </properties>
 
-    <artifactId>SongodaCore-NMS-v1_18_R2</artifactId>
+    <artifactId>SongodaCore-NMS-v1_19_R1v2</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

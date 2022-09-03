@@ -6,7 +6,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>SongodaCore-Modules</artifactId>
-    <version>2.6.15-DEV</version>
+    <version>2.6.16-DEV</version>
     <packaging>pom</packaging>
 
     <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z' to update version recursively -->
@@ -47,6 +47,7 @@
         <module>NMS/NMS-v1_18_R1</module>
         <module>NMS/NMS-v1_18_R2</module>
         <module>NMS/NMS-v1_19_R1</module>
+        <module>NMS/NMS-v1_19_R1v2</module>
     </modules>
 
     <issueManagement>

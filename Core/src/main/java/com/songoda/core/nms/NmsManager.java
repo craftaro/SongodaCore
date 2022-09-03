@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 public class NmsManager {
     private static final String serverPackagePath = Bukkit.getServer().getClass().getPackage().getName();
     private static final String serverPackageVersion = serverPackagePath.substring(serverPackagePath.lastIndexOf('.') + 1);
+    private static final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
     private static final NMSPlayer player;
     private static final AnvilCore anvil;
     private static final NBTCore nbt;
@@ -128,10 +129,17 @@ public class NmsManager {
                 world = new com.songoda.core.nms.v1_18_R2.world.WorldCoreImpl();
                 break;
             case "v1_19_R1":
-                player = new com.songoda.core.nms.v1_19_R1.entity.NMSPlayerImpl();
-                anvil = new com.songoda.core.nms.v1_19_R1.anvil.AnvilCore();
-                nbt = new com.songoda.core.nms.v1_19_R1.nbt.NBTCoreImpl();
-                world = new com.songoda.core.nms.v1_19_R1.world.WorldCoreImpl();
+                if (bukkitVersion.endsWith(".0")) {
+                    player = new com.songoda.core.nms.v1_19_R1.entity.NMSPlayerImpl();
+                    anvil = new com.songoda.core.nms.v1_19_R1.anvil.AnvilCore();
+                    nbt = new com.songoda.core.nms.v1_19_R1.nbt.NBTCoreImpl();
+                    world = new com.songoda.core.nms.v1_19_R1.world.WorldCoreImpl();
+                }else{
+                    player = new com.songoda.core.nms.v1_19_R1v2.entity.NMSPlayerImpl();
+                    anvil = new com.songoda.core.nms.v1_19_R1v2.anvil.AnvilCore();
+                    nbt = new com.songoda.core.nms.v1_19_R1v2.nbt.NBTCoreImpl();
+                    world = new com.songoda.core.nms.v1_19_R1v2.world.WorldCoreImpl();
+                }
                 break;
             default:
                 Logger.getLogger(NmsManager.class.getName()).log(Level.SEVERE, "Failed to load NMS for this server version: version {0} not found", serverPackageVersion);
