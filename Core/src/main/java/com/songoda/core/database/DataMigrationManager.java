@@ -1,5 +1,6 @@
 package com.songoda.core.database;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class DataMigrationManager {
      * Runs any needed data migrations
      */
     public void runMigrations() {
-        this.databaseConnector.connect((connection -> {
+        try (Connection connection = this.databaseConnector.getConnection()) {
             int currentMigration = -1;
             boolean migrationsExist;
 
@@ -90,7 +91,10 @@ public class DataMigrationManager {
                 statement.setInt(1, currentMigration);
                 statement.execute();
             }
-        }));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     /**
