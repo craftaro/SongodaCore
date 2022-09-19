@@ -2,10 +2,13 @@ package com.songoda.core.lootables.loot;
 
 import com.songoda.core.SongodaCore;
 import com.songoda.ultimatestacker.UltimateStacker;
+import com.songoda.ultimatestacker.settings.Settings;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,21 +72,33 @@ public class DropUtils {
     }
 
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
-        //Pre stack items
         if (SongodaCore.isRegistered("UltimateStacker")) {
-            Map<ItemStack, Integer> stacks = new HashMap<>();
-            //Check if stacks contains the item, if so update the amount
+            List<StackedItem> stacks = new ArrayList<>();
             for (ItemStack item : items) {
-                if (stacks.containsKey(item)) {
-                    stacks.put(item, stacks.get(item) + item.getAmount());
-                } else {
-                    stacks.put(item, item.getAmount());
+                if (stacks.isEmpty()) {
+                    stacks.add(new StackedItem(item, item.getAmount()));
+                    continue;
+                }
+                for (StackedItem stackedItem : stacks) {
+                    if (stackedItem.getMaterial().equals(item.getType())) {
+                        int newAmount = stackedItem.getAmount() + item.getAmount();
+                        int maxSize = Settings.MAX_STACK_ITEMS.getInt();
+                        while (newAmount > maxSize) {
+                            newAmount -= maxSize;
+                            stacks.add(new StackedItem(item, newAmount));
+                        }
+                        if (newAmount > 0) {
+                            stacks.add(new StackedItem(item, newAmount));
+                        }
+                    } else {
+                        stacks.add(new StackedItem(item, item.getAmount()));
+                    }
                 }
             }
-            //Spawn stacked items by UltimateStacker
-            for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
-                UltimateStacker.spawnStackedItem(entry.getKey(), entry.getValue(), event.getEntity().getLocation());
+            for (StackedItem stack : stacks) {
+                UltimateStacker.spawnStackedItem(stack.getItem(), stack.getAmount(), event.getEntity().getLocation());
             }
+            return;
         }
         for (ItemStack item : items) {
             event.getDrops().add(item);
@@ -99,6 +114,29 @@ public class DropUtils {
             if (!command.contains("%player%")) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
+        }
+    }
+
+    private static class StackedItem {
+
+        private final ItemStack item;
+        private final int amount;
+
+        public StackedItem(ItemStack item, int amount) {
+            this.item = item;
+            this.amount = amount;
+        }
+
+        public Material getMaterial() {
+            return item.getType();
+        }
+
+        public ItemStack getItem() {
+            return item;
+        }
+
+        public int getAmount() {
+            return amount;
         }
     }
 }
