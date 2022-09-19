@@ -1,12 +1,18 @@
 package com.songoda.core.lootables.loot;
 
+import com.songoda.core.SongodaCore;
+import com.songoda.ultimatestacker.UltimateStacker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.songoda.core.hooks.PluginHook.STACKER_ULTIMATE;
 
 public class DropUtils {
     public static void processStackedDrop(LivingEntity entity, List<Drop> drops, EntityDeathEvent event) {
@@ -63,6 +69,22 @@ public class DropUtils {
     }
 
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
+        //Pre stack items
+        if (SongodaCore.isRegistered("UltimateStacker")) {
+            Map<ItemStack, Integer> stacks = new HashMap<>();
+            //Check if stacks contains the item, if so update the amount
+            for (ItemStack item : items) {
+                if (stacks.containsKey(item)) {
+                    stacks.put(item, stacks.get(item) + item.getAmount());
+                } else {
+                    stacks.put(item, item.getAmount());
+                }
+            }
+            //Spawn stacked items by UltimateStacker
+            for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
+                UltimateStacker.spawnStackedItem(entry.getKey(), entry.getValue(), event.getEntity().getLocation());
+            }
+        }
         for (ItemStack item : items) {
             event.getDrops().add(item);
         }
