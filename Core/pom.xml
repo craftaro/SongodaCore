@@ -311,7 +311,7 @@
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>UltimateStacker</artifactId>
-            <version>2.1.1</version>
+            <version>2.3.1-Dev</version>
             <scope>provided</scope>
         </dependency>
 
