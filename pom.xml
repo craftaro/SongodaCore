@@ -162,6 +162,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io/</url>
         </repository>
+
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -187,7 +192,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
+            <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -200,15 +205,15 @@
 
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.17</artifactId>
-            <version>1.10.3</version>
+            <artifactId>MockBukkit-v1.19</artifactId>
+            <version>2.120.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
-            <version>1.7.5</version>
+            <version>1.9.5</version>
             <type>maven-plugin</type>
         </dependency>
     </dependencies>
