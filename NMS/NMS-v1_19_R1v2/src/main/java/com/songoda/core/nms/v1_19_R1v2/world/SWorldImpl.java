@@ -23,7 +23,7 @@ public class SWorldImpl implements SWorld {
         List<LivingEntity> result = new ArrayList<>();
 
         ServerLevel worldServer = ((CraftWorld) world).getHandle();
-        LevelEntityGetter<Entity> entities = worldServer.entityManager.getEntityGetter();
+        LevelEntityGetter<Entity> entities = worldServer.getEntities();
 
         entities.getAll().forEach((mcEnt) -> {
             org.bukkit.entity.Entity bukkitEntity = mcEnt.getBukkitEntity();
