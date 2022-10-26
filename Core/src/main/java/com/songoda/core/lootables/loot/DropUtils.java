@@ -8,14 +8,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.songoda.core.hooks.PluginHook.STACKER_ULTIMATE;
 
 public class DropUtils {
     public static void processStackedDrop(LivingEntity entity, List<Drop> drops, EntityDeathEvent event) {
@@ -79,7 +74,7 @@ public class DropUtils {
                     stacks.add(new StackedItem(item, item.getAmount()));
                     continue;
                 }
-                for (StackedItem stackedItem : stacks) {
+                for (StackedItem stackedItem : stacks.toArray(new StackedItem[0])) {
                     if (stackedItem.getMaterial().equals(item.getType())) {
                         int newAmount = stackedItem.getAmount() + item.getAmount();
                         int maxSize = Settings.MAX_STACK_ITEMS.getInt();
