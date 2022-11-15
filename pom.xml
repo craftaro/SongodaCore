@@ -134,12 +134,12 @@
 
     <repositories>
         <repository>
-            <id>songoda-minecraft-plugins</id>
+            <id>songoda</id>
             <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
-            <id>spigotmc-repo</id>
+            <id>SpigotMC</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
@@ -149,7 +149,7 @@
         </repository>
 
         <repository>
-            <id>bg-repo</id>
+            <id>bg-software</id>
             <url>https://repo.bg-software.com/repository/api/</url>
         </repository>
 
@@ -159,13 +159,13 @@
         </repository>
 
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io/</url>
+            <id>PaperMC</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
         <repository>
-            <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io/</url>
         </repository>
     </repositories>
 
