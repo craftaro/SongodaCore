@@ -1,134 +1,143 @@
 package com.songoda.core.utils;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerUtilsTest {
-    private ServerMock server;
+    @Test
+    void sendMessages_Array() {
+        Player player = Mockito.mock(Player.class);
+        PlayerUtils.sendMessages(player, "First message", "Second message");
 
-    @BeforeEach
-    void setUp() {
-        this.server = MockBukkit.mock();
-    }
-
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-        this.server = null;
+        InOrder playerInOrder = Mockito.inOrder(player);
+        playerInOrder.verify(player).sendMessage("First message");
+        playerInOrder.verify(player).sendMessage("Second message");
+        playerInOrder.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
     }
 
     @Test
-    void sendMessages() {
-        String[] messages = new String[] {"First message", "Second message"};
+    void sendMessages_List() {
+        Player player = Mockito.mock(Player.class);
+        PlayerUtils.sendMessages(player, Arrays.asList("First message", "Second message"));
 
-        PlayerMock player = this.server.addPlayer();
-
-        PlayerUtils.sendMessages(player, messages);
-        PlayerUtils.sendMessages(player, Arrays.asList(messages));
-
-        for (int i = 0; i < 2; ++i) {
-            assertEquals(messages[0], player.nextMessage());
-            assertEquals(messages[1], player.nextMessage());
-        }
-
-        assertNull(player.nextMessage());
+        InOrder playerInOrder = Mockito.inOrder(player);
+        playerInOrder.verify(player).sendMessage("First message");
+        playerInOrder.verify(player).sendMessage("Second message");
+        playerInOrder.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
     }
 
-    @Disabled("Player#hidePlayer can currently not be mocked")
     @Test
     void getVisiblePlayerNames() {
-        PlayerMock player = this.server.addPlayer("BasePlayer");
-        PlayerMock visiblePlayer = this.server.addPlayer("VisiblePlayer");
-        PlayerMock hiddenPlayer = this.server.addPlayer("HiddenPlayer");
+        Player player = createMockPlayer("BasePlayer");
+        Player visiblePlayer = createMockPlayer("VisiblePlayer");
+        Player hiddenPlayer = createMockPlayer("HiddenPlayer");
 
-        player.hidePlayer(MockBukkit.createMockPlugin(), hiddenPlayer);
+        List<String> result;
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            server.when(Bukkit::getOnlinePlayers).thenReturn(Arrays.asList(player, visiblePlayer, hiddenPlayer));
 
-        List<String> result = PlayerUtils.getVisiblePlayerNames(player, null);
-        assertTrue(result.contains(visiblePlayer.getName()));
-        assertFalse(result.contains(hiddenPlayer.getName()));
-        assertFalse(result.contains(player.getName()));
+            Mockito.when(player.canSee(hiddenPlayer)).thenReturn(false);
+            Mockito.when(player.canSee(visiblePlayer)).thenReturn(true);
 
-        assertEquals(0, PlayerUtils.getVisiblePlayerNames(player, "_").size());
+            assertEquals(0, PlayerUtils.getVisiblePlayerNames(player, "_").size());
+
+            result = PlayerUtils.getVisiblePlayerNames(player, null);
+        }
+
+        assertTrue(result.contains("VisiblePlayer"));
+        assertEquals(1, result.size());
     }
 
-    @Disabled("Player#hidePlayer can currently not be mocked")
     @Test
     void getVisiblePlayerDisplayNames() {
-        PlayerMock player = this.server.addPlayer("BasePlayer");
-        PlayerMock visiblePlayer = this.server.addPlayer("VisiblePlayer");
-        PlayerMock hiddenPlayer = this.server.addPlayer("HiddenPlayer");
+        Player player = createMockPlayer("BasePlayer");
+        Player visiblePlayer = createMockPlayer("VisiblePlayer", "VisibleDisplayName");
+        Player hiddenPlayer = createMockPlayer("HiddenPlayer");
 
-        player.setDisplayName("Base");
-        visiblePlayer.setDisplayName("Visible");
-        hiddenPlayer.setDisplayName("Hidden");
+        List<String> result;
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            server.when(Bukkit::getOnlinePlayers).thenReturn(Arrays.asList(player, visiblePlayer, hiddenPlayer));
 
-        player.hidePlayer(MockBukkit.createMockPlugin(), hiddenPlayer);
+            Mockito.when(player.canSee(hiddenPlayer)).thenReturn(false);
+            Mockito.when(player.canSee(visiblePlayer)).thenReturn(true);
 
-        List<String> result = PlayerUtils.getVisiblePlayerDisplayNames(player, null);
-        assertTrue(result.contains(visiblePlayer.getDisplayName()));
-        assertFalse(result.contains(hiddenPlayer.getDisplayName()));
-        assertFalse(result.contains(player.getDisplayName()));
+            assertEquals(0, PlayerUtils.getVisiblePlayerDisplayNames(player, "A").size());
 
-        assertEquals(0, PlayerUtils.getVisiblePlayerDisplayNames(player, "_").size());
+            result = PlayerUtils.getVisiblePlayerDisplayNames(player, null);
+        }
+
+        assertTrue(result.contains("VisibleDisplayName"));
+        assertEquals(1, result.size());
     }
 
-    @Disabled("Player#hidePlayer can currently not be mocked")
     @Test
     void getVisiblePlayers() {
-        PlayerMock player = this.server.addPlayer("BasePlayer");
-        PlayerMock visiblePlayer = this.server.addPlayer("VisiblePlayer");
-        PlayerMock hiddenPlayer = this.server.addPlayer("HiddenPlayer");
+        Player player = createMockPlayer("BasePlayer");
+        Player visiblePlayer = createMockPlayer("VisiblePlayer");
+        Player hiddenPlayer = createMockPlayer("HiddenPlayer");
 
-        player.hidePlayer(MockBukkit.createMockPlugin(), hiddenPlayer);
+        Mockito.when(player.canSee(hiddenPlayer)).thenReturn(false);
+        Mockito.when(player.canSee(visiblePlayer)).thenReturn(true);
 
-        List<Player> result = PlayerUtils.getVisiblePlayers(player, null);
+        List<Player> result;
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            server.when(Bukkit::getOnlinePlayers).thenReturn(Arrays.asList(player, visiblePlayer, hiddenPlayer));
+
+            assertEquals(0, PlayerUtils.getVisiblePlayers(player, "_").size());
+
+            result = PlayerUtils.getVisiblePlayers(player, null);
+        }
+
         assertTrue(result.contains(visiblePlayer));
-        assertFalse(result.contains(hiddenPlayer));
-        assertFalse(result.contains(player));
-
-        assertEquals(0, PlayerUtils.getVisiblePlayers(player, "_").size());
+        assertEquals(1, result.size());
     }
 
     @Test
     void getAllPlayers() {
-        PlayerMock basePlayer = this.server.addPlayer("BasePlayer");
-        this.server.addPlayer("Player_1");
-        this.server.addPlayer("Player_2");
-        this.server.addPlayer("Player3");
+        Player basePlayer = createMockPlayer("BasePlayer");
+        Player player1 = createMockPlayer("Player_1");
+        Player player2 = createMockPlayer("Player_2");
+        Player player3 = createMockPlayer("Player3");
 
-        List<String> result = PlayerUtils.getAllPlayers(basePlayer, "");
-        assertEquals(3, result.size());
-        assertFalse(result.contains(basePlayer.getName()));
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            server.when(Bukkit::getOnlinePlayers).thenReturn(Arrays.asList(basePlayer, player1, player2, player3));
 
-        assertTrue(PlayerUtils.getAllPlayers(basePlayer, "_").isEmpty());
-        assertEquals(0, PlayerUtils.getAllPlayers(basePlayer, "Player_").size());
+            assertEquals(0, PlayerUtils.getVisiblePlayers(basePlayer, "_").size());
+
+            List<String> result = PlayerUtils.getAllPlayers(basePlayer, "");
+            assertFalse(result.contains(basePlayer.getName()));
+            assertEquals(3, result.size());
+
+            assertEquals(0, PlayerUtils.getAllPlayers(basePlayer, "_").size());
+            assertEquals(0, PlayerUtils.getAllPlayers(basePlayer, "Player_").size());
+        }
     }
 
     @Disabled("Disabled for now as the implementations seems to be faulty")
     @Test
     void getAllPlayersDisplay() {
-        PlayerMock basePlayer = this.server.addPlayer("BasePlayer");
-        this.server.addPlayer("Player_1");
-        this.server.addPlayer("Player_2");
-        this.server.addPlayer("Player3");
+        Player basePlayer = createMockPlayer("BasePlayer");
+        createMockPlayer("Player_1");
+        createMockPlayer("Player_2");
+        createMockPlayer("Player3");
 
         List<String> result = PlayerUtils.getAllPlayersDisplay(basePlayer, "");
         assertEquals(3, result.size());
@@ -141,13 +150,9 @@ class PlayerUtilsTest {
     @Disabled("Disabled for now as the implementations seems to be faulty")
     @Test
     void findPlayer() {
-        Player p3 = this.server.addPlayer("Player");
-        Player p1 = this.server.addPlayer("Player_1");
-        Player p2 = this.server.addPlayer("_Player_2");
-
-        p1.setDisplayName("p1");
-        p2.setDisplayName("p2");
-        p3.setDisplayName("p3");
+        Player p3 = createMockPlayer("Player", "p3");
+        Player p1 = createMockPlayer("Player_1", "p1");
+        Player p2 = createMockPlayer("_Player_2", "p2");
 
         assertEquals(p1, PlayerUtils.findPlayer("Player_"));
         assertEquals(p2, PlayerUtils.findPlayer("_Play"));
@@ -160,73 +165,185 @@ class PlayerUtilsTest {
     }
 
     @Test
-    void getRandomPlayer() {
-        assertNull(PlayerUtils.getRandomPlayer());
-
-        for (int i = 0; i < 10; ++i) {
-            this.server.addPlayer(String.valueOf(i));
+    void getRandomPlayer_NoneOnline() {
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            server.when(Bukkit::getOnlinePlayers).thenReturn(Collections.emptyList());
+            assertNull(PlayerUtils.getRandomPlayer());
         }
+    }
 
-        Set<Player> returnedPlayers = new HashSet<>();
-        for (int i = 0; i < 50; ++i) {
-            if (returnedPlayers.size() >= 5) {
-                break;
+    @Test
+    void getRandomPlayer() {
+        try (MockedStatic<Bukkit> server = Mockito.mockStatic(Bukkit.class)) {
+            List<Player> players = new ArrayList<>(10);
+            for (int i = 0; i < 10; ++i) {
+                Player player = createMockPlayer("Player_" + i);
+                players.add(player);
             }
 
-            returnedPlayers.add(PlayerUtils.getRandomPlayer());
-        }
+            server.when(Bukkit::getOnlinePlayers).thenReturn(players);
 
-        assertTrue(returnedPlayers.size() >= 5);
+            Set<Player> returnedPlayers = new HashSet<>();
+            for (int i = 0; i < 50; ++i) {
+                if (returnedPlayers.size() >= 5) {
+                    break;
+                }
+
+                returnedPlayers.add(PlayerUtils.getRandomPlayer());
+            }
+
+            assertTrue(returnedPlayers.size() >= 5);
+        }
     }
 
     @Test
     void giveItem() {
-        Player player = this.server.addPlayer();
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
 
-        PlayerUtils.giveItem(player, new ItemStack(Material.STONE));
-        assertTrue(player.getInventory().contains(Material.STONE, 1));
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
 
-        PlayerUtils.giveItem(player, new ItemStack(Material.GRASS_BLOCK), new ItemStack(Material.GRASS_BLOCK));
-        assertTrue(player.getInventory().contains(Material.GRASS_BLOCK, 2));
+        ItemStack itemToAdd = Mockito.mock(ItemStack.class);
 
-        PlayerUtils.giveItem(player, Arrays.asList(new ItemStack(Material.WHEAT_SEEDS), new ItemStack(Material.WHEAT_SEEDS)));
-        assertTrue(player.getInventory().contains(Material.WHEAT_SEEDS, 2));
+        PlayerUtils.giveItem(player, itemToAdd);
+        inventoryInOrder.verify(inventory).addItem(itemToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
     }
 
     @Test
-    void giveItemOnFullInventory() {
-        PlayerMock player = this.server.addPlayer();
+    void giveItem_Array() {
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
 
-        fillInventory(player);
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
 
-        int entityCount = this.server.getEntities().size();
-        PlayerUtils.giveItem(player, new ItemStack(Material.STONE));
-        assertEquals(entityCount + 1, this.server.getEntities().size());
+        ItemStack[] itemsToAdd = new ItemStack[] {Mockito.mock(ItemStack.class), Mockito.mock(ItemStack.class)};
 
-        entityCount = this.server.getEntities().size();
-        PlayerUtils.giveItem(player, new ItemStack(Material.GRASS_BLOCK), new ItemStack(Material.GRASS_BLOCK));
-        assertEquals(entityCount + 2, this.server.getEntities().size());
+        PlayerUtils.giveItem(player, itemsToAdd);
+        inventoryInOrder.verify(inventory).addItem(itemsToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
+    }
 
-        entityCount = this.server.getEntities().size();
-        PlayerUtils.giveItem(player, Arrays.asList(new ItemStack(Material.WHEAT_SEEDS), new ItemStack(Material.WHEAT_SEEDS), new ItemStack(Material.WHEAT_SEEDS)));
-        assertEquals(entityCount + 3, this.server.getEntities().size());
+    @Test
+    void giveItem_List() {
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
+
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
+
+        ItemStack[] itemsToAdd = new ItemStack[] {Mockito.mock(ItemStack.class), Mockito.mock(ItemStack.class)};
+
+        PlayerUtils.giveItem(player, Arrays.asList(itemsToAdd));
+        inventoryInOrder.verify(inventory).addItem(itemsToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
+    }
+
+    @Test
+    void giveItem_FullInventory() {
+        ItemStack itemToAdd = Mockito.mock(ItemStack.class);
+
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        Mockito.when(inventory.addItem(itemToAdd)).thenReturn(new HashMap<Integer, ItemStack>() {{
+            put(0, itemToAdd);
+        }});
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
+
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
+
+        World world = Mockito.mock(World.class);
+        InOrder worldInOrder = Mockito.inOrder(world);
+        Mockito.when(player.getWorld()).thenReturn(world);
+
+        PlayerUtils.giveItem(player, itemToAdd);
+
+        inventoryInOrder.verify(inventory).addItem(itemToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
+
+        worldInOrder.verify(world).dropItemNaturally(Mockito.any(), Mockito.eq(itemToAdd));
+        worldInOrder.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    void giveItem_FullInventory_Array() {
+        ItemStack[] itemsToAdd = new ItemStack[] {Mockito.mock(ItemStack.class), Mockito.mock(ItemStack.class)};
+
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        Mockito.when(inventory.addItem(Mockito.any())).thenReturn(new HashMap<Integer, ItemStack>() {{
+            put(0, itemsToAdd[0]);
+            put(1, itemsToAdd[1]);
+        }});
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
+
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
+
+        World world = Mockito.mock(World.class);
+        InOrder worldInOrder = Mockito.inOrder(world);
+        Mockito.when(player.getWorld()).thenReturn(world);
+
+        PlayerUtils.giveItem(player, itemsToAdd);
+        inventoryInOrder.verify(inventory).addItem(itemsToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
+
+        worldInOrder.verify(world).dropItemNaturally(Mockito.any(), Mockito.eq(itemsToAdd[0]));
+        worldInOrder.verify(world).dropItemNaturally(Mockito.any(), Mockito.eq(itemsToAdd[1]));
+        worldInOrder.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    void giveItem_FullInventory_List() {
+        ItemStack[] itemsToAdd = new ItemStack[] {Mockito.mock(ItemStack.class), Mockito.mock(ItemStack.class)};
+
+        PlayerInventory inventory = Mockito.mock(PlayerInventory.class);
+        Mockito.when(inventory.addItem(Mockito.any())).thenReturn(new HashMap<Integer, ItemStack>() {{
+            put(0, itemsToAdd[0]);
+            put(1, itemsToAdd[1]);
+        }});
+        InOrder inventoryInOrder = Mockito.inOrder(inventory);
+
+        Player player = createMockPlayer("Player");
+        Mockito.when(player.getInventory()).thenReturn(inventory);
+        Mockito.when(player.isOnline()).thenReturn(true);
+
+        World world = Mockito.mock(World.class);
+        InOrder worldInOrder = Mockito.inOrder(world);
+        Mockito.when(player.getWorld()).thenReturn(world);
+
+        PlayerUtils.giveItem(player, Arrays.asList(itemsToAdd));
+        inventoryInOrder.verify(inventory).addItem(itemsToAdd);
+        inventoryInOrder.verify(inventory, Mockito.never()).addItem(Mockito.any());
+
+        worldInOrder.verify(world).dropItemNaturally(Mockito.any(), Mockito.eq(itemsToAdd[0]));
+        worldInOrder.verify(world).dropItemNaturally(Mockito.any(), Mockito.eq(itemsToAdd[1]));
+        worldInOrder.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
     }
 
     @Disabled("Test is incomplete")
     @Test
     void getNumberFromPermission() {
-        Player player = this.server.addPlayer();
+        Player player = createMockPlayer("Player");
 
         assertEquals(-1, PlayerUtils.getNumberFromPermission(player, "example.plugin.feature", -1));
     }
 
-    private void fillInventory(Player player) {
-        ItemStack[] contents = new ItemStack[player.getInventory().getContents().length];
+    private Player createMockPlayer(String name) {
+        return createMockPlayer(name, name);
+    }
 
-        for (int i = 0; i < contents.length; ++i) {
-            contents[i] = new ItemStack(Material.BARRIER);
-        }
+    private Player createMockPlayer(String name, String displayName) {
+        Player player = Mockito.mock(Player.class);
+        Mockito.when(player.getName()).thenReturn(name);
+        Mockito.when(player.getDisplayName()).thenReturn(displayName);
 
-        player.getInventory().setContents(contents);
+        return player;
     }
 }

@@ -1,32 +1,44 @@
 package com.songoda.core.locale;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.MockPlugin;
 import com.songoda.core.http.MockHttpClient;
 import com.songoda.core.http.MockHttpResponse;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
-
+import java.util.Objects;
 
 class LocaleFileManagerTest {
     private final byte[] validIndexFile = ("# This is a comment\n\nen_US.lang\nen.yml\nde.txt\n").getBytes(StandardCharsets.UTF_8);
 
+    private File testDirectory;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        this.testDirectory = Files.createTempDirectory("SongodaCore-LocaleFileManagerTest").toFile();
+        this.testDirectory.deleteOnExit();
+    }
+
     @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
+    void tearDown() throws IOException {
+        for (File file : Objects.requireNonNull(this.testDirectory.listFiles())) {
+            Files.deleteIfExists(file.toPath());
+        }
+        Files.deleteIfExists(this.testDirectory.toPath());
     }
 
     @Test
     void downloadMissingTranslations_EmptyTargetDir() throws IOException {
-        MockBukkit.mock();
-        MockPlugin plugin = MockBukkit.createMockPlugin();
+        Plugin plugin = Mockito.mock(Plugin.class);
+        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectory);
 
         MockHttpClient httpClient = new MockHttpClient(new MockHttpResponse(200, this.validIndexFile));
         LocaleFileManager localeFileManager = new LocaleFileManager(httpClient, "test");
@@ -51,8 +63,8 @@ class LocaleFileManagerTest {
 
     @Test
     void downloadMissingTranslations() throws IOException {
-        MockBukkit.mock();
-        MockPlugin plugin = MockBukkit.createMockPlugin();
+        Plugin plugin = Mockito.mock(Plugin.class);
+        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectory);
 
         Files.createDirectories(plugin.getDataFolder().toPath());
         Files.createFile(new File(plugin.getDataFolder(), "en_US.lang").toPath());
