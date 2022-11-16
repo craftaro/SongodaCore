@@ -9,36 +9,41 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SongodaYamlConfigRoundtripTest {
-    Path cfg;
+    private Path testDirectoryPath;
 
     @BeforeEach
     void setUp() throws IOException {
-        Path path = Files.createTempFile("SongodaYamlConfigTest", "yml");
-        File file = path.toFile();
-        file.deleteOnExit();
-
-        this.cfg = path;
+        this.testDirectoryPath = Files.createTempDirectory("SongodaCore-YamlConfigRoundtripTest");
+        this.testDirectoryPath.toFile().deleteOnExit();
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.deleteIfExists(this.cfg);
+        try (Stream<Path> paths = Files.list(this.testDirectoryPath)) {
+            for (Path path : paths.toArray(Path[]::new)) {
+                Files.deleteIfExists(path);
+            }
+        }
+        Files.deleteIfExists(this.testDirectoryPath);
     }
 
     @Test
     void roundtripTest() throws IOException {
-        Files.write(this.cfg, ("# Don't touch this – it's used to track the version of the config.\n" +
+        Path testFilePath = this.testDirectoryPath.resolve("config.yml");
+
+        Files.write(testFilePath, ("# Don't touch this – it's used to track the version of the config.\n" +
                 "version: 1\n" +
                 "messages:\n" +
                 "  # This message is shown when the 'foo' command succeeds.\n" +
                 "  fooSuccess: Remastered success value\n" +
                 "# This is the range of the 'foo' command\n").getBytes());
 
-        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile())
+        SongodaYamlConfig cfg = new SongodaYamlConfig(testFilePath.toFile())
                 .withVersion(3);
 
         ConfigEntry cmdFooSuccess = cfg.createEntry("command.foo.success", "Default success value")
@@ -94,6 +99,6 @@ class SongodaYamlConfigRoundtripTest {
                 "# This is the incrementer of the 'foo' command\n" +
                 "incrementer: 0\n" +
                 "# This is the entry without an upgrade step\n" +
-                "entryWithoutUpgradeStep: Default value\n", new String(Files.readAllBytes(this.cfg)));
+                "entryWithoutUpgradeStep: Default value\n", new String(Files.readAllBytes(testFilePath)));
     }
 }

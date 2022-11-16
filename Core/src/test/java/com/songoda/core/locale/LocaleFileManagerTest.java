@@ -13,32 +13,35 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 class LocaleFileManagerTest {
     private final byte[] validIndexFile = ("# This is a comment\n\nen_US.lang\nen.yml\nde.txt\n").getBytes(StandardCharsets.UTF_8);
 
-    private File testDirectory;
+    private Path testDirectoryPath;
 
     @BeforeEach
     void setUp() throws IOException {
-        this.testDirectory = Files.createTempDirectory("SongodaCore-LocaleFileManagerTest").toFile();
-        this.testDirectory.deleteOnExit();
+        this.testDirectoryPath = Files.createTempDirectory("SongodaCore-LocaleFileManagerTest");
+        this.testDirectoryPath.toFile().deleteOnExit();
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        for (File file : Objects.requireNonNull(this.testDirectory.listFiles())) {
-            Files.deleteIfExists(file.toPath());
+        try (Stream<Path> paths = Files.list(this.testDirectoryPath)) {
+            for (Path path : paths.toArray(Path[]::new)) {
+                Files.deleteIfExists(path);
+            }
         }
-        Files.deleteIfExists(this.testDirectory.toPath());
+        Files.deleteIfExists(this.testDirectoryPath);
     }
 
     @Test
     void downloadMissingTranslations_EmptyTargetDir() throws IOException {
         Plugin plugin = Mockito.mock(Plugin.class);
-        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectory);
+        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectoryPath.toFile());
 
         MockHttpClient httpClient = new MockHttpClient(new MockHttpResponse(200, this.validIndexFile));
         LocaleFileManager localeFileManager = new LocaleFileManager(httpClient, "test");
@@ -64,7 +67,7 @@ class LocaleFileManagerTest {
     @Test
     void downloadMissingTranslations() throws IOException {
         Plugin plugin = Mockito.mock(Plugin.class);
-        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectory);
+        Mockito.when(plugin.getDataFolder()).thenReturn(this.testDirectoryPath.toFile());
 
         Files.createDirectories(plugin.getDataFolder().toPath());
         Files.createFile(new File(plugin.getDataFolder(), "en_US.lang").toPath());
