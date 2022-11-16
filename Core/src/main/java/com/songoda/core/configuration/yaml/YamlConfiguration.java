@@ -48,7 +48,7 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
         this.nodeComments = Objects.requireNonNull(nodeComments);
 
         this.yamlDumperOptions = createDefaultYamlDumperOptions();
-        this.yamlCommentRepresenter = new YamlCommentRepresenter(this.nodeComments);
+        this.yamlCommentRepresenter = new YamlCommentRepresenter(this.yamlDumperOptions, this.nodeComments);
         this.yaml = createDefaultYaml(this.yamlDumperOptions, this.yamlCommentRepresenter);
     }
 
@@ -275,6 +275,8 @@ public class YamlConfiguration implements IConfiguration, HeaderCommentable, Nod
 
     protected static DumperOptions createDefaultYamlDumperOptions() {
         DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setProcessComments(true);
+
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         dumperOptions.setIndentWithIndicator(true);
         dumperOptions.setIndicatorIndent(2);

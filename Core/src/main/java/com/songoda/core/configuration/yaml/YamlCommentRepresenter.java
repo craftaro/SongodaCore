@@ -1,5 +1,6 @@
 package com.songoda.core.configuration.yaml;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.events.CommentEvent;
@@ -16,7 +17,8 @@ import java.util.function.Supplier;
 public class YamlCommentRepresenter extends Representer {
     private final Map<String, Supplier<String>> nodeComments;
 
-    public YamlCommentRepresenter(Map<String, Supplier<String>> nodeComments) {
+    public YamlCommentRepresenter(DumperOptions dumperOptions, Map<String, Supplier<String>> nodeComments) {
+        super(dumperOptions);
         this.nodeComments = nodeComments;
     }
 
