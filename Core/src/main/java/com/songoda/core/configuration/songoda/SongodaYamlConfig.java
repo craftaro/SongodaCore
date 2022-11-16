@@ -227,7 +227,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
         }
 
         try {
-            Path targetPath = this.file.toPath().resolveSibling(this.file.getPath() + ".backup" + System.currentTimeMillis());
+            Path targetPath = this.file.toPath().resolveSibling(this.file.getPath() + ".backup-" + System.currentTimeMillis());
 
             Files.copy(
                     this.file.toPath(),
