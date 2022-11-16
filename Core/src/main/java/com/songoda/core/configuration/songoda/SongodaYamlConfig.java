@@ -183,6 +183,8 @@ public class SongodaYamlConfig extends YamlConfiguration {
             upgradeOldConfigVersionByOne();
         }
 
+        cleanValuesMap(this.values);
+
         return true;
     }
 

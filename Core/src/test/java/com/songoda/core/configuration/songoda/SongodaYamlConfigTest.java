@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -159,6 +161,33 @@ class SongodaYamlConfigTest {
         assertThrows(IllegalArgumentException.class, () -> cfg.createEntry("key", "other-value"));
 
         assertNull(entry.get());
+    }
+
+    @Test
+    void testVersionUpgradePersistsCommentsOnKeyChange() throws IOException {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile())
+                .withVersion(2);
+
+        cfg.createEntry("newKey", "value")
+                .withComment("This is a comment")
+                .withUpgradeStep(1, "oldKey");
+
+        cfg.load(new StringReader("version: 1\noldKey: old-value\n"));
+
+        assertNull(cfg.get("oldKey"));
+        assertNull(cfg.getNodeComment("oldKey"));
+
+        assertEquals("old-value", cfg.get("newKey"));
+        assertEquals("This is a comment", Objects.requireNonNull(cfg.getNodeComment("newKey")).get());
+
+        StringWriter writer = new StringWriter();
+        cfg.save(writer);
+
+        assertEquals("# Don't touch this – it's used to track the version of the config.\n" +
+                        "version: 2\n" +
+                        "# This is a comment\n" +
+                        "newKey: old-value\n",
+                writer.toString());
     }
 
     @Test
