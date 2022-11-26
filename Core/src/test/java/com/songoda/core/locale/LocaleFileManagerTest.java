@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -55,7 +57,8 @@ class LocaleFileManagerTest {
 
         String[] localeFiles = plugin.getDataFolder().list();
         Assertions.assertNotNull(localeFiles);
-        Assertions.assertArrayEquals(new String[] {"en.yml", "en_US.lang", "de.txt"}, localeFiles);
+        Arrays.sort(localeFiles);
+        Assertions.assertArrayEquals(new String[] {"de.txt", "en.yml", "en_US.lang"}, localeFiles);
 
         Assertions.assertSame(4, httpClient.callsOnGet.size());
         Assertions.assertTrue(httpClient.callsOnGet.get(0).contains("/test/_index.txt"));
@@ -85,7 +88,8 @@ class LocaleFileManagerTest {
         String[] localeFiles = plugin.getDataFolder().list();
 
         Assertions.assertNotNull(localeFiles);
-        Assertions.assertArrayEquals(new String[] {"en.yml", "en_US.lang", "fr.lang", "de.txt"}, localeFiles);
+        Arrays.sort(localeFiles);
+        Assertions.assertArrayEquals(new String[] {"de.txt", "en.yml", "en_US.lang", "fr.lang"}, localeFiles);
 
         Assertions.assertSame(3, httpClient.callsOnGet.size());
         Assertions.assertTrue(httpClient.callsOnGet.get(0).contains("/test/_index.txt"));
