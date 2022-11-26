@@ -63,7 +63,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
     /**
      * Calls {@link #load()} and then {@link #save()}.<br>
      * <br>
-     * As this is intered to keep the {@link org.bukkit.plugin.java.JavaPlugin#onEnable()} method clean,
+     * As this is intended to keep the {@link org.bukkit.plugin.java.JavaPlugin#onEnable()} method clean,
      * it catches all exceptions and logs them instead.<br>
      * <br>
      * If this method returns false, the plugins should be disabled.
