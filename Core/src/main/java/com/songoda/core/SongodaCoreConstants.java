@@ -6,6 +6,10 @@ package com.songoda.core;
  * that needs to be inside the final jar (might get lost when this lib is shaded into other projects).
  */
 public class SongodaCoreConstants {
+    private SongodaCoreConstants() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String getCoreVersion() {
         return "UNKNOWN_VESION";
     }
