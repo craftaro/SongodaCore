@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SongodaCore {
-    private final static Logger logger = Logger.getLogger("SongodaCore");
+    private static final Logger logger = Logger.getLogger("SongodaCore");
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -50,22 +50,22 @@ public class SongodaCore {
      * @deprecated The Core's version should be used instead as it uses Semantic Versioning
      */
     @Deprecated
-    private final static int coreRevision = 9;
+    private static final int coreRevision = 9;
 
     /**
      * @since coreRevision 6
      * @deprecated Is being replaced by {@link SongodaCoreConstants#getCoreVersion()} which is automatically kept up to date.
      */
     @Deprecated
-    private final static String coreVersion = SongodaCoreConstants.getCoreVersion();
+    private static final String coreVersion = SongodaCoreConstants.getCoreVersion();
 
     /**
      * This is specific to the website api
      */
     @Deprecated
-    private final static int updaterVersion = 1;
+    private static final int updaterVersion = 1;
 
-    private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
+    private static final Set<PluginInfo> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE = null;
 
