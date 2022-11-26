@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 // TODO: Allow registering load-Listeners
 // TODO: Provide method to only save if changed
 public class SongodaYamlConfig extends YamlConfiguration {
-    protected static final String cannotCreateBackupCopyExceptionPrefix = "Unable to create backup copy of config file: ";
+    protected static final String CANNOT_CREATE_BACKUP_COPY_EXCEPTION_PREFIX = "Unable to create backup copy of config file: ";
 
     public final @NotNull File file;
     protected final @NotNull Logger logger;
@@ -239,7 +239,7 @@ public class SongodaYamlConfig extends YamlConfiguration {
 
             this.logger.info("Created backup copy of config file '" + this.file.getPath() + "' to '" + targetPath + "'");
         } catch (IOException ex) {
-            throw new IOException(cannotCreateBackupCopyExceptionPrefix + this.file.getPath(), ex);
+            throw new IOException(CANNOT_CREATE_BACKUP_COPY_EXCEPTION_PREFIX + this.file.getPath(), ex);
         }
     }
 }
