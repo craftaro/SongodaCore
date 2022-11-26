@@ -5,6 +5,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated Horrible to maintain, and it gets worse with every new Minecraft version. Should be replaced with NMS
+ */
 @Deprecated
 public enum MethodMapping {
     MC_ITEM_STACK__GET_TAG("getTag", "getTag", "s", "t", "u"),

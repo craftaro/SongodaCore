@@ -61,6 +61,7 @@ public class SongodaCore {
 
     /**
      * This is specific to the website api
+     * @deprecated Seems useless and will probably be removed in the near future
      */
     @Deprecated
     private static final int updaterVersion = 1;
@@ -235,6 +236,9 @@ public class SongodaCore {
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
+    /**
+     * @deprecated Seems useless and will probably be replaced in the near future
+     */
     @Deprecated
     private void update(PluginInfo plugin) {
         try {
@@ -293,6 +297,9 @@ public class SongodaCore {
         return coreRevision;
     }
 
+    /**
+     * @deprecated Use {@link #getVersion()} instead
+     */
     @Deprecated
     public static String getCoreLibraryVersion() {
         return SongodaCoreConstants.getCoreVersion();
@@ -307,6 +314,10 @@ public class SongodaCore {
         return -1;
     }
 
+    /**
+     * @deprecated Seems useless and will probably be removed in the near future
+     */
+    @Deprecated
     public static int getUpdaterVersion() {
         return updaterVersion;
     }
