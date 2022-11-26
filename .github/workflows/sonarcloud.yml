@@ -36,9 +36,7 @@ jobs:
       - name: Analyze project
         if: ${{ env.SONAR_TOKEN != null }}
         run: >
-          mvn \
-            -B \
-            -DskipTests \
+          mvn -B \
             verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             "-Dsonar.projectKey=$SONAR_PROJECT_KEY"
