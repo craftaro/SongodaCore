@@ -130,10 +130,16 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <scope>compile</scope>
             <version>${project.version}</version>
             <artifactId>SongodaCore-NMS-v1_19_R1</artifactId>
             <groupId>${project.groupId}</groupId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <version>${project.version}</version>
+            <artifactId>SongodaCore-NMS-v1_19_R2</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

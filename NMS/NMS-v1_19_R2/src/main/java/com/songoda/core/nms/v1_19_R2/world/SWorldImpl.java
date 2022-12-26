@@ -1,4 +1,4 @@
-package com.songoda.core.nms.v1_19_R1.world;
+package com.songoda.core.nms.v1_19_R2.world;
 
 import com.songoda.core.nms.world.SWorld;
 import net.minecraft.core.BlockPos;
@@ -9,8 +9,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;
