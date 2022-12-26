@@ -48,6 +48,7 @@
         <module>NMS/NMS-v1_18_R2</module>
         <module>NMS/NMS-v1_19_R1</module>
         <module>NMS/NMS-v1_19_R1v2</module>
+        <module>NMS/NMS-v1_19_R2</module>
     </modules>
 
     <issueManagement>
