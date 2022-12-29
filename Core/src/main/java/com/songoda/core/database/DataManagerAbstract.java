@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 public class DataManagerAbstract {
     protected final DatabaseConnector databaseConnector;
     protected final Plugin plugin;
+    protected final DatabaseType type;
 
     protected final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
@@ -30,6 +31,7 @@ public class DataManagerAbstract {
     public DataManagerAbstract(DatabaseConnector databaseConnector, Plugin plugin) {
         this.databaseConnector = databaseConnector;
         this.plugin = plugin;
+        this.type = databaseConnector.getType();
     }
 
     /**
@@ -195,5 +197,12 @@ public class DataManagerAbstract {
                 callback.accept(true);
             });
         });
+    }
+
+    public String getSyntax(String string, DatabaseType type) {
+        if (this.type == type) {
+            return string;
+        }
+        return "";
     }
 }
