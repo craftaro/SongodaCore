@@ -1,19 +1,16 @@
 package com.songoda.core.hooks.protection;
 
-import com.plotsquared.core.PlotAPI;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class PlotSquaredProtection extends Protection {
-
-    PlotSquared plotSquared;
-
     public PlotSquaredProtection(Plugin plugin) {
         super(plugin);
-        plotSquared = PlotSquared.get();
     }
 
     @Override
@@ -23,21 +20,51 @@ public class PlotSquaredProtection extends Protection {
 
     @Override
     public boolean isEnabled() {
-        return plotSquared != null;
+        return Bukkit.getPluginManager().isPluginEnabled("PlotSquared");
     }
 
     @Override
     public boolean canPlace(Player player, Location location) {
-        return plotSquared.getPlotAreaManager().getApplicablePlotArea(com.plotsquared.core.location.Location.at(location.getWorld().getName(), (int) location.getX(), (int) location.getY(), (int) location.getZ())).getPlots().stream().anyMatch(p -> p.isAdded(player.getUniqueId()));
+        return isPlayerAddedAtPlotLocation(player, location);
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        return plotSquared.getPlotAreaManager().getApplicablePlotArea(com.plotsquared.core.location.Location.at(location.getWorld().getName(), (int) location.getX(), (int) location.getY(), (int) location.getZ())).getPlots().stream().anyMatch(p -> p.isAdded(player.getUniqueId()));
+        return isPlayerAddedAtPlotLocation(player, location);
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return plotSquared.getPlotAreaManager().getApplicablePlotArea(com.plotsquared.core.location.Location.at(location.getWorld().getName(), (int) location.getX(), (int) location.getY(), (int) location.getZ())).getPlots().stream().anyMatch(p -> p.isAdded(player.getUniqueId()));
+        return isPlayerAddedAtPlotLocation(player, location);
+    }
+
+    private boolean isPlayerAddedAtPlotLocation(Player player, Location location) {
+        PlotArea plotArea = getApplicablePlotArea(location);
+        if (plotArea == null) {
+            return true;
+        }
+
+        for (Plot p : plotArea.getPlots()) {
+            if (p.isAdded(player.getUniqueId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private PlotArea getApplicablePlotArea(Location location) {
+        return PlotSquared.get()
+                .getPlotAreaManager()
+                .getApplicablePlotArea(getPlotSquaredLocation(location));
+    }
+
+    private com.plotsquared.core.location.Location getPlotSquaredLocation(Location location) {
+        return com.plotsquared.core.location.Location.at(
+                location.getWorld().getName(),
+                (int) location.getX(),
+                (int) location.getY(),
+                (int) location.getZ()
+        );
     }
 }
