@@ -129,7 +129,7 @@ public class NmsManager {
                 world = new com.songoda.core.nms.v1_18_R2.world.WorldCoreImpl();
                 break;
             case "v1_19_R1":
-                if (bukkitVersion.endsWith(".0")) {
+                if (bukkitVersion.endsWith(".0") || bukkitVersion.equals("1.19")) {
                     player = new com.songoda.core.nms.v1_19_R1.entity.NMSPlayerImpl();
                     anvil = new com.songoda.core.nms.v1_19_R1.anvil.AnvilCore();
                     nbt = new com.songoda.core.nms.v1_19_R1.nbt.NBTCoreImpl();
