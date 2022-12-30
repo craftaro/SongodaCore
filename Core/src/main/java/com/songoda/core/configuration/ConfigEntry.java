@@ -34,6 +34,9 @@ public interface ConfigEntry {
 
     void setDefaultValue(@Nullable Object defaultValue);
 
+    @Contract("_ -> this")
+    ConfigEntry withDefaultValue(@Nullable Object defaultValue);
+
     /**
      * @see #withComment(Supplier)
      */

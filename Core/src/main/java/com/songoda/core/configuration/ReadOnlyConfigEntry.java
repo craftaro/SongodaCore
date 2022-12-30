@@ -42,6 +42,12 @@ public class ReadOnlyConfigEntry implements ConfigEntry {
 
     @Override
     @Contract("_ -> fail")
+    public ConfigEntry withDefaultValue(@Nullable Object defaultValue) {
+        throw new UnsupportedOperationException("Cannot set defaultValue on a read-only config entry");
+    }
+
+    @Override
+    @Contract("_ -> fail")
     public ConfigEntry withComment(Supplier<String> comment) {
         throw new UnsupportedOperationException("Cannot set comment on a read-only config entry");
     }
