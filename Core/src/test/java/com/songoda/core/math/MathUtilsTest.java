@@ -2,16 +2,19 @@ package com.songoda.core.math;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MathUtilsTest {
     private final String warningMessage = "MathTest";
-    private final String warningMessageExpectedStart = warningMessage + " ";
+    private final String warningMessageExpectedStart = this.warningMessage + " ";
 
     @Test
     void eval() {
+        assertEquals(0, MathUtils.eval("0"));
+        assertEquals(10, MathUtils.eval("10"));
+        assertEquals(0.0, MathUtils.eval("0.0"));
+        assertEquals(10.5, MathUtils.eval("10.5"));
+
         assertEquals(10.5 + 4, MathUtils.eval("10.5 + 4"));
         assertEquals(10.5 - 5, MathUtils.eval("10.5 - 5"));
         assertEquals(10 * 4, MathUtils.eval("10 * 4"));
@@ -33,28 +36,28 @@ class MathUtilsTest {
 
     @Test
     void evalWithCommaAsDecimalSeparator() {
-        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("1,0", warningMessage));
+        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("1,0", this.warningMessage));
 
-        assertTrue(ex.getMessage().startsWith(warningMessageExpectedStart),
-                () -> "'" + ex.getMessage() + "' does not start with '" + warningMessageExpectedStart + "'");
+        assertTrue(ex.getMessage().startsWith(this.warningMessageExpectedStart),
+                () -> "'" + ex.getMessage() + "' does not start with '" + this.warningMessageExpectedStart + "'");
         assertTrue(ex.getMessage().contains("Unexpected: "));
     }
 
     @Test
     void evalWithUnsupportedSyntax() {
-        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("!2", warningMessage));
+        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("!2", this.warningMessage));
 
-        assertTrue(ex.getMessage().startsWith(warningMessageExpectedStart),
-                () -> "'" + ex.getMessage() + "' does not start with '" + warningMessageExpectedStart + "'");
+        assertTrue(ex.getMessage().startsWith(this.warningMessageExpectedStart),
+                () -> "'" + ex.getMessage() + "' does not start with '" + this.warningMessageExpectedStart + "'");
         assertTrue(ex.getMessage().contains("Unexpected: "));
     }
 
     @Test
     void evalWithUnsupportedFunction() {
-        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("acos(90)", warningMessage));
+        Exception ex = assertThrowsExactly(RuntimeException.class, () -> MathUtils.eval("acos(90)", this.warningMessage));
 
-        assertTrue(ex.getMessage().startsWith(warningMessageExpectedStart),
-                () -> "'" + ex.getMessage() + "' does not start with '" + warningMessageExpectedStart + "'");
+        assertTrue(ex.getMessage().startsWith(this.warningMessageExpectedStart),
+                () -> "'" + ex.getMessage() + "' does not start with '" + this.warningMessageExpectedStart + "'");
         assertTrue(ex.getMessage().contains("Unknown function: "));
     }
 }
