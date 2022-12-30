@@ -79,8 +79,8 @@ public class SongodaYamlConfig extends YamlConfiguration {
             this.save();
 
             return true;
-        } catch (IOException e) {
-            this.logger.log(Level.SEVERE, "Failed to load config file: " + this.file.getPath(), e);
+        } catch (IOException ex) {
+            this.logger.log(Level.SEVERE, "Failed to load config file: " + this.file.getPath(), ex);
         }
 
         return false;
@@ -134,8 +134,8 @@ public class SongodaYamlConfig extends YamlConfiguration {
         try (Reader reader = new FileReader(this.file)) {
             load(reader);
         } catch (FileNotFoundException ignore) {
-        } catch (IOException e) {
-            throw new IOException("Unable to load '" + this.file.getPath() + "'", e);
+        } catch (IOException ex) {
+            throw new IOException("Unable to load '" + this.file.getPath() + "'", ex);
         }
     }
 
@@ -144,8 +144,8 @@ public class SongodaYamlConfig extends YamlConfiguration {
 
         try (Writer writer = new FileWriter(this.file)) {
             super.save(writer);
-        } catch (IOException e) {
-            throw new IOException("Unable to save '" + this.file.getPath() + "'", e);
+        } catch (IOException ex) {
+            throw new IOException("Unable to save '" + this.file.getPath() + "'", ex);
         }
     }
 

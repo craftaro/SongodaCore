@@ -67,7 +67,7 @@ public interface ConfigEntry {
      * @param valueConverter    A function that converts the old version's value to a new one, or null if it didn't change
      */
     @Contract("_, null, null -> fail; _, _, _ -> this")
-    ConfigEntry withUpgradeStep(int version, @Nullable String keyInGivenVersion, @Nullable Function<Object, Object> valueConverter);
+    ConfigEntry withUpgradeStep(int version, @Nullable String keyInGivenVersion, @Nullable Function<@Nullable Object, @Nullable Object> valueConverter);
 
     default @Nullable String getString() {
         return getStringOr(null);

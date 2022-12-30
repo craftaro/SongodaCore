@@ -51,7 +51,7 @@ public class YamlConfigEntry implements WriteableConfigEntry {
     }
 
     @Override
-    public ConfigEntry withUpgradeStep(int version, @Nullable String keyInGivenVersion, @Nullable Function<Object, Object> valueConverter) {
+    public ConfigEntry withUpgradeStep(int version, @Nullable String keyInGivenVersion, @Nullable Function<@Nullable Object, @Nullable Object> valueConverter) {
         if (keyInGivenVersion == null && valueConverter == null) {
             throw new IllegalArgumentException("You must provide either a key or a value converter");
         }
