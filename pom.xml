@@ -80,8 +80,9 @@
 
             <!-- Plugins required for tests or coverage reports -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M6</version>
 
                 <configuration>
                     <environmentVariables>
@@ -91,8 +92,9 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.0.0-M6</version>
             </plugin>
 
             <plugin>
@@ -120,13 +122,23 @@
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
-                <version>1.7.5</version>
+                <version>1.10.3</version>
+
+                <configuration>
+                    <targetClasses>
+                        <param>com.songoda.core.*</param>
+                    </targetClasses>
+
+                    <excludedTestClasses>
+                        <excludedTestClass>com.songoda.core.SongodaCoreConstantsTest</excludedTestClass>
+                    </excludedTestClasses>
+                </configuration>
 
                 <dependencies>
                     <dependency>
                         <groupId>org.pitest</groupId>
                         <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>0.14</version>
+                        <version>1.1.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -203,22 +215,15 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.9.0</version>
+            <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
-            <version>4.9.0</version>
+            <version>4.11.0</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-maven</artifactId>
-            <version>1.9.5</version>
-            <type>maven-plugin</type>
         </dependency>
     </dependencies>
 </project>
