@@ -4,6 +4,7 @@ import com.songoda.core.configuration.ConfigEntry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +37,8 @@ class SongodaYamlConfigTest {
         try (Stream<Path> stream = Files.walk(this.tmpDir)) {
             stream
                     .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile).forEach(File::delete);
+                    .map(Path::toFile)
+                    .forEach(File::delete);
         }
     }
 
@@ -92,6 +96,17 @@ class SongodaYamlConfigTest {
                         "version: 2\n",
                 new String(Files.readAllBytes(this.cfg))
         );
+    }
+
+    @Test
+    void testWithZeroVersion() throws IOException {
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile());
+        cfg.withVersion("version-key", 0, null);
+
+        assertEquals(0, cfg.get("version-key"));
+
+        cfg.save();
+        assertEquals("version-key: 0\n", new String(Files.readAllBytes(this.cfg)));
     }
 
     @Test
@@ -212,5 +227,20 @@ class SongodaYamlConfigTest {
 
         entry.set("new-value");
         assertEquals("new-value", readOnlyConfigEntry.get());
+    }
+
+    @Test
+    void testInit_Failure() {
+        assertTrue(this.cfg.toFile().setWritable(false));
+
+        Logger mockLogger = Mockito.mock(Logger.class);
+        SongodaYamlConfig cfg = new SongodaYamlConfig(this.cfg.toFile(), mockLogger);
+
+        cfg.createEntry("key", "default-value");
+
+        assertFalse(cfg.init());
+        Mockito.verify(mockLogger).log(Mockito.eq(Level.SEVERE), Mockito.anyString(), Mockito.any(IOException.class));
+
+        assertTrue(this.cfg.toFile().setWritable(true));
     }
 }

@@ -28,4 +28,22 @@ public class ReadOnlyConfigEntryTest {
         assertNull(entry.getDefaultValue());
         assertNull(entry.getUpgradeSteps());
     }
+
+    @Test
+    void testWritingMethodsDoingNothing() {
+        YamlConfiguration config = new YamlConfiguration();
+        ConfigEntry entry = new ReadOnlyConfigEntry(config, "key");
+
+        assertThrows(UnsupportedOperationException.class, () -> entry.setDefaultValue("value"));
+        assertThrows(UnsupportedOperationException.class, () -> entry.withDefaultValue("value"));
+        assertThrows(UnsupportedOperationException.class, () -> entry.withComment("A comment."));
+        assertThrows(UnsupportedOperationException.class, () -> entry.withUpgradeStep(0, "old-key"));
+        assertThrows(UnsupportedOperationException.class, () -> entry.set("value"));
+
+        assertNull(entry.getDefaultValue());
+        assertNull(entry.getUpgradeSteps());
+        assertNull(config.getNodeComment("key"));
+        assertNull(entry.getUpgradeSteps());
+        assertNull(entry.get());
+    }
 }

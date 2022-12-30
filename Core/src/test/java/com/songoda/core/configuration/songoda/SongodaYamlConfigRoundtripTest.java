@@ -5,7 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +45,8 @@ class SongodaYamlConfigRoundtripTest {
         SongodaYamlConfig cfg = new SongodaYamlConfig(testFilePath.toFile())
                 .withVersion(3);
 
-        ConfigEntry cmdFooSuccess = cfg.createEntry("command.foo.success", "Default success value")
+        ConfigEntry cmdFooSuccess = cfg.createEntry("command.foo.success")
+                .withDefaultValue("Default success value")
                 .withComment("This message is shown when the 'foo' command succeeds.")
                 .withUpgradeStep(1, "messages.fooSuccess");
         ConfigEntry range = cfg.createEntry("range")
@@ -69,7 +69,8 @@ class SongodaYamlConfigRoundtripTest {
                     return (int) o + 1;
                 })
                 .withUpgradeStep(3, null, (o) -> "text");
-        ConfigEntry entryWithoutUpgradeStep = cfg.createEntry("entryWithoutUpgradeStep", "Default value")
+        ConfigEntry entryWithoutUpgradeStep = cfg.createEntry("entryWithoutUpgradeStep")
+                .withDefaultValue("Default value")
                 .withComment("This is the entry without an upgrade step");
 
         assertTrue(cfg.init());

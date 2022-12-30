@@ -3,6 +3,7 @@ package com.songoda.core.configuration.yaml;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.ConfigEntry;
 import com.songoda.core.configuration.songoda.SongodaYamlConfig;
+import com.songoda.ultimatestacker.core.configuration.Config;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YamlConfigEntryTest {
+    @Test
+    void testHas() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("key-2", "value-2");
+
+        ConfigEntry entry1 = new YamlConfigEntry(config, "key-1", null);
+        ConfigEntry entry2 = new YamlConfigEntry(config, "key-2", null);
+
+        assertFalse(entry1.has());
+        assertTrue(entry2.has());
+    }
+
     @Test
     void testGetKey() {
         ConfigEntry entry = new YamlConfigEntry(new YamlConfiguration(), "key-1", null);
@@ -42,6 +55,9 @@ class YamlConfigEntryTest {
 
         entry.setDefaultValue("new-value");
         assertEquals("new-value", entry.getDefaultValue());
+
+        entry.withDefaultValue("new-value-2");
+        assertEquals("new-value-2", entry.getDefaultValue());
     }
 
     @Test
@@ -235,5 +251,8 @@ class YamlConfigEntryTest {
         other = new YamlConfigEntry(cfg, "key2", "value2");
         assertNotEquals(entry, other);
         assertNotEquals(entry.hashCode(), other.hashCode());
+
+        assertNotEquals(entry, null);
+        assertNotEquals(entry, "key");
     }
 }
