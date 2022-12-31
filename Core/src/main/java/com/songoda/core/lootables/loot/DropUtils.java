@@ -6,9 +6,12 @@ import com.songoda.ultimatestacker.UltimateStacker;
 import com.songoda.ultimatestacker.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.loot.LootTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +73,7 @@ public class DropUtils {
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
         if (SongodaCore.isRegistered("UltimateStacker")) {
             List<StackedItem> stacks = new ArrayList<>();
-            int maxSize = Settings.MAX_STACK_ITEMS.getInt();
+            int maxSize = Settings.MAX_STACK_ITEMS.getInt()-64;
             for (ItemStack item : items) {
                 StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).findFirst().orElse(null);
                 if (stack == null) {
@@ -91,9 +94,7 @@ public class DropUtils {
             });
             return;
         }
-        for (ItemStack item : items) {
-            event.getDrops().add(item);
-        }
+        event.getDrops().addAll(items);
     }
 
     private static void runCommands(LivingEntity entity, List<String> commands) {
