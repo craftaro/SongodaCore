@@ -8,8 +8,6 @@ import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
-import com.songoda.core.core.SongodaCoreIPCommand;
-import com.songoda.core.core.SongodaCoreSetAPIKeyCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,20 +24,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,7 +67,6 @@ public class SongodaCore {
     private CommandManager commandManager;
     private EventListener loginListener;
     private ShadedEventListener shadingListener;
-    private static String apiKey;
 
     public static boolean hasShading() {
         // sneaky hack to check the package name since maven tries to re-shade all references to the package string
@@ -182,7 +172,7 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreIPCommand(), new SongodaCoreSetAPIKeyCommand());
+                .addSubCommand(new SongodaCoreDiagCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
 
@@ -196,82 +186,6 @@ public class SongodaCore {
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
                         CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
                 20 * 60 * 2));
-    }
-
-    private boolean checkAPIKey() {
-        String currentDir = System.getProperty("user.dir");
-        File tokenFile = new File(currentDir).getParentFile().toPath().resolve(".songoda-marketplace.key").toFile();
-        if (!tokenFile.exists()) {
-            return false;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(tokenFile))) {
-            String token = reader.readLine();
-            if (token == null || token.isEmpty()) {
-                return false;
-            }
-            token = token;
-            return true;
-        } catch (IOException ex) {
-            return false;
-        }
-    }
-
-    public static void setAPIKey(String token) {
-        token = token;
-        //Save token to file
-        String currentDir = System.getProperty("user.dir");
-        File tokenFile = new File(currentDir).getParentFile().toPath().resolve(".songoda-marketplace.key").toFile();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tokenFile))) {
-            writer.write(token);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public String getAPIKey() {
-        return apiKey;
-    }
-
-    public static boolean hasAPIKey() {
-        return apiKey != null;
-    }
-
-    private boolean checkPluginAccess(int id, String name) {
-        //No need to check Ultimate series since they are all free
-        if (name.toLowerCase().startsWith("ultimate")) {
-            return true;
-        }
-        if (!hasAPIKey()) {
-            return false;
-        }
-        try {
-            URL url = new URL("https://marketplace.songoda.com/api/v2/products/license/validate");
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-            String jsonInputString = "{\"product_id\":" + id + ",\"license\":\"" + apiKey + "\"}";
-            try(OutputStream os = con.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            try(BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-                return response.toString().contains("true");
-            }
-
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Error checking plugin access for " + name);
-        }
-        return true;
     }
 
     /**
@@ -296,15 +210,6 @@ public class SongodaCore {
     private ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
-        if(!checkPluginAccess(pluginID, plugin.getName())) {
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
-            if (hasAPIKey()) {
-                logger.log(Level.WARNING, "You do not have access to " + plugin.getName() + " on this server. Please check your license key.");
-            } else {
-                logger.log(Level.WARNING, "You do not have access to " + plugin.getName() + " on this server. Please set your license key.");
-            }
-            return;
-        }
         logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
 
