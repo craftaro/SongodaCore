@@ -73,6 +73,10 @@ class SongodaYamlConfigRoundtripTest {
                 .withDefaultValue("Default value")
                 .withComment("This is the entry without an upgrade step");
 
+        ConfigEntry entryWithCyrillic = cfg.createEntry("entryWithCyrillic")
+                .withDefaultValue("Кириллица")
+                .withComment("This is the entry with cyrillic characters");
+
         assertTrue(cfg.init());
 
         assertNull(cfg.get("messages.fooSuccess"));
@@ -89,6 +93,9 @@ class SongodaYamlConfigRoundtripTest {
         assertTrue(entryWithoutUpgradeStep.has());
         assertEquals(cfg.get("entryWithoutUpgradeStep"), entryWithoutUpgradeStep.get());
 
+        assertTrue(entryWithCyrillic.has());
+        assertEquals(cfg.get("entryWithCyrillic"), entryWithCyrillic.get());
+
         assertEquals("# Don't touch this – it's used to track the version of the config.\n" +
                 "version: 3\n" +
                 "command:\n" +
@@ -100,6 +107,8 @@ class SongodaYamlConfigRoundtripTest {
                 "# This is the incrementer of the 'foo' command\n" +
                 "incrementer: 0\n" +
                 "# This is the entry without an upgrade step\n" +
-                "entryWithoutUpgradeStep: Default value\n", new String(Files.readAllBytes(testFilePath)));
+                "entryWithoutUpgradeStep: Default value\n" +
+                "# This is the entry with cyrillic characters\n" +
+                "entryWithCyrillic: Кириллица\n", new String(Files.readAllBytes(testFilePath)));
     }
 }

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -45,7 +46,7 @@ public class LocaleFileManager {
                 throw new IOException("Failed to download language file " + languageFileName);  // TODO: Better exception
             }
 
-            try (Writer writer = new FileWriter(languageFile)) {
+            try (Writer writer = Files.newBufferedWriter(languageFile.toPath(), StandardCharsets.UTF_8)) {
                 writer.write(languageFileContents);
             }
 
