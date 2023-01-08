@@ -12,10 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -166,7 +166,7 @@ public class LootManager {
 
                 try {
                     Gson gson = new Gson();
-                    JsonReader reader = new JsonReader(new FileReader(file.getPath()));
+                    JsonReader reader = new JsonReader(Files.newBufferedReader(file.toPath()));
 
                     Lootable lootable = gson.fromJson(reader, Lootable.class);
 
@@ -195,7 +195,7 @@ public class LootManager {
                     continue;
                 }
 
-                try (Writer writer = new FileWriter(file.getPath())) {
+                try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     gson.toJson(lootable, writer);
                 }
