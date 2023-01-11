@@ -4,6 +4,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
+import com.songoda.core.utils.SongodaAuth;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -87,6 +88,24 @@ public abstract class SongodaPlugin extends JavaPlugin {
         if (emergencyStop) {
             setEnabled(false);
 
+            return;
+        }
+
+        //Check plugin access, don't load plugin if user don't have access
+        if (!SongodaAuth.isAuthorized(true)) {
+            Thread thread = new Thread(() -> {
+                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                console.sendMessage(ChatColor.RED + "You do not have access to this plugin.");
+                console.sendMessage(ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace");
+                console.sendMessage(ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses");
+                console.sendMessage(ChatColor.YELLOW + "License setup steps:");
+                console.sendMessage(ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'");
+                console.sendMessage(ChatColor.YELLOW + "Copy the following ip and uuid and click create.");
+                console.sendMessage(ChatColor.YELLOW + "IP: " + SongodaAuth.getIP());
+                console.sendMessage(ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID());
+                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            });
+            thread.start();
             return;
         }
 

@@ -8,6 +8,8 @@ import com.songoda.core.core.PluginInfo;
 import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
+import com.songoda.core.core.SongodaCoreIPCommand;
+import com.songoda.core.core.SongodaCoreUUIDCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -172,7 +174,7 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommand(new SongodaCoreDiagCommand());
+                .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreIPCommand(), new SongodaCoreUUIDCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
 
