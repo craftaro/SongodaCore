@@ -32,6 +32,13 @@ import java.util.UUID;
 public class SongodaAuth {
 
     public static boolean isAuthorized(boolean allowOffline) {
+        String productId = "%%__PLUGIN__%%";
+        try {
+            Integer.parseInt(productId);
+        } catch (NumberFormatException e) {
+            //Self compiled, return true
+            return true;
+        }
         UUID uuid = getUUID();
         try {
             URL url = new URL("https://marketplace.songoda.com/api/v2/products/license/validate");
@@ -40,7 +47,7 @@ public class SongodaAuth {
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
-            String jsonInputString = "{\"product_id\":" + "%%__PLUGIN__%%" + ",\"license\":\"" + uuid + "\",\"user_id\":\"%%__USER__%%\"}";
+            String jsonInputString = "{\"product_id\":" + productId + ",\"license\":\"" + uuid + "\",\"user_id\":\"%%__USER__%%\"}";
             try(OutputStream os = con.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
@@ -67,7 +74,7 @@ public class SongodaAuth {
     }
 
     public static UUID getUUID() {
-        File serverProperties = new File(Bukkit.getWorldContainer(),"server.properties");
+        File serverProperties = new File(new File("."),"server.properties");
         Properties prop = new Properties();
         try {
             prop.load(new FileReader(serverProperties));
@@ -81,7 +88,7 @@ public class SongodaAuth {
                 return UUID.fromString(uuid);
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Could not fetch UUID from server.properties", ex);
+            throw new RuntimeException("Could not fetch UUID for server", ex);
         }
     }
 

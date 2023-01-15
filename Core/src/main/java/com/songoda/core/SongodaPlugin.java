@@ -106,6 +106,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             });
             thread.start();
+            emergencyStop();
             return;
         }
 
