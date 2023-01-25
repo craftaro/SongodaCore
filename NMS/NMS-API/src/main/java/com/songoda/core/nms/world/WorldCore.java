@@ -18,7 +18,7 @@ public interface WorldCore {
 
     SWorld getWorld(World world);
 
-    BBaseSpawner getBaseSpawner(CreatureSpawner spawner) throws NoSuchFieldException, IllegalAccessException;
+    BBaseSpawner getBaseSpawner(CreatureSpawner spawner) throws ReflectiveOperationException;
 
     /**
      * Performs random ticks on a specific chunks.
@@ -28,7 +28,7 @@ public interface WorldCore {
      * @param bukkitChunk The chunk to tick
      * @param tickAmount  The number of blocks to tick per ChunkSection, normally referred to as <code>randomTickSpeed</code>
      */
-    void randomTickChunk(Chunk bukkitChunk, int tickAmount) throws NoSuchFieldException, IllegalAccessException;
+    void randomTickChunk(Chunk bukkitChunk, int tickAmount) throws ReflectiveOperationException;
 
     /**
      * Ticks all inactive spawners in a specific chunk ignoring the minimum required players within a specific range.<br>
@@ -37,7 +37,7 @@ public interface WorldCore {
      * @param chunk  The chunk to tick the spawners in
      * @param amount The amount of ticks to execute for each spawner
      */
-    default void tickInactiveSpawners(Chunk chunk, int amount) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException {
+    default void tickInactiveSpawners(Chunk chunk, int amount) throws ReflectiveOperationException {
         if (amount <= 0) return;
 
         for (BlockState tileEntity : chunk.getTileEntities()) {

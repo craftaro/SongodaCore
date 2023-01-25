@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -82,6 +83,7 @@ public class ItemUtils {
     }
 
     private static Method methodAsBukkitCopy, methodAsNMSCopy, methodA;
+    private static Object randomInstance;
 
     static {
         try {
@@ -90,17 +92,20 @@ public class ItemUtils {
             Class<?> clazzCraftItemStack = ClassMapping.CRAFT_ITEM_STACK.getClazz();
 
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
-            methodAsNMSCopy = clazzCraftItemStack.getMethod("asNMSCopy", ItemStack.class);
+            methodAsNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(clazzCraftItemStack);
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
                 Class<?> clazzRandomSource = ClassMapping.RANDOM_SOURCE.getClazz();
                 methodA = clazzEnchantmentManager.getMethod("a", clazzRandomSource.getMethod("c").getReturnType(), clazzItemStack, int.class, boolean.class);
-            }else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+                randomInstance = ClassMapping.SINGLE_THREADED_RANDOM_SOURCE.getClazz().getConstructor(long.class).newInstance(ThreadLocalRandom.current().nextLong());
+            } else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
+                randomInstance = new Random();
             } else {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);
+                randomInstance = new Random();
             }
-        } catch (NoSuchMethodException ex) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace();
         }
     }
@@ -109,10 +114,12 @@ public class ItemUtils {
         try {
             Object nmsItemStack = methodAsNMSCopy.invoke(null, item);
 
-            if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
-                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level);
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
+                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level, false);
+            } else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level);
             } else {
-                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level, false);
+                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level, false);
             }
 
             item = (ItemStack) methodAsBukkitCopy.invoke(null, nmsItemStack);

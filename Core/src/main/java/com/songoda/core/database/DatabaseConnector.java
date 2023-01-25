@@ -31,4 +31,6 @@ public interface DatabaseConnector {
     }
 
     Connection getConnection();
+
+    DatabaseType getType();
 }

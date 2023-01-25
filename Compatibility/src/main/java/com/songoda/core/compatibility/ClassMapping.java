@@ -47,6 +47,7 @@ public enum ClassMapping {
     CRAFT_PLAYER("entity", "CraftPlayer"),
     CRAFT_WORLD("CraftWorld"),
 
+    SINGLE_THREADED_RANDOM_SOURCE("world.level.levelgen", "SingleThreadedRandomSource"),
     RANDOM_SOURCE("util", "RandomSource"),
     MOJANGSON_PARSER("nbt", "MojangsonParser");
 

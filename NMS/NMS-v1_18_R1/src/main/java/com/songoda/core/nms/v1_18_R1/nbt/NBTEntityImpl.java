@@ -24,6 +24,7 @@ public class NBTEntityImpl extends NBTCompoundImpl implements NBTEntity {
     @Override
     public org.bukkit.entity.Entity spawn(Location location) {
         String entityType = getNBTObject("entity_type").asString();
+        getKeys().remove("UUID");
 
         Optional<EntityTypes<?>> optionalEntity = EntityTypes.a(entityType);
         if (optionalEntity.isPresent()) {

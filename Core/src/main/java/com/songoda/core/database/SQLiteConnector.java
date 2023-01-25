@@ -42,16 +42,8 @@ public class SQLiteConnector implements DatabaseConnector {
     @Deprecated
     @Override
     public void connect(ConnectionCallback callback) {
-        if (this.connection == null) {
-            try {
-                this.connection = DriverManager.getConnection(this.connectionString);
-            } catch (SQLException ex) {
-                this.plugin.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
-            }
-        }
-
         try {
-            callback.accept(this.connection);
+            callback.accept(getConnection());
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing an SQLite query: " + ex.getMessage());
             ex.printStackTrace();
@@ -72,5 +64,10 @@ public class SQLiteConnector implements DatabaseConnector {
             ex.printStackTrace();
         }
         return this.connection;
+    }
+
+    @Override
+    public DatabaseType getType() {
+        return DatabaseType.SQLITE;
     }
 }

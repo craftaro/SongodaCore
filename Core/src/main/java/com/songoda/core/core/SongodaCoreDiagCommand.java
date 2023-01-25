@@ -20,7 +20,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
     private Field tpsField;
 
     public SongodaCoreDiagCommand() {
-        super(false, "diag");
+        super(CommandType.CONSOLE_OK, "diag");
 
         try {
             serverInstance = ClassMapping.MINECRAFT_SERVER.getClazz().getMethod("getServer").invoke(null);
