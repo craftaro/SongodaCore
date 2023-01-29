@@ -1,32 +1,23 @@
 package com.songoda.core;
 
-import com.songoda.core.configuration.Config;
-import com.songoda.core.database.DataManagerAbstract;
-import com.songoda.core.locale.Locale;
-import com.songoda.core.utils.Metrics;
-import com.songoda.core.utils.SongodaAuth;
+import co.aikar.commands.PaperCommandManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
-/**
- * REMINDER: When converting plugins to use this, REMOVE METRICS <br>
- * Must not have two instances of Metrics enabled!
- */
 public abstract class SongodaPlugin extends JavaPlugin {
-    protected Locale locale;
-    protected Config config = new Config(this);
-    protected long dataLoadDelay = 20L;
-
-    protected ConsoleCommandSender console = Bukkit.getConsoleSender();
-    private boolean emergencyStop = false;
 
     static {
         /* NBT-API */
@@ -34,226 +25,94 @@ public abstract class SongodaPlugin extends JavaPlugin {
         MinecraftVersion.disableUpdateCheck();
     }
 
-    public abstract void onPluginLoad();
+    private PaperCommandManager commandManager;
+    private BukkitAudiences adventure;
 
     public abstract void onPluginEnable();
-
     public abstract void onPluginDisable();
 
-    public abstract void onDataLoad();
-
-    /**
-     * Called after reloadConfig() is called
-     */
-    public abstract void onConfigReload();
-
-    /**
-     * Any other plugin configuration files used by the plugin.
-     *
-     * @return a list of Configs that are used in addition to the main config.
-     */
-    public abstract List<Config> getExtraConfig();
-
-    @Override
-    public FileConfiguration getConfig() {
-        return config.getFileConfig();
-    }
-
-    public Config getCoreConfig() {
-        return config;
-    }
-
-    @Override
-    public void reloadConfig() {
-        config.load();
-        onConfigReload();
-    }
-
-    @Override
-    public void saveConfig() {
-        config.save();
-    }
-
-    @Override
-    public final void onLoad() {
-        try {
-            onPluginLoad();
-        } catch (Throwable th) {
-            criticalErrorOnPluginStartup(th);
-        }
-    }
+    protected abstract int getPluginId();
+    protected abstract String getPluginIcon();
 
     @Override
     public final void onEnable() {
-        if (emergencyStop) {
-            setEnabled(false);
+        SongodaCore.getInstance().registerPlugin(this, getPluginId(), getPluginIcon());
 
-            return;
-        }
+        this.commandManager = new PaperCommandManager(this);
+        this.adventure = BukkitAudiences.create(this);
 
-        //Check plugin access, don't load plugin if user don't have access
-        if (!SongodaAuth.isAuthorized(true)) {
-            Thread thread = new Thread(() -> {
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                console.sendMessage(ChatColor.RED + "You do not have access to this plugin.");
-                console.sendMessage(ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace");
-                console.sendMessage(ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses");
-                console.sendMessage(ChatColor.YELLOW + "License setup steps:");
-                console.sendMessage(ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'");
-                console.sendMessage(ChatColor.YELLOW + "Copy the following ip and uuid and click create.");
-                console.sendMessage(ChatColor.YELLOW + "IP: " + SongodaAuth.getIP());
-                console.sendMessage(ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID());
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            });
-            thread.start();
-            emergencyStop();
-            return;
-        }
+        onPluginEnable();
+    }
 
-        console.sendMessage(" "); // blank line to separate chatter
-        console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
-                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
-        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
-                ChatColor.GREEN, "Enabling", ChatColor.GRAY));
-
+    /**
+     * Create a configuration file that does NOT update.
+     * @param file File to create.
+     * @return The configuration file created.
+     */
+    public YamlDocument createConfig(File file) {
         try {
-            locale = Locale.loadDefaultLocale(this, "en_US");
-
-            // plugin setup
-            onPluginEnable();
-
-            // Load Data.
-            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
-
-            if (emergencyStop) {
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                console.sendMessage(" ");
-                return;
-            }
-
-            // Start Metrics
-            Metrics.start(this);
-        } catch (Throwable th) {
-            criticalErrorOnPluginStartup(th);
-
-            console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            console.sendMessage(" ");
-
-            return;
+            return YamlDocument.create(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(" "); // blank line to separate chatter
+        return null;
+    }
+
+    /**
+     * Create a configuration file that automatically updates. Requires config-version to be defined.
+     * @param file File to create.
+     * @return The configuration file created.
+     */
+    public YamlDocument createUpdatingConfig(File file) {
+        try {
+            return YamlDocument.create(file, getResource(file.getName()),
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings.builder().setAutoUpdate(true).build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
     public final void onDisable() {
-        if (emergencyStop) {
-            return;
-        }
-
-        console.sendMessage(" "); // blank line to separate chatter
-        console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
-                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
-        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
-                ChatColor.RED, "Disabling", ChatColor.GRAY));
-
         onPluginDisable();
-
-        console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(" "); // blank line to separate chatter
-    }
-
-    public ConsoleCommandSender getConsole() {
-        return console;
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     /**
-     * Set the plugin's locale to a specific language
-     *
-     * @param localeName locale to use, eg "en_US"
-     * @param reload     optionally reload the loaded locale if the locale didn't
-     *                   change
-     *
-     * @return true if the locale exists and was loaded successfully
+     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
      */
-    public boolean setLocale(String localeName, boolean reload) {
-        if (locale != null && locale.getName().equals(localeName)) {
-            return !reload || locale.reloadMessages();
-        }
-
-        Locale l = Locale.loadLocale(this, localeName);
-        if (l != null) {
-            locale = l;
-            return true;
-        }
-
-        return false;
-    }
-
-    protected void shutdownDataManager(DataManagerAbstract dataManager) {
-        // 3 minutes is overkill, but we just want to make sure
-        shutdownDataManager(dataManager, 15, TimeUnit.MINUTES.toSeconds(3));
-    }
-
-    protected void shutdownDataManager(DataManagerAbstract dataManager, int reportInterval, long secondsUntilForceShutdown) {
-        dataManager.shutdownTaskQueue();
-
-        while (!dataManager.isTaskQueueTerminated() && secondsUntilForceShutdown > 0) {
-            long secondsToWait = Math.min(reportInterval, secondsUntilForceShutdown);
-
-            try {
-                if (dataManager.waitForShutdown(secondsToWait, TimeUnit.SECONDS)) {
-                    break;
-                }
-
-                getLogger().info(String.format("A DataManager is currently working on %d tasks... " +
-                                "We are giving him another %d seconds until we forcefully shut him down " +
-                                "(continuing to report in %d second intervals)",
-                        dataManager.getTaskQueueSize(), secondsUntilForceShutdown, reportInterval));
-            } catch (InterruptedException ignore) {
-            } finally {
-                secondsUntilForceShutdown -= secondsToWait;
-            }
-        }
-
-        if (!dataManager.isTaskQueueTerminated()) {
-            int unfinishedTasks = dataManager.forceShutdownTaskQueue().size();
-
-            if (unfinishedTasks > 0) {
-                getLogger().log(Level.WARNING,
-                        String.format("A DataManager has been forcefully terminated with %d unfinished tasks - " +
-                                "This can be a serious problem, please report it to us (Songoda)!", unfinishedTasks));
-            }
-        }
-    }
-
-    protected void emergencyStop() {
-        emergencyStop = true;
-
-        Bukkit.getPluginManager().disablePlugin(this);
+    @Deprecated
+    @Override
+    public @NotNull FileConfiguration getConfig() {
+        return super.getConfig();
     }
 
     /**
-     * Logs one or multiple errors that occurred during plugin startup and calls {@link #emergencyStop()} afterwards
-     *
-     * @param th The error(s) that occurred
+     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
      */
-    protected void criticalErrorOnPluginStartup(Throwable th) {
-        Bukkit.getLogger().log(Level.SEVERE,
-                String.format(
-                        "Unexpected error while loading %s v%s c%s: Disabling plugin!",
-                        getDescription().getName(),
-                        getDescription().getVersion(),
-                        SongodaCore.getCoreLibraryVersion()
-                ), th);
+    @Deprecated
+    @Override
+    public void reloadConfig() {
+    }
 
-        emergencyStop();
+    /**
+     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
+     */
+    @Deprecated
+    @Override
+    public void saveConfig() {
+    }
+
+    public PaperCommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public BukkitAudiences getAdventure() {
+        return adventure;
     }
 }

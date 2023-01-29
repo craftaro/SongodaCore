@@ -1,87 +1,81 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.gui.AnvilGui;
-import com.songoda.core.gui.Gui;
-import com.songoda.core.gui.GuiUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.songoda.core.SongodaCore;
 import com.songoda.core.lootables.loot.Loot;
 import com.songoda.core.lootables.loot.LootBuilder;
 import com.songoda.core.lootables.loot.LootManager;
 import com.songoda.core.lootables.loot.Lootable;
-import com.songoda.core.utils.TextUtils;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.PaginatedGui;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
 
-public class GuiLootableEditor extends Gui {
+import java.util.Optional;
+
+public class GuiLootableEditor {
     private final LootManager lootManager;
     private final Lootable lootable;
-    private final Gui returnGui;
+    private final Player player;
+    private final PaginatedGui returnGui;
+    private final Gui gui;
 
-    public GuiLootableEditor(LootManager lootManager, Lootable lootable, Gui returnGui) {
-        super(6);
-
+    public GuiLootableEditor(LootManager lootManager, Lootable lootable, Player player, PaginatedGui returnGui) {
         this.lootManager = lootManager;
         this.lootable = lootable;
         this.returnGui = returnGui;
+        this.player = player;
+        this.gui = Gui.gui()
+                .rows(6)
+                .title(Component.text("Lootables Editor"))
+                .disableAllInteractions()
+                .create();
 
-        setOnClose((event) ->
-                lootManager.saveLootables(false));
-        setDefaultItem(null);
-        setTitle("Lootables Editor");
-
-        paint();
+        open();
     }
 
-    private void paint() {
-        if (inventory != null) {
-            inventory.clear();
-        }
-
-        setActionForRange(0, 0, 5, 9, null);
-
-        setButton(0, GuiUtils.createButtonItem(CompatibleMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Loot")),
-                (event -> {
-                    AnvilGui gui = new AnvilGui(event.player, this);
-                    gui.setAction((event1 -> {
-                        try {
-                            lootable.registerLoot(new LootBuilder().setMaterial(CompatibleMaterial
-                                    .valueOf(gui.getInputText().trim().toUpperCase())).build());
-                        } catch (IllegalArgumentException ex) {
-                            event.player.sendMessage("That is not a valid material.");
+    private void open() {
+        gui.setCloseGuiAction(event -> lootManager.saveLootables(false));
+        gui.setItem(0, ItemBuilder.from(XMaterial.LIME_DYE.parseItem()).name(Component.text("Create new Loot", NamedTextColor.GREEN)).asGuiItem(event -> {
+            new AnvilGUI.Builder()
+                    .title("Enter a material")
+                    .itemLeft(XMaterial.PAPER.parseItem())
+                    .plugin(SongodaCore.getInstance())
+                    .onComplete((player, text) -> {
+                        Optional<XMaterial> material = XMaterial.matchXMaterial(text.trim().toUpperCase());
+                        if (material.isPresent()) {
+                            lootable.registerLoot(new LootBuilder().setMaterial(material.get()).build());
+                        } else {
+                            return AnvilGUI.Response.text("That is not a valid material.");
                         }
 
-                        event.player.closeInventory();
-                        paint();
-                    }));
+                        return AnvilGUI.Response.close();
+                    }).onClose(player -> new GuiLootableEditor(lootManager, lootable, player, returnGui)).open(player);
+        }));
 
-                    gui.setTitle("Enter a material");
-                    guiManager.showGUI(event.player, gui);
-                }));
-
-        setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
-                (event -> guiManager.showGUI(event.player, returnGui)));
+        gui.setItem(8, ItemBuilder.from(XMaterial.OAK_DOOR.parseItem()).name(Component.text("Back", NamedTextColor.RED)).asGuiItem(event -> {
+            returnGui.open(player);
+        }));
 
         int i = 9;
         for (Loot loot : lootable.getRegisteredLoot()) {
-            ItemStack item = loot.getMaterial() == null
-                    ? CompatibleMaterial.BARRIER.getItem()
-                    : GuiUtils.createButtonItem(loot.getMaterial(), null,
-                    TextUtils.formatText("&6Left click &7to edit"),
-                    TextUtils.formatText("&6Right click &7to destroy"));
+            gui.setItem(i, (loot.getMaterial() == null ? ItemBuilder.from(XMaterial.BARRIER.parseItem()) : ItemBuilder.from(loot.getMaterial().parseItem())
+                    .lore(Component.text("Left click", NamedTextColor.GOLD).append(Component.text(" to edit", NamedTextColor.GRAY)),
+                            Component.text("Right click", NamedTextColor.GOLD).append(Component.text(" to destroy", NamedTextColor.GRAY)))).asGuiItem(event -> {
+                           if (event.getClick() == ClickType.LEFT) {
+                               // TODO gui loot editor
+                               return;
+                           }
 
-            setButton(i, item,
-                    (event) -> {
-                        if (event.clickType == ClickType.RIGHT) {
-                            lootable.removeLoot(loot);
-                            paint();
-
-                            return;
-                        }
-
-                        if (event.clickType == ClickType.LEFT) {
-                            guiManager.showGUI(event.player, new GuiLootEditor(lootManager, loot, this));
-                        }
-                    });
+                           if (event.getClick() == ClickType.RIGHT) {
+                               lootable.removeLoot(loot);
+                               new GuiLootableEditor(lootManager, lootable, player, returnGui);
+                           }
+            }));
 
             i++;
         }

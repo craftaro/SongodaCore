@@ -2,32 +2,40 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
+        <artifactId>SongodaCore3</artifactId>
         <groupId>com.songoda</groupId>
-        <artifactId>SongodaCore-Modules</artifactId>
-        <version>2.6.18</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>SongodaCore</artifactId>
-    <packaging>jar</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>songodacore-core</artifactId>
 
     <build>
         <finalName>SongodaCore-${project.version}</finalName>
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <groupId>de.m3y.maven</groupId>
+                <artifactId>inject-maven-plugin</artifactId>
+                <version>1.3</version>
+
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+
+                        <goals>
+                            <goal>inject</goal>
+                        </goals>
+                    </execution>
+                </executions>
 
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-
-                    <release>${java.release}</release>
+                    <injections>
+                        <injection>
+                            <value>${project.version}</value>
+                            <pointCut>com.songoda.core.SongodaCoreConstants.getCoreVersion</pointCut>
+                        </injection>
+                    </injections>
                 </configuration>
             </plugin>
 
@@ -63,7 +71,20 @@
 
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
+
+                            <artifactSet>
+                                <includes>
+                                    <include>com.zaxxer:HikariCP</include>
+                                    <include>de.tr7zw:item-nbt-api</include>
+                                    <include>net.kyori:*</include>
+                                    <include>com.github.cryptomorin:XSeries</include>
+                                    <include>co.aikar:acf-paper</include>
+                                    <include>net.wesjd:anvilgui</include>
+                                    <include>dev.dejvokep:boosted-yaml-spigot</include>
+                                    <include>dev.triumphteam:triumph-gui</include>
+                                </includes>
+                            </artifactSet>
 
                             <relocations>
                                 <relocation>
@@ -77,412 +98,144 @@
                                 </relocation>
 
                                 <relocation>
-                                    <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.org.apache.commons</shadedPattern>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.net.kyori</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>dev.dejvokep.boostedyaml</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.dev.dejvokep.boostedyaml</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.com.cryptomorin.xseries</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>co.aikar.commands</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.co.aikar.commands</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>co.aikar.locales</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.co.aikar.locales</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>net.wesjd.anvilgui</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.net.wesjd.anvilgui</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>dev.triumphteam.gui</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.dev.triumphteam.gui</shadedPattern> <!-- Replace package here here -->
                                 </relocation>
                             </relocations>
 
-                            <artifactSet>
-                                <includes>
-                                    <include>com.songoda:*</include>
-                                    <include>com.zaxxer:HikariCP</include>
-                                    <include>org.apache.commons:commons-text</include>
-                                    <include>org.apache.commons:commons-lang3</include>
-                                    <include>de.tr7zw:item-nbt-api</include>
-                                </includes>
-                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>**/*.class</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-    </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.intellectualsites.bom</groupId>
-                <artifactId>bom-1.18.x</artifactId>
-                <version>1.18</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-Compatibility</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.21</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.11.1</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Need to include all NMS modules here -->
-        <!-- Note when adding a new module: include the class in NmsManager -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-API</artifactId>
-            <version>${project.version}</version>
+            <version>2.10.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_8_R1</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.11.0</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_8_R2</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.11.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.1.2</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_8_R3</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_9_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_9_R2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_10_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_11_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_12_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_13_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_13_R2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_14_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_15_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_16_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_16_R2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_16_R3</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_17_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_18_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_18_R2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_19_R1</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_19_R1v2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-v1_19_R2</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- End NMS -->
-
-        <!-- Start Plugin Hooks -->
-        <dependency>
-            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
-            <artifactId>holographicdisplays-api</artifactId>
-            <version>2.3.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sainttx</groupId>
-            <artifactId>Holograms</artifactId>
-            <version>2.13</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.Zrips</groupId>
-            <artifactId>CMI-API</artifactId>
-            <version>7.6.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.tnemc</groupId>
-            <artifactId>Reserve</artifactId>
-            <version>0.1.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.black_ixx</groupId>
-            <artifactId>PlayerPoints</artifactId>
-            <version>2.1.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>UltimateStacker</artifactId>
-            <version>2.3.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.bgsoftware</groupId>
-            <artifactId>wildstacker</artifactId>
-            <version>3.8.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.antiperson</groupId>
-            <artifactId>stackmob</artifactId>
-            <version>4-0-2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.Zrips</groupId>
-            <artifactId>Jobs</artifactId>
-            <version>v4.17.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.gmail.nossr50.mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>2.1.200</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net</groupId>
-            <artifactId>coreprotect</artifactId>
-            <version>2.17.5</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>me.ryanhamshire</groupId>
-            <artifactId>GriefPrevention</artifactId>
-            <version>16.16.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>me.angeschossen</groupId>
-            <artifactId>LandsAPI</artifactId>
-            <version>4.12.20</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>br.net.fabiozumbi12</groupId>
-            <artifactId>RedProtect</artifactId>
-            <version>7.7.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.plotsquared</groupId>
-            <artifactId>PlotSquared-Core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.plotsquared</groupId>
-            <artifactId>PlotSquared-Bukkit</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>PlotSquared-Core</artifactId>
-                    <groupId>*</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>UltimateClaims</artifactId>
-            <version>1.3.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.palmergames</groupId>
-            <artifactId>Towny</artifactId>
-            <version>0.96.5.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>world.bentobox</groupId>
-            <artifactId>bentobox</artifactId>
-            <version>1.15.5</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.Zrips</groupId>
-            <artifactId>Residence</artifactId>
-            <version>4.9.0.6</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.decentsoftware-eu</groupId>
-            <artifactId>decentholograms</artifactId>
-            <version>2.2.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- End Plugin Hooks -->
-
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.26</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.7.25</version>
         </dependency>
 
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.2.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.0.8</version>
+            <groupId>dev.dejvokep</groupId>
+            <artifactId>boosted-yaml-spigot</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.23.1</version>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>9.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.wesjd</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>1.5.3-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.triumphteam</groupId>
+            <artifactId>triumph-gui</artifactId>
+            <version>3.1.2</version>
         </dependency>
     </dependencies>
 </project>

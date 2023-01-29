@@ -1,0 +1,5 @@
+name: SongodaCore
+author: Songoda
+main: com.songoda.core.SongodaCore
+version: ${project.version}
+api-version: 1.13

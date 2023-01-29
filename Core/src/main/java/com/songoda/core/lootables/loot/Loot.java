@@ -1,20 +1,15 @@
 package com.songoda.core.lootables.loot;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.annotations.SerializedName;
-import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.utils.ItemUtils;
-import com.songoda.core.utils.TextUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Loot {
     // Command ran for this drop.
@@ -27,7 +22,7 @@ public class Loot {
 
     // Material used for this drop.
     @SerializedName("Type")
-    private CompatibleMaterial material;
+    private XMaterial material;
 
     // The override for the item name.
     @SerializedName("Name")
@@ -43,7 +38,7 @@ public class Loot {
 
     // Material used if entity died on fire.
     @SerializedName("Burned Type")
-    private CompatibleMaterial burnedMaterial = null;
+    private XMaterial burnedMaterial = null;
 
     // Chance that this drop will take place.
     @SerializedName("Chance")
@@ -94,11 +89,11 @@ public class Loot {
     // Should the entity be charged? (Only works on creepers)
     private boolean requireCharged = false;
 
-    public CompatibleMaterial getMaterial() {
+    public XMaterial getMaterial() {
         return material;
     }
 
-    public void setMaterial(CompatibleMaterial material) {
+    public void setMaterial(XMaterial material) {
         this.material = material;
     }
 
@@ -118,26 +113,34 @@ public class Loot {
         this.xp = xp;
     }
 
-    public String getName() {
-        return TextUtils.formatText(name);
+    public Component getName() {
+        return MiniMessage.miniMessage().deserialize(name);
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public List<String> getLore() {
+    public List<Component> getLore() {
         if (lore == null) {
             return null;
         }
 
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
 
         for (String line : this.lore) {
-            lore.add(TextUtils.formatText(line));
+            lore.add(MiniMessage.miniMessage().deserialize(line));
         }
 
         return lore;
+    }
+
+    public List<String> getRawLore() {
+        if (lore == null) {
+            return null;
+        }
+
+        return new ArrayList<>(lore);
     }
 
     public void setLore(List<String> lore) {
@@ -179,11 +182,11 @@ public class Loot {
         return enchants == null ? null : Collections.unmodifiableMap(enchants);
     }
 
-    public CompatibleMaterial getBurnedMaterial() {
+    public XMaterial getBurnedMaterial() {
         return burnedMaterial;
     }
 
-    public void setBurnedMaterial(CompatibleMaterial burnedMaterial) {
+    public void setBurnedMaterial(XMaterial burnedMaterial) {
         this.burnedMaterial = burnedMaterial;
     }
 

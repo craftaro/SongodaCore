@@ -5,120 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.songoda</groupId>
-    <artifactId>SongodaCore-Modules</artifactId>
-    <version>2.6.18</version>
+    <artifactId>SongodaCore3</artifactId>
     <packaging>pom</packaging>
-
-    <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z' to update version recursively -->
-    <!-- Change version in com.songoda.core.SongodaCore too -->
-
-    <properties>
-        <java.version>1.8</java.version>
-        <java.release>8</java.release>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <sonar.organization>songoda</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.junit.reportPaths>target/surefire-reports/*.xml</sonar.junit.reportPaths>
-        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-    </properties>
-
+    <version>3.0.0-SNAPSHOT</version>
     <modules>
-        <module>Core</module>
-        <module>Compatibility</module>
-        <module>NMS/NMS-API</module>
-        <module>NMS/NMS-v1_8_R1</module>
-        <module>NMS/NMS-v1_8_R2</module>
-        <module>NMS/NMS-v1_8_R3</module>
-        <module>NMS/NMS-v1_9_R1</module>
-        <module>NMS/NMS-v1_9_R2</module>
-        <module>NMS/NMS-v1_10_R1</module>
-        <module>NMS/NMS-v1_11_R1</module>
-        <module>NMS/NMS-v1_12_R1</module>
-        <module>NMS/NMS-v1_13_R1</module>
-        <module>NMS/NMS-v1_13_R2</module>
-        <module>NMS/NMS-v1_14_R1</module>
-        <module>NMS/NMS-v1_15_R1</module>
-        <module>NMS/NMS-v1_16_R1</module>
-        <module>NMS/NMS-v1_16_R2</module>
-        <module>NMS/NMS-v1_16_R3</module>
-        <module>NMS/NMS-v1_17_R1</module>
-        <module>NMS/NMS-v1_18_R1</module>
-        <module>NMS/NMS-v1_18_R2</module>
-        <module>NMS/NMS-v1_19_R1</module>
-        <module>NMS/NMS-v1_19_R1v2</module>
-        <module>NMS/NMS-v1_19_R2</module>
+        <module>core</module>
+        <module>hooks</module>
+        <module>nms/api</module>
+        <module>nms/nms-pom</module>
     </modules>
 
-    <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
-    </issueManagement>
-
-    <scm>
-        <url>https://github.com/songoda/SongodaCore</url>
-        <connection>scm:git:git:github.com/songoda/SongodaCore.git</connection>
-    </scm>
-
-    <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-
-                    <release>${java.release}</release>
-                </configuration>
-            </plugin>
-
-            <!-- Plugins required for tests or coverage reports -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
-
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-
-                    <execution>
-                        <id>default-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <repositories>
-        <repository>
-            <id>songoda-public</id>
-            <url>https://repo.songoda.com/repository/public/</url>
-        </repository>
-
         <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -145,55 +42,27 @@
         </repository>
 
         <repository>
-            <id>enginehub-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
 
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.8.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.mockito</groupId>-->
-        <!--            <artifactId>mockito-core</artifactId>-->
-        <!--            <version>3.12.4</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-
-        <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.17</artifactId>
-            <version>1.10.3</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

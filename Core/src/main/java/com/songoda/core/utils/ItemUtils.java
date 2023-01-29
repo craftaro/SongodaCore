@@ -1,12 +1,10 @@
 package com.songoda.core.utils;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.CompatibleHand;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.MethodMapping;
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.*;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,13 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -83,7 +75,6 @@ public class ItemUtils {
     }
 
     private static Method methodAsBukkitCopy, methodAsNMSCopy, methodA;
-    private static Object randomInstance;
 
     static {
         try {
@@ -92,20 +83,17 @@ public class ItemUtils {
             Class<?> clazzCraftItemStack = ClassMapping.CRAFT_ITEM_STACK.getClazz();
 
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
-            methodAsNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(clazzCraftItemStack);
+            methodAsNMSCopy = clazzCraftItemStack.getMethod("asNMSCopy", ItemStack.class);
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
                 Class<?> clazzRandomSource = ClassMapping.RANDOM_SOURCE.getClazz();
                 methodA = clazzEnchantmentManager.getMethod("a", clazzRandomSource.getMethod("c").getReturnType(), clazzItemStack, int.class, boolean.class);
-                randomInstance = ClassMapping.SINGLE_THREADED_RANDOM_SOURCE.getClazz().getConstructor(long.class).newInstance(ThreadLocalRandom.current().nextLong());
-            } else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+            }else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class);
-                randomInstance = new Random();
             } else {
                 methodA = clazzEnchantmentManager.getMethod("a", Random.class, clazzItemStack, int.class, boolean.class);
-                randomInstance = new Random();
             }
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+        } catch (NoSuchMethodException ex) {
             ex.printStackTrace();
         }
     }
@@ -114,12 +102,10 @@ public class ItemUtils {
         try {
             Object nmsItemStack = methodAsNMSCopy.invoke(null, item);
 
-            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level, false);
-            } else if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
-                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level);
+            if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level);
             } else {
-                nmsItemStack = methodA.invoke(null, randomInstance, nmsItemStack, level, false);
+                nmsItemStack = methodA.invoke(null, new Random(), nmsItemStack, level, false);
             }
 
             item = (ItemStack) methodAsBukkitCopy.invoke(null, nmsItemStack);
@@ -329,7 +315,7 @@ public class ItemUtils {
     }
 
     public static ItemStack getPlayerSkull(OfflinePlayer player) {
-        ItemStack head = CompatibleMaterial.PLAYER_HEAD.getItem();
+        ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return head;
         }
@@ -348,7 +334,7 @@ public class ItemUtils {
     }
 
     public static void setHeadOwner(ItemStack head, OfflinePlayer player) {
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || !CompatibleMaterial.PLAYER_HEAD.matches(head)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8) || !XMaterial.PLAYER_HEAD.isSimilar(head)) {
             return;
         }
 
@@ -366,7 +352,7 @@ public class ItemUtils {
     }
 
     public static ItemStack getCustomHead(String signature, String texture) {
-        ItemStack skullItem = CompatibleMaterial.PLAYER_HEAD.getItem();
+        ItemStack skullItem = XMaterial.PLAYER_HEAD.parseItem();
 
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return skullItem;
@@ -430,7 +416,7 @@ public class ItemUtils {
     }
 
     public static String getSkullTexture(ItemStack item) {
-        if (!CompatibleMaterial.PLAYER_HEAD.matches(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
+        if (!XMaterial.PLAYER_HEAD.isSimilar(item) || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return null;
         }
 
@@ -478,7 +464,7 @@ public class ItemUtils {
 
     /**
      * Quickly check to see if the two items use the same material. <br />
-     * NOTE: Does not check meta data; only checks the item material.
+     * NOTE: Does not check metadata; only checks the item material.
      *
      * @param is1 first item to compare
      * @param is2 item to compare against
@@ -486,9 +472,9 @@ public class ItemUtils {
      * @return true if both items are of the same material
      */
     public static boolean isSimilarMaterial(ItemStack is1, ItemStack is2) {
-        CompatibleMaterial mat1 = CompatibleMaterial.getMaterial(is1);
+        XMaterial mat1 = XMaterial.matchXMaterial(is1);
 
-        return mat1 != null && mat1 == CompatibleMaterial.getMaterial(is2);
+        return mat1 != null && mat1 == XMaterial.matchXMaterial(is2);
     }
 
     /**
@@ -796,7 +782,7 @@ public class ItemUtils {
                 case "FURNACE": {
                     check = new boolean[3];
 
-                    boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
+                    boolean isFuel = !item.getType().name().contains("LOG") && XTag.ITEMS_FURNACE_MATERIALS.isTagged(XMaterial.matchXMaterial(item));
 
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
@@ -1005,7 +991,7 @@ public class ItemUtils {
                 case "FURNACE": {
                     check = new boolean[3];
 
-                    boolean isFuel = !item.getType().name().contains("LOG") && CompatibleMaterial.getMaterial(item.getType()).isFuel();
+                    boolean isFuel = !item.getType().name().contains("LOG") && XTag.ITEMS_FURNACE_MATERIALS.isTagged(XMaterial.matchXMaterial(item));
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
                         check[1] = true;
@@ -1080,41 +1066,41 @@ public class ItemUtils {
         return false;
     }
 
-    public static CompatibleMaterial getDyeColor(char color) {
+    public static XMaterial getDyeColor(char color) {
         switch (color) {
             case '0':
-                return CompatibleMaterial.BLACK_DYE;
+                return XMaterial.BLACK_DYE;
             case '1':
-                return CompatibleMaterial.BLUE_DYE;
+                return XMaterial.BLUE_DYE;
             case '2':
-                return CompatibleMaterial.GREEN_DYE;
+                return XMaterial.GREEN_DYE;
             case '3':
-                return CompatibleMaterial.CYAN_DYE;
+                return XMaterial.CYAN_DYE;
             case '4':
-                return CompatibleMaterial.BROWN_DYE;
+                return XMaterial.BROWN_DYE;
             case '5':
-                return CompatibleMaterial.PURPLE_DYE;
+                return XMaterial.PURPLE_DYE;
             case '6':
-                return CompatibleMaterial.ORANGE_DYE;
+                return XMaterial.ORANGE_DYE;
             case '7':
-                return CompatibleMaterial.LIGHT_GRAY_DYE;
+                return XMaterial.LIGHT_GRAY_DYE;
             case '8':
-                return CompatibleMaterial.GRAY_DYE;
+                return XMaterial.GRAY_DYE;
             case 'a':
-                return CompatibleMaterial.LIME_DYE;
+                return XMaterial.LIME_DYE;
             case 'b':
-                return CompatibleMaterial.LIGHT_BLUE_DYE;
+                return XMaterial.LIGHT_BLUE_DYE;
             case 'c':
-                return CompatibleMaterial.RED_DYE;
+                return XMaterial.RED_DYE;
             case 'd':
-                return CompatibleMaterial.MAGENTA_DYE;
+                return XMaterial.MAGENTA_DYE;
             case 'e':
-                return CompatibleMaterial.YELLOW_DYE;
+                return XMaterial.YELLOW_DYE;
             case 'f':
-                return CompatibleMaterial.WHITE_DYE;
+                return XMaterial.WHITE_DYE;
         }
 
-        return CompatibleMaterial.STONE;
+        return XMaterial.STONE;
     }
 
     /**

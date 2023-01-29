@@ -8,11 +8,7 @@ import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.AnaloguePowerable;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Powerable;
+import org.bukkit.block.data.*;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Gate;
 import org.bukkit.block.data.type.Switch;
@@ -153,7 +149,7 @@ public class BlockUtilsModern {
             } else if (clazzPressurePlateBlock.isAssignableFrom(mblock.getClass())) {
                 nmsPlate_updateNeighbours.invoke(mblock, mworld, mpos);
             } else {
-                SongodaCore.getLogger().warning("Unknown redstone: " + mblock.getClass().getName());
+                SongodaCore.getInstance().getLogger().warning("Unknown redstone: " + mblock.getClass().getName());
             }
 //
 //			if(mblock instanceof net.minecraft.server.v1_15_R1.BlockLever) {

@@ -1,15 +1,17 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.gui.Gui;
 import com.songoda.core.lootables.loot.Loot;
+import dev.triumphteam.gui.guis.Gui;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiEntityEditor extends AbstractGuiListEditor {
-    public GuiEntityEditor(Loot loot, Gui returnGui) {
-        super(loot, returnGui);
+    public GuiEntityEditor(Loot loot, Player player, Gui returnGui) {
+        super(loot, player, Component.text("Entity Editor"), returnGui);
     }
 
     @Override

@@ -4,14 +4,16 @@
 /.idea/
 *.iml
 /*/*.iml
-/NMS/*/*.iml
+/core/*/*.iml
+/hooks/*/*.iml
 
 ##
 # Maven
 ##
 /target/
 /*/target/
-/NMS/*/target/
+/core/*/target/
+/hooks/*/target
 
 dependency-reduced-pom.xml
 /**/logs/*.log

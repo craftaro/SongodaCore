@@ -1,7 +1,7 @@
 package com.songoda.core.utils;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.CompatibleMaterial;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
@@ -85,7 +85,7 @@ public class EntityUtils {
         return false;
     }
 
-    public static List<CompatibleMaterial> getSpawnBlocks(EntityType type) {
+    public static List<XMaterial> getSpawnBlocks(EntityType type) {
         switch (type.name()) {
             case "PIG":
             case "SHEEP":
@@ -95,23 +95,23 @@ public class EntityUtils {
             case "LLAMA":
             case "HORSE":
             case "CAT":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.GRASS_BLOCK));
+                return new ArrayList<>(Collections.singletonList(XMaterial.GRASS_BLOCK));
             case "MUSHROOM_COW":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.MYCELIUM));
+                return new ArrayList<>(Collections.singletonList(XMaterial.MYCELIUM));
             case "SQUID":
             case "ELDER_GUARDIAN":
             case "COD":
             case "SALMON":
             case "PUFFERFISH":
             case "TROPICAL_FISH":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.WATER));
+                return new ArrayList<>(Collections.singletonList(XMaterial.WATER));
             case "OCELOT":
-                return new ArrayList<>(Arrays.asList(CompatibleMaterial.GRASS_BLOCK,
-                        CompatibleMaterial.JUNGLE_LEAVES, CompatibleMaterial.ACACIA_LEAVES,
-                        CompatibleMaterial.BIRCH_LEAVES, CompatibleMaterial.DARK_OAK_LEAVES,
-                        CompatibleMaterial.OAK_LEAVES, CompatibleMaterial.SPRUCE_LEAVES));
+                return new ArrayList<>(Arrays.asList(XMaterial.GRASS_BLOCK,
+                        XMaterial.JUNGLE_LEAVES, XMaterial.ACACIA_LEAVES,
+                        XMaterial.BIRCH_LEAVES, XMaterial.DARK_OAK_LEAVES,
+                        XMaterial.OAK_LEAVES, XMaterial.SPRUCE_LEAVES));
             default:
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.AIR));
+                return new ArrayList<>(Collections.singletonList(XMaterial.AIR));
         }
     }
 }

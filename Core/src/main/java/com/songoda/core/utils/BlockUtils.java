@@ -1,17 +1,12 @@
 package com.songoda.core.utils;
 
-import com.songoda.core.compatibility.ClassMapping;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.MethodMapping;
-import com.songoda.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Effect;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
@@ -328,125 +323,6 @@ public class BlockUtils {
         return null;
     }
 
-    /* Only to be used by #updateAdjacentComparators */
-    private static Method chunkToNmsChunk, nmsChunkGetWorld, craftBlockGetPosition, craftBlockBlockDataGetter, blockDataGetBlock, craftMagicNumbersGetBlockByMaterial, nmsWorldUpdateAdjacentComparators;
-    /* Only to be used by #updateAdjacentComparators */
-    private static Constructor<?> blockPositionConstructor;
-
-    /**
-     * Manually trigger the updateAdjacentComparators method for containers
-     *
-     * @param loc The Location of the container
-     */
-    public static void updateAdjacentComparators(Location loc) {
-        if (loc == null || loc.getWorld() == null) {
-            return;
-        }
-
-        Block craftBlock = loc.getBlock();
-
-        try {
-            if (chunkToNmsChunk == null) {
-                chunkToNmsChunk = MethodMapping.CB_GENERIC__GET_HANDLE.getMethod(ClassMapping.CRAFT_CHUNK.getClazz());
-                nmsChunkGetWorld = MethodMapping.MC_CHUNK__GET_WORLD.getMethod(chunkToNmsChunk.getReturnType());
-
-                craftBlockGetPosition = MethodMapping.CB_BLOCK__GET_POSITION.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
-                if (craftBlockGetPosition == null) {
-                    blockPositionConstructor = ClassMapping.BLOCK_POSITION.getClazz().getConstructor(double.class, double.class, double.class);
-                }
-
-                nmsWorldUpdateAdjacentComparators = MethodMapping.WORLD__UPDATE_ADJACENT_COMPARATORS.getMethod(ClassMapping.WORLD.getClazz());
-
-                craftBlockBlockDataGetter = MethodMapping.CB_BLOCK__GET_NMS.getMethod(ClassMapping.CRAFT_BLOCK.getClazz());
-                blockDataGetBlock = MethodMapping.I_BLOCK_DATA__GET_BLOCK.getMethod(ClassMapping.I_BLOCK_DATA.getClazz());
-                if (craftBlockBlockDataGetter == null || blockDataGetBlock == null) {
-                    craftMagicNumbersGetBlockByMaterial = MethodMapping.CRAFT_MAGIC_NUMBERS__GET_BLOCK__MATERIAL.getMethod(ClassMapping.CRAFT_MAGIC_NUMBERS.getClazz());
-                }
-            }
-
-            Object nmsChunk = chunkToNmsChunk.invoke(loc.getChunk());
-            Object nmsWorld = nmsChunkGetWorld.invoke(nmsChunk);
-
-            Object blockPosition;
-            if (craftBlockGetPosition != null) {
-                blockPosition = craftBlockGetPosition.invoke(craftBlock);
-            } else {
-                blockPosition = blockPositionConstructor.newInstance(loc.getX(), loc.getY(), loc.getZ());
-            }
-
-            Object nmsBlock;
-            if (craftBlockBlockDataGetter != null) {
-                nmsBlock = blockDataGetBlock.invoke(craftBlockBlockDataGetter.invoke(craftBlock));
-            } else {
-                nmsBlock = craftMagicNumbersGetBlockByMaterial.invoke(null, craftBlock.getType());
-            }
-
-            nmsWorldUpdateAdjacentComparators.invoke(nmsWorld, blockPosition, nmsBlock);
-        } catch (NullPointerException | ReflectiveOperationException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /* Only to be used by #setBlockFast */
-    private static Class<?> clazzIBlockData, clazzBlocks, clazzCraftWorld, clazzBlockPosition;
-    /* Only to be used by #setBlockFast */
-    private static Method getHandle, getByCombinedId, setType, getChunkAt, getBlockData;
-
-    /**
-     * Set a block to a certain type by updating the block directly in the
-     * NMS chunk.
-     * <p>
-     * The chunk must be loaded and players must relog if they have the
-     * chunk loaded in order to use this method.
-     */
-    public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
-        try {
-            // Cache reflection
-            if (clazzIBlockData == null) {
-                clazzIBlockData = ClassMapping.I_BLOCK_DATA.getClazz();
-                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
-                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
-                clazzBlocks = ClassMapping.BLOCKS.getClazz();
-                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
-                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
-                Class<?> clazzChunk = ClassMapping.CHUNK.getClazz();
-
-                getHandle = clazzCraftWorld.getMethod("getHandle");
-                getChunkAt = MethodMapping.WORLD__GET_CHUNK_AT.getMethod(clazzWorld);
-
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-                    getBlockData = MethodMapping.BLOCK__GET_BLOCK_DATA.getMethod(ClassMapping.BLOCK.getClazz());
-                    setType = MethodMapping.CHUNK__SET_BLOCK_STATE.getMethod(ClassMapping.CHUNK.getClazz());
-                } else {
-                    getByCombinedId = clazzBlock.getMethod("getByCombinedId", int.class);
-                    setType = clazzChunk.getMethod("a", clazzBlockPosition, clazzIBlockData);
-                }
-            }
-
-            // invoke and cast objects.
-            Object craftWorld = clazzCraftWorld.cast(world);
-            Object nmsWorld = getHandle.invoke(craftWorld);
-            Object chunk = getChunkAt.invoke(nmsWorld, x >> 4, z >> 4);
-            Object blockPosition = clazzBlockPosition.getConstructor(int.class, int.class, int.class).newInstance(x & 0xF, y, z & 0xF);
-
-            // Invoke final method.
-            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
-                Object block = clazzBlocks.getField(material.name()).get(null);
-                Object IBlockData = getBlockData.invoke(block);
-                setType.invoke(chunk, blockPosition, IBlockData, true);
-            } else {
-                Object IBlockData = getByCombinedId.invoke(null, material.getId() + (data << 12));
-                setType.invoke(chunk, blockPosition, IBlockData);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
-        setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
-    }
-
     /**
      * Checks if a crop is at its max growth stage
      *
@@ -463,13 +339,12 @@ public class BlockUtils {
             return BlockUtilsModern._isCropFullyGrown(block);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-        if (mat == null || !mat.isCrop()) {
+        XMaterial material = XMaterial.matchXMaterial(block.getType());
+        if (material == null || !XBlock.isCrop(material)) {
             return false;
         }
 
-        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return block.getData() >= (material == XMaterial.BEETROOTS || material == XMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -488,13 +363,7 @@ public class BlockUtils {
             return BlockUtilsModern._getMaxGrowthStage(block);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-        if (mat == null || !mat.isCrop()) {
-            return -1;
-        }
-
-        return (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return getMaxGrowthStage(block.getType());
     }
 
     /**
@@ -513,13 +382,12 @@ public class BlockUtils {
             return BlockUtilsModern._getMaxGrowthStage(material);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(material);
-        if (mat == null || !mat.isCrop()) {
+        XMaterial xMaterial = XMaterial.matchXMaterial(material);
+        if (xMaterial == null || !XBlock.isCrop(xMaterial)) {
             return -1;
         }
 
-        return (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return (xMaterial == XMaterial.BEETROOTS || xMaterial == XMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -533,11 +401,11 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._setGrowthStage(block, stage);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-            if (mat != null && mat.isCrop()) {
+            XMaterial material = XMaterial.matchXMaterial(block.getType());
+            if (material != null && XBlock.isCrop(material)) {
                 try {
-                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, (mat == CompatibleMaterial.BEETROOTS
-                            || mat == CompatibleMaterial.NETHER_WART ? 3 : 7))));
+                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, (material == XMaterial.BEETROOTS
+                            || material == XMaterial.NETHER_WART ? 3 : 7))));
                 } catch (Exception ex) {
                     Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
                 }
@@ -555,10 +423,9 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-
-            if (mat != null && mat.isCrop() &&
-                    block.getData() < (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
+            XMaterial material = XMaterial.matchXMaterial(block.getType());
+            if (material != null && XBlock.isCrop(material) &&
+                    block.getData() < (material == XMaterial.BEETROOTS || material == XMaterial.NETHER_WART ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
@@ -578,9 +445,9 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._resetGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
+            XMaterial material = XMaterial.matchXMaterial(block.getType());
 
-            if (mat != null && mat.isCrop()) {
+            if (material != null && XBlock.isCrop(material)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) 0);
                 } catch (Exception ex) {

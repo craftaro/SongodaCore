@@ -1,75 +1,75 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.gui.AnvilGui;
-import com.songoda.core.gui.Gui;
-import com.songoda.core.gui.GuiUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.songoda.core.SongodaCore;
 import com.songoda.core.lootables.loot.Loot;
-import com.songoda.core.utils.TextUtils;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.Gui;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class AbstractGuiListEditor extends Gui {
+public abstract class AbstractGuiListEditor {
     protected final Loot loot;
+    protected final Player player;
+    private final Gui gui;
     private final Gui returnGui;
 
-    public AbstractGuiListEditor(Loot loot, Gui returnGui) {
-        super(1, returnGui);
+    public AbstractGuiListEditor(Loot loot, Player player, Component title, Gui returnGui) {
+        this.player = player;
         this.returnGui = returnGui;
         this.loot = loot;
 
-        setDefaultItem(null);
+        this.gui = Gui.gui()
+                .title(title)
+                .rows(1)
+                .disableAllInteractions()
+                .create();
 
         paint();
     }
 
     public void paint() {
-        List<String> lore = getData() == null ? new ArrayList<>() : getData();
+        List<String> lore = (getData() == null ? new ArrayList<>() : getData());
 
-        setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                        TextUtils.formatText("&cBack")),
-                (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
-                });
-        setButton(6, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                        TextUtils.formatText("&cBack")),
-                (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
-                });
-        setButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                        TextUtils.formatText("&aAdd new line")),
-                (event -> {
-                    AnvilGui gui = new AnvilGui(event.player, this);
-                    gui.setAction((e -> {
-                        String validated = validate(gui.getInputText());
-                        if (validated != null) {
-                            lore.add(validated);
-                            updateData(lore);
-                            e.player.closeInventory();
-                            paint();
-                        }
-                    }));
-                    gui.setTitle("Enter a new line");
-                    guiManager.showGUI(event.player, gui);
+        gui.setItem(Arrays.asList(2, 6), ItemBuilder.from(XMaterial.OAK_DOOR.parseItem()).name(Component.text("Back", NamedTextColor.RED)).asGuiItem(event -> {
+            returnGui.open(player);
+        }));
+
+        gui.setItem(3, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Add new line", NamedTextColor.GREEN)).asGuiItem(event -> {
+                    new AnvilGUI.Builder()
+                            .title("Enter a new line")
+                            .itemLeft(XMaterial.PAPER.parseItem())
+                            .plugin(SongodaCore.getInstance())
+                            .onComplete((player, text) -> {
+                                String validated = validate(text);
+                                if (validated != null) {
+                                    lore.add(validated);
+                                    updateData(lore);
+                                }
+
+                                return AnvilGUI.Response.close();
+                            }).onClose(player -> paint());
                 }));
 
-        setItem(4, GuiUtils.createButtonItem(CompatibleMaterial.WRITABLE_BOOK,
-                TextUtils.formatText("&9Lore:"),
-                lore.isEmpty()
-                        ? TextUtils.formatText(Collections.singletonList("&cNo lore set..."))
-                        : TextUtils.formatText(lore)));
+        gui.setItem(4, ItemBuilder.from(XMaterial.WRITABLE_BOOK.parseItem()).name(Component.text("Lore:", NamedTextColor.BLUE))
+                .lore(lore.isEmpty()
+                        ? Collections.singletonList(Component.text("No lore set...", NamedTextColor.RED))
+                        : lore.stream().map(text -> MiniMessage.miniMessage().deserialize(text)).collect(Collectors.toList())).asGuiItem());
 
-        setButton(5, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                        TextUtils.formatText("&cRemove the last line")),
-                (event -> {
-                    lore.remove(lore.size() - 1);
-                    updateData(lore);
-                    paint();
-                }));
+        gui.setItem(5, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Remove the last line", NamedTextColor.RED)).asGuiItem(event -> {
+            lore.remove(lore.size() - 1);
+            updateData(lore);
+            paint();
+        }));
     }
 
     protected abstract List<String> getData();

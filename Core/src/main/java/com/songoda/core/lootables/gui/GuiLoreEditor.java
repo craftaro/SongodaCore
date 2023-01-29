@@ -1,18 +1,20 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.gui.Gui;
 import com.songoda.core.lootables.loot.Loot;
+import dev.triumphteam.gui.guis.Gui;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class GuiLoreEditor extends AbstractGuiListEditor {
-    public GuiLoreEditor(Loot loot, Gui returnGui) {
-        super(loot, returnGui);
+    public GuiLoreEditor(Loot loot, Player player, Gui returnGui) {
+        super(loot, player, Component.text("Lore Editor"), returnGui);
     }
 
     @Override
     protected List<String> getData() {
-        return loot.getLore();
+        return loot.getRawLore();
     }
 
     @Override

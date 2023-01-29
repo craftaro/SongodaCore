@@ -1,27 +1,17 @@
 package com.songoda.core.lootables.loot;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.lootables.Lootables;
 import com.songoda.core.lootables.Modify;
-import org.bukkit.Bukkit;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 public class LootManager {
     private final Map<String, Lootable> registeredLootables = new HashMap<>();
@@ -92,7 +82,7 @@ public class LootManager {
                 }
             }
 
-            CompatibleMaterial material = loot.getMaterial();
+            XMaterial material = loot.getMaterial();
             String command = loot.getCommand();
             int xp = loot.getXp();
 
@@ -107,20 +97,19 @@ public class LootManager {
 
             if (material != null) {
                 ItemStack item = loot.getBurnedMaterial() != null &&
-                        burning ? loot.getBurnedMaterial().getItem() : material.getItem();
-                item.setAmount(amount);
-                ItemMeta meta = item.getItemMeta() == null ? Bukkit.getItemFactory().getItemMeta(loot.getMaterial().getMaterial())
-                        : item.getItemMeta();
+                        burning ? loot.getBurnedMaterial().parseItem() : material.parseItem();
+
+                ItemBuilder itemBuilder = ItemBuilder.from(item);
 
                 if (loot.getName() != null) {
-                    meta.setDisplayName(loot.getName());
+                    itemBuilder = itemBuilder.name(loot.getName());
                 }
 
                 if (loot.getLore() != null) {
-                    meta.setLore(loot.getLore());
+                    itemBuilder = itemBuilder.lore(loot.getLore());
                 }
 
-                item.setItemMeta(meta);
+                item = itemBuilder.build();
 
                 if (loot.getEnchants(item) != null) {
                     item = loot.getEnchants(item);

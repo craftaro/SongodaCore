@@ -1,6 +1,6 @@
 package com.songoda.core.lootables.loot;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.songoda.core.lootables.loot.objects.EnchantChance;
 import org.bukkit.entity.EntityType;
 
@@ -15,7 +15,7 @@ public final class LootBuilder {
         this.loot = new Loot();
     }
 
-    public LootBuilder setMaterial(CompatibleMaterial material) {
+    public LootBuilder setMaterial(XMaterial material) {
         this.loot.setMaterial(material);
         return this;
     }
@@ -52,7 +52,7 @@ public final class LootBuilder {
         return this;
     }
 
-    public LootBuilder setBurnedMaterial(CompatibleMaterial material) {
+    public LootBuilder setBurnedMaterial(XMaterial material) {
         this.loot.setBurnedMaterial(material);
         return this;
     }

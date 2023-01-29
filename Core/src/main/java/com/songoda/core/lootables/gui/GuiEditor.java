@@ -1,73 +1,59 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.gui.Gui;
-import com.songoda.core.gui.GuiUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.lootables.loot.LootManager;
 import com.songoda.core.lootables.loot.Lootable;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.PaginatedGui;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiEditor extends Gui {
+public class GuiEditor {
     private final LootManager lootManager;
+    private final Player player;
+    private final PaginatedGui gui;
 
-    public GuiEditor(LootManager lootManager) {
-        super(6);
-
+    public GuiEditor(LootManager lootManager, Player player) {
         this.lootManager = lootManager;
+        this.player = player;
 
-        setDefaultItem(null);
-        setTitle("Lootables Overview");
+        this.gui = Gui.paginated()
+                .rows(6)
+                .pageSize(36)
+                .title(Component.text("Lootables Overview"))
+                .disableAllInteractions()
+                .create();
 
         paint();
     }
 
     private void paint() {
-        if (inventory != null) {
-            inventory.clear();
-        }
-
-        setActionForRange(0, 0, 5, 9, null);
-
         List<Lootable> lootables = new ArrayList<>(lootManager.getRegisteredLootables().values());
 
-        double itemCount = lootables.size();
-        this.pages = (int) Math.max(1, Math.ceil(itemCount / 36));
-
-        if (page != 1) {
-            setButton(5, 2, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Back"),
-                    (event) -> {
-                        page--;
-                        paint();
-                    });
+        if (gui.getCurrentPageNum() != 1) {
+            gui.setItem(5, 2, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Back")).asGuiItem(event -> {
+                gui.previous();
+            }));
         }
 
-        if (page != pages) {
-            setButton(5, 6, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Next"),
-                    (event) -> {
-                        page++;
-                        paint();
-                    });
+        if (gui.getCurrentPageNum() != gui.getPagesNum()) {
+            gui.setItem(5, 6, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Next")).asGuiItem(event -> {
+                gui.next();
+            }));
         }
 
-        for (int i = 9; i < 45; i++) {
-            int current = ((page - 1) * 36) - 9;
-            if (current + i >= lootables.size()) {
-                setItem(i, null);
-                continue;
-            }
-
-            Lootable lootable = lootables.get(current + i);
-            if (lootable == null) {
-                continue;
-            }
-
-            setButton(i, getIcon(lootable.getKey()),
-                    (event) -> guiManager.showGUI(event.player, new GuiLootableEditor(lootManager, lootable, this)));
+        for (Lootable lootable : lootables) {
+            gui.addItem(ItemBuilder.from(getIcon(lootable.getKey())).asGuiItem(event -> {
+                new GuiLootableEditor(lootManager, lootable, player, gui);
+            }));
         }
     }
 
@@ -76,15 +62,15 @@ public class GuiEditor extends Gui {
         EntityType type = EntityType.fromName(key);
 
         if (type != null) {
-            CompatibleMaterial material = CompatibleMaterial.getSpawnEgg(type);
+            XMaterial material = getSpawnEgg(type);
 
             if (material != null) {
-                stack = material.getItem();
+                stack = material.parseItem();
             }
         }
 
         if (stack == null) {
-            stack = CompatibleMaterial.GHAST_SPAWN_EGG.getItem();
+            stack = XMaterial.GHAST_SPAWN_EGG.parseItem();
         }
 
         ItemMeta meta = stack.getItemMeta();
@@ -92,5 +78,17 @@ public class GuiEditor extends Gui {
         stack.setItemMeta(meta);
 
         return stack;
+    }
+
+    public XMaterial getSpawnEgg(EntityType type) {
+        if (type == EntityType.MUSHROOM_COW) {
+            return XMaterial.MOOSHROOM_SPAWN_EGG;
+        }
+
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_16) && type == EntityType.valueOf("PIG_ZOMBIE")) {
+            return XMaterial.ZOMBIFIED_PIGLIN_SPAWN_EGG;
+        }
+
+        return XMaterial.matchXMaterial(type.name() + "_SPAWN_EGG").get();
     }
 }

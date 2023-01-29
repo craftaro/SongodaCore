@@ -1,31 +1,33 @@
 package com.songoda.core.lootables.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.gui.AnvilGui;
-import com.songoda.core.gui.Gui;
-import com.songoda.core.gui.GuiUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.songoda.core.SongodaCore;
 import com.songoda.core.lootables.loot.Loot;
-import com.songoda.core.utils.TextUtils;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.Gui;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class GuiEnchantEditor extends Gui {
-    private final Gui returnGui;
+public class GuiEnchantEditor {
     private final Loot loot;
+    private final Gui returnGui;
+    private final Player player;
+    private final Gui gui;
 
-    public GuiEnchantEditor(Loot loot, Gui returnGui) {
-        super(1, returnGui);
-
+    public GuiEnchantEditor(Loot loot, Player player, Gui returnGui) {
         this.returnGui = returnGui;
         this.loot = loot;
-
-        setDefaultItem(null);
-        setTitle("Enchantment Editor");
+        this.player = player;
+        this.gui = Gui.gui()
+                .rows(1)
+                .title(Component.text("Enchantment Editor"))
+                .disableAllInteractions().create();
 
         paint();
     }
@@ -33,65 +35,58 @@ public class GuiEnchantEditor extends Gui {
     public void paint() {
         Map<String, Integer> lore = loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(loot.getEnchants());
 
-        setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                        TextUtils.formatText("&cBack")),
-                (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
-                });
-        setButton(6, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
-                        TextUtils.formatText("&cBack")),
-                (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
-                });
-        setButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                        TextUtils.formatText("&aAdd new line")),
-                (event -> {
-                    AnvilGui gui = new AnvilGui(event.player, this);
-                    gui.setAction((e -> {
-                        if (Enchantment.getByName(gui.getInputText().toUpperCase().trim()) == null) {
-                            e.player.sendMessage("That is not a valid enchantment.");
-                            e.player.closeInventory();
-                            return;
+        gui.setItem(Arrays.asList(2, 6), ItemBuilder.from(XMaterial.OAK_DOOR.parseItem()).name(Component.text("Back", NamedTextColor.RED)).asGuiItem(event -> {
+            returnGui.open(player);
+        }));
+
+        gui.setItem(3, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Add new enchantment", NamedTextColor.GREEN)).asGuiItem(event -> {
+            new AnvilGUI.Builder()
+                    .title("Enter an enchantment")
+                    .itemLeft(XMaterial.PAPER.parseItem())
+                    .plugin(SongodaCore.getInstance())
+                    .onComplete((player, text) -> {
+                        if (Enchantment.getByName(text.toUpperCase().trim()) == null) {
+                            return AnvilGUI.Response.text("Invalid enchantment");
                         }
 
-                        AnvilGui gui1 = new AnvilGui(event.player, this);
-                        gui1.setAction((ee -> {
-                            lore.put(gui.getInputText().toUpperCase().trim(), Integer.parseInt(gui1.getInputText().trim()));
-                            loot.setEnchants(lore);
-                            ee.player.closeInventory();
-                            paint();
-                        }));
-                        gui1.setTitle("Enter a level");
-                        guiManager.showGUI(event.player, gui1);
-                    }));
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                new AnvilGUI.Builder()
+                                        .title("Enter a level")
+                                        .itemLeft(XMaterial.PAPER.parseItem())
+                                        .plugin(SongodaCore.getInstance())
+                                        .onComplete((player, level) -> {
+                                            lore.put(text.toUpperCase().trim(), Integer.parseInt(level.trim()));
+                                            loot.setEnchants(lore);
+                                            player.closeInventory();
 
-                    gui.setTitle("Enter an enchant");
-                    guiManager.showGUI(event.player, gui);
-                }));
+                                            return AnvilGUI.Response.close();
+                                        }).onClose(player -> paint());
+                            }
+                        }.runTaskLater(SongodaCore.getInstance(), 1l);
 
-        List<String> enchantments = new ArrayList<>();
+                        return AnvilGUI.Response.close();
+                    }).onClose(player -> paint());
+        }));
 
+        List<Component> enchantments = new ArrayList<>();
         String last = null;
 
         if (!lore.isEmpty()) {
             for (Map.Entry<String, Integer> entry : lore.entrySet()) {
                 last = entry.getKey();
-                enchantments.add("&6" + entry.getKey() + " " + entry.getValue());
+                enchantments.add(Component.text("&6" + entry.getKey() + " " + entry.getValue(), NamedTextColor.GOLD));
             }
         }
 
-        setItem(4, GuiUtils.createButtonItem(CompatibleMaterial.WRITABLE_BOOK,
-                TextUtils.formatText("&7Enchant Override:"),
-                lore.isEmpty()
-                        ? TextUtils.formatText(Collections.singletonList("&cNo enchantments set..."))
-                        : TextUtils.formatText(enchantments)));
+        gui.setItem(4, ItemBuilder.from(XMaterial.WRITABLE_BOOK.parseItem()).name(Component.text("Enchant Override", NamedTextColor.GRAY))
+                        .lore(lore.isEmpty()
+                            ? Collections.singletonList(Component.text("No enchantments set...", NamedTextColor.RED))
+                                : enchantments).asGuiItem());
 
         String lastFinal = last;
-        setButton(5, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
-                        TextUtils.formatText("&cRemove the last line")),
-                (event -> {
+        gui.setItem(5, ItemBuilder.from(XMaterial.ARROW.parseItem()).name(Component.text("Remove the last line", NamedTextColor.RED)).asGuiItem(event -> {
                     lore.remove(lastFinal);
                     loot.setEnchants(lore);
                     paint();
