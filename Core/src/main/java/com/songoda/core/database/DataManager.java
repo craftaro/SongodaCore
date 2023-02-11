@@ -48,16 +48,15 @@ public class DataManager {
      */
     public synchronized int getNextId(String table) {
         if (!this.autoIncrementCache.containsKey(table)) {
-            String query = "SELECT * FROM " + table + " ORDER BY id DESC LIMIT 1";
-            databaseConnector.connect(connection -> {
-                try (Statement statement = connection.prepareStatement(query)) {
-                    try (ResultSet resultSet = statement.executeQuery(query)) {
-                        if (resultSet.next()) {
-                            this.autoIncrementCache.put(table, resultSet.getInt("id"));
-                        } else {
-                            this.autoIncrementCache.put(table, 1);
-                        }
+            databaseConnector.connectDSL(dsl -> {
+                try (ResultSet rs = dsl.select(DSL.max(DSL.field("id"))).from(table).fetchResultSet()) {
+                    if (rs.next()) {
+                        this.autoIncrementCache.put(table, rs.getInt(1));
+                    } else {
+                        this.autoIncrementCache.put(table, 1);
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             });
         }
