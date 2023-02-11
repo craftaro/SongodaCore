@@ -83,6 +83,10 @@
                                     <include>net.wesjd:anvilgui</include>
                                     <include>dev.dejvokep:boosted-yaml-spigot</include>
                                     <include>dev.triumphteam:triumph-gui</include>
+                                    <include>org.jooq:jooq</include>
+                                    <include>org.reactivestreams:reactive-streams</include>
+                                    <include>io.r2dbc:r2dbc-spi</include>
+                                    <include>org.mariadb.jdbc:mariadb-java-client</include>
                                 </includes>
                             </artifactSet>
 
@@ -125,6 +129,25 @@
                                 <relocation>
                                     <pattern>revxrsal.commands</pattern>
                                     <shadedPattern>com.songoda.core.third_party.revxersal.commands</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.jooq</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.org.jooq</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.mariadb.jdbc</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.org.mariadb.jdbc</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.reactivestreams</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.org.reactivestreams</shadedPattern>
+                                </relocation>
+                                <relocation>>
+                                    <pattern>io.r2dbc</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.io.r2dbc</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -243,6 +266,17 @@
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
             <version>3.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.17.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.0.8</version>
         </dependency>
     </dependencies>
 </project>

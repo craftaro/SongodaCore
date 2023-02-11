@@ -11,7 +11,6 @@
     <modules>
         <module>core</module>
         <module>hooks</module>
-        <module>nms/api</module>
         <module>nms/nms-pom</module>
     </modules>
 
