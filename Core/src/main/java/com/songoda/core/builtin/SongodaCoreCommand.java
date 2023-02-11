@@ -1,10 +1,5 @@
 package com.songoda.core.builtin;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerProject;
@@ -12,14 +7,18 @@ import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.plugins.PluginInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.DefaultFor;
+import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 
-@CommandAlias("songoda")
+@Command("songoda")
 @CommandPermission("songoda.admin")
-public class SongodaCoreCommand extends BaseCommand {
+public class SongodaCoreCommand {
 
     private final SongodaCore core;
     private final DecimalFormat format = new DecimalFormat("##.##");
@@ -39,7 +38,7 @@ public class SongodaCoreCommand extends BaseCommand {
         }
     }
 
-    @Default
+    @DefaultFor("songoda")
     public void onDefault(CommandSender sender) {
         // TODO gui
     }

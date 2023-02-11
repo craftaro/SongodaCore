@@ -1,8 +1,9 @@
 package com.songoda.core;
 
-import co.aikar.commands.PaperCommandManager;
+import com.songoda.core.builtin.SongodaCoreCommand;
 import com.songoda.core.plugins.PluginInfo;
 import org.bukkit.plugin.java.JavaPlugin;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,13 +18,14 @@ public class SongodaCore extends JavaPlugin {
 
     private final Set<PluginInfo> registeredPlugins = new HashSet<>();
 
-    private PaperCommandManager commandManager;
+    private BukkitCommandHandler commandManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        this.commandManager = new PaperCommandManager(this);
+        this.commandManager = BukkitCommandHandler.create(this);
+        commandManager.register(new SongodaCoreCommand(this));
     }
 
     public void registerPlugin(SongodaPlugin plugin, int pluginId, String icon) {
