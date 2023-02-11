@@ -1,6 +1,10 @@
 package com.songoda.core;
 
-import co.aikar.commands.PaperCommandManager;
+import com.songoda.core.actions.ActionManager;
+import com.songoda.core.builtin.SongodaCoreCommand;
+import com.songoda.core.placeholder.IPlaceholderResolver;
+import com.songoda.core.placeholder.NoPluginResolver;
+import com.songoda.core.placeholder.PlaceholderAPIResolver;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -9,9 +13,11 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +31,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
         MinecraftVersion.disableUpdateCheck();
     }
 
-    private PaperCommandManager commandManager;
+    private BukkitCommandHandler commandManager;
     private BukkitAudiences adventure;
+    private IPlaceholderResolver placeholderResolver;
+    private ActionManager actionManager;
 
     public abstract void onPluginEnable();
     public abstract void onPluginDisable();
@@ -38,8 +46,15 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public final void onEnable() {
         SongodaCore.getInstance().registerPlugin(this, getPluginId(), getPluginIcon());
 
-        this.commandManager = new PaperCommandManager(this);
+        this.commandManager = BukkitCommandHandler.create(this);
         this.adventure = BukkitAudiences.create(this);
+        this.actionManager = new ActionManager(this);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            this.placeholderResolver = new PlaceholderAPIResolver();
+        }else{
+            this.placeholderResolver = new NoPluginResolver();
+        }
 
         onPluginEnable();
     }
@@ -108,11 +123,19 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public void saveConfig() {
     }
 
-    public PaperCommandManager getCommandManager() {
+    public BukkitCommandHandler getCommandManager() {
         return commandManager;
     }
 
     public BukkitAudiences getAdventure() {
         return adventure;
+    }
+
+    public IPlaceholderResolver getPlaceholderResolver() {
+        return placeholderResolver;
+    }
+
+    public ActionManager getActionManager() {
+        return actionManager;
     }
 }

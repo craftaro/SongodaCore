@@ -113,23 +113,18 @@
                                 </relocation>
 
                                 <relocation>
-                                    <pattern>co.aikar.commands</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.co.aikar.commands</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>co.aikar.locales</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.co.aikar.locales</shadedPattern>
-                                </relocation>
-
-                                <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
                                     <shadedPattern>com.songoda.core.third_party.net.wesjd.anvilgui</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>dev.triumphteam.gui</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.dev.triumphteam.gui</shadedPattern> <!-- Replace package here here -->
+                                    <shadedPattern>com.songoda.core.third_party.dev.triumphteam.gui</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>revxrsal.commands</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.revxersal.commands</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -167,6 +162,13 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -219,10 +221,15 @@
         </dependency>
 
         <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>acf-paper</artifactId>
-            <version>0.5.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>common</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>3.1.3</version>
         </dependency>
 
         <dependency>
