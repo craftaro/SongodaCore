@@ -10,7 +10,9 @@ public interface Data {
      *
      * @return The auto increment id
      */
-    int getId();
+    default int getId() {
+        return 0;
+    }
 
     /**
      * Gets the uuid of this data

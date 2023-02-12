@@ -79,8 +79,10 @@
                                     <include>de.tr7zw:item-nbt-api</include>
                                     <include>net.kyori:*</include>
                                     <include>com.github.cryptomorin:XSeries</include>
-                                    <include>co.aikar:acf-paper</include>
+                                    <include>com.github.Revxrsal.Lamp:*</include>
+                                    <include>com.songoda:songodacore-hooks</include>
                                     <include>net.wesjd:anvilgui</include>
+                                    <include>co.aikar:*</include>
                                     <include>dev.dejvokep:boosted-yaml-spigot</include>
                                     <include>dev.triumphteam:triumph-gui</include>
                                     <include>org.jooq:jooq</include>
@@ -128,12 +130,17 @@
 
                                 <relocation>
                                     <pattern>revxrsal.commands</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.revxersal.commands</shadedPattern>
+                                    <shadedPattern>com.songoda.core.third_party.revxrsal.commands</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.jooq</pattern>
                                     <shadedPattern>com.songoda.core.third_party.org.jooq</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>co.aikar.taskchain</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.co.aikar.taskchain</shadedPattern>
                                 </relocation>
 
                                 <relocation>
@@ -150,15 +157,6 @@
                                     <shadedPattern>com.songoda.core.third_party.io.r2dbc</shadedPattern>
                                 </relocation>
                             </relocations>
-
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <includes>
-                                        <include>**/*.class</include>
-                                    </includes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -263,6 +261,12 @@
         </dependency>
 
         <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
             <version>3.1.2</version>
@@ -277,6 +281,11 @@
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>3.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>songodacore-hooks</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

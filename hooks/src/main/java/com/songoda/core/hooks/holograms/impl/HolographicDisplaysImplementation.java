@@ -1,21 +1,21 @@
 package com.songoda.core.hooks.holograms.impl;
 
-import com.songoda.core.SongodaCore;
 import com.songoda.core.hooks.holograms.AbstractHologram;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
 public class HolographicDisplaysImplementation extends AbstractHologram {
 
     private final Map<String, Hologram> holograms = new HashMap<>();
-    private final SongodaCore core;
+    private final Plugin plugin;
 
     private HolographicDisplaysAPI api;
-    public HolographicDisplaysImplementation(SongodaCore core) {
-        this.core = core;
+    public HolographicDisplaysImplementation(Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class HolographicDisplaysImplementation extends AbstractHologram {
 
     @Override
     public boolean enableHook() {
-        this.api = HolographicDisplaysAPI.get(core);
+        this.api = HolographicDisplaysAPI.get(plugin);
         return true;
     }
 

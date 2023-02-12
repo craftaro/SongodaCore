@@ -1,5 +1,8 @@
 package com.songoda.core;
 
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.songoda.core.actions.ActionManager;
 import com.songoda.core.builtin.SongodaCoreCommand;
 import com.songoda.core.placeholder.IPlaceholderResolver;
@@ -35,6 +38,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     private BukkitAudiences adventure;
     private IPlaceholderResolver placeholderResolver;
     private ActionManager actionManager;
+    private TaskChainFactory taskChainFactory;
 
     public abstract void onPluginEnable();
     public abstract void onPluginDisable();
@@ -49,6 +53,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
         this.commandManager = BukkitCommandHandler.create(this);
         this.adventure = BukkitAudiences.create(this);
         this.actionManager = new ActionManager(this);
+        this.taskChainFactory = BukkitTaskChainFactory.create(this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderResolver = new PlaceholderAPIResolver();
@@ -137,5 +142,13 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     public ActionManager getActionManager() {
         return actionManager;
+    }
+
+    public <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
+    public <T> TaskChain<T> newSharedChain(String name) {
+        return taskChainFactory.newSharedChain(name);
     }
 }

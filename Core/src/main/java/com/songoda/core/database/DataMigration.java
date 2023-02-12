@@ -10,7 +10,7 @@ public abstract class DataMigration {
         this.revision = revision;
     }
 
-    public abstract void migrate(Connection connection, String tablePrefix) throws SQLException;
+    public abstract void migrate(DatabaseConnector connector, String tablePrefix) throws SQLException;
 
     /**
      * @return the revision number of this migration

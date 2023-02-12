@@ -2,6 +2,8 @@ package com.songoda.core.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -14,8 +16,18 @@ public class MySQLConnector implements DatabaseConnector {
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL, int poolSize) {
+    public MySQLConnector(Plugin plugin, YamlDocument databaseConfig) {
         this.plugin = plugin;
+
+        Section section = databaseConfig.getSection("connection-settings");
+
+        String hostname = section.getString("hostname");
+        int port = section.getInt("port");
+        String database = section.getString("databaseName");
+        String username = section.getString("username");
+        String password = section.getString("password");
+        boolean useSSL = section.getBoolean("useSsl");
+        int poolSize = section.getInt("poolSize");
 
         plugin.getLogger().info("connecting to " + hostname + " : " + port + " using MySQL");
 
