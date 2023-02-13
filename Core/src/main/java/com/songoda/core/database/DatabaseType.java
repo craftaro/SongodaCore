@@ -6,6 +6,7 @@ public enum DatabaseType {
 
     MARIADB,
     MYSQL,
+    H2,
     SQLITE;
 
     public SQLDialect getDialect() {
@@ -16,6 +17,8 @@ public enum DatabaseType {
                 return SQLDialect.MYSQL;
             case SQLITE:
                 return SQLDialect.SQLITE;
+            case H2:
+                return SQLDialect.H2;
             default:
                 return SQLDialect.DEFAULT;
         }

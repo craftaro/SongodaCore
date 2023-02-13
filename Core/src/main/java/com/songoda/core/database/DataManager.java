@@ -2,8 +2,7 @@ package com.songoda.core.database;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.songoda.core.SongodaPlugin;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import com.songoda.core.configuration.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jooq.Query;
@@ -24,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class DataManager {
     protected final SongodaPlugin plugin;
-    protected final YamlDocument databaseConfig;
+    protected final Config databaseConfig;
     private final List<DataMigration> migrations;
 
     protected DatabaseConnector databaseConnector;
@@ -51,24 +51,29 @@ public class DataManager {
     public DataManager(SongodaPlugin plugin, List<DataMigration> migrations) {
         this.plugin = plugin;
         this.migrations = migrations;
-        this.databaseConfig = plugin.createUpdatingConfig(new File(plugin.getDataFolder(), "databaseSettings.yml"));
+        this.databaseConfig = plugin.getDatabaseConfig();
         load();
     }
 
     private void load() {
         try {
-            String databaseType = databaseConfig.getString("type").toLowerCase();
+            String databaseType = databaseConfig.getString("Type").toUpperCase(Locale.ROOT);
             switch (databaseType) {
-                case "mysql": {
+                case "MYSQL": {
                     this.databaseConnector = new MySQLConnector(plugin, databaseConfig);
                     break;
                 }
-                case "mariadb": {
+                case "MARIADB": {
                     this.databaseConnector = new MariaDBConnector(plugin, databaseConfig);
                     break;
                 }
-                default: {
+                case "SQLITE": {
                     this.databaseConnector = new SQLiteConnector(plugin);
+                    break;
+                }
+                default: {
+                    //H2
+                    this.databaseConnector = new H2Connector(plugin, databaseConfig);
                     break;
                 }
             }
@@ -82,6 +87,13 @@ public class DataManager {
         }
 
         runMigrations();
+    }
+
+    /**
+     * @return the database connector
+     */
+    public DatabaseConnector getDatabaseConnector() {
+        return databaseConnector;
     }
 
     /**
@@ -325,6 +337,23 @@ public class DataManager {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * Close the database and shutdown the async pool
+     */
+    public void shutdown() {
+        asyncPool.shutdown();
+        databaseConnector.closeConnection();
+    }
+
+    /**
+     * Force shutdown the async pool and close the database
+     * @return Tasks that didn't finish in the async pool
+     */
+    public List<Runnable> shutdownNow() {
+        databaseConnector.closeConnection();
+        return asyncPool.shutdownNow();
     }
 
     public void shutdownTaskQueue() {

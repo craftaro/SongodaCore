@@ -1,7 +1,7 @@
 package com.songoda.core.locale;
 
 import com.songoda.core.SongodaPlugin;
-import dev.dejvokep.boostedyaml.YamlDocument;
+import com.songoda.core.configuration.Config;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.File;
 public class LocaleManager {
 
     private final SongodaPlugin plugin;
-    private final YamlDocument langFile;
+    private final Config langFile;
 
     public LocaleManager(SongodaPlugin plugin) {
         this.plugin = plugin;

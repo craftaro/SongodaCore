@@ -1,12 +1,12 @@
 package com.songoda.core.database;
 
+import com.songoda.core.configuration.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.simpleyaml.configuration.ConfigurationSection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,20 +16,20 @@ public class MySQLConnector implements DatabaseConnector {
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MySQLConnector(Plugin plugin, YamlDocument databaseConfig) {
+    public MySQLConnector(Plugin plugin, Config databaseConfig) {
         this.plugin = plugin;
 
-        Section section = databaseConfig.getSection("connection-settings");
+        ConfigurationSection section = databaseConfig.getConfigurationSection("Connection Settings");
 
-        String hostname = section.getString("hostname");
-        int port = section.getInt("port");
-        String database = section.getString("databaseName");
-        String username = section.getString("username");
-        String password = section.getString("password");
-        boolean useSSL = section.getBoolean("useSsl");
-        int poolSize = section.getInt("poolSize");
+        String hostname = section.getString("Hostname");
+        int port = section.getInt("Port");
+        String database = section.getString("Database");
+        String username = section.getString("Username");
+        String password = section.getString("Password");
+        boolean useSSL = section.getBoolean("Use SSL");
+        int poolSize = section.getInt("Pool Size");
 
-        plugin.getLogger().info("connecting to " + hostname + " : " + port + " using MySQL");
+        plugin.getLogger().info("Connecting to " + hostname + " : " + port + " using MySQL");
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);

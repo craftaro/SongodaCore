@@ -1,8 +1,7 @@
 package com.songoda.core.gui;
 
 import com.songoda.core.SongodaPlugin;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import com.songoda.core.configuration.Config;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -12,6 +11,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.simpleyaml.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public abstract class CustomizableInventory {
     protected final SongodaPlugin plugin;
     protected final Player player;
     private final String key;
-    private final YamlDocument config;
+    private final Config config;
     protected final Gui gui;
 
     public CustomizableInventory(SongodaPlugin plugin, Player player, String key) {
@@ -54,12 +54,12 @@ public abstract class CustomizableInventory {
     protected abstract void fill(Player player);
 
     private void fillWithCustom(Player player) {
-        if (!config.isSection("customItems")) {
+        if (!config.isConfigurationSection("customItems")) {
             return;
         }
 
-        for (String key : config.getSection("customItems").getRoutesAsStrings(false)) {
-            Section section = config.getSection("customItems." + key);
+        for (String key : config.getConfigurationSection("customItems").getKeys(false)) {
+            ConfigurationSection section = config.getConfigurationSection("customItems." + key);
             List<String> actions = section.getStringList("actions");
             int slot = section.getInt("slot");
 
@@ -68,12 +68,12 @@ public abstract class CustomizableInventory {
     }
 
     protected int getSlot(String route) {
-        Section section = config.getSection(route);
+        ConfigurationSection section = config.getConfigurationSection(route);
         return section.getInt("slot");
     }
 
     protected GuiItem getItem(String route, Map<String, String> placeholders, Consumer<InventoryClickEvent> consumer) {
-        Section section = config.getSection(route);
+        ConfigurationSection section = config.getConfigurationSection(route);
 
         Material material = Material.getMaterial(section.getString("material"));
         Component name = MiniMessage.miniMessage().deserialize(plugin.getPlaceholderResolver().setPlaceholders(player, section.getString("name")))

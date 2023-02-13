@@ -83,12 +83,14 @@
                                     <include>com.songoda:songodacore-hooks</include>
                                     <include>net.wesjd:anvilgui</include>
                                     <include>co.aikar:*</include>
-                                    <include>dev.dejvokep:boosted-yaml-spigot</include>
                                     <include>dev.triumphteam:triumph-gui</include>
                                     <include>org.jooq:jooq</include>
                                     <include>org.reactivestreams:reactive-streams</include>
                                     <include>io.r2dbc:r2dbc-spi</include>
                                     <include>org.mariadb.jdbc:mariadb-java-client</include>
+                                    <include>com.h2database:h2</include>
+                                    <include>me.carleslc.Simple-YAML:Simple-YAML</include>
+                                    <include>ru.vyarus:yaml-config-updater</include>
                                 </includes>
                             </artifactSet>
 
@@ -106,11 +108,6 @@
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>com.songoda.core.third_party.net.kyori</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>dev.dejvokep.boostedyaml</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.dev.dejvokep.boostedyaml</shadedPattern>
                                 </relocation>
 
                                 <relocation>
@@ -149,12 +146,26 @@
                                 </relocation>
 
                                 <relocation>
+                                    <pattern>com.h2database</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.com.h2database</shadedPattern>
+                                </relocation>
+
+                                <relocation>
                                     <pattern>org.reactivestreams</pattern>
                                     <shadedPattern>com.songoda.core.third_party.org.reactivestreams</shadedPattern>
                                 </relocation>
                                 <relocation>>
                                     <pattern>io.r2dbc</pattern>
                                     <shadedPattern>com.songoda.core.third_party.io.r2dbc</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>me.carleslc.Simple-YAML</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.me.carleslc.Simple-YAML</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>ru.vyarus.yaml</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.ru.vyarus.yaml</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -228,13 +239,6 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.dejvokep</groupId>
-            <artifactId>boosted-yaml-spigot</artifactId>
-            <version>1.3</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
             <version>9.1.0</version>
@@ -283,9 +287,33 @@
             <version>3.0.8</version>
         </dependency>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>songodacore-hooks</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>me.carleslc.Simple-YAML</groupId>
+            <artifactId>Simple-Yaml</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.vyarus</groupId>
+            <artifactId>yaml-config-updater</artifactId>
+            <version>1.4.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 </project>

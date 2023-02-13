@@ -15,15 +15,6 @@ public interface Data {
     }
 
     /**
-     * Gets the uuid of this data
-     *
-     * @return The uuid
-     */
-    default UUID getDataUniqueId() {
-        return UUID.randomUUID();
-    }
-
-    /**
      * Serializes the data into a map
      * to save to the database
      *

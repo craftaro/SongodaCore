@@ -5,16 +5,11 @@ import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import com.songoda.core.actions.ActionManager;
 import com.songoda.core.builtin.SongodaCoreCommand;
+import com.songoda.core.configuration.Config;
 import com.songoda.core.placeholder.IPlaceholderResolver;
 import com.songoda.core.placeholder.NoPluginResolver;
 import com.songoda.core.placeholder.PlaceholderAPIResolver;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,14 +64,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @param file File to create.
      * @return The configuration file created.
      */
-    public YamlDocument createConfig(File file) {
-        try {
-            return YamlDocument.create(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    public Config createConfig(File file) {
+        return new Config(file);
     }
 
     /**
@@ -84,18 +73,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @param file File to create.
      * @return The configuration file created.
      */
-    public YamlDocument createUpdatingConfig(File file) {
-        try {
-            return YamlDocument.create(file, getResource(file.getName()),
-                    GeneralSettings.DEFAULT,
-                    LoaderSettings.builder().setAutoUpdate(true).build(),
-                    DumperSettings.DEFAULT,
-                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Config createUpdatingConfig(File file) {
+        return new Config(this, file);
+    }
 
-        return null;
+    public Config getDatabaseConfig() {
+        return new Config(this, new File(getDataFolder(), "database.yml"));
     }
 
     @Override
@@ -104,7 +87,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     /**
-     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
+     * Use {@link com.songoda.core.configuration.Config} instead.
      */
     @Deprecated
     @Override
@@ -113,7 +96,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     /**
-     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
+     * Use {@link com.songoda.core.configuration.Config} instead.
      */
     @Deprecated
     @Override
@@ -121,7 +104,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     /**
-     * Use {@link dev.dejvokep.boostedyaml.YamlDocument} instead.
+     * Use {@link com.songoda.core.configuration.Config} instead.
      */
     @Deprecated
     @Override
