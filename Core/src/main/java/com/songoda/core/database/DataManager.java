@@ -57,7 +57,7 @@ public class DataManager {
 
     private void load() {
         try {
-            String databaseType = databaseConfig.getString("Type").toUpperCase(Locale.ROOT);
+            String databaseType = databaseConfig.getString("Connection Settings.Type").toUpperCase();
             switch (databaseType) {
                 case "MYSQL": {
                     this.databaseConnector = new MySQLConnector(plugin, databaseConfig);

@@ -1,5 +1,6 @@
 package com.songoda.core.configuration;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.SongodaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
 import ru.vyarus.yaml.updater.YamlUpdater;
@@ -33,11 +34,17 @@ public class Config extends YamlFile {
      * @param file   The file to load the config from starting from the plugin's data folder
      */
     public Config(SongodaPlugin plugin, File file) {
-        super(new File(plugin.getDataFolder(), file.toString()));
+        super(new File(plugin.getDataFolder(), file.toString().replace("plugins" + File.separator + plugin.getName() + File.separator, "")));
+        String path = file.toString().replace("plugins" + File.separator + plugin.getName() + File.separator, "");
         if (!super.exists()) {
             try {
                 super.createNewFile();
-                YamlUpdater.create(super.getConfigurationFile(), Objects.requireNonNull(plugin.getClass().getResourceAsStream(file.toString().startsWith("/") ? file.toString() : "/"+file))).update();
+                final String resource = "/" + path;
+                if (file.toString().endsWith("database.yml")) {
+                    YamlUpdater.create(super.getConfigurationFile(), Objects.requireNonNull(SongodaCore.getInstance().getClass().getResourceAsStream(resource))).update();
+                } else {
+                    YamlUpdater.create(super.getConfigurationFile(), Objects.requireNonNull(plugin.getClass().getResourceAsStream(resource))).update();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

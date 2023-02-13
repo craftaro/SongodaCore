@@ -89,7 +89,7 @@
                                     <include>io.r2dbc:r2dbc-spi</include>
                                     <include>org.mariadb.jdbc:mariadb-java-client</include>
                                     <include>com.h2database:h2</include>
-                                    <include>me.carleslc.Simple-YAML:Simple-YAML</include>
+                                    <include>me.carleslc.Simple-YAML:Simple-Yaml</include>
                                     <include>ru.vyarus:yaml-config-updater</include>
                                 </includes>
                             </artifactSet>
@@ -146,15 +146,15 @@
                                 </relocation>
 
                                 <relocation>
-                                    <pattern>com.h2database</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.com.h2database</shadedPattern>
+                                    <pattern>org.h2</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.org.h2</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.reactivestreams</pattern>
                                     <shadedPattern>com.songoda.core.third_party.org.reactivestreams</shadedPattern>
                                 </relocation>
-                                <relocation>>
+                                <relocation>
                                     <pattern>io.r2dbc</pattern>
                                     <shadedPattern>com.songoda.core.third_party.io.r2dbc</shadedPattern>
                                 </relocation>

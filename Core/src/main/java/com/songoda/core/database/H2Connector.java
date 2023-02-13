@@ -8,6 +8,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.simpleyaml.configuration.ConfigurationSection;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -25,9 +26,8 @@ public class H2Connector implements DatabaseConnector {
         int poolSize = section.getInt("Pool Size");
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:tcp://" + plugin.getDataFolder().getAbsolutePath() + "/database");
-        config.setUsername("songoda");
-        config.setPassword("");
+        config.setDriverClassName("com.songoda.core.third_party.org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:file:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE");
         config.setMaximumPoolSize(poolSize);
 
         try {
