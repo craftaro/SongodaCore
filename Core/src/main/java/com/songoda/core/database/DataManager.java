@@ -12,8 +12,10 @@ import org.jooq.impl.DSL;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,16 +23,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -39,9 +44,10 @@ public class DataManager {
     protected final Config databaseConfig;
     private final List<DataMigration> migrations;
 
+    private final static Set<DatabaseConnector> openedConnections = new HashSet<>();
     protected DatabaseConnector databaseConnector;
     protected DatabaseType type;
-    private final Map<String, Integer> autoIncrementCache = new HashMap<>();
+    private final Map<String, AtomicInteger> autoIncrementCache = new HashMap<>();
 
     protected final ExecutorService asyncPool = new ThreadPoolExecutor(1, 5, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName()+"-Database-Async-%d").build());
 
@@ -77,7 +83,7 @@ public class DataManager {
                     break;
                 }
             }
-
+            openedConnections.add(this.databaseConnector);
             this.type = databaseConnector.getType();
             this.plugin.getLogger().info("Data handler connected using " + databaseConnector.getType().name() + ".");
         } catch (Exception ex) {
@@ -111,17 +117,9 @@ public class DataManager {
             int currentMigration = -1;
             boolean migrationsExist;
 
-            String query;
-            if (this.databaseConnector instanceof SQLiteConnector) {
-                query = "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?";
-            } else {
-                query = "SHOW TABLES LIKE ?";
-            }
-
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, this.getMigrationsTableName());
-                migrationsExist = statement.executeQuery().next();
-            }
+            DatabaseMetaData meta = connection.getMetaData();
+            ResultSet res = meta.getTables(null, null, this.getMigrationsTableName(), new String[] {"TABLE"});
+            migrationsExist = res.next();
 
             if (!migrationsExist) {
                 // No migration table exists, create one
@@ -192,23 +190,13 @@ public class DataManager {
      */
     public synchronized int getNextId(String table) {
         if (!this.autoIncrementCache.containsKey(table)) {
-            databaseConnector.connectDSL(dsl -> {
-                try (ResultSet rs = dsl.select(DSL.max(DSL.field("id"))).from(table).fetchResultSet()) {
-                    if (rs.next()) {
-                        this.autoIncrementCache.put(table, rs.getInt(1));
-                    } else {
-                        this.autoIncrementCache.put(table, 1);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            databaseConnector.connectDSL(context -> {
+                context.select(DSL.max(DSL.field("id"))).from(table).fetchOptional().ifPresentOrElse(record -> {
+                    this.autoIncrementCache.put(table, new AtomicInteger(record.get(0, Integer.class)));
+                }, () -> this.autoIncrementCache.put(table, new AtomicInteger(0)));
             });
         }
-
-        int id = this.autoIncrementCache.get(table);
-        id++;
-        this.autoIncrementCache.put(table, id);
-        return id;
+        return this.autoIncrementCache.get(table).incrementAndGet();
     }
 
     /**
@@ -219,8 +207,9 @@ public class DataManager {
             databaseConnector.connectDSL(context -> {
                 context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                         .set(data.serialize())
-                        .onDuplicateKeyUpdate()
+                        .onConflict(DSL.field("id")).doUpdate()
                         .set(data.serialize())
+                        .where(DSL.field("id").eq(data.getId()))
                         .execute();
             });
         });
@@ -236,8 +225,9 @@ public class DataManager {
                 for (Data data : dataBatch) {
                     queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                             .set(data.serialize())
-                            .onDuplicateKeyUpdate()
-                            .set(data.serialize()));
+                            .onConflict(DSL.field("id")).doUpdate()
+                            .set(data.serialize())
+                            .where(DSL.field("id").eq(data.getId())));
                 }
 
                 context.batch(queries).execute();
@@ -344,6 +334,8 @@ public class DataManager {
      */
     public void shutdown() {
         asyncPool.shutdown();
+        //Make sure no H2 database is left open when reloading the plugin
+        openedConnections.forEach(DatabaseConnector::closeConnection);
         databaseConnector.closeConnection();
     }
 
@@ -353,6 +345,8 @@ public class DataManager {
      */
     public List<Runnable> shutdownNow() {
         databaseConnector.closeConnection();
+        //Make sure no H2 database is left open when reloading the plugin
+        openedConnections.forEach(DatabaseConnector::closeConnection);
         return asyncPool.shutdownNow();
     }
 
