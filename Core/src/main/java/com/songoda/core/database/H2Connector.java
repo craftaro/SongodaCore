@@ -24,10 +24,14 @@ public class H2Connector implements DatabaseConnector {
         ConfigurationSection section = databaseConfig.getConfigurationSection("Connection Settings");
 
         int poolSize = section.getInt("Pool Size");
+        String password = section.getString("Password");
+        String username = section.getString("Username");
 
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("com.songoda.core.third_party.org.h2.Driver");
-        config.setJdbcUrl("jdbc:h2:file:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE");
+        config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setPassword(username);
+        config.setUsername(password);
         config.setMaximumPoolSize(poolSize);
 
         try {
@@ -62,7 +66,7 @@ public class H2Connector implements DatabaseConnector {
     @Override
     public void connectDSL(DSLContextCallback callback) {
         try (Connection connection = getConnection()){
-            callback.accept(DSL.using(connection, SQLDialect.MARIADB));
+            callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
