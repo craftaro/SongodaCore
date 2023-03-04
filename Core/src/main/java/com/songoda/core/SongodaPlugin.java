@@ -93,16 +93,22 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         // Check plugin access, don't load plugin if user don't have access
         if (!SongodaAuth.isAuthorized(true)) {
+            String pluginName = getDescription().getName();
+
             new Thread(() -> {
-                String message = ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-                        ChatColor.RED + "You do not have access to this plugin.\n" +
+                String externalIP = SongodaAuth.getIP();
+                String serverUuid = SongodaAuth.getUUID().toString();
+
+                String message = "\n" +
+                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                        ChatColor.RED + "You do not have access to the " + pluginName + " plugin.\n" +
                         ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace\n" +
                         ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses\n" +
                         ChatColor.YELLOW + "License setup steps:\n" +
-                        ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'\n" +
-                        ChatColor.YELLOW + "Copy the following ip and uuid and click create.\n" +
-                        ChatColor.YELLOW + "IP: " + SongodaAuth.getIP() + "\n" +
-                        ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID() + "\n" +
+                        ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License' button.\n" +
+                        ChatColor.YELLOW + "Copy the following IP address and UUID and click create.\n" +
+                        ChatColor.YELLOW + "IP: " + externalIP + "\n" +
+                        ChatColor.YELLOW + "UUID: " + serverUuid + "\n" +
                         ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
                 this.console.sendMessage(message);
             }).start();
