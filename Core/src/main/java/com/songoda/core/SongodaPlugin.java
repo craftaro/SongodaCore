@@ -85,27 +85,28 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        if (emergencyStop) {
+        if (this.emergencyStop) {
             setEnabled(false);
 
             return;
         }
 
-        //Check plugin access, don't load plugin if user don't have access
+        // Check plugin access, don't load plugin if user don't have access
         if (!SongodaAuth.isAuthorized(true)) {
-            Thread thread = new Thread(() -> {
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                console.sendMessage(ChatColor.RED + "You do not have access to this plugin.");
-                console.sendMessage(ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace");
-                console.sendMessage(ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses");
-                console.sendMessage(ChatColor.YELLOW + "License setup steps:");
-                console.sendMessage(ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'");
-                console.sendMessage(ChatColor.YELLOW + "Copy the following ip and uuid and click create.");
-                console.sendMessage(ChatColor.YELLOW + "IP: " + SongodaAuth.getIP());
-                console.sendMessage(ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID());
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            });
-            thread.start();
+            new Thread(() -> {
+                String message = ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                        ChatColor.RED + "You do not have access to this plugin.\n" +
+                        ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace\n" +
+                        ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses\n" +
+                        ChatColor.YELLOW + "License setup steps:\n" +
+                        ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'\n" +
+                        ChatColor.YELLOW + "Copy the following ip and uuid and click create.\n" +
+                        ChatColor.YELLOW + "IP: " + SongodaAuth.getIP() + "\n" +
+                        ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID() + "\n" +
+                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+                this.console.sendMessage(message);
+            }).start();
+
             emergencyStop();
             return;
         }
