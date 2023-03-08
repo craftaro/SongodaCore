@@ -1,5 +1,6 @@
 package com.songoda.core.locale;
 
+import com.songoda.core.utils.ColorUtils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
@@ -14,8 +15,12 @@ public class Message {
         this.component = component;
     }
 
+    public static Message of(BukkitAudiences adventure, String text) {
+        return new Message(adventure, ColorUtils.formatComponent(text));
+    }
+
     public Message replace(String placeholder, String replacement) {
-        this.component = component.replaceText(text -> text.matchLiteral(placeholder).replacement(replacement));
+        this.component = component.replaceText(text -> text.matchLiteral("<"+placeholder+">").replacement(replacement));
         return this;
     }
 
