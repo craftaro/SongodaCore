@@ -27,6 +27,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
         /* NBT-API */
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
         MinecraftVersion.disableUpdateCheck();
+        // Disable tips and logo for Jooq
+        System.setProperty("org.jooq.no-tips", "true");
+        System.setProperty("org.jooq.no-logo", "true");
     }
 
     private BukkitCommandHandler commandManager;
