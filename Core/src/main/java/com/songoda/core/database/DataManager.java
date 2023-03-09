@@ -189,14 +189,15 @@ public class DataManager {
      * @return The next auto increment value for the given table
      */
     public synchronized int getNextId(String table) {
-        if (!this.autoIncrementCache.containsKey(table)) {
+        String prefixedTable = getTablePrefix() + table;
+        if (!this.autoIncrementCache.containsKey(prefixedTable)) {
             databaseConnector.connectDSL(context -> {
-                context.select(DSL.max(DSL.field("id"))).from(table).fetchOptional().ifPresentOrElse(record -> {
-                    this.autoIncrementCache.put(table, new AtomicInteger(record.get(0, Integer.class)));
-                }, () -> this.autoIncrementCache.put(table, new AtomicInteger(0)));
+                context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().ifPresentOrElse(record -> {
+                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(record.get(0, Integer.class)));
+                }, () -> this.autoIncrementCache.put(prefixedTable, new AtomicInteger(0)));
             });
         }
-        return this.autoIncrementCache.get(table).incrementAndGet();
+        return this.autoIncrementCache.get(prefixedTable).incrementAndGet();
     }
 
     /**
