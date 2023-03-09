@@ -1,8 +1,9 @@
 package com.songoda.core.hooks.protection;
 
-import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.LandsIntegration;
+import me.angeschossen.lands.api.flags.type.Flags;
+import me.angeschossen.lands.api.flags.type.RoleFlag;
 import me.angeschossen.lands.api.land.Area;
-import me.angeschossen.lands.api.role.enums.RoleSetting;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -13,32 +14,31 @@ public class LandsProtection extends Protection {
     public LandsProtection(Plugin plugin) {
         super(plugin);
 
-        this.landsIntegration = new LandsIntegration(plugin);
+        this.landsIntegration = LandsIntegration.of(plugin);
     }
 
     @Override
     public boolean canPlace(Player player, Location location) {
-        return hasPerms(player, location, RoleSetting.BLOCK_PLACE);
+        return hasPerms(player, location, Flags.BLOCK_PLACE);
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        return hasPerms(player, location, RoleSetting.BLOCK_BREAK);
+        return hasPerms(player, location, Flags.BLOCK_BREAK);
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return hasPerms(player, location, RoleSetting.INTERACT_CONTAINER);
+        return hasPerms(player, location, Flags.INTERACT_CONTAINER);
     }
 
-    private boolean hasPerms(Player player, Location location, RoleSetting roleSetting) {
-        Area area = landsIntegration.getAreaByLoc(location);
-
+    private boolean hasPerms(Player player, Location location, RoleFlag roleFlag) {
+        Area area = this.landsIntegration.getArea(location);
         if (area == null) {
             return true;
         }
 
-        return area.canSetting(player, roleSetting, false);
+        return area.getRole(player.getUniqueId()).hasFlag(roleFlag);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class LandsProtection extends Protection {
 
     @Override
     public boolean isEnabled() {
-        return landsIntegration != null;
+        return this.landsIntegration != null;
     }
 }
