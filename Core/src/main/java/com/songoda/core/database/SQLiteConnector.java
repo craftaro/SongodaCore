@@ -65,4 +65,9 @@ public class SQLiteConnector implements DatabaseConnector {
         }
         return this.connection;
     }
+
+    @Override
+    public DatabaseType getType() {
+        return DatabaseType.SQLITE;
+    }
 }

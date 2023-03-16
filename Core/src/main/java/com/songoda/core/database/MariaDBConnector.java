@@ -62,4 +62,9 @@ public class MariaDBConnector implements DatabaseConnector {
         }
         return null;
     }
+
+    @Override
+    public DatabaseType getType() {
+        return DatabaseType.MARIADB;
+    }
 }
