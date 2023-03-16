@@ -33,7 +33,7 @@ public class SItemStackImpl implements SItemStack {
             vec3d1 = vec3d1.yRot(-entityPlayer.getYRot() * 0.017453292F);
             vec3d1 = vec3d1.add(entityPlayer.getX(), entityPlayer.getEyeY(), entityPlayer.getZ());
 
-            entityPlayer.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, CraftItemStack.asNMSCopy(item)), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
+            entityPlayer.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, CraftItemStack.asNMSCopy(this.item)), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
         }
     }
 }

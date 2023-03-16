@@ -15,10 +15,10 @@ public class NBTItemImpl extends NBTCompoundImpl implements NBTItem {
     }
 
     public org.bukkit.inventory.ItemStack finish() {
-        if (nmsItem == null) {
-            return CraftItemStack.asBukkitCopy(ItemStack.of(compound));
+        if (this.nmsItem == null) {
+            return CraftItemStack.asBukkitCopy(ItemStack.of(this.compound));
         }
 
-        return CraftItemStack.asBukkitCopy(nmsItem);
+        return CraftItemStack.asBukkitCopy(this.nmsItem);
     }
 }
