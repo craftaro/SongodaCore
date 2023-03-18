@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Deprecated
 public class SQLiteConnector implements DatabaseConnector {
     private final Plugin plugin;
     private final String connectionString;
