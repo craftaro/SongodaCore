@@ -35,7 +35,11 @@ public abstract class DataMigration {
      */
     public static DataManager convert(SongodaPlugin plugin, DatabaseType toType) {
         DataManager from = plugin.getDataManager();
-        DataManager to = new DataManager(plugin, Collections.emptyList());
+        if (from.getDatabaseConnector().getType() == toType) {
+            plugin.getLogger().severe("Cannot convert to the same database type!");
+            return null;
+        }
+        DataManager to = new DataManager(plugin, Collections.emptyList(), toType);
         if (!to.getDatabaseConnector().isInitialized()) {
             plugin.getLogger().severe("Invalid database configuration for " + toType.name() +"! Please check your "+plugin.getName()+"/database.yml file.");
             return null;
@@ -44,10 +48,12 @@ public abstract class DataMigration {
         DatabaseConnector fromConnector = from.getDatabaseConnector();
         DatabaseConnector toConnector = to.getDatabaseConnector();
 
-        String tablePrefix = plugin.getDataManager().getTablePrefix();
+        Connection fromConnection;
+        Connection toConnection = null;
 
-        try (Connection fromConnection = fromConnector.getConnection(); Connection toConnection = toConnector.getConnection()) {
-            fromConnection.setAutoCommit(false);
+        try {
+            fromConnection = fromConnector.getConnection();
+            toConnection = toConnector.getConnection();
             toConnection.setAutoCommit(false);
 
             // Retrieve the list of tables from the old database
@@ -75,9 +81,15 @@ public abstract class DataMigration {
                 }
             }
 
-            fromConnection.commit();
             toConnection.commit();
         } catch (Exception e) {
+            if (toConnection != null)
+                try {
+                    toConnection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                    SongodaCore.getInstance().getLogger().severe("Failed to rollback data for the new database");
+                }
             e.printStackTrace();
             SongodaCore.getInstance().getLogger().severe("Failed to migrate data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
             return null;

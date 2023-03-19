@@ -58,12 +58,22 @@ public class DataManager {
         this.plugin = plugin;
         this.migrations = migrations;
         this.databaseConfig = plugin.getDatabaseConfig();
-        load();
+        load(null);
     }
 
-    private void load() {
+    public DataManager(SongodaPlugin plugin, List<DataMigration> migrations, DatabaseType forcedType) {
+        this.plugin = plugin;
+        this.migrations = migrations;
+        this.databaseConfig = plugin.getDatabaseConfig();
+        load(forcedType);
+    }
+
+    private void load(DatabaseType forcedType) {
         try {
             String databaseType = databaseConfig.getString("Connection Settings.Type").toUpperCase();
+            if (forcedType != null) {
+                databaseType = forcedType.name();
+            }
             switch (databaseType) {
                 case "MYSQL": {
                     this.databaseConnector = new MySQLConnector(plugin, databaseConfig);
