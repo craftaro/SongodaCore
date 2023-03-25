@@ -29,11 +29,27 @@ public interface DatabaseConnector {
     void connect(ConnectionCallback callback);
 
     /**
+     * Executes a callback with a Connection passed and automatically closes it when finished
+     *
+     * @param callback The callback to execute once the connection is retrieved
+     * @return The result of the callback
+     */
+    OptionalResult connectOptional(ConnectionOptionalCallback callback);
+
+    /**
      * Executes a callback with a DSLContext passed and automatically closes it when finished
      *
      * @param callback The callback to execute once the connection is retrieved
      */
     void connectDSL(DSLContextCallback callback);
+
+    /**
+     * Executes a callback with a DSLContext passed and automatically closes it when finished
+     *
+     * @param callback The callback to execute once the connection is retrieved
+     * @return The result of the callback
+     */
+    OptionalResult connectDSLOptional(DSLContextOptionalCallback callback);
 
     /**
      * Wraps a connection in a callback which will automagically handle catching sql errors
@@ -43,10 +59,28 @@ public interface DatabaseConnector {
     }
 
     /**
+     * Wraps a connection in a callback which will
+     * automagically handle catching sql errors
+     * Can return a value
+     */
+    interface ConnectionOptionalCallback {
+        OptionalResult accept(Connection connection) throws SQLException;
+    }
+
+    /**
      * Wraps a connection in a callback which will automagically handle catching sql errors
      */
     interface DSLContextCallback {
         void accept(DSLContext context) throws SQLException;
+    }
+
+    /**
+     * Wraps a connection in a callback which will
+     * automagically handle catching sql errors
+     * Can return a value
+     */
+    interface DSLContextOptionalCallback {
+        OptionalResult accept(DSLContext context) throws SQLException;
     }
 
     /**
