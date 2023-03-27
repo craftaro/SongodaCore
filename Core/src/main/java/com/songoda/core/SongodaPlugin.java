@@ -142,6 +142,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
     @Override
     public final void onDisable() {
         onPluginDisable();
+        if (dataManager != null) {
+            dataManager.shutdown();
+        }
     }
 
     /**
