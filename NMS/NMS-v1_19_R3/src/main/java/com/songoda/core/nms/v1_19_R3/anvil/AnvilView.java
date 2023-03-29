@@ -40,10 +40,10 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
 
     static {
         try {
-            mc_ContainerAnvil_repairInventory = ItemCombinerMenu.class.getDeclaredField("p");
+            mc_ContainerAnvil_repairInventory = ItemCombinerMenu.class.getDeclaredField("q");
             mc_ContainerAnvil_repairInventory.setAccessible(true);
 
-            mc_ContainerAnvil_resultInventory = ItemCombinerMenu.class.getDeclaredField("o");
+            mc_ContainerAnvil_resultInventory = ItemCombinerMenu.class.getDeclaredField("r");
             mc_ContainerAnvil_resultInventory.setAccessible(true);
 
             mc_ContainerAnvil_bukkitEntity = AnvilMenu.class.getDeclaredField("bukkitEntity");
