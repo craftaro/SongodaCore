@@ -1,5 +1,6 @@
 package com.songoda.core.database;
 
+import com.songoda.core.SongodaCore;
 import com.songoda.core.configuration.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -66,13 +67,35 @@ public class MySQLConnector implements DatabaseConnector {
     }
 
     @Override
-    public void connectDSL(DSLContextCallback callback) {
+    public OptionalResult connectOptional(ConnectionOptionalCallback callback) {
         try (Connection connection = getConnection()) {
+            return callback.accept(connection);
+        } catch (Exception ex) {
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        return OptionalResult.empty();
+    }
+
+    @Override
+    public void connectDSL(DSLContextCallback callback) {
+        try (Connection connection = getConnection()){
             callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public OptionalResult connectDSLOptional(DSLContextOptionalCallback callback) {
+        try (Connection connection = getConnection()) {
+            return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
+        } catch (Exception ex) {
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        return OptionalResult.empty();
     }
 
     @Override
