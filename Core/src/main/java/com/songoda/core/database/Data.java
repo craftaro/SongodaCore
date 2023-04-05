@@ -8,10 +8,19 @@ public interface Data {
     /**
      * Gets the auto increment id of this data
      *
-     * @return The auto increment id
+     * @return The auto increment id or -1 if not applicable
      */
     default int getId() {
-        return 0;
+        return -1;
+    }
+
+    /**
+     * Gets the unique id of this data
+     *
+     * @return The unique id or null if not applicable
+     */
+    default UUID getUniqueId() {
+        return null;
     }
 
     /**

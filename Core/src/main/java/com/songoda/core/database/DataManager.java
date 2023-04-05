@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class DataManager {
     protected final Config databaseConfig;
     private final List<DataMigration> migrations;
 
-    private final static Set<DatabaseConnector> openedConnections = new HashSet<>();
+    private final Set<DatabaseConnector> openedConnections = new HashSet<>();
     protected DatabaseConnector databaseConnector;
     protected DatabaseType type;
     private final Map<String, AtomicInteger> autoIncrementCache = new HashMap<>();
@@ -203,8 +204,12 @@ public class DataManager {
         if (!this.autoIncrementCache.containsKey(prefixedTable)) {
             databaseConnector.connectDSL(context -> {
                 context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().ifPresentOrElse(record -> {
+                    if (record.get(0, Integer.class) == null) {
+                        this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1));
+                        return;
+                    }
                     this.autoIncrementCache.put(prefixedTable, new AtomicInteger(record.get(0, Integer.class)));
-                }, () -> this.autoIncrementCache.put(prefixedTable, new AtomicInteger(0)));
+                }, () -> this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1)));
             });
         }
         return this.autoIncrementCache.get(prefixedTable).incrementAndGet();
@@ -220,9 +225,23 @@ public class DataManager {
                         .set(data.serialize())
                         .onConflict(DSL.field("id")).doUpdate()
                         .set(data.serialize())
-                        .where(DSL.field("id").eq(data.getId()))
+                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
                         .execute();
             });
+        });
+    }
+
+    /**
+     * Saves the data to the database synchronously
+     */
+    public void saveSync(Data data) {
+        databaseConnector.connectDSL(context -> {
+            context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
+                    .set(data.serialize())
+                    .onConflict(DSL.field("id")).doUpdate()
+                    .set(data.serialize())
+                    .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
+                    .execute();
         });
     }
 
@@ -238,11 +257,29 @@ public class DataManager {
                             .set(data.serialize())
                             .onConflict(DSL.field("id")).doUpdate()
                             .set(data.serialize())
-                            .where(DSL.field("id").eq(data.getId())));
+                            .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString())));
                 }
 
                 context.batch(queries).execute();
             });
+        });
+    }
+
+    /**
+     * Saves the data in batch to the database
+     */
+    public void saveBatchSync(Collection<Data> dataBatch) {
+        databaseConnector.connectDSL(context -> {
+            List<Query> queries = new ArrayList<>();
+            for (Data data : dataBatch) {
+                queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
+                        .set(data.serialize())
+                        .onConflict(DSL.field("id")).doUpdate()
+                        .set(data.serialize())
+                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString())));
+            }
+
+            context.batch(queries).execute();
         });
     }
 
@@ -253,7 +290,7 @@ public class DataManager {
         asyncPool.execute(() -> {
             databaseConnector.connectDSL(context -> {
                 context.delete(DSL.table(getTablePrefix() + data.getTableName()))
-                        .where(DSL.field("id").eq(data.getId()))
+                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
                         .execute();
             });
         });
@@ -295,6 +332,7 @@ public class DataManager {
     public <T extends Data> T load(UUID uuid, Class<?> clazz, String table) {
         try {
             AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicBoolean found = new AtomicBoolean(false);
             databaseConnector.connectDSL(context -> {
                 try {
                     data.set((Data) clazz.getDeclaredConstructor().newInstance());
@@ -303,11 +341,18 @@ public class DataManager {
                                     .where(DSL.field("uuid").eq(uuid.toString()))
                                     .fetchOne())
                             .intoMap());
+                    found.set(true);
+                } catch (NullPointerException ignored) {
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             });
-            return (T) data.get();
+            if (found.get()) {
+                return (T) data.get();
+            } else {
+                return null;
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
