@@ -107,8 +107,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
                         ChatColor.YELLOW + "License setup steps:\n" +
                         ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License' button.\n" +
                         ChatColor.YELLOW + "Copy the following IP address and UUID and click create.\n" +
-                        ChatColor.YELLOW + "IP: " + externalIP + "\n" +
                         ChatColor.YELLOW + "UUID: " + serverUuid + "\n" +
+                        ChatColor.YELLOW + "IP: " + externalIP + "\n" +
                         ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
                 this.console.sendMessage(message);
             }).start();
