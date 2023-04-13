@@ -13,6 +13,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
@@ -55,7 +56,7 @@ public class WorldCoreImpl implements WorldCore {
      */
     @Override
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
-        LevelChunk chunk = ((CraftChunk) bukkitChunk).getHandle();
+        LevelChunk chunk = (LevelChunk) ((CraftChunk) bukkitChunk).getHandle(ChunkStatus.FULL);
         ServerLevel world = chunk.q;
         ProfilerFiller gameProfilerFiller = world.getProfiler();
 
