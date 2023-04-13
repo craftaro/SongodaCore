@@ -101,7 +101,7 @@ public class DropUtils {
         Bukkit.getScheduler().runTask(SongodaCore.getHijackedPlugin(), () -> {
             for (String command : commands) {
                 if (entity.getKiller() != null) {
-                    command = command.replace("%player%", entity.getKiller().getName());
+                    command = command.replace("%player%", entity.getKiller().getName().replace("%x%", String.valueOf((int)entity.getLocation().getX())).replace("%y%", String.valueOf((int)entity.getLocation().getY())).replace("%z%", String.valueOf((int)entity.getLocation().getZ())));
                 }
 
                 if (!command.contains("%player%")) {

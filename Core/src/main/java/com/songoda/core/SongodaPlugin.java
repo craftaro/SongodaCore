@@ -85,34 +85,41 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        if (emergencyStop) {
+        if (this.emergencyStop) {
             setEnabled(false);
 
             return;
         }
 
-        //Check plugin access, don't load plugin if user don't have access
+        // Check plugin access, don't load plugin if user don't have access
         if (!SongodaAuth.isAuthorized(true)) {
-            Thread thread = new Thread(() -> {
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                console.sendMessage(ChatColor.RED + "You do not have access to this plugin.");
-                console.sendMessage(ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace");
-                console.sendMessage(ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses");
-                console.sendMessage(ChatColor.YELLOW + "License setup steps:");
-                console.sendMessage(ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License button'");
-                console.sendMessage(ChatColor.YELLOW + "Copy the following ip and uuid and click create.");
-                console.sendMessage(ChatColor.YELLOW + "IP: " + SongodaAuth.getIP());
-                console.sendMessage(ChatColor.YELLOW + "UUID: " + SongodaAuth.getUUID());
-                console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            });
-            thread.start();
+            String pluginName = getDescription().getName();
+
+            new Thread(() -> {
+                String externalIP = SongodaAuth.getIP();
+                String serverUuid = SongodaAuth.getUUID().toString();
+
+                String message = "\n" +
+                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                        ChatColor.RED + "You do not have access to the " + pluginName + " plugin.\n" +
+                        ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace\n" +
+                        ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses\n" +
+                        ChatColor.YELLOW + "License setup steps:\n" +
+                        ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License' button.\n" +
+                        ChatColor.YELLOW + "Copy the following IP address and UUID and click create.\n" +
+                        ChatColor.YELLOW + "UUID: " + serverUuid + "\n" +
+                        ChatColor.YELLOW + "IP: " + externalIP + "\n" +
+                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+                this.console.sendMessage(message);
+            }).start();
+
             emergencyStop();
             return;
         }
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
+        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY,
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
         console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
                 ChatColor.GREEN, "Enabling", ChatColor.GRAY));
@@ -155,7 +162,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
+        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY,
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
         console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
                 ChatColor.RED, "Disabling", ChatColor.GRAY));
@@ -229,7 +236,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             if (unfinishedTasks > 0) {
                 getLogger().log(Level.WARNING,
                         String.format("A DataManager has been forcefully terminated with %d unfinished tasks - " +
-                                "This can be a serious problem, please report it to us (Songoda)!", unfinishedTasks));
+                                "This can be a serious problem, please report it to us (Craftaro / Songoda)!", unfinishedTasks));
             }
         }
     }
