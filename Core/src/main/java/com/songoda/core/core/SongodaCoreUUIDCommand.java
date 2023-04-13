@@ -40,7 +40,7 @@ public class SongodaCoreUUIDCommand extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "songodacore.admin";
+        return "songoda.admin";
     }
 
     @Override
