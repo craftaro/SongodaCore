@@ -36,7 +36,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/songoda diag";
+        return "/craftaro diag";
     }
 
     @Override

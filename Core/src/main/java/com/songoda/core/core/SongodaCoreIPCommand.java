@@ -63,7 +63,7 @@ public class SongodaCoreIPCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/songoda myip";
+        return "/craftaro myip";
     }
 
     @Override

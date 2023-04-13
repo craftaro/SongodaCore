@@ -45,7 +45,7 @@ public class SongodaCoreUUIDCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/songodacore uuid";
+        return "/craftaro uuid";
     }
 
     @Override
