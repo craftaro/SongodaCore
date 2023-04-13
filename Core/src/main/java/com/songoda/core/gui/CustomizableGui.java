@@ -60,7 +60,7 @@ public class CustomizableGui extends Gui {
                                 "in this GUI.")
                         .setDefaultComment("overrides",
                                 "For information on how to apply overrides please visit",
-                                "https://wiki.songoda.com/Gui");
+                                "https://wiki.craftaro.com/index.php/Gui");
 
                 config.saveChanges();
             }
