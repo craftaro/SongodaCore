@@ -18,8 +18,10 @@ import net.minecraft.server.v1_16_R3.MobSpawnerAbstract;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
 
 public class WorldCoreImpl implements WorldCore {
@@ -97,5 +99,14 @@ public class WorldCoreImpl implements WorldCore {
         }
 
         profiler.exit();
+    }
+
+    @Override
+    public void updateAdjacentComparators(Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
+
+        net.minecraft.server.v1_16_R3.World nmsWorld = craftChunk.getHandle().getWorld();
+        nmsWorld.updateAdjacentComparators(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }

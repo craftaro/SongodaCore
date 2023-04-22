@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.nms.NmsManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +20,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated This class will be removed in the future and replaced with a more maintainable system.
+ */
+@Deprecated
 public class BlockUtils {
     protected static final Set<Material> DOORS;
     protected static final Set<Material> PRESSURE_PLATES;
@@ -337,7 +342,10 @@ public class BlockUtils {
      * Manually trigger the updateAdjacentComparators method for containers
      *
      * @param loc The Location of the container
+     *
+     * @deprecated Broken in/since Spigot 1.19.4! Use {@link com.songoda.core.nms.world.WorldCore#updateAdjacentComparators(Block)} on {@link NmsManager#getWorld()} instead
      */
+    @Deprecated
     public static void updateAdjacentComparators(Location loc) {
         if (loc == null || loc.getWorld() == null) {
             return;

@@ -32,6 +32,12 @@ public enum CompatibleMaterial {
      DARK_OAK_DOOR_ITEM(431),
      */
 
+    /* 1.19.3 */
+    ENDER_DRAGON_SPAWN_EGG(),
+    IRON_GOLEM_SPAWN_EGG(),
+    SNOW_GOLEM_SPAWN_EGG(),
+    WITHER_SPAWN_EGG(),
+
     /* 1.19 */
     ACACIA_CHEST_BOAT(),
     ALLAY_SPAWN_EGG(),

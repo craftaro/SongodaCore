@@ -3,11 +3,10 @@ package com.songoda.core.nms.world;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface WorldCore {
     SSpawner getSpawner(CreatureSpawner spawner);
@@ -29,6 +28,8 @@ public interface WorldCore {
      * @param tickAmount  The number of blocks to tick per ChunkSection, normally referred to as <code>randomTickSpeed</code>
      */
     void randomTickChunk(Chunk bukkitChunk, int tickAmount) throws ReflectiveOperationException;
+
+    void updateAdjacentComparators(Block bukkitBlock);
 
     /**
      * Ticks all inactive spawners in a specific chunk ignoring the minimum required players within a specific range.<br>

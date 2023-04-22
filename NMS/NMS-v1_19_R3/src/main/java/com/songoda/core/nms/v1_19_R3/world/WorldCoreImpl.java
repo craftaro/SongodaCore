@@ -19,8 +19,10 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
 
 public class WorldCoreImpl implements WorldCore {
@@ -90,5 +92,14 @@ public class WorldCoreImpl implements WorldCore {
                 }
             }
         }
+    }
+
+    @Override
+    public void updateAdjacentComparators(Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
+        LevelChunk nmsChunk = (LevelChunk) craftChunk.getHandle(ChunkStatus.FULL);
+
+        nmsChunk.q.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }

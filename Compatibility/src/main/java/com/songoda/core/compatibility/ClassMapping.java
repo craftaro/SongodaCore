@@ -1,5 +1,9 @@
 package com.songoda.core.compatibility;
 
+/**
+ * @deprecated Usage is highly discouraged – use NMSManager instead
+ */
+@Deprecated
 public enum ClassMapping {
     BIOME_BASE("world.level.biome", "BiomeBase"),
     BIOME_STORAGE("world.level.chunk", "BiomeStorage"),

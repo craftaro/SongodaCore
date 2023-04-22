@@ -5,6 +5,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated Usage is highly discouraged – use NMSManager instead
+ */
+@Deprecated
 public enum MethodMapping {
     MC_ITEM_STACK__GET_TAG("getTag", "getTag", "s", "t", "u"),
     MC_ITEM_STACK__SET_TAG("setTag", "setTag", "c", "c", "c", ClassMapping.NBT_TAG_COMPOUND.getClazz()),
