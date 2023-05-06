@@ -8,7 +8,7 @@ import com.songoda.core.utils.SongodaAuth;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,7 +44,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     /**
      * Called after reloadConfig() is called
      */
-    public abstract @NotNull List<SongodaYamlConfig> getConfigs();
+    public abstract void onConfigReload();
 
     /**
      * Any other plugin configuration files used by the plugin.

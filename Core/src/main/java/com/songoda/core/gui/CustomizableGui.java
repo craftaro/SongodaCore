@@ -48,9 +48,19 @@ public class CustomizableGui extends Gui {
             Config config = new Config(plugin, "gui/" + guiKey + ".yml");
             config.load();
 
-            config.setNodeComment("overrides", "For information on how to apply overrides please visit\n" +
-                    "https://wiki.craftaro.com/index.php/Gui");
-            config.setNodeComment("overrides.example", "This is just an example and does not override to any items in this GUI.");
+            if (!config.isConfigurationSection("overrides")) {
+                config.setDefault("overrides.example.item", CompatibleMaterial.STONE.name(),
+                                "This is the icon material you would like to replace",
+                                "the current material with.")
+                        .setDefault("overrides.example.position", 5,
+                                "This is the current position of the icon you would like to move.",
+                                "The number represents the cell the icon currently resides in.")
+                        .setDefaultComment("overrides.example",
+                                "This is just an example and does not override to any items",
+                                "in this GUI.")
+                        .setDefaultComment("overrides",
+                                "For information on how to apply overrides please visit",
+                                "https://wiki.craftaro.com/index.php/Gui");
 
                 config.saveChanges();
             }
