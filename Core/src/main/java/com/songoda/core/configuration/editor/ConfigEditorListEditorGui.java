@@ -12,7 +12,10 @@ import java.util.List;
 
 /**
  * Edit a string list
+ *
+ * @deprecated Needs a recode in another package
  */
+@Deprecated
 public class ConfigEditorListEditorGui extends SimplePagedGui {
     final ConfigEditorGui current;
 
