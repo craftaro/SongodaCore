@@ -337,7 +337,11 @@ public class BlockUtils {
      * Manually trigger the updateAdjacentComparators method for containers
      *
      * @param loc The Location of the container
+     *
+     * @deprecated Use {@link com.songoda.core.nms.world.WorldCore#updateAdjacentComparators(Block)}
+     * via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
      */
+    @Deprecated
     public static void updateAdjacentComparators(Location loc) {
         if (loc == null || loc.getWorld() == null) {
             return;
