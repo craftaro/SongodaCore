@@ -337,7 +337,11 @@ public class BlockUtils {
      * <p>
      * The chunk must be loaded and players must relog if they have the
      * chunk loaded in order to use this method.
+     *
+     * @deprecated Use {@link com.songoda.core.nms.world.SWorld#setBlockFast(int, int, int, Material)}
+     *         via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
      */
+    @Deprecated
     public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
         try {
             // Cache reflection
@@ -382,6 +386,11 @@ public class BlockUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.songoda.core.nms.world.SWorld#setBlockFast(int, int, int, Material)}
+     *         via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
+     */
+    @Deprecated
     public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
         setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
     }
