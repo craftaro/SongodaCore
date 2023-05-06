@@ -12,6 +12,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated Use {@link com.songoda.core.nms.world.NmsWorldBorder} via {@link Nms#getImplementations()} instead.
+ */
+@Deprecated
 public class SWorldBorder {
     private static Class<?> packetPlayOutWorldBorderEnumClass;
     private static Class<?> worldBorderClass;
@@ -93,6 +97,10 @@ public class SWorldBorder {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.songoda.core.nms.world.NmsWorldBorder.BorderColor} instead.
+     */
+    @Deprecated
     public enum Color {
         Blue, Green, Red
     }
