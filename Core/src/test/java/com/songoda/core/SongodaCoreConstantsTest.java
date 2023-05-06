@@ -6,6 +6,7 @@ import org.opentest4j.TestSkippedException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SongodaCoreConstantsTest {
@@ -21,5 +22,15 @@ class SongodaCoreConstantsTest {
         String coreVersion = SongodaCoreConstants.getCoreVersion();
 
         assertTrue(VERSION_PATTERN.matcher(coreVersion).matches(), "Version string is not a valid semver string: " + coreVersion);
+    }
+
+    @Test
+    void getProjectName() {
+        assertFalse(SongodaCoreConstants.getProjectName().isEmpty());
+    }
+
+    @Test
+    void getGitHubProjectUrl() {
+        assertFalse(SongodaCoreConstants.getGitHubProjectUrl().isEmpty());
     }
 }

@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SongodaCore {
-    private static final Logger logger = Logger.getLogger("SongodaCore");
+    private static final Logger logger = Logger.getLogger(SongodaCoreConstants.getProjectName());
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -64,6 +64,7 @@ public class SongodaCore {
 
     /**
      * This is specific to the website api
+     *
      * @deprecated Seems useless and will probably be removed in the near future
      */
     @Deprecated
@@ -326,7 +327,7 @@ public class SongodaCore {
     }
 
     public static String getPrefix() {
-        return "[SongodaCore] ";
+        return "[" + SongodaCoreConstants.getProjectName() + "] ";
     }
 
     public static Logger getLogger() {
