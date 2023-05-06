@@ -10,6 +10,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public interface WorldCore {
+    /**
+     * @deprecated Use {@link #getSpawner(Location)} instead
+     */
+    @Deprecated
     SSpawner getSpawner(CreatureSpawner spawner);
 
     SSpawner getSpawner(Location location);
