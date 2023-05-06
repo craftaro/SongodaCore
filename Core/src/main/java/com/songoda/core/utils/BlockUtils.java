@@ -4,7 +4,6 @@ import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.nms.NmsManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -343,7 +342,8 @@ public class BlockUtils {
      *
      * @param loc The Location of the container
      *
-     * @deprecated Broken in/since Spigot 1.19.4! Use {@link com.songoda.core.nms.world.WorldCore#updateAdjacentComparators(Block)} on {@link NmsManager#getWorld()} instead
+     * @deprecated Use {@link com.songoda.core.nms.world.WorldCore#updateAdjacentComparators(Block)}
+     * via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
      */
     @Deprecated
     public static void updateAdjacentComparators(Location loc) {
@@ -406,7 +406,11 @@ public class BlockUtils {
      * <p>
      * The chunk must be loaded and players must relog if they have the
      * chunk loaded in order to use this method.
+     *
+     * @deprecated Use {@link com.songoda.core.nms.world.SWorld#setBlockFast(int, int, int, Material)}
+     *         via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
      */
+    @Deprecated
     public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
         try {
             // Cache reflection
@@ -451,6 +455,11 @@ public class BlockUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.songoda.core.nms.world.SWorld#setBlockFast(int, int, int, Material)}
+     *         via {@link com.songoda.core.nms.Nms#getImplementations()} instead.
+     */
+    @Deprecated
     public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
         setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
     }
@@ -476,8 +485,7 @@ public class BlockUtils {
             return false;
         }
 
-        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -526,8 +534,7 @@ public class BlockUtils {
             return -1;
         }
 
-        return (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**

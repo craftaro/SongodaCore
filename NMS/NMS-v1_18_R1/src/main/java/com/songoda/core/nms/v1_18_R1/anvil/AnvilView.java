@@ -2,17 +2,17 @@ package com.songoda.core.nms.v1_18_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.network.chat.ChatMessage;
-import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.IInventory;
-import net.minecraft.world.entity.player.EntityHuman;
-import net.minecraft.world.inventory.Container;
-import net.minecraft.world.inventory.ContainerAccess;
-import net.minecraft.world.inventory.ContainerAnvil;
-import net.minecraft.world.inventory.ContainerAnvilAbstract;
-import net.minecraft.world.inventory.Containers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
@@ -23,8 +23,8 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AnvilView extends ContainerAnvil implements CustomAnvil {
-    private final EntityPlayer entity;
+public class AnvilView extends AnvilMenu implements CustomAnvil {
+    private final ServerPlayer entity;
     private final Inventory inventory;
     private String customTitle = "Repairing";
     private int cost = -1;
@@ -38,13 +38,13 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     static {
         try {
-            mc_ContainerAnvil_repairInventory = ContainerAnvilAbstract.class.getDeclaredField("p");
+            mc_ContainerAnvil_repairInventory = ItemCombinerMenu.class.getDeclaredField("p");
             mc_ContainerAnvil_repairInventory.setAccessible(true);
 
-            mc_ContainerAnvil_resultInventory = ContainerAnvilAbstract.class.getDeclaredField("o");
+            mc_ContainerAnvil_resultInventory = ItemCombinerMenu.class.getDeclaredField("o");
             mc_ContainerAnvil_resultInventory.setAccessible(true);
 
-            mc_ContainerAnvil_bukkitEntity = ContainerAnvil.class.getDeclaredField("bukkitEntity");
+            mc_ContainerAnvil_bukkitEntity = AnvilMenu.class.getDeclaredField("bukkitEntity");
             mc_ContainerAnvil_bukkitEntity.setAccessible(true);
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
@@ -56,17 +56,17 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     static {
         try {
-            mc_Container_title = Container.class.getDeclaredField("title");
+            mc_Container_title = AbstractContainerMenu.class.getDeclaredField("title");
             mc_Container_title.setAccessible(true);
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
         }
     }
 
-    public AnvilView(int id, EntityPlayer entity, InventoryHolder holder) {
-        super(entity.nextContainerCounter(), entity.fq(), ContainerAccess.a(entity.t, new BlockPosition(0, 0, 0)));
+    public AnvilView(int id, ServerPlayer entity, InventoryHolder holder) {
+        super(entity.nextContainerCounter(), entity.getInventory(), ContainerLevelAccess.create(entity.level, new BlockPos(0, 0, 0)));
 
-        this.setTitle(new ChatMessage(customTitle != null ? customTitle : ""));
+        this.setTitle(new TranslatableComponent(customTitle != null ? customTitle : ""));
         this.checkReachable = false;
         this.entity = entity;
 
@@ -77,12 +77,12 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         }
     }
 
-    public CraftInventoryView getBukkitView(EntityHuman player, InventoryHolder holder) {
+    public CraftInventoryView getBukkitView(Player player, InventoryHolder holder) {
         try {
             AnvilInventoryCustom craftInventory = new AnvilInventoryCustom(holder,
-                    new Location(entity.t.getWorld(), 0, 0, 0),
-                    (IInventory) mc_ContainerAnvil_repairInventory.get(this),
-                    (IInventory) mc_ContainerAnvil_resultInventory.get(this), this);
+                    new Location(entity.level.getWorld(), 0, 0, 0),
+                    (Container) mc_ContainerAnvil_repairInventory.get(this),
+                    (Container) mc_ContainerAnvil_resultInventory.get(this), this);
             CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
             mc_ContainerAnvil_bukkitEntity.set(this, view);
 
@@ -95,13 +95,13 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     }
 
     @Override
-    public boolean a(EntityHuman entityhuman) {
+    public boolean stillValid(Player entityHuman) {
         return canUse;
     }
 
     @Override
-    public void e() {
-        super.e();
+    public void broadcastFullState() {
+        super.broadcastFullState();
 
         if (cost >= 0) {
             this.setLevelCost(cost);
@@ -112,17 +112,17 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
 
     @Override
     public void update() {
-        e();
+        broadcastFullState();
     }
 
     @Override
     public String getRenameText() {
-        return this.v;
+        return this.itemName;
     }
 
     @Override
     public void setRenameText(String text) {
-        this.a(text);
+        this.setItemName(text);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
         this.customTitle = title;
 
         try {
-            mc_Container_title.set(this, new ChatMessage(customTitle != null ? customTitle : ""));
+            mc_Container_title.set(this, new TranslatableComponent(customTitle != null ? customTitle : ""));
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Error", ex);
         }
@@ -203,12 +203,12 @@ public class AnvilView extends ContainerAnvil implements CustomAnvil {
     @Override
     public void open() {
         // Send the packet
-        entity.b.a(new PacketPlayOutOpenWindow(j, Containers.h, new ChatMessage(customTitle != null ? customTitle : "")));
+        entity.connection.send(new ClientboundOpenScreenPacket(super.containerId, MenuType.ANVIL, new TranslatableComponent(customTitle != null ? customTitle : "")));
 
         // Set their active container to this anvil
-        entity.bW = this;
+        entity.containerMenu = this;
 
         // Add the slot listener
-        entity.a(entity.bW);
+        entity.initMenu(entity.containerMenu);
     }
 }

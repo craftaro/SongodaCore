@@ -10,14 +10,12 @@
         <version>2.6.21</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <artifactId>SongodaCore-NMS-v1_17_R1</artifactId>
 
     <properties>
         <java.version>16</java.version>
         <java.release>16</java.release>
     </properties>
-
-    <artifactId>SongodaCore-NMS-v1_17_R1</artifactId>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -31,12 +29,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-NMS-API</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-Compatibility</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

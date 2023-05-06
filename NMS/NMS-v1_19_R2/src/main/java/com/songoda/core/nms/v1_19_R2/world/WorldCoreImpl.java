@@ -23,6 +23,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_19_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -94,11 +95,10 @@ public class WorldCoreImpl implements WorldCore {
     }
 
     @Override
-    public void updateAdjacentComparators(Block bukkitBlock) {
+    public void updateAdjacentComparators(@NotNull Block bukkitBlock) {
         CraftBlock craftBlock = (CraftBlock) bukkitBlock;
-        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
+        ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
-        ServerLevel nmsWorld = craftChunk.getHandle().q;
-        nmsWorld.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
+        serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }

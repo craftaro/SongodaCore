@@ -44,27 +44,36 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SongodaCore {
-    private final static Logger logger = Logger.getLogger("SongodaCore");
+    private static final Logger logger = Logger.getLogger(SongodaCoreConstants.getProjectName());
 
     /**
      * Whenever we make a major change to the core GUI, updater,
      * or other function used by the core, increment this number
+     *
+     * @deprecated The Core's version should be used instead as it uses Semantic Versioning
      */
-    private final static int coreRevision = 9;
+    @Deprecated
+    private static final int coreRevision = 9;
 
     /**
      * @since coreRevision 6
+     * @deprecated Is being replaced by {@link SongodaCoreConstants#getCoreVersion()} which is automatically kept up to date.
      */
-    private final static String coreVersion = "2.6.21";
+    @Deprecated
+    private static final String coreVersion = SongodaCoreConstants.getCoreVersion();
 
     /**
      * This is specific to the website api
+     *
+     * @deprecated Seems useless and will probably be removed in the near future
      */
-    private final static int updaterVersion = 1;
+    @Deprecated
+    private static final int updaterVersion = 1;
 
-    private final static Set<PluginInfo> registeredPlugins = new HashSet<>();
+    private static final Set<PluginInfo> registeredPlugins = new HashSet<>();
 
     private static SongodaCore INSTANCE = null;
+
     private JavaPlugin piggybackedPlugin;
     private CommandManager commandManager;
     private EventListener loginListener;
@@ -76,7 +85,7 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
-        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), coreVersion);
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), SongodaCoreConstants.getCoreVersion());
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
@@ -91,13 +100,23 @@ public class SongodaCore {
                     try {
                         // test to see if we're up-to-date
                         int otherVersion;
+                        int ownVersion;
+
                         try {
-                            otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            otherVersion = (int) clazz.getMethod("getCoreMajorVersion").invoke(null);
+                            ownVersion = getCoreMajorVersion();
                         } catch (Exception ignore) {
-                            otherVersion = -1;
+                            try {
+                                otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            } catch (Exception ignore2) {
+                                otherVersion = -1;
+                            }
+
+                            ownVersion = getCoreVersion();
                         }
 
-                        if (otherVersion >= getCoreVersion()) {
+
+                        if (otherVersion >= ownVersion) {
                             // use the active service
                             // assuming that the other is greater than R6 if we get here ;)
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class, String.class).invoke(null, plugin, pluginID, icon, coreVersion);
@@ -221,6 +240,10 @@ public class SongodaCore {
         tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
+    /**
+     * @deprecated Seems useless and will probably be replaced in the near future
+     */
+    @Deprecated
     private void update(PluginInfo plugin) {
         try {
             URL url = new URL("https://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
@@ -266,20 +289,45 @@ public class SongodaCore {
         return new ArrayList<>(registeredPlugins);
     }
 
+    public static String getVersion() {
+        return SongodaCoreConstants.getCoreVersion();
+    }
+
+    /**
+     * @deprecated Use {@link #getCoreMajorVersion()} instead, but careful, coreRevision is at 9 while major version is at 2
+     */
+    @Deprecated
     public static int getCoreVersion() {
         return coreRevision;
     }
 
+    /**
+     * @deprecated Use {@link #getVersion()} instead
+     */
+    @Deprecated
     public static String getCoreLibraryVersion() {
-        return coreVersion;
+        return SongodaCoreConstants.getCoreVersion();
     }
 
+    public static int getCoreMajorVersion() {
+        String fullVersion = getVersion();
+        if (fullVersion.contains(".")) {
+            return Integer.parseInt(fullVersion.substring(0, fullVersion.indexOf(".")));
+        }
+
+        return -1;
+    }
+
+    /**
+     * @deprecated Seems useless and will probably be removed in the near future
+     */
+    @Deprecated
     public static int getUpdaterVersion() {
         return updaterVersion;
     }
 
     public static String getPrefix() {
-        return "[SongodaCore] ";
+        return "[" + SongodaCoreConstants.getProjectName() + "] ";
     }
 
     public static Logger getLogger() {

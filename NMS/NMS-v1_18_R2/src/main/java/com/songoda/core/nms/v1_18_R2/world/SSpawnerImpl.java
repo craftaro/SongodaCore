@@ -40,7 +40,8 @@ public class SSpawnerImpl implements SSpawner {
         SpawnData data = new SpawnData();
         CompoundTag compound = data.getEntityToSpawn();
 
-        String name = type.name().toLowerCase().replace("snowman", "snow_golem")
+        String name = type.name().toLowerCase()
+                .replace("snowman", "snow_golem")
                 .replace("mushroom_cow", "mooshroom");
         compound.putString("id", "minecraft:" + name);
 

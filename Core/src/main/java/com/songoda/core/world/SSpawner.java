@@ -2,7 +2,7 @@ package com.songoda.core.world;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.hooks.EntityStackerManager;
-import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.Nms;
 import com.songoda.core.nms.world.SpawnedEntity;
 import com.songoda.core.utils.EntityUtils;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ public class SSpawner {
 
     public SSpawner(Location location) {
         this.location = location;
-        this.sSpawner = NmsManager.getWorld().getSpawner(location);
+        this.sSpawner = Nms.getImplementations().getWorld().getSpawner(location);
     }
 
     public SSpawner(CreatureSpawner spawner) {

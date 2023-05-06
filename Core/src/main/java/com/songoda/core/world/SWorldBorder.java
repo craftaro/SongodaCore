@@ -3,7 +3,7 @@ package com.songoda.core.world;
 import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.MethodMapping;
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.Nms;
 import com.songoda.core.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -12,6 +12,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated Use {@link com.songoda.core.nms.world.NmsWorldBorder} via {@link Nms#getImplementations()} instead.
+ */
+@Deprecated
 public class SWorldBorder {
     private static Class<?> packetPlayOutWorldBorderEnumClass;
     private static Class<?> worldBorderClass;
@@ -81,18 +85,22 @@ public class SWorldBorder {
 
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)) {
                 Object packet = clientboundInitializeBorderPacketConstructor.newInstance(worldBorder);
-                NmsManager.getPlayer().sendPacket(player, packet);
+                Nms.getImplementations().getPlayer().sendPacket(player, packet);
             } else {
                 @SuppressWarnings({"unchecked", "rawtypes"})
                 Object packet = packetPlayOutWorldBorderConstructor.newInstance(worldBorder,
                         Enum.valueOf((Class<? extends Enum>) packetPlayOutWorldBorderEnumClass, "INITIALIZE"));
-                NmsManager.getPlayer().sendPacket(player, packet);
+                Nms.getImplementations().getPlayer().sendPacket(player, packet);
             }
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
     }
 
+    /**
+     * @deprecated Use {@link com.songoda.core.nms.world.NmsWorldBorder.BorderColor} instead.
+     */
+    @Deprecated
     public enum Color {
         Blue, Green, Red
     }

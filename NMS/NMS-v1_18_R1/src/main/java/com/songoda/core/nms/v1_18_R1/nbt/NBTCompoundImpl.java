@@ -2,98 +2,96 @@ package com.songoda.core.nms.v1_18_R1.nbt;
 
 import com.songoda.core.nms.nbt.NBTCompound;
 import com.songoda.core.nms.nbt.NBTObject;
-import net.minecraft.nbt.NBTCompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
 public class NBTCompoundImpl implements NBTCompound {
-    protected NBTTagCompound compound;
+    protected CompoundTag compound;
 
-    protected NBTCompoundImpl(NBTTagCompound compound) {
+    protected NBTCompoundImpl(CompoundTag compound) {
         this.compound = compound;
     }
 
     public NBTCompoundImpl() {
-        this.compound = new NBTTagCompound();
+        this.compound = new CompoundTag();
     }
 
     @Override
     public NBTCompound set(String tag, String s) {
-        compound.a(tag, s);
+        compound.putString(tag, s);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, boolean b) {
-        compound.a(tag, b);
+        compound.putBoolean(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, int i) {
-        compound.a(tag, i);
+        compound.putInt(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, double i) {
-        compound.a(tag, i);
+        compound.putDouble(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, long l) {
-        compound.a(tag, l);
+        compound.putLong(tag, l);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, short s) {
-        compound.a(tag, s);
+        compound.putShort(tag, s);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, byte b) {
-        compound.a(tag, b);
+        compound.putByte(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, int[] i) {
-        compound.a(tag, i);
+        compound.putIntArray(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, byte[] b) {
-        compound.a(tag, b);
+        compound.putByteArray(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, UUID u) {
-        compound.a(tag, u);
+        compound.putUUID(tag, u);
         return this;
     }
 
     @Override
     public NBTCompound remove(String tag) {
-        compound.r(tag);
+        compound.remove(tag);
         return this;
     }
 
     @Override
     public boolean has(String tag) {
-        return compound.e(tag);
+        return compound.contains(tag);
     }
 
     @Override
@@ -152,19 +150,19 @@ public class NBTCompoundImpl implements NBTCompound {
             return getNBTObject(tag).asCompound();
         }
 
-        NBTTagCompound newCompound = new NBTTagCompound();
-        compound.a(tag, newCompound);
+        CompoundTag newCompound = new CompoundTag();
+        compound.put(tag, newCompound);
         return new NBTCompoundImpl(newCompound);
     }
 
     @Override
     public Set<String> getKeys() {
-        return compound.d();
+        return compound.getAllKeys();
     }
 
     @Override
     public Set<String> getKeys(String tag) {
-        return compound.p(tag).d();
+        return compound.getCompound(tag).getAllKeys();
     }
 
     @Override
@@ -172,13 +170,13 @@ public class NBTCompoundImpl implements NBTCompound {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              ObjectOutputStream dataOutput = new ObjectOutputStream(outputStream)) {
             addExtras();
-            NBTTagCompound compound = this.compound.g();
+            CompoundTag compound = this.compound.copy();
 
             for (String exclusion : exclusions) {
-                compound.r(exclusion);
+                compound.remove(exclusion);
             }
 
-            NBTCompressedStreamTools.a(compound, (OutputStream) dataOutput);
+            NbtIo.writeCompressed(compound, dataOutput);
 
             return outputStream.toByteArray();
         } catch (Exception ex) {
@@ -192,7 +190,7 @@ public class NBTCompoundImpl implements NBTCompound {
     public void deSerialize(byte[] serialized) {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(serialized);
              ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
-            compound = NBTCompressedStreamTools.a((InputStream) dataInput);
+            compound = NbtIo.readCompressed(dataInput);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

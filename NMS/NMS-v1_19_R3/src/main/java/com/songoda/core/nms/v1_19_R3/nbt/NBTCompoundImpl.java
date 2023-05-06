@@ -25,78 +25,78 @@ public class NBTCompoundImpl implements NBTCompound {
 
     @Override
     public NBTCompound set(String tag, String s) {
-        compound.putString(tag, s);
+        this.compound.putString(tag, s);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, boolean b) {
-        compound.putBoolean(tag, b);
+        this.compound.putBoolean(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, int i) {
-        compound.putInt(tag, i);
+        this.compound.putInt(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, double i) {
-        compound.putDouble(tag, i);
+        this.compound.putDouble(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, long l) {
-        compound.putLong(tag, l);
+        this.compound.putLong(tag, l);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, short s) {
-        compound.putShort(tag, s);
+        this.compound.putShort(tag, s);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, byte b) {
-        compound.putByte(tag, b);
+        this.compound.putByte(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, int[] i) {
-        compound.putIntArray(tag, i);
+        this.compound.putIntArray(tag, i);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, byte[] b) {
-        compound.putByteArray(tag, b);
+        this.compound.putByteArray(tag, b);
         return this;
     }
 
     @Override
     public NBTCompound set(String tag, UUID u) {
-        compound.putUUID(tag, u);
+        this.compound.putUUID(tag, u);
         return this;
     }
 
     @Override
     public NBTCompound remove(String tag) {
-        compound.remove(tag);
+        this.compound.remove(tag);
         return this;
     }
 
     @Override
     public boolean has(String tag) {
-        return compound.contains(tag);
+        return this.compound.contains(tag);
     }
 
     @Override
     public NBTObject getNBTObject(String tag) {
-        return new NBTObjectImpl(compound, tag);
+        return new NBTObjectImpl(this.compound, tag);
     }
 
     @Override
@@ -151,18 +151,18 @@ public class NBTCompoundImpl implements NBTCompound {
         }
 
         CompoundTag newCompound = new CompoundTag();
-        compound.put(tag, newCompound);
+        this.compound.put(tag, newCompound);
         return new NBTCompoundImpl(newCompound);
     }
 
     @Override
     public Set<String> getKeys() {
-        return compound.getAllKeys();
+        return this.compound.getAllKeys();
     }
 
     @Override
     public Set<String> getKeys(String tag) {
-        return compound.getCompound(tag).getAllKeys();
+        return this.compound.getCompound(tag).getAllKeys();
     }
 
     @Override
@@ -190,7 +190,7 @@ public class NBTCompoundImpl implements NBTCompound {
     public void deSerialize(byte[] serialized) {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(serialized);
              ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
-            compound = NbtIo.readCompressed(dataInput);
+            this.compound = NbtIo.readCompressed(dataInput);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -203,6 +203,6 @@ public class NBTCompoundImpl implements NBTCompound {
 
     @Override
     public String toString() {
-        return compound.toString();
+        return this.compound.toString();
     }
 }

@@ -10,15 +10,14 @@
         <version>2.6.21</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <artifactId>SongodaCore-NMS-API</artifactId>
-    <packaging>jar</packaging>
 
     <dependencies>
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -26,6 +25,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-Compatibility</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

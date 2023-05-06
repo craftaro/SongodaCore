@@ -46,13 +46,13 @@ public class SSpawnerImpl implements SSpawner {
 
         short spawnRange = 4;
         for (int i = 0; i < 50; i++) {
-            assert spawnerLocation.getWorld() != null;
-            ServerLevel world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
+            assert this.spawnerLocation.getWorld() != null;
+            ServerLevel world = ((CraftWorld) this.spawnerLocation.getWorld()).getHandle();
 
             RandomSource random = world.getRandom();
-            double x = spawnerLocation.getX() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
-            double y = spawnerLocation.getY() + random.nextInt(3) - 1;
-            double z = spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
+            double x = this.spawnerLocation.getX() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
+            double y = this.spawnerLocation.getY() + random.nextInt(3) - 1;
+            double z = this.spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
 
             Optional<Entity> optionalEntity = net.minecraft.world.entity.EntityType.create(compound, world);
             if (optionalEntity.isEmpty()) continue;
@@ -67,7 +67,7 @@ public class SSpawnerImpl implements SSpawner {
                 continue;
             }
 
-            Location spot = new Location(spawnerLocation.getWorld(), x, y, z);
+            Location spot = new Location(this.spawnerLocation.getWorld(), x, y, z);
 
             if (!canSpawn(world, entityInsentient, spot, canSpawnOn)) {
                 continue;
@@ -122,7 +122,7 @@ public class SSpawnerImpl implements SSpawner {
         for (CompatibleMaterial material : canSpawnOn) {
             if (material == null) continue;
 
-            if (spawnedOn.equals(material) || material.isAir()) {
+            if (spawnedOn == material || material.isAir()) {
                 return true;
             }
         }

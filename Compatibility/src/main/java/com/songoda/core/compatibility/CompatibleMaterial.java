@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -1548,6 +1549,7 @@ public enum CompatibleMaterial {
      *
      * @return LegacyMaterial or null if none found
      */
+    @Contract("_, !null -> !null")
     public static CompatibleMaterial getMaterial(String name, CompatibleMaterial def) {
         return name == null ? def : lookupMap.getOrDefault(name.toUpperCase(), def);
     }

@@ -2,7 +2,6 @@ package com.songoda.core.nms.v1_19_R1.anvil;
 
 import com.songoda.core.nms.anvil.CustomAnvil;
 import com.songoda.core.nms.anvil.methods.AnvilTextChange;
-import net.md_5.bungee.api.chat.TranslatableComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;

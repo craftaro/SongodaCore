@@ -2,7 +2,6 @@ package com.songoda.core.nms.v1_19_R2.nbt;
 
 import com.songoda.core.nms.nbt.NBTEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;

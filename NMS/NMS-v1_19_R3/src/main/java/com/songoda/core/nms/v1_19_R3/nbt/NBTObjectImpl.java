@@ -17,56 +17,56 @@ public class NBTObjectImpl implements NBTObject {
 
     @Override
     public String asString() {
-        return compound.getString(tag);
+        return this.compound.getString(this.tag);
     }
 
     @Override
     public boolean asBoolean() {
-        return compound.getBoolean(tag);
+        return this.compound.getBoolean(this.tag);
     }
 
     @Override
     public int asInt() {
-        return compound.getInt(tag);
+        return this.compound.getInt(this.tag);
     }
 
     @Override
     public double asDouble() {
-        return compound.getDouble(tag);
+        return this.compound.getDouble(this.tag);
     }
 
     @Override
     public long asLong() {
-        return compound.getLong(tag);
+        return this.compound.getLong(this.tag);
     }
 
     @Override
     public short asShort() {
-        return compound.getShort(tag);
+        return this.compound.getShort(this.tag);
     }
 
     @Override
     public byte asByte() {
-        return compound.getByte(tag);
+        return this.compound.getByte(this.tag);
     }
 
     @Override
     public int[] asIntArray() {
-        return compound.getIntArray(tag);
+        return this.compound.getIntArray(this.tag);
     }
 
     @Override
     public byte[] asByteArray() {
-        return compound.getByteArray(tag);
+        return this.compound.getByteArray(this.tag);
     }
 
     @Override
     public NBTCompound asCompound() {
-        return new NBTCompoundImpl(compound.getCompound(tag));
+        return new NBTCompoundImpl(this.compound.getCompound(this.tag));
     }
 
     @Override
     public Set<String> getKeys() {
-        return compound.getAllKeys();
+        return this.compound.getAllKeys();
     }
 }

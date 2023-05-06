@@ -10,13 +10,11 @@
     <packaging>pom</packaging>
 
     <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z' to update version recursively -->
-    <!-- Change version in com.songoda.core.SongodaCore too -->
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <java.release>8</java.release>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <sonar.organization>songoda</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -27,6 +25,8 @@
     <modules>
         <module>Core</module>
         <module>Compatibility</module>
+
+        <module>NMS/NMS</module>
         <module>NMS/NMS-API</module>
         <module>NMS/NMS-v1_8_R1</module>
         <module>NMS/NMS-v1_8_R2</module>
@@ -46,8 +46,8 @@
         <module>NMS/NMS-v1_17_R1</module>
         <module>NMS/NMS-v1_18_R1</module>
         <module>NMS/NMS-v1_18_R2</module>
+        <module>NMS/NMS-v1_19_0</module>
         <module>NMS/NMS-v1_19_R1</module>
-        <module>NMS/NMS-v1_19_R1v2</module>
         <module>NMS/NMS-v1_19_R2</module>
         <module>NMS/NMS-v1_19_R3</module>
     </modules>
@@ -69,7 +69,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
 
                 <configuration>
                     <source>${java.version}</source>
@@ -81,13 +81,21 @@
 
             <!-- Plugins required for tests or coverage reports -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M6</version>
+
+                <configuration>
+                    <environmentVariables>
+                        <TESTS_RUN_WITH_MAVEN>true</TESTS_RUN_WITH_MAVEN>
+                    </environmentVariables>
+                </configuration>
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.0.0-M6</version>
             </plugin>
 
             <plugin>
@@ -111,17 +119,41 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.10.3</version>
+
+                <configuration>
+                    <targetClasses>
+                        <param>com.songoda.core.*</param>
+                    </targetClasses>
+
+                    <excludedTestClasses>
+                        <excludedTestClass>com.songoda.core.SongodaCoreConstantsTest</excludedTestClass>
+                    </excludedTestClasses>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.1.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 
     <repositories>
         <repository>
-            <id>songoda-public</id>
-            <url>https://repo.songoda.com/repository/public/</url>
+            <id>songoda</id>
+            <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
-            <id>spigotmc-repo</id>
+            <id>SpigotMC</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
@@ -131,13 +163,18 @@
         </repository>
 
         <repository>
-            <id>bg-repo</id>
+            <id>bg-software</id>
             <url>https://repo.bg-software.com/repository/api/</url>
         </repository>
 
         <repository>
             <id>ViaVersion</id>
             <url>https://repo.viaversion.com/</url>
+        </repository>
+
+        <repository>
+            <id>PaperMC</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
         <repository>
@@ -160,7 +197,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>23.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -179,21 +216,14 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.1</version>
+            <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.mockito</groupId>-->
-        <!--            <artifactId>mockito-core</artifactId>-->
-        <!--            <version>3.12.4</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-
         <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.17</artifactId>
-            <version>1.10.3</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

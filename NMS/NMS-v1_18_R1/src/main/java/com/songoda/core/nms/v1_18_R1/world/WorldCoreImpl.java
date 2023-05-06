@@ -7,15 +7,15 @@ import com.songoda.core.nms.world.SItemStack;
 import com.songoda.core.nms.world.SSpawner;
 import com.songoda.core.nms.world.SWorld;
 import com.songoda.core.nms.world.WorldCore;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.util.profiling.GameProfilerFiller;
-import net.minecraft.world.level.ChunkCoordIntPair;
-import net.minecraft.world.level.MobSpawnerAbstract;
-import net.minecraft.world.level.block.state.IBlockData;
-import net.minecraft.world.level.chunk.Chunk;
-import net.minecraft.world.level.chunk.ChunkSection;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.material.FluidState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -23,6 +23,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_18_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -49,59 +50,58 @@ public class WorldCoreImpl implements WorldCore {
     public BBaseSpawner getBaseSpawner(CreatureSpawner spawner) throws NoSuchFieldException, IllegalAccessException {
         Object cTileEntity = ReflectionUtils.getFieldValue(spawner, "tileEntity");
 
-        return new BBaseSpawnerImpl(spawner, (MobSpawnerAbstract) ReflectionUtils.getFieldValue(cTileEntity, "a"));
+        return new BBaseSpawnerImpl(spawner, (BaseSpawner) ReflectionUtils.getFieldValue(cTileEntity, "a"));
     }
 
     /**
-     * Method is based on {@link WorldServer#a(Chunk, int)}.
+     * Method is based on {@link ServerLevel#tickChunk(LevelChunk, int)}.
      */
     @Override
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
-        Chunk chunk = ((CraftChunk) bukkitChunk).getHandle();
-        WorldServer world = chunk.q;
+        LevelChunk chunk = ((CraftChunk) bukkitChunk).getHandle();
+        ServerLevel world = chunk.q;
 
-        ChunkCoordIntPair chunkcoordintpair = chunk.f();
-        int j = chunkcoordintpair.d();
-        int k = chunkcoordintpair.e();
+        ChunkPos chunkcoordintpair = chunk.getPos();
+        int j = chunkcoordintpair.getMinBlockX();
+        int k = chunkcoordintpair.getMinBlockZ();
 
-        GameProfilerFiller gameprofilerfiller = world.ab();
-        gameprofilerfiller.b("tickBlocks");
+        ProfilerFiller gameprofilerfiller = world.getProfiler();
+        gameprofilerfiller.popPush("tickBlocks");
         if (tickAmount > 0) {
-            ChunkSection[] achunksection = chunk.d();
+            LevelChunkSection[] achunksection = chunk.getSections();
             int l = achunksection.length;
 
-            for (ChunkSection chunksection : achunksection) {
-                if (chunksection.d()) {
-                    int j1 = chunksection.g();
+            for (LevelChunkSection chunksection : achunksection) {
+                if (chunksection.isRandomlyTicking()) {
+                    int j1 = chunksection.bottomBlockY();
 
                     for (int k1 = 0; k1 < tickAmount; ++k1) {
-                        BlockPosition blockposition2 = world.a(j, j1, k, 15);
-                        gameprofilerfiller.a("randomTick");
-                        IBlockData iblockdata1 = chunksection.a(blockposition2.u() - j, blockposition2.v() - j1, blockposition2.w() - k);
-                        if (iblockdata1.o()) {
-                            iblockdata1.b(world, blockposition2, world.w);
+                        BlockPos blockposition2 = world.getBlockRandomPos(j, j1, k, 15);
+                        gameprofilerfiller.push("randomTick");
+                        BlockState iblockdata1 = chunksection.getBlockState(blockposition2.getX() - j, blockposition2.getY() - j1, blockposition2.getZ() - k);
+                        if (iblockdata1.isRandomlyTicking()) {
+                            iblockdata1.randomTick(world, blockposition2, world.random);
                         }
 
-                        Fluid fluid = iblockdata1.n();
-                        if (fluid.f()) {
-                            fluid.b(world, blockposition2, world.w);
+                        FluidState fluid = iblockdata1.getFluidState();
+                        if (fluid.isRandomlyTicking()) {
+                            fluid.randomTick(world, blockposition2, world.random);
                         }
 
-                        gameprofilerfiller.c();
+                        gameprofilerfiller.pop();
                     }
                 }
             }
         }
 
-        gameprofilerfiller.c();
+        gameprofilerfiller.pop();
     }
 
     @Override
-    public void updateAdjacentComparators(Block bukkitBlock) {
+    public void updateAdjacentComparators(@NotNull Block bukkitBlock) {
         CraftBlock craftBlock = (CraftBlock) bukkitBlock;
-        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
+        ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
-        WorldServer nmsWorld = craftChunk.getHandle().q;
-        nmsWorld.c(craftBlock.getPosition(), craftBlock.getNMS().b());
+        serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }

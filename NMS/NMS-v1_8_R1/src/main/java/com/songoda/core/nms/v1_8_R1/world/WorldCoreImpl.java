@@ -18,9 +18,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_8_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -40,7 +42,7 @@ public class WorldCoreImpl implements WorldCore {
 
     @Override
     public SWorld getWorld(World world) {
-        return new SWorldImpl();
+        return new SWorldImpl(world);
     }
 
     @Override
@@ -91,12 +93,12 @@ public class WorldCoreImpl implements WorldCore {
     }
 
     @Override
-    public void updateAdjacentComparators(org.bukkit.block.Block bukkitBlock) {
+    public void updateAdjacentComparators(@NotNull org.bukkit.block.Block bukkitBlock) {
         CraftBlock craftBlock = (CraftBlock) bukkitBlock;
-        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
-        net.minecraft.server.v1_8_R1.World nmsWorld = craftChunk.getHandle().getWorld();
+        WorldServer serverLevel = ((CraftWorld) craftBlock.getWorld()).getHandle();
 
-        BlockPosition blockPosition = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
-        nmsWorld.updateAdjacentComparators(blockPosition, CraftMagicNumbers.getBlock(craftBlock));
+        BlockPosition blockPos = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
+        Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
+        serverLevel.updateAdjacentComparators(blockPos, nmsBlock);
     }
 }

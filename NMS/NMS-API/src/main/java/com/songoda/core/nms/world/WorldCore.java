@@ -7,8 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public interface WorldCore {
+    /**
+     * @deprecated Use {@link #getSpawner(Location)} instead
+     */
+    @Deprecated
     SSpawner getSpawner(CreatureSpawner spawner);
 
     SSpawner getSpawner(Location location);
@@ -29,7 +34,7 @@ public interface WorldCore {
      */
     void randomTickChunk(Chunk bukkitChunk, int tickAmount) throws ReflectiveOperationException;
 
-    void updateAdjacentComparators(Block bukkitBlock);
+    void updateAdjacentComparators(@NotNull Block bukkitBlock);
 
     /**
      * Ticks all inactive spawners in a specific chunk ignoring the minimum required players within a specific range.<br>
