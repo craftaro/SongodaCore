@@ -3,12 +3,11 @@ package com.songoda.core.nms.world;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface WorldCore {
     SSpawner getSpawner(Location location);
@@ -29,12 +28,7 @@ public interface WorldCore {
      */
     void randomTickChunk(Chunk bukkitChunk, int tickAmount) throws ReflectiveOperationException;
 
-    /**
-     * Manually trigger the updateAdjacentComparators method for containers
-     *
-     * @param loc The Location of the container
-     */
-    void updateAdjacentComparators(@NotNull Location loc);
+    void updateAdjacentComparators(@NotNull Block bukkitBlock);
 
     /**
      * Ticks all inactive spawners in a specific chunk ignoring the minimum required players within a specific range.<br>

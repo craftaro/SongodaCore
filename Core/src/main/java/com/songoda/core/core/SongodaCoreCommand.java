@@ -12,7 +12,7 @@ public class SongodaCoreCommand extends AbstractCommand {
     protected GuiManager guiManager;
 
     public SongodaCoreCommand() {
-        super(false, "songoda");
+        super(CommandType.CONSOLE_OK, "craftaro", "songoda");
     }
 
     @Override
@@ -24,7 +24,9 @@ public class SongodaCoreCommand extends AbstractCommand {
 
             guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
         } else {
-            sender.sendMessage("/songoda diag");
+            sender.sendMessage("/craftaro diag");
+            sender.sendMessage("/craftaro myip");
+            sender.sendMessage("/craftaro uuid");
         }
 
         return ReturnType.SUCCESS;
@@ -37,7 +39,7 @@ public class SongodaCoreCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/songoda";
+        return "/craftaro";
     }
 
     @Override

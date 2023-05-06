@@ -12,21 +12,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -56,7 +54,7 @@ public class WorldCoreImpl implements WorldCore {
      */
     @Override
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
-        LevelChunk chunk = ((CraftChunk) bukkitChunk).getHandle();
+        LevelChunk chunk = (LevelChunk) ((CraftChunk) bukkitChunk).getHandle(ChunkStatus.FULL);
         ServerLevel world = chunk.q;
         ProfilerFiller gameprofilerfiller = world.getProfiler();
 
@@ -93,13 +91,10 @@ public class WorldCoreImpl implements WorldCore {
     }
 
     @Override
-    public void updateAdjacentComparators(@NotNull Location loc) {
-        Objects.requireNonNull(loc.getWorld());
+    public void updateAdjacentComparators(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+        ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
-        ServerLevel serverLevel = ((CraftWorld) loc.getWorld()).getHandle();
-        BlockPos blockPos = new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        Block nmsBlock = CraftMagicNumbers.getBlock(loc.getBlock().getType());
-
-        serverLevel.updateNeighbourForOutputSignal(blockPos, nmsBlock);
+        serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }

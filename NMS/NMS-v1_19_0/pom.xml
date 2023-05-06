@@ -61,7 +61,6 @@
         </plugins>
     </build>
 
-
     <dependencies>
         <!--suppress VulnerableLibrariesLocal -->
         <dependency>

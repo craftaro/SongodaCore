@@ -4,9 +4,11 @@ import com.google.gson.annotations.SerializedName;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,6 +149,25 @@ public class Loot {
     public ItemStack getEnchants(ItemStack item) {
         if (enchants == null) {
             return null;
+        }
+
+        //Create enchantment book
+        if (item.getType().equals(Material.ENCHANTED_BOOK)) {
+            EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+            for (Map.Entry<String, Integer> entry : this.enchants.entrySet()) {
+                if (entry.getValue() == null) continue;
+
+                //TODO add random enchants
+//                if (entry.getKey().equalsIgnoreCase("RANDOM")) {
+//                    item = ItemUtils.applyRandomEnchants(item, entry.getValue());
+//
+//                    continue;
+//                }
+
+                meta.addStoredEnchant(Enchantment.getByName(entry.getKey()), entry.getValue(), true);
+            }
+            item.setItemMeta(meta);
+            return item;
         }
 
         Map<Enchantment, Integer> enchants = new HashMap<>();

@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Method;
 
 /**
- * @deprecated Horrible to maintain, and it gets worse with every new Minecraft version. Should be replaced with NMS
+ * @deprecated Usage is highly discouraged – use com.songoda.core.nms.Nms#getImplementations() instead
  */
 @Deprecated
 public enum MethodMapping {

@@ -55,7 +55,7 @@ public class CustomizableGui extends Gui {
             }
 
             config.setNodeComment("overrides", "For information on how to apply overrides please visit\n" +
-                    "https://wiki.songoda.com/Gui");
+                    "https://wiki.craftaro.com/index.php/Gui");
             config.setNodeComment("overrides.example", "This is just an example and does not override to any items in this GUI.");
 
             config.createEntry("overrides.example.item", CompatibleMaterial.STONE)

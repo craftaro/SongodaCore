@@ -22,6 +22,10 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated This class will be removed in the future and replaced with a more maintainable system.
+ */
+@Deprecated
 public class BlockUtilsModern {
     protected static void _updatePressurePlateModern(Block plate, int power) {
         BlockData blockData = plate.getBlockData();

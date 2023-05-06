@@ -12,21 +12,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -95,13 +92,10 @@ public class WorldCoreImpl implements WorldCore {
     }
 
     @Override
-    public void updateAdjacentComparators(@NotNull Location loc) {
-        Objects.requireNonNull(loc.getWorld());
+    public void updateAdjacentComparators(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+        ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
-        ServerLevel serverLevel = ((CraftWorld) loc.getWorld()).getHandle();
-        BlockPos blockPos = new BlockPos(loc.getX(), loc.getY(), loc.getZ());
-        Block nmsBlock = ((CraftBlock) loc.getBlock()).getNMS().getBlock();
-
-        serverLevel.updateNeighbourForOutputSignal(blockPos, nmsBlock);
+        serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }
