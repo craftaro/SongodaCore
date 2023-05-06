@@ -1,8 +1,12 @@
 package com.songoda.core.utils;
 
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.MethodMapping;
+import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
@@ -320,6 +324,66 @@ public class BlockUtils {
         }
 
         return null;
+    }
+
+    /* Only to be used by #setBlockFast */
+    private static Class<?> clazzIBlockData, clazzBlocks, clazzCraftWorld, clazzBlockPosition;
+    /* Only to be used by #setBlockFast */
+    private static Method getHandle, getByCombinedId, setType, getChunkAt, getBlockData;
+
+    /**
+     * Set a block to a certain type by updating the block directly in the
+     * NMS chunk.
+     * <p>
+     * The chunk must be loaded and players must relog if they have the
+     * chunk loaded in order to use this method.
+     */
+    public static void setBlockFast(World world, int x, int y, int z, Material material, byte data) {
+        try {
+            // Cache reflection
+            if (clazzIBlockData == null) {
+                clazzIBlockData = ClassMapping.I_BLOCK_DATA.getClazz();
+                clazzBlockPosition = ClassMapping.BLOCK_POSITION.getClazz();
+                clazzCraftWorld = ClassMapping.CRAFT_WORLD.getClazz();
+                clazzBlocks = ClassMapping.BLOCKS.getClazz();
+                Class<?> clazzBlock = ClassMapping.BLOCK.getClazz();
+                Class<?> clazzWorld = ClassMapping.WORLD.getClazz();
+                Class<?> clazzChunk = ClassMapping.CHUNK.getClazz();
+
+                getHandle = clazzCraftWorld.getMethod("getHandle");
+                getChunkAt = MethodMapping.WORLD__GET_CHUNK_AT.getMethod(clazzWorld);
+
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+                    getBlockData = MethodMapping.BLOCK__GET_BLOCK_DATA.getMethod(ClassMapping.BLOCK.getClazz());
+                    setType = MethodMapping.CHUNK__SET_BLOCK_STATE.getMethod(ClassMapping.CHUNK.getClazz());
+                } else {
+                    getByCombinedId = clazzBlock.getMethod("getByCombinedId", int.class);
+                    setType = clazzChunk.getMethod("a", clazzBlockPosition, clazzIBlockData);
+                }
+            }
+
+            // invoke and cast objects.
+            Object craftWorld = clazzCraftWorld.cast(world);
+            Object nmsWorld = getHandle.invoke(craftWorld);
+            Object chunk = getChunkAt.invoke(nmsWorld, x >> 4, z >> 4);
+            Object blockPosition = clazzBlockPosition.getConstructor(int.class, int.class, int.class).newInstance(x & 0xF, y, z & 0xF);
+
+            // Invoke final method.
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+                Object block = clazzBlocks.getField(material.name()).get(null);
+                Object IBlockData = getBlockData.invoke(block);
+                setType.invoke(chunk, blockPosition, IBlockData, true);
+            } else {
+                Object IBlockData = getByCombinedId.invoke(null, material.getId() + (data << 12));
+                setType.invoke(chunk, blockPosition, IBlockData);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
+        setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
     }
 
     /**
