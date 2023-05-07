@@ -8,7 +8,7 @@ import com.songoda.core.utils.SongodaAuth;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,7 +25,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
     protected Config config = new Config(this);
     protected long dataLoadDelay = 20L;
 
-    protected ConsoleCommandSender console = Bukkit.getConsoleSender();
     private boolean emergencyStop = false;
 
     static {
@@ -91,6 +90,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
             return;
         }
 
+        CommandSender console = Bukkit.getConsoleSender();
+
         // Check plugin access, don't load plugin if user don't have access
         if (!SongodaAuth.isAuthorized(true)) {
             String pluginName = getDescription().getName();
@@ -110,7 +111,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                         ChatColor.YELLOW + "UUID: " + serverUuid + "\n" +
                         ChatColor.YELLOW + "IP: " + externalIP + "\n" +
                         ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-                this.console.sendMessage(message);
+                console.sendMessage(message);
             }).start();
 
             emergencyStop();
@@ -125,15 +126,19 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ChatColor.GREEN, "Enabling", ChatColor.GRAY));
 
         try {
-            locale = Locale.loadDefaultLocale(this, "en_US");
+            this.locale = Locale.loadDefaultLocale(this, "en_US");
 
             // plugin setup
             onPluginEnable();
 
-            // Load Data.
-            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, dataLoadDelay);
+            if (this.emergencyStop) {
+                return;
+            }
 
-            if (emergencyStop) {
+            // Load Data.
+            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, this.dataLoadDelay);
+
+            if (this.emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 console.sendMessage(" ");
                 return;
@@ -156,9 +161,11 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onDisable() {
-        if (emergencyStop) {
+        if (this.emergencyStop) {
             return;
         }
+
+        CommandSender console = Bukkit.getConsoleSender();
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
@@ -173,12 +180,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
         console.sendMessage(" "); // blank line to separate chatter
     }
 
-    public ConsoleCommandSender getConsole() {
-        return console;
-    }
-
     public Locale getLocale() {
-        return locale;
+        return this.locale;
     }
 
     /**
@@ -191,13 +194,13 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @return true if the locale exists and was loaded successfully
      */
     public boolean setLocale(String localeName, boolean reload) {
-        if (locale != null && locale.getName().equals(localeName)) {
-            return !reload || locale.reloadMessages();
+        if (this.locale != null && this.locale.getName().equals(localeName)) {
+            return !reload || this.locale.reloadMessages();
         }
 
         Locale l = Locale.loadLocale(this, localeName);
         if (l != null) {
-            locale = l;
+            this.locale = l;
             return true;
         }
 
@@ -242,7 +245,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     protected void emergencyStop() {
-        emergencyStop = true;
+        this.emergencyStop = true;
 
         Bukkit.getPluginManager().disablePlugin(this);
     }
@@ -255,10 +258,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
     protected void criticalErrorOnPluginStartup(Throwable th) {
         Bukkit.getLogger().log(Level.SEVERE,
                 String.format(
-                        "Unexpected error while loading %s v%s c%s: Disabling plugin!",
+                        "Unexpected error while loading %s v%s (core v%s): Disabling plugin!",
                         getDescription().getName(),
                         getDescription().getVersion(),
-                        SongodaCore.getCoreLibraryVersion()
+                        SongodaCore.getVersion()
                 ), th);
 
         emergencyStop();

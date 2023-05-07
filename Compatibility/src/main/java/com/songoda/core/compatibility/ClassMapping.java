@@ -1,7 +1,7 @@
 package com.songoda.core.compatibility;
 
 /**
- * @deprecated Usage is highly discouraged – use NMSManager instead
+ * @deprecated Usage is highly discouraged – use com.songoda.core.nms.Nms#getImplementations() instead
  */
 @Deprecated
 public enum ClassMapping {

@@ -1,0 +1,94 @@
+name: Build
+
+on:
+  push:
+    branches: [ master, development, development-v3 ]
+    tags:
+      - 'v*'
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+permissions: read-all
+
+env:
+  DEPLOYMENT_POM_PATH: ./Core/dependency-reduced-pom.xml
+  DEPLOYMENT_ARTIFACT_DIR: ./Core/target
+  DEPLOYMENT_ARTIFACT_SELECTOR: SongodaCore-*.jar
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare Workspace
+        uses: ./.github/actions/setup_project_workspace
+
+      - name: Run tests
+        run: mvn -B clean test
+
+  Build:
+    name: Build + Deploy
+    runs-on: ubuntu-latest
+    needs: [ Tests ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare Workspace
+        uses: ./.github/actions/setup_project_workspace
+        with:
+          maven_username: ${{ secrets.MAVEN_REPO_USERNAME }}
+          maven_password: ${{ secrets.MAVEN_REPO_PASSWORD }}
+
+      - name: Set project version
+        uses: songoda/GH-Commons/.github/actions/maven_set_project_version@master
+        with:
+          append_snapshot: ${{ github.ref_type == 'tag' && 'false' || 'true' }}
+          version: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          increment_version: ${{ github.ref_type == 'tag' && '' || 'patch' }}
+
+      - name: Build with Maven
+        run: mvn -B -Duser.name="GitHub Actions on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)" -DskipTests clean package
+
+      - name: Sign jar archives
+        uses: songoda/GH-Commons/.github/actions/sign_jars@master
+        with:
+          jar_file_selector: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
+          keystore_gpg_encrypted: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED }}
+          keystore_gpg_password: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED_PASSWORD }}
+          keystore_password: ${{ secrets.JARSIGNER_KEYSTORE_PASSWORD }}
+
+      - name: 'Upload Build Artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}
+          path: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
+
+      - name: Deploy to Maven repo
+        uses: songoda/GH-Commons/.github/actions/maven_deploy@master
+        with:
+          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
+          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
+          maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
+          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+      - name: Deploy parent pom.xml to Maven repo
+        uses: songoda/GH-Commons/.github/actions/maven_deploy@master
+        with:
+          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
+          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
+          only_deploy_pom: true
+          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+
+  discord_webhook:
+    name: Send Discord Webhook
+    runs-on: ubuntu-latest
+
+    needs: [ Tests, Build ]
+    if: ${{ always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development' || github.ref_type == 'tag') }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Notify Webhook
+        uses: songoda/GH-Commons/.github/actions/discord_send_job_results@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          webhook_url: ${{ secrets.DISCORD_BUILD_STATUS_WEBHOOK }}

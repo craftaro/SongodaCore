@@ -1,7 +1,7 @@
 package com.songoda.core.world;
 
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.Nms;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -15,7 +15,7 @@ public class SWorld {
 
     public SWorld(World world) {
         this.world = world;
-        this.sWorld = NmsManager.getWorld().getWorld(world);
+        this.sWorld = Nms.getImplementations().getWorld().getWorld(world);
     }
 
     public Entity[] getEntitiesFromChunk(int x, int z) {

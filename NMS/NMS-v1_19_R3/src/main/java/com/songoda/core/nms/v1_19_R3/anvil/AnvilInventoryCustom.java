@@ -17,6 +17,6 @@ public class AnvilInventoryCustom extends CraftInventoryAnvil {
 
     @Override
     public InventoryHolder getHolder() {
-        return holder;
+        return this.holder;
     }
 }

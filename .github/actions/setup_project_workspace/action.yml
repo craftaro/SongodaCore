@@ -1,0 +1,23 @@
+name: Prepare Workspace
+description: Prepares the workspace for compilation
+
+inputs:
+  maven_username:
+    required: false
+    description: The username to use for the Maven server
+  maven_password:
+    required: false
+    description: The password to use for the Maven server
+
+runs:
+  using: composite
+  steps:
+    - uses: songoda/GH-Commons/.github/actions/setup_workspace@master
+      with:
+        maven_username: ${{ inputs.maven_username }}
+        maven_password: ${{ inputs.maven_password }}
+
+    - uses: SpraxDev/Action-SpigotMC@v4
+      with:
+        versions: 1.18.1, 1.18.2, 1.19, 1.19.2, 1.19.3, 1.19.4
+        remapped: true

@@ -24,6 +24,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldCoreImpl implements WorldCore {
     @Override
@@ -60,46 +61,45 @@ public class WorldCoreImpl implements WorldCore {
     public void randomTickChunk(org.bukkit.Chunk bukkitChunk, int tickAmount) {
         LevelChunk chunk = (LevelChunk) ((CraftChunk) bukkitChunk).getHandle(ChunkStatus.FULL);
         ServerLevel world = chunk.q;
-        ProfilerFiller gameProfilerFiller = world.getProfiler();
+        ProfilerFiller gameprofilerfiller = world.getProfiler();
 
         ChunkPos chunkCoordIntPair = chunk.getPos();
         int j = chunkCoordIntPair.getMinBlockX();
         int k = chunkCoordIntPair.getMinBlockZ();
 
-        gameProfilerFiller.popPush("tickBlocks");
+        gameprofilerfiller.push("tickBlocks");
         if (tickAmount > 0) {
             LevelChunkSection[] aChunkSection = chunk.getSections();
-
             for (LevelChunkSection chunkSection : aChunkSection) {
                 if (chunkSection.isRandomlyTicking()) {
-                    int j1 = chunkSection.bottomBlockY();
+                    int l1 = chunkSection.bottomBlockY();
 
-                    for (int k1 = 0; k1 < tickAmount; ++k1) {
-                        BlockPos blockposition2 = world.getBlockRandomPos(j, j1, k, 15);
-                        gameProfilerFiller.push("randomTick");
-                        BlockState iBlockData1 = chunkSection.getBlockState(blockposition2.getX() - j, blockposition2.getY() - j1, blockposition2.getZ() - k);
-                        if (iBlockData1.isRandomlyTicking()) {
-                            iBlockData1.randomTick(world, blockposition2, world.random);
+                    for (int l = 0; l < tickAmount; ++l) {
+                        BlockPos blockposition2 = world.getBlockRandomPos(j, l1, k, 15);
+                        gameprofilerfiller.push("randomTick");
+                        BlockState iBlockData3 = chunkSection.getBlockState(blockposition2.getX() - j, blockposition2.getY() - l1, blockposition2.getZ() - k);
+                        if (iBlockData3.isRandomlyTicking()) {
+                            iBlockData3.randomTick(world, blockposition2, world.random);
                         }
 
-                        FluidState fluid = iBlockData1.getFluidState();
+                        FluidState fluid = iBlockData3.getFluidState();
                         if (fluid.isRandomlyTicking()) {
                             fluid.randomTick(world, blockposition2, world.random);
                         }
 
-                        gameProfilerFiller.pop();
+                        gameprofilerfiller.pop();
                     }
                 }
             }
         }
+        gameprofilerfiller.pop();
     }
 
     @Override
-    public void updateAdjacentComparators(Block bukkitBlock) {
+    public void updateAdjacentComparators(@NotNull Block bukkitBlock) {
         CraftBlock craftBlock = (CraftBlock) bukkitBlock;
-        CraftChunk craftChunk = (CraftChunk) bukkitBlock.getChunk();
-        LevelChunk nmsChunk = (LevelChunk) craftChunk.getHandle(ChunkStatus.FULL);
+        ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
-        nmsChunk.q.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
+        serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
 }
