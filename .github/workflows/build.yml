@@ -44,6 +44,7 @@ jobs:
         with:
           append_snapshot: ${{ github.ref_type == 'tag' && 'false' || 'true' }}
           version: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          increment_version: ${{ github.ref_type == 'tag' && '' || 'patch' }}
 
       - name: Build with Maven
         run: mvn -B -Duser.name="GitHub Actions on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)" -DskipTests clean package
