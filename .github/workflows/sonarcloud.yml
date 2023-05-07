@@ -2,9 +2,8 @@ name: SonarCloud
 
 on:
   push:
-    branches: [ master, development, development-v3 ]
-  pull_request:
-    types: [ opened, synchronize, reopened ]
+    branches: [ master, development ]
+  workflow_dispatch:
 
 permissions: read-all
 
@@ -18,23 +17,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        if: ${{ env.SONAR_TOKEN != null }}
         with:
           fetch-depth: 0
 
       - name: Prepare Workspace
-        if: ${{ env.SONAR_TOKEN != null }}
         uses: ./.github/actions/setup_project_workspace
 
       - name: 'Cache: SonarCloud'
-        if: ${{ env.SONAR_TOKEN != null }}
         uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
 
       - name: Analyze project
-        if: ${{ env.SONAR_TOKEN != null }}
         run: >
           mvn -B \
             verify \
