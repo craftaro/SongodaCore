@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ master, development, development-v3 ]
+    branches: [ master, development ]
     tags:
       - 'v*'
   pull_request:
