@@ -1,5 +1,7 @@
 package com.songoda.core.input;
 
+import com.songoda.SchedulerTask;
+import com.songoda.SchedulerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +22,7 @@ public class ChatPrompt implements Listener {
 
     private final Plugin plugin;
     private final ChatConfirmHandler handler;
-    private int taskId;
+    private SchedulerTask taskId;
     private OnClose onClose = null;
     private OnCancel onCancel = null;
     private Listener listener;
@@ -67,7 +69,7 @@ public class ChatPrompt implements Listener {
     }
 
     public ChatPrompt setTimeOut(Player player, long ticks) {
-        taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        taskId = SchedulerUtils.scheduleSyncDelayedTask(plugin, () -> {
             if (onClose != null) {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         onClose.onClose(), 0L);
@@ -108,7 +110,7 @@ public class ChatPrompt implements Listener {
                 }
 
                 HandlerList.unregisterAll(listener);
-                Bukkit.getScheduler().cancelTask(taskId);
+                SchedulerUtils.cancelTask(taskId);
             }
 
             @EventHandler(priority = EventPriority.LOWEST)
@@ -132,7 +134,7 @@ public class ChatPrompt implements Listener {
                 }
 
                 HandlerList.unregisterAll(listener);
-                Bukkit.getScheduler().cancelTask(taskId);
+                SchedulerUtils.cancelTask(taskId);
             }
         };
 

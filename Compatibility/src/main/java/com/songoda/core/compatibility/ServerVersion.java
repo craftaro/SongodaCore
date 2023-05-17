@@ -11,7 +11,10 @@ public enum ServerVersion {
     private final static ServerVersion serverVersion;
     private final static boolean isMocked;
 
+    private final static boolean isFolia;
+
     static {
+        boolean isFolia1;
         if (Bukkit.getServer() != null) {
             String srvPackage = Bukkit.getServer().getClass().getPackage().getName();
             isMocked = srvPackage.equals("be.seeseemelk.mockbukkit");
@@ -29,7 +32,19 @@ public enum ServerVersion {
             isMocked = false;
         }
 
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            isFolia1 = true;
+        } catch (ClassNotFoundException e) {
+            isFolia1 = false;
+        }
+        isFolia = isFolia1;
+
         serverVersion = getVersion();
+    }
+
+    public static boolean isFolia() {
+        return isFolia;
     }
 
     private static ServerVersion getVersion() {

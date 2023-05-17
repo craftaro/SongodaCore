@@ -84,6 +84,7 @@
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
                                     <include>org.yaml:snakeyaml</include>
+                                    <include>io.papermc:paperlib</include>
                                 </includes>
                             </artifactSet>
 
@@ -109,8 +110,8 @@
                                 </relocation>
 
                                 <relocation>
-                                    <pattern>org.yaml.snakeyaml</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.org.yaml.snakeyaml</shadedPattern>
+                                    <pattern>io.papermc.lib</pattern>
+                                    <shadedPattern>com.songoda.core.third_party.io.papermc.lib</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -143,6 +144,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>dev.folia</groupId>
+            <artifactId>folia-api</artifactId>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.19.2-R0.1-SNAPSHOT</version>
@@ -150,8 +158,22 @@
         </dependency>
 
         <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.7</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-Compatibility</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>Folia</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

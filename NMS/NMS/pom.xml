@@ -141,5 +141,11 @@
             <groupId>${project.groupId}</groupId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <version>${project.version}</version>
+            <artifactId>SongodaCore-NMS-v1_19_R3</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

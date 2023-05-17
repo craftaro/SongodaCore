@@ -1,5 +1,6 @@
 package com.songoda.core;
 
+import com.songoda.SchedulerUtils;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
@@ -136,7 +137,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             }
 
             // Load Data.
-            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, this.dataLoadDelay);
+            SchedulerUtils.runTaskLater(this, this::onDataLoad, this.dataLoadDelay);
 
             if (this.emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

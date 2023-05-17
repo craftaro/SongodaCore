@@ -1,5 +1,6 @@
 package com.songoda.core.database;
 
+import com.songoda.SchedulerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -81,7 +82,7 @@ public class DataManagerAbstract {
      */
     @Deprecated
     public void async(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
+        SchedulerUtils.runTaskAsynchronously(plugin, runnable);
     }
 
     /**
@@ -100,7 +101,7 @@ public class DataManagerAbstract {
      * @param runnable task to run on the next server tick
      */
     public void sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(this.plugin, runnable);
+        SchedulerUtils.runTask(plugin, runnable);
     }
 
     public void runAsync(Runnable runnable) {

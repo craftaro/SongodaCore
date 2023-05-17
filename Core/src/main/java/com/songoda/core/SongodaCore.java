@@ -1,5 +1,7 @@
 package com.songoda.core;
 
+import com.songoda.SchedulerTask;
+import com.songoda.SchedulerUtils;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.CompatibleMaterial;
@@ -198,15 +200,14 @@ public class SongodaCore {
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
 
         // we aggressively want to own this command
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
-                10 * 60));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
-                20 * 60));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
-                20 * 60 * 2));
+        tasks.add(SchedulerUtils.runTaskLater(piggybackedPlugin, () ->
+                CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager), 10 * 60));
+
+        tasks.add(SchedulerUtils.runTaskLater(piggybackedPlugin, () ->
+                CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager), 20 * 60));
+
+        tasks.add(SchedulerUtils.runTaskLater(piggybackedPlugin, () ->
+                CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager), 20 * 60 * 2));
     }
 
     /**
@@ -216,7 +217,7 @@ public class SongodaCore {
         Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
 
         tasks.stream().filter(Objects::nonNull)
-                .forEach(task -> Bukkit.getScheduler().cancelTask(task.getTaskId()));
+                .forEach(SchedulerUtils::cancelTask);
 
         HandlerList.unregisterAll(loginListener);
         if (!hasShading()) {
@@ -228,7 +229,7 @@ public class SongodaCore {
         loginListener = null;
     }
 
-    private ArrayList<BukkitTask> tasks = new ArrayList<>();
+    private ArrayList<SchedulerTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
@@ -237,7 +238,7 @@ public class SongodaCore {
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
+        tasks.add(SchedulerUtils.runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
     /**
@@ -416,9 +417,10 @@ public class SongodaCore {
 
             // check for updates! ;)
             for (PluginInfo plugin : getPlugins()) {
-                if (plugin.getNotification() != null && plugin.getJavaPlugin().isEnabled())
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin.getJavaPlugin(), () ->
+                if (plugin.getNotification() != null && plugin.getJavaPlugin().isEnabled()) {
+                    SchedulerUtils.runTaskLaterAsynchronously(plugin.getJavaPlugin(), () ->
                             player.sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
+                }
             }
         }
 

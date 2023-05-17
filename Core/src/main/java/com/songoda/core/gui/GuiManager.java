@@ -1,5 +1,6 @@
 package com.songoda.core.gui;
 
+import com.songoda.SchedulerUtils;
 import com.songoda.core.compatibility.ClientVersion;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
@@ -102,7 +103,7 @@ public class GuiManager {
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerUtils.runTaskAsynchronously(plugin, () -> {
             Gui openInv = openInventories.get(player);
 
             if (openInv != null) {
@@ -111,7 +112,7 @@ public class GuiManager {
 
             Inventory inv = gui.getOrCreateInventory(this);
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            SchedulerUtils.runTask(plugin, () -> {
                 player.openInventory(inv);
                 gui.onOpen(this, player);
 
@@ -136,7 +137,7 @@ public class GuiManager {
             popup.add();
             popup.grant(player);
 
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            SchedulerUtils.runTaskLaterAsynchronously(plugin, () -> {
                 popup.revoke(player);
                 popup.remove();
             }, 70);
@@ -280,7 +281,7 @@ public class GuiManager {
                 if (manager.shutdown) {
                     gui.onClose(manager, player);
                 } else {
-                    Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                    SchedulerUtils.runEntityTask(manager.plugin, player, () -> gui.onClose(manager, player), 1);
                 }
 
                 manager.openInventories.remove(player);

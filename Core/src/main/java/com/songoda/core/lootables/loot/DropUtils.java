@@ -1,6 +1,7 @@
 package com.songoda.core.lootables.loot;
 
 import com.bgsoftware.wildstacker.api.objects.StackedItem;
+import com.songoda.SchedulerUtils;
 import com.songoda.core.SongodaCore;
 import com.songoda.ultimatestacker.UltimateStacker;
 import com.songoda.ultimatestacker.settings.Settings;
@@ -87,7 +88,7 @@ public class DropUtils {
                 }
                 stack.setamount(newAmount);
             }
-            Bukkit.getScheduler().runTask(UltimateStacker.getInstance(), () -> {
+            SchedulerUtils.runLocationTask(UltimateStacker.getInstance(), event.getEntity().getLocation(), () -> {
                 for (StackedItem stack : stacks) {
                     UltimateStacker.spawnStackedItem(stack.getItem(), stack.getAmount(), event.getEntity().getLocation());
                 }
@@ -98,7 +99,7 @@ public class DropUtils {
     }
 
     private static void runCommands(LivingEntity entity, List<String> commands) {
-        Bukkit.getScheduler().runTask(SongodaCore.getHijackedPlugin(), () -> {
+        SchedulerUtils.runTask(SongodaCore.getHijackedPlugin(), () -> {
             for (String command : commands) {
                 if (entity.getKiller() != null) {
                     command = command.replace("%player%", entity.getKiller().getName()
