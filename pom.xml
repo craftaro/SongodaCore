@@ -51,13 +51,13 @@
     </modules>
 
     <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
+        <url>https://github.com/craftaro/SongodaCore/issues</url>
+        <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/songoda/SongodaCore</url>
-        <connection>scm:git:git:github.com/songoda/SongodaCore.git</connection>
+        <url>https://github.com/craftaro/SongodaCore</url>
+        <connection>scm:git:git://github.com/craftaro/SongodaCore.git</connection>
     </scm>
 
     <build>
