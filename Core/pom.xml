@@ -83,7 +83,6 @@
                                     <include>net.kyori:*</include>
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
-                                    <include>org.yaml:snakeyaml</include>
                                 </includes>
                             </artifactSet>
 
@@ -107,21 +106,7 @@
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.songoda.core.third_party.org.apache.commons</shadedPattern>
                                 </relocation>
-
-                                <relocation>
-                                    <pattern>org.yaml.snakeyaml</pattern>
-                                    <shadedPattern>com.songoda.core.third_party.org.yaml.snakeyaml</shadedPattern>
-                                </relocation>
                             </relocations>
-
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <includes>
-                                        <include>**/*.class</include>
-                                    </includes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -188,13 +173,6 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.2.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.33</version>
             <scope>compile</scope>
         </dependency>
 

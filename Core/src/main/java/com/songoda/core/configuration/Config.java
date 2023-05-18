@@ -461,7 +461,7 @@ public class Config extends ConfigSection {
         Map<?, ?> input;
 
         try {
-            input = this.yaml.load(contents);
+            input = (Map<?, ?>) this.yaml.load(contents);
         } catch (YAMLException e2) {
             throw new InvalidConfigurationException(e2);
         } catch (ClassCastException e3) {
