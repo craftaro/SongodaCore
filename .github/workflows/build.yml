@@ -53,9 +53,9 @@ jobs:
         uses: songoda/GH-Commons/.github/actions/sign_jars@master
         with:
           jar_file_selector: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
-          keystore_gpg_encrypted: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED }}
-          keystore_gpg_password: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED_PASSWORD }}
-          keystore_password: ${{ secrets.JARSIGNER_KEYSTORE_PASSWORD }}
+          keystore_gpg_encrypted: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG }}
+          keystore_gpg_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG_PASSWORD }}
+          keystore_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_PASSWORD }}
 
       - name: 'Upload Build Artifacts'
         uses: actions/upload-artifact@v3
