@@ -36,8 +36,8 @@ jobs:
       - name: Prepare Workspace
         uses: ./.github/actions/setup_project_workspace
         with:
-          maven_username: ${{ secrets.MAVEN_REPO_USERNAME }}
-          maven_password: ${{ secrets.MAVEN_REPO_PASSWORD }}
+          maven_username: ${{ secrets.PLUGINS_MAVEN_REPO_USERNAME }}
+          maven_password: ${{ secrets.PLUGINS_MAVEN_REPO_PASSWORD }}
 
       - name: Set project version
         uses: songoda/GH-Commons/.github/actions/maven_set_project_version@master
@@ -67,16 +67,16 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: songoda/GH-Commons/.github/actions/maven_deploy@master
         with:
-          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
-          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
+          repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
+          repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
           maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
           maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
       - name: Deploy parent pom.xml to Maven repo
         if: ${{ github.event_name == 'push' }}
         uses: songoda/GH-Commons/.github/actions/maven_deploy@master
         with:
-          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
-          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
+          repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
+          repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
           only_deploy_pom: true
           maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
 
