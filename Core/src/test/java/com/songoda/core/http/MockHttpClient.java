@@ -1,9 +1,11 @@
 package com.songoda.core.http;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class MockHttpClient implements HttpClient {
     public HttpResponse returnValue;
@@ -18,5 +20,10 @@ public class MockHttpClient implements HttpClient {
         this.callsOnGet.add(url);
 
         return this.returnValue;
+    }
+
+    @Override
+    public @NotNull HttpResponse request(String method, String url, Map<String, String> headers, byte[] body) {
+        throw new NotImplementedException();
     }
 }

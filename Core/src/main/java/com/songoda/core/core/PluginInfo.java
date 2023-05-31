@@ -1,6 +1,7 @@
 package com.songoda.core.core;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.verification.ProductVerificationStatus;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
@@ -12,8 +13,10 @@ public final class PluginInfo {
     protected final JavaPlugin javaPlugin;
     protected final int songodaId;
     protected final String coreIcon;
-    protected final String coreLibraryVersion;
     protected final CompatibleMaterial icon;
+    protected final String coreLibraryVersion;
+    public final ProductVerificationStatus verificationStatus;
+
     private final List<PluginInfoModule> modules = new ArrayList<>();
     private boolean hasUpdate = false;
     private String latestVersion;
@@ -22,12 +25,13 @@ public final class PluginInfo {
     private String marketplaceLink;
     private JSONObject json;
 
-    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon, String coreLibraryVersion) {
+    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon, String coreLibraryVersion, ProductVerificationStatus verificationStatus) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;
         this.icon = CompatibleMaterial.getMaterial(icon);
         this.coreLibraryVersion = coreLibraryVersion;
+        this.verificationStatus = verificationStatus;
     }
 
     public String getLatestVersion() {

@@ -18,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.UUID;
 
+@Deprecated
 public class SongodaAuth {
+    @Deprecated
     public static boolean isAuthorized(boolean allowOffline) {
         String productId = "%%__PLUGIN__%%";
         if (isPluginSelfCompiled(productId)) {
@@ -52,6 +54,7 @@ public class SongodaAuth {
         }
     }
 
+    @Deprecated
     public static UUID getUUID() {
         File serverProperties = new File("./server.properties");
         try {
@@ -72,6 +75,7 @@ public class SongodaAuth {
         }
     }
 
+    @Deprecated
     public static String getIP() {
         try {
             URL url = new URL("https://marketplace.songoda.com/api/v2/products/license/ip");

@@ -5,6 +5,8 @@ import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import com.songoda.core.utils.SongodaAuth;
+import com.songoda.core.verification.CraftaroProductVerification;
+import com.songoda.core.verification.ProductVerificationStatus;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -93,27 +95,15 @@ public abstract class SongodaPlugin extends JavaPlugin {
         CommandSender console = Bukkit.getConsoleSender();
 
         // Check plugin access, don't load plugin if user don't have access
-        if (!SongodaAuth.isAuthorized(true)) {
-            String pluginName = getDescription().getName();
-
-            new Thread(() -> {
-                String externalIP = SongodaAuth.getIP();
-                String serverUuid = SongodaAuth.getUUID().toString();
-
-                String message = "\n" +
-                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-                        ChatColor.RED + "You do not have access to the " + pluginName + " plugin.\n" +
-                        ChatColor.YELLOW + "Please purchase a license at https://sngda.to/marketplace\n" +
-                        ChatColor.YELLOW + "or set up your license at https://sngda.to/licenses\n" +
-                        ChatColor.YELLOW + "License setup steps:\n" +
-                        ChatColor.YELLOW + "Visit the link mentioned above and click the 'Create License' button.\n" +
-                        ChatColor.YELLOW + "Copy the following IP address and UUID and click create.\n" +
-                        ChatColor.YELLOW + "UUID: " + serverUuid + "\n" +
-                        ChatColor.YELLOW + "IP: " + externalIP + "\n" +
-                        ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-                console.sendMessage(message);
-            }).start();
-
+        if (CraftaroProductVerification.getOwnProductVerificationStatus() != ProductVerificationStatus.VERIFIED) {
+            console.sendMessage("\n" +
+                    ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                    ChatColor.RED + "You do not have access to the " + getDescription().getName() + " plugin.\n" +
+                    ChatColor.YELLOW + "Please purchase a license at https://craftaro.com/\n" +
+                    ChatColor.YELLOW + "or set up your license\n" +
+                    ChatColor.YELLOW + "License setup steps:\n" +
+                    ChatColor.YELLOW + "Run the command '" + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + "' and follow the instructions\n" +
+                    ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             emergencyStop();
             return;
         }

@@ -27,6 +27,7 @@ public class SongodaCoreCommand extends AbstractCommand {
             sender.sendMessage("/craftaro diag");
             sender.sendMessage("/craftaro myip");
             sender.sendMessage("/craftaro uuid");
+            sender.sendMessage("/craftaro license");
         }
 
         return ReturnType.SUCCESS;

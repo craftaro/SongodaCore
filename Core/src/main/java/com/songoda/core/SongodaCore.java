@@ -9,7 +9,10 @@ import com.songoda.core.core.PluginInfoModule;
 import com.songoda.core.core.SongodaCoreCommand;
 import com.songoda.core.core.SongodaCoreDiagCommand;
 import com.songoda.core.core.SongodaCoreIPCommand;
+import com.songoda.core.core.SongodaCoreLicenseCommand;
 import com.songoda.core.core.SongodaCoreUUIDCommand;
+import com.songoda.core.verification.CraftaroProductVerification;
+import com.songoda.core.verification.ProductVerificationStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -115,7 +118,6 @@ public class SongodaCore {
                             ownVersion = getCoreVersion();
                         }
 
-
                         if (otherVersion >= ownVersion) {
                             // use the active service
                             // assuming that the other is greater than R6 if we get here ;)
@@ -193,7 +195,7 @@ public class SongodaCore {
     private void init() {
         shadingListener = new ShadedEventListener();
         commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreIPCommand(), new SongodaCoreUUIDCommand());
+                .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreIPCommand(), new SongodaCoreUUIDCommand(), new SongodaCoreLicenseCommand());
         Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
 
@@ -231,8 +233,15 @@ public class SongodaCore {
     private ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
+        ProductVerificationStatus verificationStatus = ProductVerificationStatus.VERIFIED;
+        try {
+            verificationStatus = CraftaroProductVerification.getProductVerificationStatus(pluginID);
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
+        }
+
         logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
-        PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
+        PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion, verificationStatus);
 
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
