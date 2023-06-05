@@ -6,43 +6,35 @@ import com.songoda.core.configuration.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MariaDBConnector implements DatabaseConnector {
+public class H2Connector implements DatabaseConnector {
 
-    private final SongodaPlugin plugin;
+    private final Plugin plugin;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MariaDBConnector(SongodaPlugin plugin) {
+    public H2Connector(SongodaPlugin plugin) {
         this(plugin, plugin.getDatabaseConfig());
     }
 
-    public MariaDBConnector(SongodaPlugin plugin, Config databaseConfig) {
+    public H2Connector(Plugin plugin, Config databaseConfig) {
         this.plugin = plugin;
 
-        String hostname = databaseConfig.getString("Connection Settings.Hostname");
-        int port = databaseConfig.getInt("Connection Settings.Port");
-        String database = databaseConfig.getString("Connection Settings.Database");
-        String username = databaseConfig.getString("Connection Settings.Username");
-        String password = databaseConfig.getString("Connection Settings.Password");
-        boolean useSSL = databaseConfig.getBoolean("Connection Settings.Use SSL");
         int poolSize = databaseConfig.getInt("Connection Settings.Pool Size");
-
-        try {
-            Class.forName("com.songoda.core.third_party.org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        String password = databaseConfig.getString("Connection Settings.Password");
+        String username = databaseConfig.getString("Connection Settings.Username");
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mariadb://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
-        config.setUsername(username);
-        config.setPassword(password);
+        config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:./h2_" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setPassword(username);
+        config.setUsername(password);
         config.setMaximumPoolSize(poolSize);
 
         try {
@@ -88,7 +80,7 @@ public class MariaDBConnector implements DatabaseConnector {
     @Override
     public void connectDSL(DSLContextCallback callback) {
         try (Connection connection = getConnection()){
-            callback.accept(DSL.using(connection, SQLDialect.MARIADB));
+            callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
@@ -98,7 +90,7 @@ public class MariaDBConnector implements DatabaseConnector {
     @Override
     public OptionalResult connectDSLOptional(DSLContextOptionalCallback callback) {
         try (Connection connection = getConnection()) {
-            return callback.accept(DSL.using(connection, SQLDialect.MARIADB));
+            return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
@@ -113,6 +105,6 @@ public class MariaDBConnector implements DatabaseConnector {
 
     @Override
     public DatabaseType getType() {
-        return DatabaseType.MARIADB;
+        return DatabaseType.H2;
     }
 }

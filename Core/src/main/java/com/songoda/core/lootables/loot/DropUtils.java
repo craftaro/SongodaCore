@@ -1,9 +1,9 @@
 package com.songoda.core.lootables.loot;
 
 import com.bgsoftware.wildstacker.api.objects.StackedItem;
+import com.craftaro.ultimatestacker.api.UltimateStackerAPI;
 import com.songoda.core.SongodaCore;
-import com.songoda.ultimatestacker.UltimateStacker;
-import com.songoda.ultimatestacker.settings.Settings;
+import com.songoda.core.hooks.stackers.UltimateStacker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -73,7 +73,7 @@ public class DropUtils {
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
         if (SongodaCore.isRegistered("UltimateStacker")) {
             List<StackedItem> stacks = new ArrayList<>();
-            int maxSize = Settings.MAX_STACK_ITEMS.getInt()-64;
+            int maxSize = UltimateStackerAPI.getSettings().getMaxItemStackSize()-64;
             for (ItemStack item : items) {
                 StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).findFirst().orElse(null);
                 if (stack == null) {
@@ -87,9 +87,9 @@ public class DropUtils {
                 }
                 stack.setamount(newAmount);
             }
-            Bukkit.getScheduler().runTask(UltimateStacker.getInstance(), () -> {
+            Bukkit.getScheduler().runTask(UltimateStackerAPI.getPlugin(), () -> {
                 for (StackedItem stack : stacks) {
-                    UltimateStacker.spawnStackedItem(stack.getItem(), stack.getAmount(), event.getEntity().getLocation());
+                    UltimateStackerAPI.getStackedItemManager().createStack(stack.getItem(), event.getEntity().getLocation(), stack.getAmount());
                 }
             });
             return;

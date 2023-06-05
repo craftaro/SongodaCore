@@ -1,8 +1,14 @@
 package com.songoda.core.database;
 
+import com.songoda.core.SongodaCore;
+import com.songoda.core.SongodaPlugin;
+import com.songoda.core.configuration.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,10 +18,22 @@ public class MySQLConnector implements DatabaseConnector {
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL, int poolSize) {
+    public MySQLConnector(SongodaPlugin plugin) {
+        this(plugin, plugin.getDatabaseConfig());
+    }
+
+    public MySQLConnector(Plugin plugin, Config databaseConfig) {
         this.plugin = plugin;
 
-        plugin.getLogger().info("connecting to " + hostname + " : " + port);
+        String hostname = databaseConfig.getString("Connection Settings.Hostname");
+        int port = databaseConfig.getInt("Connection Settings.Port");
+        String database = databaseConfig.getString("Connection Settings.Database");
+        String username = databaseConfig.getString("Connection Settings.Username");
+        String password = databaseConfig.getString("Connection Settings.Password");
+        boolean useSSL = databaseConfig.getBoolean("Connection Settings.Use SSL");
+        int poolSize = databaseConfig.getInt("Connection Settings.Pool Size");
+
+        plugin.getLogger().info("Connecting to " + hostname + " : " + port + " using MySQL");
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
@@ -41,7 +59,6 @@ public class MySQLConnector implements DatabaseConnector {
         this.hikari.close();
     }
 
-    @Deprecated
     @Override
     public void connect(ConnectionCallback callback) {
         try (Connection connection = this.hikari.getConnection()) {
@@ -53,13 +70,40 @@ public class MySQLConnector implements DatabaseConnector {
     }
 
     @Override
-    public Connection getConnection() {
-        try {
-            return this.hikari.getConnection();
+    public OptionalResult connectOptional(ConnectionOptionalCallback callback) {
+        try (Connection connection = getConnection()) {
+            return callback.accept(connection);
         } catch (Exception ex) {
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
         }
-        return null;
+        return OptionalResult.empty();
+    }
+
+    @Override
+    public void connectDSL(DSLContextCallback callback) {
+        try (Connection connection = getConnection()){
+            callback.accept(DSL.using(connection, SQLDialect.MYSQL));
+        } catch (Exception ex) {
+            this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public OptionalResult connectDSLOptional(DSLContextOptionalCallback callback) {
+        try (Connection connection = getConnection()) {
+            return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
+        } catch (Exception ex) {
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        return OptionalResult.empty();
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return this.hikari.getConnection();
     }
 
     @Override

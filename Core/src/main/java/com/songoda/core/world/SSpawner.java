@@ -1,6 +1,7 @@
 package com.songoda.core.world;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.database.SerializedLocation;
 import com.songoda.core.hooks.EntityStackerManager;
 import com.songoda.core.nms.Nms;
 import com.songoda.core.nms.world.SpawnedEntity;
@@ -11,12 +12,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SSpawner {
-    protected final com.songoda.core.nms.world.SSpawner sSpawner;
-    protected final Location location;
+    protected com.songoda.core.nms.world.SSpawner sSpawner;
+    protected Location location;
 
     public SSpawner(Location location) {
         this.location = location;
@@ -25,6 +27,11 @@ public class SSpawner {
 
     public SSpawner(CreatureSpawner spawner) {
         this(spawner.getLocation());
+    }
+
+    public void initFromData(Map<String, Object> data) {
+        location = SerializedLocation.of(data);
+        sSpawner = Nms.getImplementations().getWorld().getSpawner(location);
     }
 
     public int spawn(int amountToSpawn, EntityType... types) {
