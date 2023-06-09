@@ -1,7 +1,6 @@
 package com.songoda.core.http;
 
-import org.apache.commons.io.IOUtils;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -30,13 +29,15 @@ public class HttpResponseImpl implements HttpResponse, AutoCloseable {
 
     public byte[] getBody() throws IOException {
         if (this.body == null) {
-            try (InputStream in = this.connection.getInputStream();
-                 InputStream err = this.connection.getErrorStream()) {
+            try (InputStream err = this.connection.getErrorStream()) {
                 if (err != null) {
-                    this.body = IOUtils.toByteArray(err);
-                } else {
-                    this.body = IOUtils.toByteArray(in);
+                    this.body = toByteArray(err);
+                    return this.body;
                 }
+            }
+
+            try (InputStream in = this.connection.getInputStream()) {
+                this.body = toByteArray(in);
             }
         }
 
@@ -50,5 +51,15 @@ public class HttpResponseImpl implements HttpResponse, AutoCloseable {
     @Override
     public void close() throws Exception {
         this.connection.disconnect();
+    }
+
+    private byte[] toByteArray(InputStream in) throws IOException {
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        while ((bytesRead = in.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+        return output.toByteArray();
     }
 }
