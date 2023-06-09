@@ -1,10 +1,10 @@
 package com.songoda.core;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
-import com.songoda.core.utils.SongodaAuth;
 import com.songoda.core.verification.CraftaroProductVerification;
 import com.songoda.core.verification.ProductVerificationStatus;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -18,15 +18,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-/**
- * REMINDER: When converting plugins to use this, REMOVE METRICS <br>
- * Must not have two instances of Metrics enabled!
- */
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
     protected Config config = new Config(this);
     protected long dataLoadDelay = 20L;
 
+    private boolean licensePreventedPluginLoad = false;
     private boolean emergencyStop = false;
 
     static {
@@ -101,19 +98,18 @@ public abstract class SongodaPlugin extends JavaPlugin {
                     ChatColor.RED + "You do not have access to the " + getDescription().getName() + " plugin.\n" +
                     ChatColor.YELLOW + "Please purchase a license at https://craftaro.com/\n" +
                     ChatColor.YELLOW + "or set up your license\n" +
-                    ChatColor.YELLOW + "License setup steps:\n" +
-                    ChatColor.YELLOW + "Run the command '" + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + "' and follow the instructions\n" +
+                    ChatColor.YELLOW + "And setup it up:\n" +
+                    ChatColor.YELLOW + "Run the command " + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + " and follow the instructions\n" +
                     ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            emergencyStop();
+            this.licensePreventedPluginLoad = true;
+            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (CompatibleMaterial) null);
             return;
         }
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY,
-                getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
-        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
-                ChatColor.GREEN, "Enabling", ChatColor.GRAY));
+        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY, getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
+        console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY, ChatColor.GREEN, "Enabling", ChatColor.GRAY));
 
         try {
             this.locale = Locale.loadDefaultLocale(this, "en_US");
@@ -151,7 +147,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onDisable() {
-        if (this.emergencyStop) {
+        if (this.emergencyStop || this.licensePreventedPluginLoad) {
             return;
         }
 

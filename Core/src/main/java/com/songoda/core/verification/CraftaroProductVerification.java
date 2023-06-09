@@ -28,13 +28,13 @@ public final class CraftaroProductVerification {
     private static @Nullable VerificationRequest verificationRequest;
 
     public static ProductVerificationStatus getOwnProductVerificationStatus() {
-        final String productId = "%%__PRODUCT_ID__%%";
-        if (!productId.matches("[0-9]+")) {
+        final int productId = getProductId();
+        if (productId <= 0) {
             return ProductVerificationStatus.VERIFIED;
         }
 
         try {
-            return getProductVerificationStatus(Integer.parseInt(productId));
+            return getProductVerificationStatus(productId);
         } catch (IOException ex) {
             SongodaCore.getLogger().log(Level.WARNING, "Failed to fetch product verification status", ex);
             return ProductVerificationStatus.VERIFIED;
@@ -147,6 +147,15 @@ public final class CraftaroProductVerification {
         return new AsyncTokenAcquisitionFlow(uri, asyncTokenRefreshWorkflowFuture);
     }
 
+    public static int getProductId() {
+        final String productId = "%%__PRODUCT_ID__%%";
+        if (!productId.matches("[0-9]+")) {
+            return -1;
+        }
+
+        return Integer.parseInt(productId);
+    }
+
     private static @Nullable VerificationToken refreshVerificationToken(VerificationToken token) throws IOException {
         JsonObject reqBody = new JsonObject();
         reqBody.addProperty("access_token", token.accessToken);
@@ -179,7 +188,6 @@ public final class CraftaroProductVerification {
     }
 
     private static void tryDeleteTokenFile() {
-
         try {
             VerificationTokenFileManager.deleteVerificationTokenFile();
         } catch (IOException ex) {

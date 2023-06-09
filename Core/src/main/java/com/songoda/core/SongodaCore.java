@@ -233,10 +233,12 @@ public class SongodaCore {
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         ProductVerificationStatus verificationStatus = ProductVerificationStatus.VERIFIED;
-        try {
-            verificationStatus = CraftaroProductVerification.getProductVerificationStatus(pluginID);
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
+        if (pluginID > 0) {
+            try {
+                verificationStatus = CraftaroProductVerification.getProductVerificationStatus(pluginID);
+            } catch (IOException ex) {
+                logger.log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
+            }
         }
 
         logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
