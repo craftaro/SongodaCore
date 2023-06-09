@@ -103,6 +103,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
                     ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             this.licensePreventedPluginLoad = true;
             SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (CompatibleMaterial) null);
+
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                String pluginName = getDescription().getName();
+                String pluginUrl = "https://craftaro.com/marketplace/product/" + CraftaroProductVerification.getProductId();
+                Bukkit.broadcastMessage(ChatColor.RED + pluginName + " has not been activated. Please download " + pluginName + " here: " + pluginUrl);
+            }, 5 * 20, 60 * 20);
             return;
         }
 
