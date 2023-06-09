@@ -55,7 +55,7 @@ public class SongodaCore {
      * @deprecated The Core's version should be used instead as it uses Semantic Versioning
      */
     @Deprecated
-    private static final int coreRevision = 9;
+    private static final int coreRevision = 10;
 
     /**
      * @since coreRevision 6
@@ -304,7 +304,7 @@ public class SongodaCore {
     }
 
     /**
-     * @deprecated Use {@link #getCoreMajorVersion()} instead, but careful, coreRevision is at 9 while major version is at 2
+     * @deprecated Use {@link #getCoreMajorVersion()} instead, but careful, coreRevision is at 10 while major version is at 2
      */
     @Deprecated
     public static int getCoreVersion() {
