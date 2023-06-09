@@ -26,20 +26,29 @@ public class SongodaCoreLicenseCommand extends AbstractCommand {
         try {
             boolean verificationNeedsAction = false;
 
+            if (SongodaCore.getPlugins().isEmpty()) {
+                sender.sendMessage(SongodaCore.getPrefix() + ChatColor.RED + "No plugins found.");
+                return ReturnType.SUCCESS;
+            }
+
+            sender.sendMessage("");
             for (PluginInfo pl : SongodaCore.getPlugins()) {
                 if (pl.verificationStatus == ProductVerificationStatus.ACTION_NEEDED) {
                     verificationNeedsAction = true;
                 }
 
-                sender.sendMessage(pl.getJavaPlugin().getName() + ": " + pl.verificationStatus.getFriendlyName());
+                sender.sendMessage(String.format(
+                        ChatColor.YELLOW + "%s" + ChatColor.GRAY + ": %s",
+                        pl.getJavaPlugin().getName(),
+                        pl.verificationStatus.getColoredFriendlyName()
+                ));
             }
+            sender.sendMessage("");
 
             if (verificationNeedsAction) {
-                sender.sendMessage("");
-
                 AsyncTokenAcquisitionFlow tokenAcquisitionFlow = CraftaroProductVerification.startAsyncTokenAcquisitionFlow();
                 sender.sendMessage(String.format(
-                        SongodaCore.getPrefix() + ChatColor.YELLOW + "Please visit " + ChatColor.GOLD + "%s " + ChatColor.YELLOW + "to verify your server.\nI'll be checking again every " + ChatColor.GOLD + "%d seconds " + ChatColor.YELLOW + "– You got about " + ChatColor.GOLD + "%d minutes " + ChatColor.YELLOW + "for this.",
+                        SongodaCore.getPrefix() + ChatColor.YELLOW + "Please visit " + ChatColor.GOLD + "%s " + ChatColor.YELLOW + "to verify your server.\nI'll be checking again every " + ChatColor.GOLD + "%d seconds " + ChatColor.GRAY + "–" + ChatColor.YELLOW + " You got about " + ChatColor.GOLD + "%d minutes " + ChatColor.YELLOW + "for this.",
                         tokenAcquisitionFlow.getUriForTheUserToVisit(),
                         TimeUnit.MILLISECONDS.toSeconds(VerificationRequest.CHECK_INTERVAL_MILLIS),
                         TimeUnit.MILLISECONDS.toMinutes(VerificationRequest.REQUEST_TTL_MILLIS)
@@ -49,15 +58,15 @@ public class SongodaCoreLicenseCommand extends AbstractCommand {
                         .whenComplete((successful, throwable) -> {
                             if (throwable != null) {
                                 SongodaCore.getLogger().log(Level.WARNING, "Failed to acquire token", throwable);
-                                sender.sendMessage(SongodaCore.getPrefix() + ChatColor.RED + "The process failed – Please check the server log for details and try again later.");
+                                sender.sendMessage(SongodaCore.getPrefix() + ChatColor.RED + "The process failed " + ChatColor.GRAY + "– " + ChatColor.DARK_RED + "Please check the server log for details and try again later.");
                                 return;
                             }
 
                             if (!successful) {
-                                sender.sendMessage(SongodaCore.getPrefix() + ChatColor.RED + "The process failed – Please check the server log for details and try again later.");
+                                sender.sendMessage(SongodaCore.getPrefix() + ChatColor.RED + "The process failed " + ChatColor.GRAY + "–" + ChatColor.DARK_RED + " Please check the server log for details and try again later.");
                                 return;
                             }
-                            sender.sendMessage(SongodaCore.getPrefix() + ChatColor.GREEN + "The verification process has been completed – Please restart your server to finalize the process.");
+                            sender.sendMessage(SongodaCore.getPrefix() + ChatColor.GREEN + "The verification process has been completed " + ChatColor.GRAY + "–" + ChatColor.DARK_GREEN + " Please restart your server to finalize the process.");
                         });
 
                 sender.sendMessage("");
