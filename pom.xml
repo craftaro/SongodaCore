@@ -130,7 +130,7 @@
                     </targetClasses>
 
                     <excludedTestClasses>
-                        <excludedTestClass>com.songoda.core.SongodaCoreConstantsTest</excludedTestClass>
+                        <excludedTestClass>com.craftaro.core.SongodaCoreConstantsTest</excludedTestClass>
                     </excludedTestClasses>
                 </configuration>
 
