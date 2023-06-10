@@ -1,7 +1,7 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
 
-# SongodaCore
+# CraftaroCore
 
 **An elaborate multi functional general Spigot plugin compatibility core and general use API.**
 

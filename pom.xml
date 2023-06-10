@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.songoda</groupId>
-    <artifactId>SongodaCore-Modules</artifactId>
+    <groupId>com.craftaro</groupId>
+    <artifactId>CraftaroCore-Modules</artifactId>
     <version>2.6.22</version>
     <packaging>pom</packaging>
 
@@ -52,13 +52,13 @@
     </modules>
 
     <issueManagement>
-        <url>https://github.com/craftaro/SongodaCore/issues</url>
+        <url>https://github.com/craftaro/CraftaroCore/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/craftaro/SongodaCore</url>
-        <connection>scm:git:git://github.com/craftaro/SongodaCore.git</connection>
+        <url>https://github.com/craftaro/CraftaroCore</url>
+        <connection>scm:git:git://github.com/craftaro/CraftaroCore.git</connection>
     </scm>
 
     <build>

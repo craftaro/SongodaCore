@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.songoda</groupId>
-        <artifactId>SongodaCore-Modules</artifactId>
+        <groupId>com.craftaro</groupId>
+        <artifactId>CraftaroCore-Modules</artifactId>
         <version>2.6.22</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>SongodaCore</artifactId>
+    <artifactId>CraftaroCore</artifactId>
 
     <build>
-        <finalName>SongodaCore-${project.version}</finalName>
+        <finalName>CraftaroCore-${project.version}</finalName>
 
         <plugins>
             <plugin>
@@ -137,14 +137,14 @@
         <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-Compatibility</artifactId>
+            <artifactId>CraftaroCore-Compatibility</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS</artifactId>
+            <artifactId>CraftaroCore-NMS</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
