@@ -22,6 +22,6 @@ public final class Nms {
     }
 
     private static String getImplementationClassName() {
-        return String.format("com.songoda.core.nms.%s.NmsImplementationsImpl", ServerVersion.getServerVersionString());
+        return String.format("com.craftaro.core.nms.%s.NmsImplementationsImpl", ServerVersion.getServerVersionString());
     }
 }

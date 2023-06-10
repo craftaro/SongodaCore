@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Method;
 
 /**
- * @deprecated Usage is highly discouraged – use com.songoda.core.nms.Nms#getImplementations() instead
+ * @deprecated Usage is highly discouraged – use com.craftaro.core.nms.Nms#getImplementations() instead
  */
 @Deprecated
 public enum MethodMapping {
