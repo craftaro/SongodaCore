@@ -71,6 +71,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-NMS-API</artifactId>
