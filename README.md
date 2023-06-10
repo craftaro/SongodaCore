@@ -31,7 +31,7 @@ JavaDocs are hosted at ???.
 **Artifact**
 ```xml
 <dependency>
-  <groupId>com.songoda</groupId>
+  <groupId>com.craftaro</groupId>
   <artifactId>SongodaCore</artifactId>
   <version>VERSION</version>
 </dependency>

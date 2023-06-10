@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.songoda</groupId>
-        <artifactId>SongodaCore-Modules</artifactId>
+        <groupId>com.craftaro</groupId>
+        <artifactId>CraftaroCore-Modules</artifactId>
         <version>2.6.23-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>SongodaCore-NMS-v1_8_R2</artifactId>
+    <artifactId>CraftaroCore-NMS-v1_8_R2</artifactId>
 
     <dependencies>
         <dependency>
@@ -22,14 +22,14 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-NMS-API</artifactId>
+            <artifactId>CraftaroCore-NMS-API</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SongodaCore-Compatibility</artifactId>
+            <artifactId>CraftaroCore-Compatibility</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
