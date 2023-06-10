@@ -13,7 +13,7 @@ permissions: read-all
 env:
   DEPLOYMENT_POM_PATH: ./Core/dependency-reduced-pom.xml
   DEPLOYMENT_ARTIFACT_DIR: ./Core/target
-  DEPLOYMENT_ARTIFACT_SELECTOR: SongodaCore-*.jar
+  DEPLOYMENT_ARTIFACT_SELECTOR: CraftaroCore-*.jar
 
 jobs:
   Tests:
@@ -40,7 +40,7 @@ jobs:
           maven_password: ${{ secrets.PLUGINS_MAVEN_REPO_PASSWORD }}
 
       - name: Set project version
-        uses: songoda/GH-Commons/.github/actions/maven_set_project_version@master
+        uses: craftaro/GH-Commons/.github/actions/maven_set_project_version@master
         with:
           append_snapshot: ${{ github.ref_type == 'tag' && 'false' || 'true' }}
           version: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
@@ -50,7 +50,7 @@ jobs:
         run: mvn -B -Duser.name="GitHub Actions on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)" -DskipTests clean package
 
       - name: Sign jar archives
-        uses: songoda/GH-Commons/.github/actions/sign_jars@master
+        uses: craftaro/GH-Commons/.github/actions/sign_jars@master
         with:
           jar_file_selector: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
           keystore_gpg_encrypted: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG }}
@@ -65,7 +65,7 @@ jobs:
 
       - name: Deploy to Maven repo
         if: ${{ github.event_name == 'push' }}
-        uses: songoda/GH-Commons/.github/actions/maven_deploy@master
+        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
         with:
           repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
           repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
@@ -73,7 +73,7 @@ jobs:
           maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
       - name: Deploy parent pom.xml to Maven repo
         if: ${{ github.event_name == 'push' }}
-        uses: songoda/GH-Commons/.github/actions/maven_deploy@master
+        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
         with:
           repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
           repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Notify Webhook
-        uses: songoda/GH-Commons/.github/actions/discord_send_job_results@master
+        uses: craftaro/GH-Commons/.github/actions/discord_send_job_results@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           webhook_url: ${{ secrets.DISCORD_BUILD_STATUS_WEBHOOK }}

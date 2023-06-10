@@ -12,7 +12,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: songoda/GH-Commons/.github/actions/setup_workspace@master
+    - uses: craftaro/GH-Commons/.github/actions/setup_workspace@master
       with:
         maven_username: ${{ inputs.maven_username }}
         maven_password: ${{ inputs.maven_password }}
