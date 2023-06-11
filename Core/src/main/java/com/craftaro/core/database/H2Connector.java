@@ -12,38 +12,35 @@ import org.jooq.impl.DSL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MySQLConnector implements DatabaseConnector {
+public class H2Connector implements DatabaseConnector {
+
     private final Plugin plugin;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
-    public MySQLConnector(SongodaPlugin plugin) {
+    public H2Connector(SongodaPlugin plugin) {
         this(plugin, plugin.getDatabaseConfig());
     }
 
-    public MySQLConnector(Plugin plugin, Config databaseConfig) {
+    public H2Connector(Plugin plugin, Config databaseConfig) {
         this.plugin = plugin;
 
-        String hostname = databaseConfig.getString("Connection Settings.Hostname");
-        int port = databaseConfig.getInt("Connection Settings.Port");
-        String database = databaseConfig.getString("Connection Settings.Database");
-        String username = databaseConfig.getString("Connection Settings.Username");
-        String password = databaseConfig.getString("Connection Settings.Password");
-        boolean useSSL = databaseConfig.getBoolean("Connection Settings.Use SSL");
         int poolSize = databaseConfig.getInt("Connection Settings.Pool Size");
-
-        plugin.getLogger().info("Connecting to " + hostname + " : " + port + " using MySQL");
+        String password = databaseConfig.getString("Connection Settings.Password");
+        String username = databaseConfig.getString("Connection Settings.Username");
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
-        config.setUsername(username);
-        config.setPassword(password);
+        config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:./h2_" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setPassword(username);
+        config.setUsername(password);
         config.setMaximumPoolSize(poolSize);
 
         try {
             this.hikari = new HikariDataSource(config);
             this.initializedSuccessfully = true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             this.initializedSuccessfully = false;
         }
     }
@@ -107,6 +104,6 @@ public class MySQLConnector implements DatabaseConnector {
 
     @Override
     public DatabaseType getType() {
-        return DatabaseType.MYSQL;
+        return DatabaseType.H2;
     }
 }

@@ -1,12 +1,14 @@
 package com.craftaro.core;
 
+import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.configuration.Config;
+import com.craftaro.core.database.DataManager;
+import com.craftaro.core.database.DataMigration;
+import com.craftaro.core.database.DatabaseType;
 import com.craftaro.core.locale.Locale;
 import com.craftaro.core.utils.Metrics;
 import com.craftaro.core.verification.CraftaroProductVerification;
 import com.craftaro.core.verification.ProductVerificationStatus;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.database.DataManagerAbstract;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,13 +16,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.sql.Connection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
     protected Config config = new Config(this);
+    protected Config databaseConfig;
+    protected DataManager dataManager;
     protected long dataLoadDelay = 20L;
 
     private boolean licensePreventedPluginLoad = false;
@@ -30,6 +36,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
         /* NBT-API */
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
         MinecraftVersion.disableUpdateCheck();
+        // Disable tips and logo for Jooq
+        System.setProperty("org.jooq.no-tips", "true");
+        System.setProperty("org.jooq.no-logo", "true");
     }
 
     public abstract void onPluginLoad();
@@ -167,6 +176,11 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ChatColor.RED, "Disabling", ChatColor.GRAY));
 
         onPluginDisable();
+        try (Connection connection = this.dataManager.getDatabaseConnector().getConnection()) {
+            connection.close();
+            this.dataManager.getDatabaseConnector().closeConnection();
+        } catch (Exception ignored) {
+        }
 
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(" "); // blank line to separate chatter
@@ -199,43 +213,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
         return false;
     }
 
-    protected void shutdownDataManager(DataManagerAbstract dataManager) {
-        // 3 minutes is overkill, but we just want to make sure
-        shutdownDataManager(dataManager, 15, TimeUnit.MINUTES.toSeconds(3));
-    }
-
-    protected void shutdownDataManager(DataManagerAbstract dataManager, int reportInterval, long secondsUntilForceShutdown) {
-        dataManager.shutdownTaskQueue();
-
-        while (!dataManager.isTaskQueueTerminated() && secondsUntilForceShutdown > 0) {
-            long secondsToWait = Math.min(reportInterval, secondsUntilForceShutdown);
-
-            try {
-                if (dataManager.waitForShutdown(secondsToWait, TimeUnit.SECONDS)) {
-                    break;
-                }
-
-                getLogger().info(String.format("A DataManager is currently working on %d tasks... " +
-                                "We are giving him another %d seconds until we forcefully shut him down " +
-                                "(continuing to report in %d second intervals)",
-                        dataManager.getTaskQueueSize(), secondsUntilForceShutdown, reportInterval));
-            } catch (InterruptedException ignore) {
-            } finally {
-                secondsUntilForceShutdown -= secondsToWait;
-            }
-        }
-
-        if (!dataManager.isTaskQueueTerminated()) {
-            int unfinishedTasks = dataManager.forceShutdownTaskQueue().size();
-
-            if (unfinishedTasks > 0) {
-                getLogger().log(Level.WARNING,
-                        String.format("A DataManager has been forcefully terminated with %d unfinished tasks - " +
-                                "This can be a serious problem, please report it to us (Craftaro / Songoda)!", unfinishedTasks));
-            }
-        }
-    }
-
     protected void emergencyStop() {
         this.emergencyStop = true;
 
@@ -257,5 +234,86 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 ), th);
 
         emergencyStop();
+    }
+
+    //New database stuff
+    public Config getDatabaseConfig() {
+        File databaseFile = new File(getDataFolder(), "database.yml");
+        if (!databaseFile.exists()) {
+            saveResource("database.yml", false);
+        }
+        if (this.databaseConfig == null) {
+            this.databaseConfig = new Config(databaseFile);
+            this.databaseConfig.load();
+        }
+        return this.databaseConfig;
+    }
+
+    /**
+     * Get the DataManager for this plugin.
+     * Note: Make sure to call initDatabase() in onPluginEnable() before using this.
+     *
+     * @return DataManager for this plugin.
+     */
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    /**
+     * Initialize the DataManager for this plugin and convert from SQLite to H2 if needed.
+     */
+    protected void initDatabase() {
+        initDatabase(Collections.emptyList());
+    }
+
+    /**
+     * Initialize the DataManager for this plugin and convert from SQLite to H2 if needed.
+     *
+     * @param migrations List of migrations to run.
+     */
+    protected void initDatabase(List<DataMigration> migrations) {
+        boolean legacy = this.config.contains("MySQL");
+        boolean isSQLite = !this.config.getBoolean("MySQL.Enabled", false);
+        if (legacy && isSQLite) {
+            this.config.set("MySQL", null);
+            this.dataManager = new DataManager(this, migrations, DatabaseType.SQLITE);
+        } else if (legacy) {
+            //Copy creditental from old config to new config
+            this.databaseConfig.set("MySQL.Hostname", this.config.getString("MySQL.Hostname", "localhost"));
+            this.databaseConfig.set("MySQL.Port", this.config.getInt("MySQL.Port", 3306));
+            this.databaseConfig.set("MySQL.Database", this.config.getString("MySQL.Database", "database"));
+            this.databaseConfig.set("MySQL.Username", this.config.getString("MySQL.Username", "username"));
+            this.databaseConfig.set("MySQL.Password", this.config.getString("MySQL.Password", "password"));
+            this.databaseConfig.set("MySQL.Pool Size", this.config.getInt("MySQL.Pool Size", 5));
+            this.databaseConfig.set("MySQL.Use SSL", this.config.getBoolean("MySQL.Use SSL", false));
+            this.dataManager = new DataManager(this, migrations);
+        } else {
+            this.dataManager = new DataManager(this, migrations);
+        }
+        if (dataManager.getDatabaseConnector().isInitialized()) {
+            //Check if the type is SQLite
+            if (dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {
+                //Let's convert it to H2
+                DataManager newDataManager = DataMigration.convert(this, DatabaseType.H2);
+                if (newDataManager != null && newDataManager.getDatabaseConnector().isInitialized()) {
+                    //Set the new data manager
+                    setDataManager(newDataManager);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set the DataManager for this plugin.
+     * Used for converting from one database to another.
+     */
+    public void setDataManager(DataManager dataManager) {
+        if (dataManager == null) throw new IllegalArgumentException("DataManager cannot be null!");
+        if (this.dataManager == dataManager) return;
+        //Make sure to shut down the old data manager.
+        if (this.dataManager != null) {
+            dataManager.shutdown();
+        }
+        this.dataManager = dataManager;
     }
 }
