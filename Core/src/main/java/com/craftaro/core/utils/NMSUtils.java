@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated Use {@link com.craftaro.core.nms.Nms} instead
+ */
+@Deprecated
 public class NMSUtils {
     /**
      * @deprecated Use {@link ClassMapping} instead

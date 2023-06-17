@@ -29,6 +29,11 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * @deprecated The class is not used in the Core and existing usages in plugins should be re-implemented in the Core for
+ *         better stability between game versions.
+ */
+@Deprecated
 public class ReflectionUtils {
     public final static double JAVA_VERSION = getVersion();
     private static String system_os = System.getProperty("os.name").toLowerCase();

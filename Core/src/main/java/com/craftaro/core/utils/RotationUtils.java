@@ -2,19 +2,23 @@ package com.craftaro.core.utils;
 
 import org.bukkit.block.BlockFace;
 
+/**
+ * @deprecated No replacement available
+ */
+@Deprecated
 public class RotationUtils {
     public static float faceToYaw(BlockFace face) {
         switch (face) {
-            case NORTH:
-                return 180F;
             case EAST:
-                return -90F;
-            case SOUTH:
-                return 0F;
+                return -90;
             case WEST:
-                return 90F;
+                return 90;
+            case NORTH:
+                return 180;
+
+            case SOUTH:
             default:
-                return 0F;
+                return 0;
         }
     }
 
