@@ -12,6 +12,13 @@
     </parent>
     <artifactId>CraftaroCore-Compatibility</artifactId>
 
+    <repositories>
+        <repository>
+            <id>ViaVersion</id>
+            <url>https://repo.viaversion.com/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -23,7 +30,7 @@
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viaversion-api</artifactId>
-            <version>4.0.1</version>
+            <version>4.7.0</version>
             <scope>provided</scope>
         </dependency>
 
