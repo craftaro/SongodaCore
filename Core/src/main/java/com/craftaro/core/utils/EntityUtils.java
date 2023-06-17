@@ -2,6 +2,7 @@ package com.craftaro.core.utils;
 
 import com.craftaro.core.compatibility.ClassMapping;
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
@@ -13,6 +14,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated Use {@link com.craftaro.core.nms.entity.NmsEntity} instead
+ */
+@Deprecated
 public class EntityUtils {
     private static Class<?> clazzEntityInsentient, clazzEntity, clazzCraftEntity;
 
@@ -41,6 +46,10 @@ public class EntityUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.craftaro.core.nms.entity.NmsEntity#setMobAware(Entity, boolean)} instead
+     */
+    @Deprecated
     public static void setUnaware(LivingEntity entity) {
         try {
             setUnaware(methodGetHandle.invoke(clazzCraftEntity.cast(entity)));
@@ -49,6 +58,10 @@ public class EntityUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.craftaro.core.nms.entity.NmsEntity#setMobAware(Entity, boolean)} instead
+     */
+    @Deprecated
     public static void setUnaware(Object entity) {
         try {
             if (aware != null) {
@@ -61,6 +74,10 @@ public class EntityUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.craftaro.core.nms.entity.NmsEntity#isAware(Entity)} instead
+     */
+    @Deprecated
     public static boolean isAware(LivingEntity entity) {
         try {
             return isAware(methodGetHandle.invoke(clazzCraftEntity.cast(entity)));
@@ -71,6 +88,10 @@ public class EntityUtils {
         return false;
     }
 
+    /**
+     * @deprecated Use {@link com.craftaro.core.nms.entity.NmsEntity#isAware(Entity)} instead
+     */
+    @Deprecated
     public static boolean isAware(Object entity) {
         try {
             if (aware != null) {
