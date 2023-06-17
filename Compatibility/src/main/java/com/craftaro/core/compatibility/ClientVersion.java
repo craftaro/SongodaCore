@@ -103,9 +103,19 @@ public class ClientVersion {
             case 755:
             case 756:
                 return ServerVersion.V1_17;
+            case 757:
+            case 758:
+                return ServerVersion.V1_18;
+            case 759:
+            case 760:
+            case 761:
+            case 762:
+                return ServerVersion.V1_19;
+            case 763:
+                return ServerVersion.V1_20;
 
             default:
-                return version > 756 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;
+                return version > 763 ? ServerVersion.getServerVersion() : ServerVersion.UNKNOWN;
         }
     }
 
