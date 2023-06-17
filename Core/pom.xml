@@ -81,6 +81,7 @@
                                     <include>com.zaxxer:HikariCP</include>
                                     <include>de.tr7zw:item-nbt-api</include>
                                     <include>net.kyori:*</include>
+                                    <include>com.github.cryptomorin:XSeries</include>
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
                                 </includes>
@@ -106,9 +107,21 @@
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.craftaro.core.third_party.org.apache.commons</shadedPattern>
                                 </relocation>
+
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.com.cryptomorin.xseries</shadedPattern>
+                                </relocation>
                             </relocations>
 
                             <filters>
+                                <filter>
+                                    <artifact>com.github.cryptomorin:XSeries</artifact>
+                                    <includes>
+                                        <include>com/cryptomorin/xseries/XMaterial*</include>
+                                    </includes>
+                                </filter>
+
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
