@@ -41,7 +41,7 @@ public class SSpawner {
      */
     public int spawn(int amountToSpawn, String particle, Set<CompatibleMaterial> canSpawnOn, SpawnedEntity spawned,
                      EntityType... types) {
-        if (location.getWorld() == null) {
+        if (this.location.getWorld() == null) {
             return 0;
         }
 
@@ -60,7 +60,7 @@ public class SSpawner {
         int amountSpawned = 0;
         while (spawnCountUsed-- > 0) {
             EntityType type = types[ThreadLocalRandom.current().nextInt(types.length)];
-            LivingEntity entity = sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
+            LivingEntity entity = this.sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
 
             if (entity != null) {
                 // If this entity is indeed stackable then spawn a single stack with the desired stack size.
@@ -79,6 +79,6 @@ public class SSpawner {
     }
 
     public Location getLocation() {
-        return location;
+        return this.location;
     }
 }
