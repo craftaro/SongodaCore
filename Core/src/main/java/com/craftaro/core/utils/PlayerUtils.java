@@ -12,13 +12,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class PlayerUtils {
-    static Random random = new Random();
-
     public static void sendMessages(Player player, String... messages) {
         for (String message : messages) {
             player.sendMessage(message);
@@ -26,9 +24,7 @@ public class PlayerUtils {
     }
 
     public static void sendMessages(Player player, List<String> messages) {
-        for (String message : messages) {
-            player.sendMessage(message);
-        }
+        sendMessages(player, messages.toArray(new String[0]));
     }
 
     /**
@@ -39,7 +35,10 @@ public class PlayerUtils {
      *                     start with this
      *
      * @return list of player names that are "visible" to the player
+     *
+     * @deprecated This method has a strong use-case for Command related code and should be reimplemented there
      */
+    @Deprecated
     public static List<String> getVisiblePlayerNames(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
@@ -60,7 +59,10 @@ public class PlayerUtils {
      *                     start with this
      *
      * @return list of player names that are "visible" to the player
+     *
+     * @deprecated This method has a strong use-case for Command related code and should be reimplemented there
      */
+    @Deprecated
     public static List<String> getVisiblePlayerDisplayNames(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.replaceAll("[^a-zA-Z]", "").toLowerCase();
@@ -81,7 +83,10 @@ public class PlayerUtils {
      *                     start with this
      *
      * @return list of players that are "visible" to the player
+     *
+     * @deprecated This method has a strong use-case for Command related code and should be reimplemented there
      */
+    @Deprecated
     public static List<Player> getVisiblePlayers(CommandSender sender, String startingWith) {
         Player player = sender instanceof Player ? (Player) sender : null;
         final String startsWith = startingWith == null || startingWith.isEmpty() ? null : startingWith.toLowerCase();
@@ -101,7 +106,10 @@ public class PlayerUtils {
      * @param startsWith All names returned must start with this input string
      *
      * @return List of matching player IGN
+     *
+     * @deprecated This method has a strong use-case for Command related code and should be reimplemented there
      */
+    @Deprecated
     public static List<String> getAllPlayers(CommandSender us, String startsWith) {
         final String arg = startsWith.toLowerCase();
 
@@ -118,7 +126,10 @@ public class PlayerUtils {
      * @param startsWith All names returned must start with this input string
      *
      * @return List of matching player display names
+     *
+     * @deprecated This method has a strong use-case for Command related code and should be reimplemented there
      */
+    @Deprecated
     public static List<String> getAllPlayersDisplay(CommandSender us, String startsWith) {
         // FIXME: Why do we need that regex? It just breaks the startsWith check
         //        + the DisplayName comparison is not made lower case
@@ -137,7 +148,10 @@ public class PlayerUtils {
      * @param player player to search for
      *
      * @return Player that closest matches the input name, or null if none found
+     *
+     * @deprecated This method has a strong use-case for Command related code and should probably be reimplemented there
      */
+    @Deprecated
     public static Player findPlayer(String player) {
         Player found = Bukkit.getServer().getPlayer(player);
 
@@ -181,7 +195,7 @@ public class PlayerUtils {
 
         final Iterator<? extends Player> alli = all.iterator();
 
-        int pick = random.nextInt(all.size());
+        int pick = ThreadLocalRandom.current().nextInt(all.size());
 
         for (; pick > 0; --pick) {
             alli.next();
@@ -230,6 +244,10 @@ public class PlayerUtils {
         }
     }
 
+    /**
+     * @deprecated The method should be moved to a more appropriate class
+     */
+    @Deprecated
     public static int getNumberFromPermission(Player player, String permission, int def) {
         final Set<PermissionAttachmentInfo> permissions = player.getEffectivePermissions();
 
