@@ -109,43 +109,43 @@ public enum MethodMapping {
 
     public Method getMethod(Class<?> clazz) {
         try {
-            String methodName = _1_18;
+            String methodName = this._1_18;
             switch (ServerVersion.getServerVersion()) {
                 case V1_14:
-                    if (_1_14 != null) {
-                        methodName = _1_14;
+                    if (this._1_14 != null) {
+                        methodName = this._1_14;
                     }
 
                     break;
                 case V1_17:
-                    if (_1_17 != null) {
-                        methodName = _1_17;
+                    if (this._1_17 != null) {
+                        methodName = this._1_17;
                     }
 
                     break;
                 case V1_18:
-                    if (_1_18_2 != null) {
-                        methodName = _1_18_2;
+                    if (this._1_18_2 != null) {
+                        methodName = this._1_18_2;
                     }
 
                     break;
                 case V1_19:
-                    if (_1_19 != null) {
-                        methodName = _1_19;
+                    if (this._1_19 != null) {
+                        methodName = this._1_19;
                     }
 
                     break;
             }
 
             try {
-                Method method = clazz.getMethod(methodName, parameters);
+                Method method = clazz.getMethod(methodName, this.parameters);
                 method.setAccessible(true);
 
                 return method;
             } catch (NullPointerException | NoSuchMethodException ex) {
-                if (saneFallback != null && !saneFallback.equals(methodName)) {
+                if (this.saneFallback != null && !this.saneFallback.equals(methodName)) {
                     try {
-                        Method method = clazz.getMethod(saneFallback, parameters);
+                        Method method = clazz.getMethod(this.saneFallback, this.parameters);
                         method.setAccessible(true);
 
                         return method;

@@ -1356,7 +1356,7 @@ public enum CompatibleMaterial {
     private final Material material;
     private final Byte data;
     // quick test to see if our version is < 1.13
-    protected static final boolean useLegacy = ServerVersion.isServerVersionBelow(ServerVersion.V1_13);
+    private static final boolean useLegacy = ServerVersion.isServerVersionBelow(ServerVersion.V1_13);
     // map to speed up name->material lookups
     private static final Map<String, CompatibleMaterial> lookupMap = new HashMap<>();
 
@@ -1398,20 +1398,20 @@ public enum CompatibleMaterial {
         this(ServerVersion.UNKNOWN, null, null);
     }
 
-    CompatibleMaterial(String legacy) {
-        this(ServerVersion.V1_13, null, null, legacy, null);
+    CompatibleMaterial(String legacyMaterial) {
+        this(ServerVersion.V1_13, null, null, legacyMaterial, null);
     }
 
-    CompatibleMaterial(String legacy, byte legacyData) {
-        this(ServerVersion.V1_13, null, null, legacy, legacyData);
+    CompatibleMaterial(String legacyMaterial, byte legacyData) {
+        this(ServerVersion.V1_13, null, null, legacyMaterial, legacyData);
     }
 
-    CompatibleMaterial(ServerVersion modernMinimum, String legacy) {
-        this(modernMinimum, null, null, legacy, null);
+    CompatibleMaterial(ServerVersion modernMinimum, String legacyMaterial) {
+        this(modernMinimum, null, null, legacyMaterial, null);
     }
 
-    CompatibleMaterial(ServerVersion modernMinimum, String legacy, Byte legacyData) {
-        this(modernMinimum, null, null, legacy, legacyData);
+    CompatibleMaterial(ServerVersion modernMinimum, String legacyMaterial, Byte legacyData) {
+        this(modernMinimum, null, null, legacyMaterial, legacyData);
     }
 
     CompatibleMaterial(ServerVersion modernMinimum, String modern2, ServerVersion modern2Minimum, String legacyMaterial, Byte legacyData) {
@@ -1422,35 +1422,35 @@ public enum CompatibleMaterial {
         this.legacy = legacyMaterial;
         this.legacyData = legacyData == null ? 0 : legacyData;
         this.legacyRequiresData = legacyData != null;
-        this.compatibleMaterial = LegacyMaterialAnalouge.lookupAnalouge(modern);
+        this.compatibleMaterial = LegacyMaterialAnalouge.lookupAnalouge(this.modern);
 
-        if (compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan)) {
+        if (this.compatibleMaterial != null && ServerVersion.isServerVersionBelow(this.compatibleMaterial.versionLessThan)) {
             // server older than this item: use a proxy
-            material = compatibleMaterial.material;
-            data = compatibleMaterial.data;
-        } else if (ServerVersion.isServerVersionAtLeast(minVersion)) {
-            material = Material.getMaterial(modern);
-            data = null;
-        } else if (modern2 != null && ServerVersion.isServerVersionAtLeast(minVersion2)) {
-            material = Material.getMaterial(modern2);
-            data = null;
-        } else if (legacyMaterial != null && (compatibleMaterial == null || ServerVersion.isServerVersionAtLeast(compatibleMaterial.versionLessThan))) {
+            this.material = this.compatibleMaterial.material;
+            this.data = this.compatibleMaterial.data;
+        } else if (ServerVersion.isServerVersionAtLeast(this.minVersion)) {
+            this.material = Material.getMaterial(this.modern);
+            this.data = null;
+        } else if (modern2 != null && ServerVersion.isServerVersionAtLeast(this.minVersion2)) {
+            this.material = Material.getMaterial(modern2);
+            this.data = null;
+        } else if (legacyMaterial != null && (this.compatibleMaterial == null || ServerVersion.isServerVersionAtLeast(this.compatibleMaterial.versionLessThan))) {
             // we're using a server that has the legacy value available
-            material = Material.getMaterial(legacyMaterial);
-            data = legacyRequiresData ? this.legacyData : null;
-        } else if (compatibleMaterial != null) {
+            this.material = Material.getMaterial(legacyMaterial);
+            this.data = this.legacyRequiresData ? this.legacyData : null;
+        } else if (this.compatibleMaterial != null) {
             // no match: use a proxy
-            material = compatibleMaterial.material;
-            data = compatibleMaterial.data;
+            this.material = this.compatibleMaterial.material;
+            this.data = this.compatibleMaterial.data;
         } else {
-            material = null;
-            data = null;
+            this.material = null;
+            this.data = null;
         }
 
-        if (material != null && ServerVersion.isServerVersionBelow(ServerVersion.V1_13) && (compatibleMaterial == null || material != compatibleMaterial.material)) {
-            legacyBlockMaterial = LegacyMaterialBlockType.getMaterial(this.modern);
+        if (this.material != null && ServerVersion.isServerVersionBelow(ServerVersion.V1_13) && (this.compatibleMaterial == null || this.material != this.compatibleMaterial.material)) {
+            this.legacyBlockMaterial = LegacyMaterialBlockType.getMaterial(this.modern);
         } else {
-            legacyBlockMaterial = null;
+            this.legacyBlockMaterial = null;
         }
     }
 
@@ -1458,14 +1458,14 @@ public enum CompatibleMaterial {
      * @return the Bukkit Material for this material
      */
     public Material getMaterial() {
-        return material;
+        return this.material;
     }
 
     /**
      * @return the Bukkit Material required to create a block
      */
     public Material getBlockMaterial() {
-        return legacyBlockMaterial != null ? legacyBlockMaterial.getBlockMaterial() : (isBlock() ? material : AIR.material);
+        return this.legacyBlockMaterial != null ? this.legacyBlockMaterial.getBlockMaterial() : (isBlock() ? this.material : AIR.material);
     }
 
     /**
@@ -1482,24 +1482,24 @@ public enum CompatibleMaterial {
      */
     public ItemStack getItem(int amount) {
         if (usesCompatibility()) {
-            return compatibleMaterial.getItem();
+            return this.compatibleMaterial.getItem();
         }
 
-        return data != null ? new ItemStack(material, amount, data) : new ItemStack(material);
+        return this.data != null ? new ItemStack(this.material, amount, this.data) : new ItemStack(this.material);
     }
 
     /**
      * Does this material need to use a legacy fallback?
      */
     public boolean usesLegacy() {
-        return legacy != null && ServerVersion.isServerVersionBelow(minVersion);
+        return this.legacy != null && ServerVersion.isServerVersionBelow(this.minVersion);
     }
 
     /**
      * Does this material need to use a fallback item on this server?
      */
     public boolean usesCompatibility() {
-        return compatibleMaterial != null && material == compatibleMaterial.material;
+        return this.compatibleMaterial != null && this.material == this.compatibleMaterial.material;
         //return compatibleMaterial != null && ServerVersion.isServerVersionBelow(compatibleMaterial.versionLessThan);
     }
 
@@ -1514,7 +1514,7 @@ public enum CompatibleMaterial {
      * Get the legacy data value for this material if there is one, or -1 if none
      */
     public byte getData() {
-        return data != null ? data : -1;
+        return this.data != null ? this.data : -1;
     }
 
     /**
@@ -1523,7 +1523,7 @@ public enum CompatibleMaterial {
      * @return true if server is legacy and this item requires data to be defined.
      */
     public boolean usesData() {
-        return data != null;
+        return this.data != null;
     }
 
     /**
@@ -1840,11 +1840,11 @@ public enum CompatibleMaterial {
     public void applyToBlock(Block block) {
         if (block == null) return;
 
-        block.setType(material);
+        block.setType(this.material);
 
-        if (data != null && data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+        if (this.data != null && this.data != -1 && ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
             try {
-                methodSetData.invoke(block, data);
+                methodSetData.invoke(block, this.data);
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 ex.printStackTrace();
             }
@@ -1860,9 +1860,9 @@ public enum CompatibleMaterial {
      */
     public boolean matches(ItemStack item) {
         return item != null &&
-                !usesCompatibility() && item.getType() == material &&
+                !usesCompatibility() && item.getType() == this.material &&
                 // eons ago, ItemStack.getData() would return a byte. 1.7 doesn't, though.
-                (data == null || item.getDurability() == data);
+                (this.data == null || item.getDurability() == this.data);
     }
 
     /**
@@ -1935,21 +1935,21 @@ public enum CompatibleMaterial {
      * Check to see if this is a material that can exist as a block
      */
     public boolean isBlock() {
-        return material != null && material.isBlock();
+        return this.material != null && this.material.isBlock();
     }
 
     /**
      * Check to see if this is an item that can be consumed to restore hunger
      */
     public boolean isEdible() {
-        return material != null && material.isEdible();
+        return this.material != null && this.material.isEdible();
     }
 
     /**
      * Check if the material is a block and can be built on
      */
     public boolean isSolid() {
-        return material != null && material.isSolid();
+        return this.material != null && this.material.isSolid();
     }
 
     /**
@@ -1963,21 +1963,21 @@ public enum CompatibleMaterial {
      */
     @Deprecated
     public boolean isTransparent() {
-        return material != null && material.isTransparent();
+        return this.material != null && this.material.isTransparent();
     }
 
     /**
      * Check if the material is a block and can catch fire
      */
     public boolean isFlammable() {
-        return material != null && material.isFlammable();
+        return this.material != null && this.material.isFlammable();
     }
 
     /**
      * Check if the material is a block and can be destroyed by burning
      */
     public boolean isBurnable() {
-        return material != null && material.isBurnable();
+        return this.material != null && this.material.isBurnable();
     }
 
     /**
@@ -2386,14 +2386,14 @@ public enum CompatibleMaterial {
      * Check if the material is a block and completely blocks vision
      */
     public boolean isOccluding() {
-        return material != null && material.isOccluding();
+        return this.material != null && this.material.isOccluding();
     }
 
     /**
      * @return True if this material is affected by gravity.
      */
     public boolean hasGravity() {
-        return material != null && material.hasGravity();
+        return this.material != null && this.material.hasGravity();
     }
 
     /**
@@ -3169,8 +3169,6 @@ public enum CompatibleMaterial {
 
     public static CompatibleMaterial getGlassColor(int color) {
         switch (color) {
-            case 0:
-                return WHITE_STAINED_GLASS;
             case 1:
                 return ORANGE_STAINED_GLASS;
             case 2:
@@ -3201,6 +3199,8 @@ public enum CompatibleMaterial {
                 return RED_STAINED_GLASS;
             case 15:
                 return BLACK_STAINED_GLASS;
+
+            case 0:
             default:
                 return WHITE_STAINED_GLASS;
         }
@@ -3208,8 +3208,6 @@ public enum CompatibleMaterial {
 
     public static CompatibleMaterial getWoolColor(int color) {
         switch (color) {
-            case 0:
-                return WHITE_WOOL;
             case 1:
                 return ORANGE_WOOL;
             case 2:
@@ -3240,6 +3238,8 @@ public enum CompatibleMaterial {
                 return RED_WOOL;
             case 15:
                 return BLACK_WOOL;
+
+            case 0:
             default:
                 return WHITE_WOOL;
         }
@@ -3247,8 +3247,6 @@ public enum CompatibleMaterial {
 
     public static CompatibleMaterial getDyeColor(int color) {
         switch (color) {
-            case 0:
-                return BLACK_DYE;
             case 1:
                 return RED_DYE;
             case 2:
@@ -3279,6 +3277,8 @@ public enum CompatibleMaterial {
                 return ORANGE_DYE;
             case 15:
                 return WHITE_DYE;
+
+            case 0:
             default:
                 return WHITE_DYE;
         }

@@ -124,7 +124,7 @@ public class CompatibleParticleHandler {
         final boolean compatibilityMode;
         final LegacyParticleEffects.Type compatibleEffect;
         final Object particle;
-        final static Map<String, ParticleType> map = new HashMap<>();
+        static final Map<String, ParticleType> map = new HashMap<>();
 
         static {
             for (ParticleType t : values()) {

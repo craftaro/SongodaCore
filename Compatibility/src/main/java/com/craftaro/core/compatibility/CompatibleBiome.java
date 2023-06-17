@@ -165,7 +165,7 @@ public enum CompatibleBiome {
     }
 
     CompatibleBiome() {
-        versions.add(v(ServerVersion.UNKNOWN, name()));
+        this.versions.add(v(ServerVersion.UNKNOWN, name()));
     }
 
     CompatibleBiome(ServerVersion version, Version... versions) {
@@ -178,12 +178,12 @@ public enum CompatibleBiome {
     }
 
     public List<Version> getVersions() {
-        return new LinkedList<>(versions);
+        return new LinkedList<>(this.versions);
     }
 
     public Biome getBiome() {
         try {
-            for (Version version : versions) {
+            for (Version version : this.versions) {
                 if (ServerVersion.isServerVersionAtLeast(version.version)) {
                     return Biome.valueOf(version.biome);
                 }

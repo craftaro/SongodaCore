@@ -809,41 +809,41 @@ public enum LegacyMaterialAnalouge {
         this.compatibleData = compatData;
 
         if (ServerVersion.isServerVersionBelow(versionLessThan)) {
-            if (legacyMinimumVersion != null && ServerVersion.isServerVersionBelow(legacyMinimumVersion)) {
+            if (this.legacyMinimumVersion != null && ServerVersion.isServerVersionBelow(this.legacyMinimumVersion)) {
                 // fallback material not available, so use its fallback
-                material = Material.getMaterial(compatibleMaterial);
-                data = compatibleData;
-            } else if (modernMaterial == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_13)) {
+                this.material = Material.getMaterial(this.compatibleMaterial);
+                this.data = this.compatibleData;
+            } else if (this.modernMaterial == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_13)) {
                 // use legacy material if on legacy
-                material = Material.getMaterial(legacyMaterial);
-                data = legacyData;
+                this.material = Material.getMaterial(legacyMaterial);
+                this.data = legacyData;
             } else {
-                material = Material.getMaterial(modernMaterial);
-                data = null;
+                this.material = Material.getMaterial(this.modernMaterial);
+                this.data = null;
             }
         } else {
-            material = null;
-            data = null;
+            this.material = null;
+            this.data = null;
         }
     }
 
     public Material getMaterial() {
-        return material;
+        return this.material;
     }
 
     public boolean usesData() {
-        return data != null;
+        return this.data != null;
     }
 
     public byte getData() {
-        return data == null ? 0 : data;
+        return this.data == null ? 0 : this.data;
     }
 
     public ItemStack getItem() {
-        if (material == null) {
+        if (this.material == null) {
             return null;
         }
 
-        return data != null ? new ItemStack(material, 1, data) : new ItemStack(material);
+        return this.data != null ? new ItemStack(this.material, 1, this.data) : new ItemStack(this.material);
     }
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
  * NOTE: this is automatically initialized through SongodaCore
  */
 public class ClientVersion {
-    static HashMap<UUID, ServerVersion> players = new HashMap<>();
+    private static final HashMap<UUID, ServerVersion> players = new HashMap<>();
 
     /**
      * Check to see what client version this player is connected to the server
