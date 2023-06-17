@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ColorUtils {
-    private static Map<ColorCode, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
+    private static final Map<ColorCode, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
 
     static {
         colorMap.put(ColorCode.BLACK, new ColorSet<>(0, 0, 0));
@@ -40,15 +40,15 @@ public class ColorUtils {
         }
 
         public R getRed() {
-            return red;
+            return this.red;
         }
 
         public G getGreen() {
-            return green;
+            return this.green;
         }
 
         public B getBlue() {
-            return blue;
+            return this.blue;
         }
     }
 
