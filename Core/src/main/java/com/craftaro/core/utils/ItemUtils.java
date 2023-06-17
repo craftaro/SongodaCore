@@ -1,12 +1,12 @@
 package com.craftaro.core.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import com.craftaro.core.compatibility.ClassMapping;
 import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.MethodMapping;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -42,7 +42,10 @@ import java.util.stream.Stream;
 
 /**
  * This class uses some Minecraft code and also Paper API
+ *
+ * @deprecated Needs to be re-implemented without ClassMapping usage etc. and moved into a more appropriate package
  */
+@Deprecated
 public class ItemUtils {
     static boolean can_getI18NDisplayName = true;
 
