@@ -46,7 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SongodaCore {
-    private static final Logger logger = Logger.getLogger(SongodaCoreConstants.getProjectName());
+    private static final Logger logger = Logger.getLogger(CraftaroCoreConstants.getProjectName());
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -59,10 +59,10 @@ public class SongodaCore {
 
     /**
      * @since coreRevision 6
-     * @deprecated Is being replaced by {@link SongodaCoreConstants#getCoreVersion()} which is automatically kept up to date.
+     * @deprecated Is being replaced by {@link CraftaroCoreConstants#getCoreVersion()} which is automatically kept up to date.
      */
     @Deprecated
-    private static final String coreVersion = SongodaCoreConstants.getCoreVersion();
+    private static final String coreVersion = CraftaroCoreConstants.getCoreVersion();
 
     /**
      * This is specific to the website api
@@ -87,7 +87,7 @@ public class SongodaCore {
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
-        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), SongodaCoreConstants.getCoreVersion());
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), CraftaroCoreConstants.getCoreVersion());
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
@@ -300,7 +300,7 @@ public class SongodaCore {
     }
 
     public static String getVersion() {
-        return SongodaCoreConstants.getCoreVersion();
+        return CraftaroCoreConstants.getCoreVersion();
     }
 
     /**
@@ -316,7 +316,7 @@ public class SongodaCore {
      */
     @Deprecated
     public static String getCoreLibraryVersion() {
-        return SongodaCoreConstants.getCoreVersion();
+        return CraftaroCoreConstants.getCoreVersion();
     }
 
     public static int getCoreMajorVersion() {
@@ -337,7 +337,7 @@ public class SongodaCore {
     }
 
     public static String getPrefix() {
-        return "[" + SongodaCoreConstants.getProjectName() + "] ";
+        return "[" + CraftaroCoreConstants.getProjectName() + "] ";
     }
 
     public static Logger getLogger() {
