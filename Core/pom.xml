@@ -107,6 +107,20 @@
                                     <shadedPattern>com.craftaro.core.third_party.org.apache.commons</shadedPattern>
                                 </relocation>
                             </relocations>
+
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/INDEX.LIST</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>**/LICENSE*</exclude>
+                                        <exclude>**/NOTICE*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -127,6 +141,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
