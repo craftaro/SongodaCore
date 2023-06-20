@@ -1,11 +1,11 @@
 package com.craftaro.core.lootables.gui;
 
-import com.craftaro.core.lootables.loot.Loot;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.gui.AnvilGui;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
+import com.craftaro.core.lootables.loot.Loot;
 import com.craftaro.core.utils.TextUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.enchantments.Enchantment;
 
 import java.util.ArrayList;
@@ -33,19 +33,19 @@ public class GuiEnchantEditor extends Gui {
     public void paint() {
         Map<String, Integer> lore = loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(loot.getEnchants());
 
-        setButton(2, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
+        setButton(2, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
-        setButton(6, GuiUtils.createButtonItem(CompatibleMaterial.OAK_FENCE_GATE,
+        setButton(6, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
                     guiManager.showGUI(event.player, returnGui);
                     ((GuiLootEditor) returnGui).paint();
                 });
-        setButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
+        setButton(3, GuiUtils.createButtonItem(XMaterial.ARROW,
                         TextUtils.formatText("&aAdd new line")),
                 (event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -82,14 +82,14 @@ public class GuiEnchantEditor extends Gui {
             }
         }
 
-        setItem(4, GuiUtils.createButtonItem(CompatibleMaterial.WRITABLE_BOOK,
+        setItem(4, GuiUtils.createButtonItem(XMaterial.WRITABLE_BOOK,
                 TextUtils.formatText("&7Enchant Override:"),
                 lore.isEmpty()
                         ? TextUtils.formatText(Collections.singletonList("&cNo enchantments set..."))
                         : TextUtils.formatText(enchantments)));
 
         String lastFinal = last;
-        setButton(5, GuiUtils.createButtonItem(CompatibleMaterial.ARROW,
+        setButton(5, GuiUtils.createButtonItem(XMaterial.ARROW,
                         TextUtils.formatText("&cRemove the last line")),
                 (event -> {
                     lore.remove(lastFinal);

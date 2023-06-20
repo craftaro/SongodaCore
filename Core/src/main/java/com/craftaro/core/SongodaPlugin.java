@@ -1,12 +1,12 @@
 package com.craftaro.core;
 
 import com.craftaro.core.configuration.Config;
+import com.craftaro.core.database.DataManagerAbstract;
 import com.craftaro.core.locale.Locale;
 import com.craftaro.core.utils.Metrics;
 import com.craftaro.core.verification.CraftaroProductVerification;
 import com.craftaro.core.verification.ProductVerificationStatus;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.database.DataManagerAbstract;
+import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -102,7 +102,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                     ChatColor.YELLOW + "Run the command " + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + " and follow the instructions\n" +
                     ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             this.licensePreventedPluginLoad = true;
-            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (CompatibleMaterial) null);
+            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (XMaterial) null);
 
             getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
                 String pluginName = getDescription().getName();

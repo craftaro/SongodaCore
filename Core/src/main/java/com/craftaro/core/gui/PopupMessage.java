@@ -1,11 +1,11 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.compatibility.ServerVersion;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -30,18 +30,18 @@ class PopupMessage {
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
     private final TextComponent title;
-    CompatibleMaterial icon;
+    XMaterial icon;
     TriggerType trigger = TriggerType.IMPOSSIBLE;
     FrameType frame = FrameType.GOAL; // TASK is the default
     BackgroundType background = BackgroundType.ADVENTURE;
 
-    PopupMessage(Plugin source, CompatibleMaterial icon, String title) {
+    PopupMessage(Plugin source, XMaterial icon, String title) {
         this.key = new NamespacedKey(source, "popup/" + id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;
     }
 
-    PopupMessage(Plugin source, CompatibleMaterial icon, String title, BackgroundType background) {
+    PopupMessage(Plugin source, XMaterial icon, String title, BackgroundType background) {
         this.key = new NamespacedKey(source, "popup/" + id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;
@@ -54,9 +54,9 @@ class PopupMessage {
 
         if (this.icon != null) {
             JsonObject displayIcon = new JsonObject();
-            displayIcon.addProperty("item", "minecraft:" + this.icon.getMaterial().name().toLowerCase());
+            displayIcon.addProperty("item", "minecraft:" + this.icon.parseMaterial().name().toLowerCase());
 
-            if (this.icon.usesData()) {
+            if (this.icon.getData() != 0) {
                 displayIcon.addProperty("data", this.icon.getData());
             }
 

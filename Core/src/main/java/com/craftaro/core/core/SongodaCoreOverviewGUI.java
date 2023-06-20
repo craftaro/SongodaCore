@@ -1,10 +1,10 @@
 package com.craftaro.core.core;
 
-import com.craftaro.core.configuration.editor.PluginConfigGui;
-import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.SongodaCore;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.configuration.editor.PluginConfigGui;
 import com.craftaro.core.gui.Gui;
+import com.craftaro.core.gui.GuiUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
@@ -24,7 +24,7 @@ final class SongodaCoreOverviewGUI extends Gui {
             final PluginInfo plugin = plugins.get(i);
 
             if (plugin.hasUpdate()) {
-                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
+                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : XMaterial.STONE,
                                 ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                                 ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
                                 ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
@@ -42,7 +42,7 @@ final class SongodaCoreOverviewGUI extends Gui {
                 continue;
             }
 
-            setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : CompatibleMaterial.STONE,
+            setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : XMaterial.STONE,
                             ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                             ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
                             "",

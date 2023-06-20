@@ -1,11 +1,11 @@
 package com.craftaro.core.lootables.loot;
 
+import com.craftaro.core.lootables.Lootables;
+import com.craftaro.core.lootables.Modify;
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.lootables.Lootables;
-import com.craftaro.core.lootables.Modify;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -92,7 +92,7 @@ public class LootManager {
                 }
             }
 
-            CompatibleMaterial material = loot.getMaterial();
+            XMaterial material = loot.getMaterial();
             String command = loot.getCommand();
             int xp = loot.getXp();
 
@@ -107,9 +107,9 @@ public class LootManager {
 
             if (material != null) {
                 ItemStack item = loot.getBurnedMaterial() != null &&
-                        burning ? loot.getBurnedMaterial().getItem() : material.getItem();
+                        burning ? loot.getBurnedMaterial().parseItem() : material.parseItem();
                 item.setAmount(amount);
-                ItemMeta meta = item.getItemMeta() == null ? Bukkit.getItemFactory().getItemMeta(loot.getMaterial().getMaterial())
+                ItemMeta meta = item.getItemMeta() == null ? Bukkit.getItemFactory().getItemMeta(loot.getMaterial().parseMaterial())
                         : item.getItemMeta();
 
                 if (loot.getName() != null) {

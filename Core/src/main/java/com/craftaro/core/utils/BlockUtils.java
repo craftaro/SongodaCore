@@ -7,6 +7,8 @@ import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
 import com.craftaro.core.nms.world.SWorld;
 import com.craftaro.core.nms.world.WorldCore;
+import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -346,7 +349,7 @@ public class BlockUtils {
      * @param loc The Location of the container
      *
      * @deprecated Use {@link WorldCore#updateAdjacentComparators(Block)}
-     * via {@link Nms#getImplementations()} instead.
+     *         via {@link Nms#getImplementations()} instead.
      */
     @Deprecated
     public static void updateAdjacentComparators(Location loc) {
@@ -463,8 +466,8 @@ public class BlockUtils {
      *         via {@link Nms#getImplementations()} instead.
      */
     @Deprecated
-    public static void setBlockFast(World world, int x, int y, int z, CompatibleMaterial material, byte data) {
-        setBlockFast(world, x, y, z, material.getBlockMaterial(), data);
+    public static void setBlockFast(World world, int x, int y, int z, XMaterial material, byte data) {
+        setBlockFast(world, x, y, z, material.parseMaterial(), data);
     }
 
     /**
@@ -483,12 +486,12 @@ public class BlockUtils {
             return BlockUtilsModern._isCropFullyGrown(block);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-        if (mat == null || !mat.isCrop()) {
+        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(block.getType());
+        if (!mat.isPresent() || !XBlock.isCrop(mat.get())) {
             return false;
         }
 
-        return block.getData() >= (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return block.getData() >= (mat.get() == XMaterial.BEETROOTS || mat.get() == XMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -507,13 +510,12 @@ public class BlockUtils {
             return BlockUtilsModern._getMaxGrowthStage(block);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-        if (mat == null || !mat.isCrop()) {
+        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(block.getType());
+        if (!mat.isPresent() || !XBlock.isCrop(mat.get())) {
             return -1;
         }
 
-        return (mat == CompatibleMaterial.BEETROOTS
-                || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return (mat.get() == XMaterial.BEETROOTS || mat.get() == XMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -532,12 +534,12 @@ public class BlockUtils {
             return BlockUtilsModern._getMaxGrowthStage(material);
         }
 
-        CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(material);
-        if (mat == null || !mat.isCrop()) {
+        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(material);
+        if (!mat.isPresent() || XBlock.isCrop(mat.get())) {
             return -1;
         }
 
-        return (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7);
+        return (mat.get() == XMaterial.BEETROOTS || mat.get() == XMaterial.NETHER_WART ? 3 : 7);
     }
 
     /**
@@ -551,11 +553,10 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._setGrowthStage(block, stage);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
-            if (mat != null && mat.isCrop()) {
+            Optional<XMaterial> mat = CompatibleMaterial.getMaterial(block.getType());
+            if (mat.isPresent() && XBlock.isCrop(mat.get())) {
                 try {
-                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, (mat == CompatibleMaterial.BEETROOTS
-                            || mat == CompatibleMaterial.NETHER_WART ? 3 : 7))));
+                    legacySetBlockData.invoke(block, (byte) Math.max(0, Math.min(stage, (mat.get() == XMaterial.BEETROOTS || mat.get() == XMaterial.NETHER_WART ? 3 : 7))));
                 } catch (Exception ex) {
                     Logger.getLogger(BlockUtils.class.getName()).log(Level.SEVERE, "Unexpected method error", ex);
                 }
@@ -573,10 +574,9 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._incrementGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
+            Optional<XMaterial> mat = CompatibleMaterial.getMaterial(block.getType());
 
-            if (mat != null && mat.isCrop() &&
-                    block.getData() < (mat == CompatibleMaterial.BEETROOTS || mat == CompatibleMaterial.NETHER_WART ? 3 : 7)) {
+            if (mat.isPresent() && XBlock.isCrop(mat.get()) && block.getData() < (mat.get() == XMaterial.BEETROOTS || mat.get() == XMaterial.NETHER_WART ? 3 : 7)) {
                 try {
                     legacySetBlockData.invoke(block, (byte) (block.getData() + 1));
                 } catch (Exception ex) {
@@ -596,9 +596,9 @@ public class BlockUtils {
         } else if (!useLegacy) {
             BlockUtilsModern._resetGrowthStage(block);
         } else {
-            CompatibleMaterial mat = CompatibleMaterial.getBlockMaterial(block.getType());
+            Optional<XMaterial> mat = CompatibleMaterial.getMaterial(block.getType());
 
-            if (mat != null && mat.isCrop()) {
+            if (mat.isPresent() && XBlock.isCrop(mat.get())) {
                 try {
                     legacySetBlockData.invoke(block, (byte) 0);
                 } catch (Exception ex) {

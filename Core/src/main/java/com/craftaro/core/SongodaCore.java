@@ -1,6 +1,7 @@
 package com.craftaro.core;
 
 import com.craftaro.core.commands.CommandManager;
+import com.craftaro.core.compatibility.ClientVersion;
 import com.craftaro.core.core.LocaleModule;
 import com.craftaro.core.core.PluginInfo;
 import com.craftaro.core.core.PluginInfoModule;
@@ -10,8 +11,7 @@ import com.craftaro.core.core.SongodaCoreLicenseCommand;
 import com.craftaro.core.core.SongodaCoreUUIDCommand;
 import com.craftaro.core.verification.CraftaroProductVerification;
 import com.craftaro.core.verification.ProductVerificationStatus;
-import com.craftaro.core.compatibility.ClientVersion;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -86,7 +86,7 @@ public class SongodaCore {
         return !SongodaCore.class.getPackage().getName().equals(new String(new char[] {'c', 'o', 'm', '.', 'c', 'r', 'a', 'f', 't', 'a', 'r', 'o', '.', 'c', 'o', 'r', 'e'}));
     }
 
-    public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, XMaterial icon) {
         registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), CraftaroCoreConstants.getCoreVersion());
     }
 

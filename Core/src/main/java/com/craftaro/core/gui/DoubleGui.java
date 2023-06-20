@@ -8,7 +8,7 @@ import com.craftaro.core.gui.methods.Droppable;
 import com.craftaro.core.gui.methods.Openable;
 import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -461,12 +461,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
@@ -481,12 +481,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 

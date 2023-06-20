@@ -1,8 +1,8 @@
 package com.craftaro.core.gui;
 
 import com.craftaro.core.compatibility.ClientVersion;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -123,14 +123,14 @@ public class GuiManager {
     }
 
     public void showPopup(Player player, String message) {
-        showPopup(player, message, CompatibleMaterial.NETHER_STAR, BackgroundType.ADVENTURE);
+        showPopup(player, message, XMaterial.NETHER_STAR, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, CompatibleMaterial icon) {
+    public void showPopup(Player player, String message, XMaterial icon) {
         showPopup(player, message, icon, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, CompatibleMaterial icon, BackgroundType background) {
+    public void showPopup(Player player, String message, XMaterial icon, BackgroundType background) {
         if (ClientVersion.getClientVersion(player).isAtLeast(ServerVersion.V1_12)) {
             PopupMessage popup = new PopupMessage(plugin, icon, message, background);
             popup.add();

@@ -1,9 +1,9 @@
 package com.craftaro.core.lootables.loot;
 
-import com.google.gson.annotations.SerializedName;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.utils.ItemUtils;
 import com.craftaro.core.utils.TextUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.annotations.SerializedName;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -29,7 +29,7 @@ public class Loot {
 
     // Material used for this drop.
     @SerializedName("Type")
-    private CompatibleMaterial material;
+    private XMaterial material;
 
     // The override for the item name.
     @SerializedName("Name")
@@ -45,7 +45,7 @@ public class Loot {
 
     // Material used if entity died on fire.
     @SerializedName("Burned Type")
-    private CompatibleMaterial burnedMaterial = null;
+    private XMaterial burnedMaterial = null;
 
     // Chance that this drop will take place.
     @SerializedName("Chance")
@@ -96,11 +96,11 @@ public class Loot {
     // Should the entity be charged? (Only works on creepers)
     private boolean requireCharged = false;
 
-    public CompatibleMaterial getMaterial() {
+    public XMaterial getMaterial() {
         return material;
     }
 
-    public void setMaterial(CompatibleMaterial material) {
+    public void setMaterial(XMaterial material) {
         this.material = material;
     }
 
@@ -200,11 +200,11 @@ public class Loot {
         return enchants == null ? null : Collections.unmodifiableMap(enchants);
     }
 
-    public CompatibleMaterial getBurnedMaterial() {
+    public XMaterial getBurnedMaterial() {
         return burnedMaterial;
     }
 
-    public void setBurnedMaterial(CompatibleMaterial burnedMaterial) {
+    public void setBurnedMaterial(XMaterial burnedMaterial) {
         this.burnedMaterial = burnedMaterial;
     }
 

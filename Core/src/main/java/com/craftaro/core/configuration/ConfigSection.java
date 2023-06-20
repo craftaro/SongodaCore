@@ -1,6 +1,7 @@
 package com.craftaro.core.configuration;
 
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -714,18 +715,17 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @Nullable
-    public CompatibleMaterial getMaterial(@NotNull String path) {
+    public XMaterial getMaterial(@NotNull String path) {
         String val = getString(path);
 
-        return val != null ? CompatibleMaterial.getMaterial(val) : null;
+        return val != null ? CompatibleMaterial.getMaterial(val).orElse(null) : null;
     }
 
     @Nullable
-    public CompatibleMaterial getMaterial(@NotNull String path, @Nullable CompatibleMaterial def) {
+    public XMaterial getMaterial(@NotNull String path, @Nullable XMaterial def) {
         String val = getString(path);
 
-        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
-
+        XMaterial mat = val != null ? CompatibleMaterial.getMaterial(val).orElse(def) : null;
         return mat != null ? mat : def;
     }
 

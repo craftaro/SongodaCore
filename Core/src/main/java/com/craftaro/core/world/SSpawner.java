@@ -1,10 +1,10 @@
 package com.craftaro.core.world;
 
-import com.craftaro.core.utils.EntityUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.hooks.EntityStackerManager;
 import com.craftaro.core.nms.Nms;
 import com.craftaro.core.nms.world.SpawnedEntity;
+import com.craftaro.core.utils.EntityUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Location;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -39,8 +39,7 @@ public class SSpawner {
      *
      * @return amount of entities spawned
      */
-    public int spawn(int amountToSpawn, String particle, Set<CompatibleMaterial> canSpawnOn, SpawnedEntity spawned,
-                     EntityType... types) {
+    public int spawn(int amountToSpawn, String particle, Set<XMaterial> canSpawnOn, SpawnedEntity spawned, EntityType... types) {
         if (this.location.getWorld() == null) {
             return 0;
         }

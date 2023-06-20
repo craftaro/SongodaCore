@@ -1,6 +1,6 @@
 package com.craftaro.core.configuration;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -256,12 +256,12 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
     }
 
     @Nullable
-    public CompatibleMaterial getMaterial(@NotNull String path) {
+    public XMaterial getMaterial(@NotNull String path) {
         return config.getMaterial(path);
     }
 
     @Nullable
-    public CompatibleMaterial getMaterial(@NotNull String path, @Nullable CompatibleMaterial def) {
+    public XMaterial getMaterial(@NotNull String path, @Nullable XMaterial def) {
         return config.getMaterial(path, def);
     }
 

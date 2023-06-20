@@ -1,7 +1,7 @@
 package com.craftaro.core.utils;
 
 import com.craftaro.core.compatibility.ClassMapping;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -9,7 +9,6 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -106,7 +105,7 @@ public class EntityUtils {
         return false;
     }
 
-    public static List<CompatibleMaterial> getSpawnBlocks(EntityType type) {
+    public static List<XMaterial> getSpawnBlocks(EntityType type) {
         switch (type.name()) {
             case "PIG":
             case "SHEEP":
@@ -116,23 +115,27 @@ public class EntityUtils {
             case "LLAMA":
             case "HORSE":
             case "CAT":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.GRASS_BLOCK));
+                return Collections.singletonList(XMaterial.GRASS_BLOCK);
+
             case "MUSHROOM_COW":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.MYCELIUM));
+                return Collections.singletonList(XMaterial.MYCELIUM);
+
             case "SQUID":
             case "ELDER_GUARDIAN":
             case "COD":
             case "SALMON":
             case "PUFFERFISH":
             case "TROPICAL_FISH":
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.WATER));
+                return Collections.singletonList(XMaterial.WATER);
+
             case "OCELOT":
-                return new ArrayList<>(Arrays.asList(CompatibleMaterial.GRASS_BLOCK,
-                        CompatibleMaterial.JUNGLE_LEAVES, CompatibleMaterial.ACACIA_LEAVES,
-                        CompatibleMaterial.BIRCH_LEAVES, CompatibleMaterial.DARK_OAK_LEAVES,
-                        CompatibleMaterial.OAK_LEAVES, CompatibleMaterial.SPRUCE_LEAVES));
+                return Arrays.asList(XMaterial.GRASS_BLOCK,
+                        XMaterial.JUNGLE_LEAVES, XMaterial.ACACIA_LEAVES,
+                        XMaterial.BIRCH_LEAVES, XMaterial.DARK_OAK_LEAVES,
+                        XMaterial.OAK_LEAVES, XMaterial.SPRUCE_LEAVES);
+
             default:
-                return new ArrayList<>(Collections.singletonList(CompatibleMaterial.AIR));
+                return Collections.singletonList(XMaterial.AIR);
         }
     }
 }

@@ -4,6 +4,7 @@ import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.nms.world.SSpawner;
 import com.craftaro.core.nms.world.SpawnedEntity;
+import com.cryptomorin.xseries.XMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -36,16 +37,19 @@ public class SSpawnerImpl implements SSpawner {
     }
 
     @Override
-    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<CompatibleMaterial> canSpawnOn) {
+    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<XMaterial> canSpawnOn) {
         SpawnData data = new SpawnData();
         CompoundTag compound = data.getEntityToSpawn();
 
-        String name = type.name().toLowerCase().replace("snowman", "snow_golem")
+        String name = type
+                .name()
+                .toLowerCase()
+                .replace("snowman", "snow_golem")
                 .replace("mushroom_cow", "mooshroom");
         compound.putString("id", "minecraft:" + name);
 
         short spawnRange = 4;
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; ++i) {
             assert this.spawnerLocation.getWorld() != null;
             ServerLevel world = ((CraftWorld) this.spawnerLocation.getWorld()).getHandle();
 
@@ -100,29 +104,29 @@ public class SSpawnerImpl implements SSpawner {
         return null;
     }
 
-    private boolean canSpawn(ServerLevel world, Mob entityInsentient, Location location, Set<CompatibleMaterial> canSpawnOn) {
+    private boolean canSpawn(ServerLevel world, Mob entityInsentient, Location location, Set<XMaterial> canSpawnOn) {
         if (!world.noCollision(entityInsentient, entityInsentient.getBoundingBox())) {
             return false;
         }
 
-        CompatibleMaterial spawnedIn = CompatibleMaterial.getMaterial(location.getBlock());
-        CompatibleMaterial spawnedOn = CompatibleMaterial.getMaterial(location.getBlock().getRelative(BlockFace.DOWN));
+        Optional<XMaterial> spawnedIn = CompatibleMaterial.getMaterial(location.getBlock().getType());
+        Optional<XMaterial> spawnedOn = CompatibleMaterial.getMaterial(location.getBlock().getRelative(BlockFace.DOWN).getType());
 
-        if (spawnedIn == null || spawnedOn == null) {
+        if (spawnedIn.isEmpty() || spawnedOn.isEmpty()) {
             return false;
         }
 
-        if (!spawnedIn.isAir() &&
-                spawnedIn != CompatibleMaterial.WATER &&
-                !spawnedIn.name().contains("PRESSURE") &&
-                !spawnedIn.name().contains("SLAB")) {
+        if (!CompatibleMaterial.isAir(spawnedIn.get()) &&
+                spawnedIn.get() != XMaterial.WATER &&
+                !spawnedIn.get().name().contains("PRESSURE") &&
+                !spawnedIn.get().name().contains("SLAB")) {
             return false;
         }
 
-        for (CompatibleMaterial material : canSpawnOn) {
+        for (XMaterial material : canSpawnOn) {
             if (material == null) continue;
 
-            if (spawnedOn == material || material.isAir()) {
+            if (spawnedOn.get() == material || CompatibleMaterial.isAir(material)) {
                 return true;
             }
         }

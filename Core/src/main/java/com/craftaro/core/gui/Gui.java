@@ -11,9 +11,9 @@ import com.craftaro.core.gui.methods.Droppable;
 import com.craftaro.core.gui.methods.Openable;
 import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -501,12 +501,12 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @NotNull String... lore) {
+    public Gui updateItem(int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @NotNull String... lore) {
         return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable String... lore) {
+    public Gui updateItem(int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable String... lore) {
         ItemStack item = cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
@@ -533,12 +533,12 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         ItemStack item = cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {

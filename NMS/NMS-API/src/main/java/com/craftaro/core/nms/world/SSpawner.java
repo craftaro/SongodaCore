@@ -1,6 +1,6 @@
 package com.craftaro.core.nms.world;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -11,8 +11,7 @@ import java.util.Set;
 public interface SSpawner {
     LivingEntity spawnEntity(EntityType type, Location spawnerLocation);
 
-    LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned,
-                             Set<CompatibleMaterial> canSpawnOn);
+    LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<XMaterial> canSpawnOn);
 
     default String translateName(EntityType type, boolean capital) {
         return capital ? TypeTranslations.getUpperFromType(type) : TypeTranslations.getLowerFromType(type);

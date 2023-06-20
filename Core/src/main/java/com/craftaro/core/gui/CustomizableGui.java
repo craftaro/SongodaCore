@@ -1,11 +1,12 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.configuration.ConfigSection;
 import com.craftaro.core.gui.methods.Clickable;
 import com.craftaro.core.utils.TextUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -49,7 +50,7 @@ public class CustomizableGui extends Gui {
             config.load();
 
             if (!config.isConfigurationSection("overrides")) {
-                config.setDefault("overrides.example.item", CompatibleMaterial.STONE.name(),
+                config.setDefault("overrides.example.item", XMaterial.STONE.name(),
                                 "This is the icon material you would like to replace",
                                 "the current material with.")
                         .setDefault("overrides.example.position", 5,
@@ -92,19 +93,19 @@ public class CustomizableGui extends Gui {
                                 section.getInt("col", -1),
                                 section.getBoolean("mirrorrow", false),
                                 section.getBoolean("mirrorcol", false),
-                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
+                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")).get() : null);
                     } else {
                         customContent.addButton(section.getNodeKey(), section.getInt("row", -1),
                                 section.getInt("col", -1),
                                 section.getString("title", null),
                                 section.isSet("lore") ? section.getStringList("lore") : null,
-                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
+                                section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")).get() : null);
                     }
                 } else {
                     customContent.addButton(section.getNodeKey(), section.getString("position", "-1"),
                             section.getString("title", null),
                             section.isSet("lore") ? section.getStringList("lore") : null,
-                            section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")) : null);
+                            section.isSet("item") ? CompatibleMaterial.getMaterial(section.getString("item")).get() : null);
                 }
             }
 
@@ -475,7 +476,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public Gui updateItem(@NotNull String key, int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @NotNull String... lore) {
+    public Gui updateItem(@NotNull String key, int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @NotNull String... lore) {
         if (customContent.isButtonDisabled(key)) {
             return this;
         }
@@ -484,7 +485,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public Gui updateItem(@NotNull String key, int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable String... lore) {
+    public Gui updateItem(@NotNull String key, int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable String... lore) {
         List<Integer> cells = Collections.singletonList(cell);
 
         if (customContent.isButtonDisabled(key)) {
@@ -531,7 +532,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public Gui updateItem(@NotNull String key, int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(@NotNull String key, int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         if (customContent.isButtonDisabled(key)) {
             return this;
         }
@@ -540,7 +541,7 @@ public class CustomizableGui extends Gui {
     }
 
     @NotNull
-    public Gui updateItem(@NotNull String key, int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+    public Gui updateItem(@NotNull String key, int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
         List<Integer> cells = Collections.singletonList(cell);
 
         if (customContent.isButtonDisabled(key)) {
@@ -826,9 +827,9 @@ public class CustomizableGui extends Gui {
         private final String title;
         private final List<String> lore;
 
-        private final CompatibleMaterial item;
+        private final XMaterial item;
 
-        public CustomButton(String key, List<Integer> positions, String title, List<String> lore, CompatibleMaterial item) {
+        public CustomButton(String key, List<Integer> positions, String title, List<String> lore, XMaterial item) {
             this.key = key;
             this.positions = positions;
             this.row = -1;
@@ -838,7 +839,7 @@ public class CustomizableGui extends Gui {
             this.lore = lore;
         }
 
-        public CustomButton(String key, int row, int col, String title, List<String> lore, CompatibleMaterial item) {
+        public CustomButton(String key, int row, int col, String title, List<String> lore, XMaterial item) {
             this.key = key;
             this.positions = null;
             this.row = row;
@@ -857,7 +858,7 @@ public class CustomizableGui extends Gui {
                 return false;
             }
 
-            item.setType(this.item.getMaterial());
+            item.setType(this.item.parseMaterial());
 
             if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_13)) {
                 item.setDurability(this.item.getData());
@@ -869,7 +870,7 @@ public class CustomizableGui extends Gui {
         }
 
         public ItemStack createItem() {
-            ItemStack item = this.item.getItem();
+            ItemStack item = this.item.parseItem();
             applyMeta(item);
 
             return item;
@@ -910,7 +911,7 @@ public class CustomizableGui extends Gui {
         private final boolean mirrorRow;
         private final boolean mirrorCol;
 
-        public MirrorFill(String key, int row, int col, boolean mirrorRow, boolean mirrorCol, CompatibleMaterial item) {
+        public MirrorFill(String key, int row, int col, boolean mirrorRow, boolean mirrorCol, XMaterial item) {
             super(key, row, col, null, null, item);
 
             this.mirrorRow = mirrorRow;
@@ -954,7 +955,7 @@ public class CustomizableGui extends Gui {
             return Collections.unmodifiableMap(customButtons);
         }
 
-        public void addButton(String key, String position, String title, List<String> lore, CompatibleMaterial item) {
+        public void addButton(String key, String position, String title, List<String> lore, XMaterial item) {
             List<Integer> positions = Arrays.stream(position.split(","))
                     .map(Integer::parseInt)
                     .collect(Collectors.toList());
@@ -969,7 +970,7 @@ public class CustomizableGui extends Gui {
             customizedButtons.put(key, customButton);
         }
 
-        public void addButton(String key, int row, int col, String title, List<String> lore, CompatibleMaterial item) {
+        public void addButton(String key, int row, int col, String title, List<String> lore, XMaterial item) {
             CustomButton customButton = new CustomButton(key, row, col, title, lore, item);
 
             if (key.startsWith("custom_")) {
@@ -980,7 +981,7 @@ public class CustomizableGui extends Gui {
             customizedButtons.put(key, customButton);
         }
 
-        public void addButton(String key, int row, int col, boolean mirrorRow, boolean mirrorCol, CompatibleMaterial item) {
+        public void addButton(String key, int row, int col, boolean mirrorRow, boolean mirrorCol, XMaterial item) {
             MirrorFill mirrorFill = new MirrorFill(key, row, col, mirrorRow, mirrorCol, item);
 
             if (key.startsWith("custom_")) {

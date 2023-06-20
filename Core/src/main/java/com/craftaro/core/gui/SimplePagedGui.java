@@ -2,7 +2,7 @@ package com.craftaro.core.gui;
 
 import com.craftaro.core.gui.events.GuiClickEvent;
 import com.craftaro.core.gui.methods.Clickable;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -30,8 +30,8 @@ public class SimplePagedGui extends Gui {
     public SimplePagedGui(Gui parent) {
         super(parent);
 
-        nextPage = GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Next Page");
-        prevPage = GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Previous Page");
+        nextPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Next Page");
+        prevPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Previous Page");
     }
 
     public SimplePagedGui setUseHeader(boolean useHeader) {

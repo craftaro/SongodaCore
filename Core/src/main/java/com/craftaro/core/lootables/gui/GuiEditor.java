@@ -5,12 +5,14 @@ import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.lootables.loot.LootManager;
 import com.craftaro.core.lootables.loot.Lootable;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GuiEditor extends Gui {
     private final LootManager lootManager;
@@ -39,7 +41,7 @@ public class GuiEditor extends Gui {
         this.pages = (int) Math.max(1, Math.ceil(itemCount / 36));
 
         if (page != 1) {
-            setButton(5, 2, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Back"),
+            setButton(5, 2, GuiUtils.createButtonItem(XMaterial.ARROW, "Back"),
                     (event) -> {
                         page--;
                         paint();
@@ -47,7 +49,7 @@ public class GuiEditor extends Gui {
         }
 
         if (page != pages) {
-            setButton(5, 6, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, "Next"),
+            setButton(5, 6, GuiUtils.createButtonItem(XMaterial.ARROW, "Next"),
                     (event) -> {
                         page++;
                         paint();
@@ -76,15 +78,15 @@ public class GuiEditor extends Gui {
         EntityType type = EntityType.fromName(key);
 
         if (type != null) {
-            CompatibleMaterial material = CompatibleMaterial.getSpawnEgg(type);
+            Optional<XMaterial> material = CompatibleMaterial.getSpawnEgg(type);
 
-            if (material != null) {
-                stack = material.getItem();
+            if (material.isPresent()) {
+                stack = material.get().parseItem();
             }
         }
 
         if (stack == null) {
-            stack = CompatibleMaterial.GHAST_SPAWN_EGG.getItem();
+            stack = XMaterial.GHAST_SPAWN_EGG.parseItem();
         }
 
         ItemMeta meta = stack.getItemMeta();
