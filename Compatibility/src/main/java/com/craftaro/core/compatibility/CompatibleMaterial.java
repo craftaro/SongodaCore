@@ -234,4 +234,47 @@ public class CompatibleMaterial {
                 return false;
         }
     }
+
+    /**
+     * TODO: Check if usages on this can be removed otherwise remove deprecation annotation
+     */
+    @Deprecated
+    public static XMaterial getGlassPaneColor(int color) {
+        switch (color) {
+            case 0:
+                return XMaterial.WHITE_STAINED_GLASS_PANE;
+            case 1:
+                return XMaterial.ORANGE_STAINED_GLASS_PANE;
+            case 2:
+                return XMaterial.MAGENTA_STAINED_GLASS_PANE;
+            case 3:
+                return XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE;
+            case 4:
+                return XMaterial.YELLOW_STAINED_GLASS_PANE;
+            case 5:
+                return XMaterial.LIME_STAINED_GLASS_PANE;
+            case 6:
+                return XMaterial.PINK_STAINED_GLASS_PANE;
+            case 7:
+                return XMaterial.GRAY_STAINED_GLASS_PANE;
+            case 8:
+                return XMaterial.LIGHT_GRAY_STAINED_GLASS_PANE;
+            case 9:
+                return XMaterial.CYAN_STAINED_GLASS_PANE;
+            case 10:
+                return XMaterial.PURPLE_STAINED_GLASS_PANE;
+            case 11:
+                return XMaterial.BLUE_STAINED_GLASS_PANE;
+            case 12:
+                return XMaterial.BROWN_STAINED_GLASS_PANE;
+            case 13:
+                return XMaterial.GREEN_STAINED_GLASS_PANE;
+            case 14:
+                return XMaterial.RED_STAINED_GLASS_PANE;
+            case 15:
+                return XMaterial.BLACK_STAINED_GLASS_PANE;
+            default:
+                return XMaterial.WHITE_STAINED_GLASS;
+        }
+    }
 }
