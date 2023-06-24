@@ -53,22 +53,22 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public FileConfiguration getConfig() {
-        return config.getFileConfig();
+        return this.config.getFileConfig();
     }
 
     public Config getCoreConfig() {
-        return config;
+        return this.config;
     }
 
     @Override
     public void reloadConfig() {
-        config.load();
+        this.config.load();
         onConfigReload();
     }
 
     @Override
     public void saveConfig() {
-        config.save();
+        this.config.save();
     }
 
     @Override
