@@ -30,8 +30,8 @@ public class SimplePagedGui extends Gui {
     public SimplePagedGui(Gui parent) {
         super(parent);
 
-        nextPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Next Page");
-        prevPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Previous Page");
+        this.nextPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Next Page");
+        this.prevPage = GuiUtils.createButtonItem(XMaterial.ARROW, "Previous Page");
     }
 
     public SimplePagedGui setUseHeader(boolean useHeader) {
@@ -40,7 +40,7 @@ public class SimplePagedGui extends Gui {
     }
 
     public ItemStack getHeaderBackItem() {
-        return headerBackItem;
+        return this.headerBackItem;
     }
 
     public SimplePagedGui setHeaderBackItem(ItemStack headerBackItem) {
@@ -49,7 +49,7 @@ public class SimplePagedGui extends Gui {
     }
 
     public ItemStack getFooterBackItem() {
-        return footerBackItem;
+        return this.footerBackItem;
     }
 
     public SimplePagedGui setFooterBackItem(ItemStack footerBackItem) {
@@ -65,11 +65,11 @@ public class SimplePagedGui extends Gui {
     @Override
     public SimplePagedGui setItem(int cell, ItemStack item) {
         // set the cell relative to the current page
-        int cellIndex = cell < 0 ? cell : (page == 1 || (useHeader && cell < 9) ? cell : (cell + (page - 1) * (rowsPerPage * 9)));
+        int cellIndex = cell < 0 ? cell : (this.page == 1 || (this.useHeader && cell < 9) ? cell : (cell + (this.page - 1) * (this.rowsPerPage * 9)));
 
-        cellItems.put(cellIndex, item);
-        if (open && cell >= 0 && cell < inventory.getSize()) {
-            inventory.setItem(cell, item);
+        this.cellItems.put(cellIndex, item);
+        if (this.open && cell >= 0 && cell < this.inventory.getSize()) {
+            this.inventory.setItem(cell, item);
         }
 
         return this;
@@ -77,27 +77,27 @@ public class SimplePagedGui extends Gui {
 
     @Override
     public void nextPage() {
-        if (page < pages) {
-            ++page;
+        if (this.page < this.pages) {
+            ++this.page;
             showPage();
         }
     }
 
     @Override
     public void prevPage() {
-        if (page > 1) {
-            --page;
+        if (this.page > 1) {
+            --this.page;
             showPage();
         }
     }
 
     public void showPage() {
-        int startCell = useHeader ? 9 : 0;
-        int cellIndex = startCell + (page - 1) * (rowsPerPage * 9);
+        int startCell = this.useHeader ? 9 : 0;
+        int cellIndex = startCell + (this.page - 1) * (this.rowsPerPage * 9);
 
-        for (int i = startCell; i < (rows - 1) * 9; ++i) {
-            final ItemStack item = cellItems.get(cellIndex++);
-            inventory.setItem(i, item != null ? item : blankItem);
+        for (int i = startCell; i < (this.rows - 1) * 9; ++i) {
+            final ItemStack item = this.cellItems.get(cellIndex++);
+            this.inventory.setItem(i, item != null ? item : this.blankItem);
         }
 
         // page markers
@@ -106,26 +106,26 @@ public class SimplePagedGui extends Gui {
 
     @Override
     protected void updatePageNavigation() {
-        if (page > 1) {
-            inventory.setItem(inventory.getSize() - prevPageIndex, prevPage);
+        if (this.page > 1) {
+            this.inventory.setItem(this.inventory.getSize() - this.prevPageIndex, this.prevPage);
 
-            this.setButton(-prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+            this.setButton(-this.prevPageIndex, this.prevPage, ClickType.LEFT, (event) -> this.prevPage());
         } else {
-            inventory.setItem(inventory.getSize() - prevPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+            this.inventory.setItem(this.inventory.getSize() - this.prevPageIndex, this.footerBackItem != null ? this.footerBackItem : this.blankItem);
 
-            this.setItem(-prevPageIndex, null);
-            this.clearActions(-prevPageIndex);
+            this.setItem(-this.prevPageIndex, null);
+            this.clearActions(-this.prevPageIndex);
         }
 
-        if (pages > 1 && page != pages) {
-            inventory.setItem(inventory.getSize() - nextPageIndex, nextPage);
+        if (this.pages > 1 && this.page != this.pages) {
+            this.inventory.setItem(this.inventory.getSize() - this.nextPageIndex, this.nextPage);
 
-            this.setButton(-nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+            this.setButton(-this.nextPageIndex, this.nextPage, ClickType.LEFT, (event) -> this.nextPage());
         } else {
-            inventory.setItem(inventory.getSize() - nextPageIndex, footerBackItem != null ? footerBackItem : blankItem);
+            this.inventory.setItem(this.inventory.getSize() - this.nextPageIndex, this.footerBackItem != null ? this.footerBackItem : this.blankItem);
 
-            this.setItem(-nextPageIndex, null);
-            this.clearActions(-nextPageIndex);
+            this.setItem(-this.nextPageIndex, null);
+            this.clearActions(-this.nextPageIndex);
         }
     }
 
@@ -134,65 +134,65 @@ public class SimplePagedGui extends Gui {
         this.guiManager = manager;
 
         // calculate pages here
-        rowsPerPage = useHeader ? 4 : 5;
-        maxCellSlot = this.cellItems.keySet().stream().max(Integer::compare).orElse(0) + 1;
-        int maxRows = (int) Math.ceil(maxCellSlot / 9.);
-        pages = (int) Math.max(1, Math.ceil(maxRows / (double) rowsPerPage));
-        this.setRows(maxRows + (useHeader ? 1 : 0));
+        this.rowsPerPage = this.useHeader ? 4 : 5;
+        this.maxCellSlot = this.cellItems.keySet().stream().max(Integer::compare).orElse(0) + 1;
+        int maxRows = (int) Math.ceil(this.maxCellSlot / 9.);
+        this.pages = (int) Math.max(1, Math.ceil(maxRows / (double) this.rowsPerPage));
+        this.setRows(maxRows + (this.useHeader ? 1 : 0));
 
         // create inventory view
         createInventory();
 
         // populate and return the display inventory
-        setPage(Math.min(page, pages));
+        setPage(Math.min(this.page, this.pages));
         update();
 
-        return inventory;
+        return this.inventory;
     }
 
     @Override
     protected void createInventory() {
-        final int cells = rows * 9;
+        final int cells = this.rows * 9;
 
-        inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), cells,
-                title == null ? "" : trimTitle(title));
+        this.inventory = Bukkit.getServer().createInventory(new GuiHolder(this.guiManager, this), cells,
+                this.title == null ? "" : trimTitle(this.title));
     }
 
     @Override
     public void update() {
-        if (inventory == null) {
+        if (this.inventory == null) {
             return;
         }
 
         // calculate pages here
-        rowsPerPage = useHeader ? 4 : 5;
-        maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
-        int maxRows = Math.max((useHeader ? 1 : 0), (int) Math.ceil(maxCellSlot / 9.));
-        pages = (int) Math.ceil(maxRows / rowsPerPage);
+        this.rowsPerPage = this.useHeader ? 4 : 5;
+        this.maxCellSlot = (this.cellItems.isEmpty() ? 0 : this.cellItems.keySet().stream().max(Integer::compare).get()) + 1;
+        int maxRows = Math.max((this.useHeader ? 1 : 0), (int) Math.ceil(this.maxCellSlot / 9.));
+        this.pages = (int) Math.ceil(maxRows / this.rowsPerPage);
 
         // create a new inventory if needed
         List<Player> toUpdate = null;
-        if (Math.min(54, (maxRows + (useHeader ? 1 : 0)) * 9) != inventory.getSize()) {
+        if (Math.min(54, (maxRows + (this.useHeader ? 1 : 0)) * 9) != this.inventory.getSize()) {
             toUpdate = getPlayers();
 
-            this.setRows(maxRows + (useHeader ? 1 : 0));
+            this.setRows(maxRows + (this.useHeader ? 1 : 0));
 
             createInventory();
         }
 
         // populate header
-        if (useHeader) {
+        if (this.useHeader) {
             for (int i = 0; i < 9; ++i) {
-                final ItemStack item = cellItems.get(i);
+                final ItemStack item = this.cellItems.get(i);
 
-                inventory.setItem(i, item != null ? item : (headerBackItem != null ? headerBackItem : blankItem));
+                this.inventory.setItem(i, item != null ? item : (this.headerBackItem != null ? this.headerBackItem : this.blankItem));
             }
         }
 
         // last row is dedicated to pagation
-        final int cells = rows * 9;
+        final int cells = this.rows * 9;
         for (int i = cells - 9; i < cells; ++i) {
-            inventory.setItem(i, footerBackItem != null ? footerBackItem : blankItem);
+            this.inventory.setItem(i, this.footerBackItem != null ? this.footerBackItem : this.blankItem);
         }
 
         // fill out the rest of the page
@@ -202,7 +202,7 @@ public class SimplePagedGui extends Gui {
         if (toUpdate != null) {
             // whoopsie!
             exit();
-            toUpdate.forEach(player -> guiManager.showGUI(player, this));
+            toUpdate.forEach(player -> this.guiManager.showGUI(player, this));
         }
     }
 
@@ -211,14 +211,14 @@ public class SimplePagedGui extends Gui {
         int cell = event.getSlot();
         Map<ClickType, Clickable> conditionals;
 
-        if (useHeader && cell < 9) {
-            conditionals = conditionalButtons.get(cell);
-        } else if (cell >= (rows - 1) * 9) {
+        if (this.useHeader && cell < 9) {
+            conditionals = this.conditionalButtons.get(cell);
+        } else if (cell >= (this.rows - 1) * 9) {
             // footer row
-            conditionals = conditionalButtons.get(cell - (rows * 9));
+            conditionals = this.conditionalButtons.get(cell - (this.rows * 9));
         } else {
-            int cellIndex = page == 1 ? cell : cell + (page - 1) * rowsPerPage * 9;
-            conditionals = conditionalButtons.get(cellIndex);
+            int cellIndex = this.page == 1 ? cell : cell + (this.page - 1) * this.rowsPerPage * 9;
+            conditionals = this.conditionalButtons.get(cellIndex);
         }
 
         Clickable button;
