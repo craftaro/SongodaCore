@@ -1,5 +1,6 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.gui.events.GuiClickEvent;
 import com.craftaro.core.gui.events.GuiCloseEvent;
 import com.craftaro.core.gui.events.GuiDropItemEvent;
@@ -11,9 +12,8 @@ import com.craftaro.core.gui.methods.Droppable;
 import com.craftaro.core.gui.methods.Openable;
 import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
-import com.craftaro.core.compatibility.CompatibleSound;
-import com.craftaro.core.compatibility.ServerVersion;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -50,7 +50,7 @@ public class Gui {
     protected ItemStack nextPageItem, prevPageItem;
     protected ItemStack nextPage, prevPage;
     protected Gui parent = null;
-    protected static ItemStack AIR = new ItemStack(Material.AIR);
+    protected static final ItemStack AIR = new ItemStack(Material.AIR);
 
     protected GuiManager guiManager;
     protected boolean open = false;
@@ -60,7 +60,7 @@ public class Gui {
     protected Closable closer = null;
     protected Droppable dropper = null;
     protected Pagable pager = null;
-    protected CompatibleSound defaultSound = CompatibleSound.UI_BUTTON_CLICK;
+    protected XSound defaultSound = XSound.UI_BUTTON_CLICK;
 
     public Gui() {
         this.rows = 3;
@@ -68,6 +68,7 @@ public class Gui {
 
     public Gui(@NotNull GuiType type) {
         this.inventoryType = type;
+
 
         switch (type) {
             case HOPPER:
@@ -959,11 +960,11 @@ public class Gui {
         }
     }
 
-    public CompatibleSound getDefaultSound() {
+    public XSound getDefaultSound() {
         return defaultSound;
     }
 
-    public void setDefaultSound(CompatibleSound sound) {
+    public void setDefaultSound(XSound sound) {
         defaultSound = sound;
     }
 }

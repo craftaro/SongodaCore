@@ -1,9 +1,9 @@
 package com.craftaro.core.world;
 
 import com.craftaro.core.compatibility.CompatibleHand;
-import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -93,7 +93,7 @@ public class SItemStack {
         Bukkit.getServer().getPluginManager().callEvent(breakEvent);
 
         this.sItem.breakItem(player, amount);
-        CompatibleSound.ENTITY_ITEM_BREAK.play(player);
+        XSound.ENTITY_ITEM_BREAK.play(player);
     }
 
     public ItemStack getItem() {

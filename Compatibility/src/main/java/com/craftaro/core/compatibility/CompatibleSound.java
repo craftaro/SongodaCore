@@ -1,5 +1,6 @@
 package com.craftaro.core.compatibility;
 
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -14,7 +15,10 @@ import org.bukkit.entity.Player;
  * sounds were renamed. New sounds have been added by different versions, as
  * well. The intent of this class is to provide either the correct sound or a
  * near equivalent for the current server.
+ *
+ * @deprecated Use {@link XSound} instead.
  */
+@Deprecated
 public enum CompatibleSound {
     // some of these values are missing an API value...
     // would using the raw strings be better?
