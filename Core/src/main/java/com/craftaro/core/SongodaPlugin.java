@@ -29,7 +29,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
     static {
         /* NBT-API */
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
-        MinecraftVersion.disableUpdateCheck();
     }
 
     public abstract void onPluginLoad();
