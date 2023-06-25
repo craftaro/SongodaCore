@@ -42,6 +42,66 @@ public class CompatibleMaterial {
         return getMaterial(type.name() + "_SPAWN_EGG");
     }
 
+    public static @Nullable XMaterial getYieldForCrop(XMaterial material) {
+        switch (material) {
+            case BEETROOTS:
+                return XMaterial.BEETROOT;
+            case CACTUS:
+                return XMaterial.CACTUS;
+            case CARROTS:
+                return XMaterial.CARROT;
+            case CHORUS_FLOWER:
+                return XMaterial.CHORUS_PLANT;
+            case KELP:
+                return XMaterial.KELP;
+            case MELON_STEM:
+                return XMaterial.MELON;
+            case NETHER_WART:
+                return XMaterial.NETHER_WART;
+            case POTATOES:
+                return XMaterial.POTATO;
+            case PUMPKIN_STEM:
+                return XMaterial.PUMPKIN;
+            case SUGAR_CANE:
+                return XMaterial.SUGAR_CANE;
+            case WHEAT:
+                return XMaterial.WHEAT;
+
+            default:
+                return null;
+        }
+    }
+
+    public static @Nullable XMaterial getSeedForCrop(XMaterial material) {
+        switch (material) {
+            case BEETROOTS:
+                return XMaterial.BEETROOT_SEEDS;
+            case CACTUS:
+                return XMaterial.CACTUS;
+            case CARROTS:
+                return XMaterial.CARROT;
+            case CHORUS_PLANT:
+                return XMaterial.CHORUS_FLOWER;
+            case KELP:
+                return XMaterial.KELP;
+            case MELON_STEM:
+                return XMaterial.MELON_SEEDS;
+            case NETHER_WART:
+                return XMaterial.NETHER_WART;
+            case POTATOES:
+                return XMaterial.POTATO;
+            case PUMPKIN_STEM:
+                return XMaterial.PUMPKIN_SEEDS;
+            case SUGAR_CANE:
+                return XMaterial.SUGAR_CANE;
+            case WHEAT:
+                return XMaterial.WHEAT_SEEDS;
+
+            default:
+                return null;
+        }
+    }
+
     /**
      * TODO: Check if used by ItemUtils when ready for Core v3 and if yes maybe re-implement to not need manual updating
      */
