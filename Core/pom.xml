@@ -116,15 +116,6 @@
 
                             <filters>
                                 <filter>
-                                    <artifact>com.github.cryptomorin:XSeries</artifact>
-                                    <includes>
-                                        <include>com/cryptomorin/xseries/XMaterial*</include>
-                                        <include>com/cryptomorin/xseries/XBlock*</include>
-                                        <include>com/cryptomorin/xseries/XSound*</include>
-                                    </includes>
-                                </filter>
-
-                                <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/INDEX.LIST</exclude>
