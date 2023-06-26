@@ -1,0 +1,15 @@
+## This sets the default economy hook. Available plugins:
+## - Vault
+Default Economy Hook: Vault
+
+## This sets the default hologram hook. Available plugins:
+## - HolographicDisplays
+## - DecentHolograms
+Default Hologram Hook: HolographicDisplays
+
+## This sets the enabled protection hook. Available plugins:
+## - WorldGuard
+## - BentoBox
+## - GriefPrevention
+Enabled Protection Hooks:
+  - WorldGuard

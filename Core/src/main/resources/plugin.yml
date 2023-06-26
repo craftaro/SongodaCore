@@ -1,5 +1,5 @@
-name: SongodaCore
-author: Songoda
-main: com.songoda.core.SongodaCore
+name: CraftaroCore
+author: Craftaro
+main: com.craftaro.core.CraftaroCore
 version: ${project.version}
 api-version: 1.13

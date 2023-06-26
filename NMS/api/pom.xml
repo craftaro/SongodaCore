@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.songoda</groupId>
-        <artifactId>songodacore-nms</artifactId>
+        <groupId>com.craftaro</groupId>
+        <artifactId>CraftaroCore3</artifactId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>../nms-pom/pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>songodacore-nmsapi</artifactId>
+    <artifactId>craftarocore-nmsapi</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -22,9 +22,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>craftarocore-compatibility</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
-
 </project>

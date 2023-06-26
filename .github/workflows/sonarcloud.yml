@@ -43,6 +43,6 @@ jobs:
 
       - name: Analyze project
         if: ${{ env.SONAR_TOKEN != null }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=songoda_SongodaCore
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=craftaro_CraftaroCore
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
