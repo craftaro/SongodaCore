@@ -1,6 +1,5 @@
 package com.craftaro.core.lootables.gui;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.gui.AnvilGui;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
@@ -9,6 +8,7 @@ import com.craftaro.core.lootables.loot.LootBuilder;
 import com.craftaro.core.lootables.loot.LootManager;
 import com.craftaro.core.lootables.loot.Lootable;
 import com.craftaro.core.utils.TextUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,13 +39,12 @@ public class GuiLootableEditor extends Gui {
 
         setActionForRange(0, 0, 5, 9, null);
 
-        setButton(0, GuiUtils.createButtonItem(CompatibleMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Loot")),
+        setButton(0, GuiUtils.createButtonItem(XMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Loot")),
                 (event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setAction((event1 -> {
                         try {
-                            lootable.registerLoot(new LootBuilder().setMaterial(CompatibleMaterial
-                                    .valueOf(gui.getInputText().trim().toUpperCase())).build());
+                            lootable.registerLoot(new LootBuilder().setMaterial(XMaterial.valueOf(gui.getInputText().trim().toUpperCase())).build());
                         } catch (IllegalArgumentException ex) {
                             event.player.sendMessage("That is not a valid material.");
                         }
@@ -58,13 +57,13 @@ public class GuiLootableEditor extends Gui {
                     guiManager.showGUI(event.player, gui);
                 }));
 
-        setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
+        setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
                 (event -> guiManager.showGUI(event.player, returnGui)));
 
         int i = 9;
         for (Loot loot : lootable.getRegisteredLoot()) {
             ItemStack item = loot.getMaterial() == null
-                    ? CompatibleMaterial.BARRIER.getItem()
+                    ? XMaterial.BARRIER.parseItem()
                     : GuiUtils.createButtonItem(loot.getMaterial(), null,
                     TextUtils.formatText("&6Left click &7to edit"),
                     TextUtils.formatText("&6Right click &7to destroy"));

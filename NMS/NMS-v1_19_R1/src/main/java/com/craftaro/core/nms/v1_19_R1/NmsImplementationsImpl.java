@@ -1,10 +1,12 @@
 package com.craftaro.core.nms.v1_19_R1;
 
-import com.craftaro.core.nms.v1_19_R1.anvil.AnvilCore;
-import com.craftaro.core.nms.v1_19_R1.entity.NMSPlayerImpl;
 import com.craftaro.core.nms.NmsImplementations;
 import com.craftaro.core.nms.entity.NMSPlayer;
+import com.craftaro.core.nms.entity.NmsEntity;
 import com.craftaro.core.nms.nbt.NBTCore;
+import com.craftaro.core.nms.v1_19_R1.anvil.AnvilCore;
+import com.craftaro.core.nms.v1_19_R1.entity.NMSPlayerImpl;
+import com.craftaro.core.nms.v1_19_R1.entity.NmsEntityImpl;
 import com.craftaro.core.nms.v1_19_R1.nbt.NBTCoreImpl;
 import com.craftaro.core.nms.v1_19_R1.world.NmsWorldBorderImpl;
 import com.craftaro.core.nms.v1_19_R1.world.WorldCoreImpl;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class NmsImplementationsImpl implements NmsImplementations {
+    private final NmsEntity entity;
     private final NMSPlayer player;
     private final WorldCore world;
     private final NmsWorldBorder worldBorder;
@@ -25,6 +28,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
         if (((CraftMagicNumbers) CraftMagicNumbers.INSTANCE).getMappingsVersion().equals("7b9de0da1357e5b251eddde9aa762916")) {
             var nmsMc1_19_0 = new com.craftaro.core.nms.v1_19_0.NmsImplementationsImpl();
 
+            this.entity = nmsMc1_19_0.getEntity();
             this.player = nmsMc1_19_0.getPlayer();
             this.world = nmsMc1_19_0.getWorld();
             this.worldBorder = nmsMc1_19_0.getWorldBorder();
@@ -34,11 +38,17 @@ public class NmsImplementationsImpl implements NmsImplementations {
             return;
         }
 
+        this.entity = new NmsEntityImpl();
         this.player = new NMSPlayerImpl();
         this.world = new WorldCoreImpl();
         this.worldBorder = new NmsWorldBorderImpl();
         this.anvil = new AnvilCore();
         this.nbt = new NBTCoreImpl();
+    }
+
+    @Override
+    public @NotNull NmsEntity getEntity() {
+        return this.entity;
     }
 
     @Override

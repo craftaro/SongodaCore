@@ -1,5 +1,6 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.gui.events.GuiClickEvent;
 import com.craftaro.core.gui.events.GuiCloseEvent;
 import com.craftaro.core.gui.events.GuiDropItemEvent;
@@ -11,9 +12,8 @@ import com.craftaro.core.gui.methods.Droppable;
 import com.craftaro.core.gui.methods.Openable;
 import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.compatibility.CompatibleSound;
-import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -50,7 +50,7 @@ public class Gui {
     protected ItemStack nextPageItem, prevPageItem;
     protected ItemStack nextPage, prevPage;
     protected Gui parent = null;
-    protected static ItemStack AIR = new ItemStack(Material.AIR);
+    protected static final ItemStack AIR = new ItemStack(Material.AIR);
 
     protected GuiManager guiManager;
     protected boolean open = false;
@@ -60,7 +60,7 @@ public class Gui {
     protected Closable closer = null;
     protected Droppable dropper = null;
     protected Pagable pager = null;
-    protected CompatibleSound defaultSound = CompatibleSound.UI_BUTTON_CLICK;
+    protected XSound defaultSound = XSound.UI_BUTTON_CLICK;
 
     public Gui() {
         this.rows = 3;
@@ -68,6 +68,7 @@ public class Gui {
 
     public Gui(@NotNull GuiType type) {
         this.inventoryType = type;
+
 
         switch (type) {
             case HOPPER:
@@ -95,11 +96,11 @@ public class Gui {
 
     @NotNull
     public List<Player> getPlayers() {
-        if (inventory == null) {
+        if (this.inventory == null) {
             return Collections.emptyList();
         }
 
-        return inventory.getViewers().stream()
+        return this.inventory.getViewers().stream()
                 .filter(Player.class::isInstance)
                 .map(Player.class::cast)
                 .collect(Collectors.toList());
@@ -107,15 +108,15 @@ public class Gui {
 
     public boolean isOpen() {
         // double check
-        if (inventory != null && inventory.getViewers().isEmpty()) {
-            open = false;
+        if (this.inventory != null && this.inventory.getViewers().isEmpty()) {
+            this.open = false;
         }
 
-        return open;
+        return this.open;
     }
 
     public boolean getAcceptsItems() {
-        return acceptsItems;
+        return this.acceptsItems;
     }
 
     public Gui setAcceptsItems(boolean acceptsItems) {
@@ -128,7 +129,7 @@ public class Gui {
      * will be cleared
      */
     public boolean getAllowDrops() {
-        return allowDropItems;
+        return this.allowDropItems;
     }
 
     /**
@@ -141,7 +142,7 @@ public class Gui {
     }
 
     public boolean getAllowClose() {
-        return allowClose;
+        return this.allowClose;
     }
 
     public Gui setAllowClose(boolean allow) {
@@ -154,10 +155,10 @@ public class Gui {
      * GUIs
      */
     public void exit() {
-        allowClose = true;
-        open = false;
+        this.allowClose = true;
+        this.open = false;
 
-        inventory.getViewers().stream()
+        this.inventory.getViewers().stream()
                 .filter(Player.class::isInstance)
                 .map(Player.class::cast)
                 .collect(Collectors.toList())
@@ -168,9 +169,9 @@ public class Gui {
      * Close the GUI as if the player closed it normally
      */
     public void close() {
-        allowClose = true;
+        this.allowClose = true;
 
-        inventory.getViewers().stream()
+        this.inventory.getViewers().stream()
                 .filter(Player.class::isInstance)
                 .map(Player.class::cast)
                 .collect(Collectors.toList())
@@ -179,19 +180,19 @@ public class Gui {
 
     @NotNull
     public GuiType getType() {
-        return inventoryType;
+        return this.inventoryType;
     }
 
     @NotNull
     public Gui setUnlocked(int cell) {
-        unlockedCells.put(cell, true);
+        this.unlockedCells.put(cell, true);
         return this;
     }
 
     @NotNull
     public Gui setUnlocked(int row, int col) {
-        final int cell = col + row * inventoryType.columns;
-        unlockedCells.put(cell, true);
+        final int cell = col + row * this.inventoryType.columns;
+        this.unlockedCells.put(cell, true);
 
         return this;
     }
@@ -199,7 +200,7 @@ public class Gui {
     @NotNull
     public Gui setUnlockedRange(int cellFirst, int cellLast) {
         for (int cell = cellFirst; cell <= cellLast; ++cell) {
-            unlockedCells.put(cell, true);
+            this.unlockedCells.put(cell, true);
         }
 
         return this;
@@ -208,7 +209,7 @@ public class Gui {
     @NotNull
     public Gui setUnlockedRange(int cellFirst, int cellLast, boolean open) {
         for (int cell = cellFirst; cell <= cellLast; ++cell) {
-            unlockedCells.put(cell, open);
+            this.unlockedCells.put(cell, open);
         }
 
         return this;
@@ -216,10 +217,10 @@ public class Gui {
 
     @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
-        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        final int last = cellColLast + cellRowLast * this.inventoryType.columns;
 
-        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
-            unlockedCells.put(cell, true);
+        for (int cell = cellColFirst + cellRowFirst * this.inventoryType.columns; cell <= last; ++cell) {
+            this.unlockedCells.put(cell, true);
         }
 
         return this;
@@ -227,10 +228,10 @@ public class Gui {
 
     @NotNull
     public Gui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, boolean open) {
-        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        final int last = cellColLast + cellRowLast * this.inventoryType.columns;
 
-        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
-            unlockedCells.put(cell, open);
+        for (int cell = cellColFirst + cellRowFirst * this.inventoryType.columns; cell <= last; ++cell) {
+            this.unlockedCells.put(cell, open);
         }
 
         return this;
@@ -238,14 +239,14 @@ public class Gui {
 
     @NotNull
     public Gui setUnlocked(int cell, boolean open) {
-        unlockedCells.put(cell, open);
+        this.unlockedCells.put(cell, open);
         return this;
     }
 
     @NotNull
     public Gui setUnlocked(int row, int col, boolean open) {
-        final int cell = col + row * inventoryType.columns;
-        unlockedCells.put(cell, open);
+        final int cell = col + row * this.inventoryType.columns;
+        this.unlockedCells.put(cell, open);
 
         return this;
     }
@@ -259,19 +260,19 @@ public class Gui {
         if (!title.equals(this.title)) {
             this.title = title;
 
-            if (inventory != null) {
+            if (this.inventory != null) {
                 // update active inventory
                 List<Player> toUpdate = getPlayers();
-                boolean isAllowClose = allowClose;
+                boolean isAllowClose = this.allowClose;
                 exit();
 
-                Inventory oldInv = inventory;
+                Inventory oldInv = this.inventory;
                 createInventory();
-                inventory.setContents(oldInv.getContents());
+                this.inventory.setContents(oldInv.getContents());
 
-                toUpdate.forEach(player -> player.openInventory(inventory));
+                toUpdate.forEach(player -> player.openInventory(this.inventory));
 
-                allowClose = isAllowClose;
+                this.allowClose = isAllowClose;
             }
         }
 
@@ -279,12 +280,12 @@ public class Gui {
     }
 
     public int getRows() {
-        return rows;
+        return this.rows;
     }
 
     @NotNull
     public Gui setRows(int rows) {
-        switch (inventoryType) {
+        switch (this.inventoryType) {
             case HOPPER:
             case DISPENSER:
                 break;
@@ -298,53 +299,53 @@ public class Gui {
 
     @NotNull
     public Gui setDefaultAction(@Nullable Clickable action) {
-        defaultClicker = action;
+        this.defaultClicker = action;
         return this;
     }
 
     @NotNull
     protected Gui setPrivateDefaultAction(@Nullable Clickable action) {
-        privateDefaultClicker = action;
+        this.privateDefaultClicker = action;
         return this;
     }
 
     @NotNull
     public Gui setDefaultItem(@Nullable ItemStack item) {
-        blankItem = item;
+        this.blankItem = item;
         return this;
     }
 
     @Nullable
     public ItemStack getDefaultItem() {
-        return blankItem;
+        return this.blankItem;
     }
 
     @Nullable
     public ItemStack getItem(int cell) {
-        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
-            return inventory.getItem(cell);
+        if (this.inventory != null && this.unlockedCells.getOrDefault(cell, false)) {
+            return this.inventory.getItem(cell);
         }
 
-        return cellItems.get(cell);
+        return this.cellItems.get(cell);
     }
 
     @Nullable
     public ItemStack getItem(int row, int col) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
 
-        if (inventory != null && unlockedCells.getOrDefault(cell, false)) {
-            return inventory.getItem(cell);
+        if (this.inventory != null && this.unlockedCells.getOrDefault(cell, false)) {
+            return this.inventory.getItem(cell);
         }
 
-        return cellItems.get(cell);
+        return this.cellItems.get(cell);
     }
 
     @NotNull
     public Gui setItem(int cell, @Nullable ItemStack item) {
-        cellItems.put(cell, item);
+        this.cellItems.put(cell, item);
 
-        if (inventory != null && cell >= 0 && cell < inventory.getSize()) {
-            inventory.setItem(cell, item);
+        if (this.inventory != null && cell >= 0 && cell < this.inventory.getSize()) {
+            this.inventory.setItem(cell, item);
         }
 
         return this;
@@ -352,7 +353,7 @@ public class Gui {
 
     @NotNull
     public Gui setItem(int row, int col, @Nullable ItemStack item) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
         return setItem(cell, item);
     }
 
@@ -361,7 +362,7 @@ public class Gui {
         setItem(row, col, item);
 
         if (mirrorRow) {
-            setItem(rows - row - 1, col, item);
+            setItem(this.rows - row - 1, col, item);
         }
 
         if (mirrorCol) {
@@ -369,7 +370,7 @@ public class Gui {
         }
 
         if (mirrorRow && mirrorCol) {
-            setItem(rows - row - 1, 8 - col, item);
+            setItem(this.rows - row - 1, 8 - col, item);
         }
 
         return this;
@@ -377,7 +378,7 @@ public class Gui {
 
     @NotNull
     public Gui highlightItem(int cell) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, ItemUtils.addGlow(item));
@@ -388,14 +389,14 @@ public class Gui {
 
     @NotNull
     public Gui highlightItem(int row, int col) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
 
         return highlightItem(cell);
     }
 
     @NotNull
     public Gui removeHighlight(int cell) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, ItemUtils.removeGlow(item));
@@ -406,18 +407,18 @@ public class Gui {
 
     @NotNull
     public Gui removeHighlight(int row, int col) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
         return removeHighlight(cell);
     }
 
     @NotNull
     public Gui updateItemLore(int row, int col, @NotNull String... lore) {
-        return updateItemLore(col + row * inventoryType.columns, lore);
+        return updateItemLore(col + row * this.inventoryType.columns, lore);
     }
 
     @NotNull
     public Gui updateItemLore(int cell, @NotNull String... lore) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItemLore(item, lore));
@@ -428,12 +429,12 @@ public class Gui {
 
     @NotNull
     public Gui updateItemLore(int row, int col, @Nullable List<String> lore) {
-        return updateItemLore(col + row * inventoryType.columns, lore);
+        return updateItemLore(col + row * this.inventoryType.columns, lore);
     }
 
     @NotNull
     public Gui updateItemLore(int cell, @Nullable List<String> lore) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItemLore(item, lore));
@@ -444,12 +445,12 @@ public class Gui {
 
     @NotNull
     public Gui updateItemName(int row, int col, @Nullable String name) {
-        return updateItemName(col + row * inventoryType.columns, name);
+        return updateItemName(col + row * this.inventoryType.columns, name);
     }
 
     @NotNull
     public Gui updateItemName(int cell, @Nullable String name) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItemName(item, name));
@@ -460,7 +461,7 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @NotNull String... lore) {
-        return updateItem(col + row * inventoryType.columns, name, lore);
+        return updateItem(col + row * this.inventoryType.columns, name, lore);
     }
 
     @NotNull
@@ -470,12 +471,12 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @Nullable List<String> lore) {
-        return updateItem(col + row * inventoryType.columns, name, lore);
+        return updateItem(col + row * this.inventoryType.columns, name, lore);
     }
 
     @NotNull
     public Gui updateItem(int cell, @NotNull String name, @Nullable List<String> lore) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, name, lore));
@@ -486,12 +487,12 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull ItemStack itemTo, @Nullable String title, @NotNull String... lore) {
-        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
+        return updateItem(col + row * this.inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
     public Gui updateItem(int cell, @NotNull ItemStack itemTo, @Nullable String title, @NotNull String... lore) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));
@@ -501,13 +502,13 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @NotNull String... lore) {
-        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
+    public Gui updateItem(int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @NotNull String... lore) {
+        return updateItem(col + row * this.inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable String... lore) {
-        ItemStack item = cellItems.get(cell);
+    public Gui updateItem(int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable String... lore) {
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));
@@ -518,12 +519,12 @@ public class Gui {
 
     @NotNull
     public Gui updateItem(int row, int col, @NotNull ItemStack itemTo, @Nullable String title, @Nullable List<String> lore) {
-        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
+        return updateItem(col + row * this.inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
     public Gui updateItem(int cell, @NotNull ItemStack itemTo, @Nullable String title, @Nullable List<String> lore) {
-        ItemStack item = cellItems.get(cell);
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));
@@ -533,13 +534,13 @@ public class Gui {
     }
 
     @NotNull
-    public Gui updateItem(int row, int col, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
-        return updateItem(col + row * inventoryType.columns, itemTo, title, lore);
+    public Gui updateItem(int row, int col, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+        return updateItem(col + row * this.inventoryType.columns, itemTo, title, lore);
     }
 
     @NotNull
-    public Gui updateItem(int cell, @NotNull CompatibleMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
-        ItemStack item = cellItems.get(cell);
+    public Gui updateItem(int cell, @NotNull XMaterial itemTo, @Nullable String title, @Nullable List<String> lore) {
+        ItemStack item = this.cellItems.get(cell);
 
         if (item != null && item.getType() != Material.AIR) {
             setItem(cell, GuiUtils.updateItem(item, itemTo, title, lore));
@@ -556,7 +557,7 @@ public class Gui {
 
     @NotNull
     public Gui setAction(int row, int col, @Nullable Clickable action) {
-        setConditional(col + row * inventoryType.columns, null, action);
+        setConditional(col + row * this.inventoryType.columns, null, action);
         return this;
     }
 
@@ -568,7 +569,7 @@ public class Gui {
 
     @NotNull
     public Gui setAction(int row, int col, @Nullable ClickType type, @Nullable Clickable action) {
-        setConditional(col + row * inventoryType.columns, type, action);
+        setConditional(col + row * this.inventoryType.columns, type, action);
         return this;
     }
 
@@ -583,9 +584,9 @@ public class Gui {
 
     @NotNull
     public Gui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, @Nullable Clickable action) {
-        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        final int last = cellColLast + cellRowLast * this.inventoryType.columns;
 
-        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
+        for (int cell = cellColFirst + cellRowFirst * this.inventoryType.columns; cell <= last; ++cell) {
             setConditional(cell, null, action);
         }
 
@@ -603,9 +604,9 @@ public class Gui {
 
     @NotNull
     public Gui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, @Nullable ClickType type, @Nullable Clickable action) {
-        final int last = cellColLast + cellRowLast * inventoryType.columns;
+        final int last = cellColLast + cellRowLast * this.inventoryType.columns;
 
-        for (int cell = cellColFirst + cellRowFirst * inventoryType.columns; cell <= last; ++cell) {
+        for (int cell = cellColFirst + cellRowFirst * this.inventoryType.columns; cell <= last; ++cell) {
             setConditional(cell, type, action);
         }
 
@@ -614,13 +615,13 @@ public class Gui {
 
     @NotNull
     public Gui clearActions(int cell) {
-        conditionalButtons.remove(cell);
+        this.conditionalButtons.remove(cell);
         return this;
     }
 
     @NotNull
     public Gui clearActions(int row, int col) {
-        return clearActions(col + row * inventoryType.columns);
+        return clearActions(col + row * this.inventoryType.columns);
     }
 
     @NotNull
@@ -633,7 +634,7 @@ public class Gui {
 
     @NotNull
     public Gui setButton(int row, int col, @Nullable ItemStack item, @Nullable Clickable action) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
 
         setItem(cell, item);
         setConditional(cell, null, action);
@@ -651,7 +652,7 @@ public class Gui {
 
     @NotNull
     public Gui setButton(int row, int col, @Nullable ItemStack item, @Nullable ClickType type, @Nullable Clickable action) {
-        final int cell = col + row * inventoryType.columns;
+        final int cell = col + row * this.inventoryType.columns;
 
         setItem(cell, item);
         setConditional(cell, type, action);
@@ -660,62 +661,62 @@ public class Gui {
     }
 
     protected void setConditional(int cell, @Nullable ClickType type, @Nullable Clickable action) {
-        Map<ClickType, Clickable> conditionals = conditionalButtons.computeIfAbsent(cell, k -> new HashMap<>());
+        Map<ClickType, Clickable> conditionals = this.conditionalButtons.computeIfAbsent(cell, k -> new HashMap<>());
         conditionals.put(type, action);
     }
 
     @NotNull
     public Gui setOnOpen(@Nullable Openable action) {
-        opener = action;
+        this.opener = action;
         return this;
     }
 
     @NotNull
     public Gui setOnClose(@Nullable Closable action) {
-        closer = action;
+        this.closer = action;
         return this;
     }
 
     @NotNull
     public Gui setOnDrop(@Nullable Droppable action) {
-        dropper = action;
+        this.dropper = action;
         return this;
     }
 
     @NotNull
     public Gui setOnPage(@Nullable Pagable action) {
-        pager = action;
+        this.pager = action;
         return this;
     }
 
     public Gui setNextPage(ItemStack item) {
-        nextPage = item;
+        this.nextPage = item;
         return this;
     }
 
     public Gui setPrevPage(ItemStack item) {
-        prevPage = item;
+        this.prevPage = item;
         return this;
     }
 
     public void reset() {
-        if (inventory != null) {
-            inventory.clear();
+        if (this.inventory != null) {
+            this.inventory.clear();
         }
 
         setActionForRange(0, 53, null);
-        cellItems.clear();
+        this.cellItems.clear();
         update();
     }
 
     @NotNull
     public Gui setNextPage(int cell, @NotNull ItemStack item) {
-        nextPageItem = cellItems.get(cell);
-        nextPageIndex = cell;
-        nextPage = item;
+        this.nextPageItem = this.cellItems.get(cell);
+        this.nextPageIndex = cell;
+        this.nextPage = item;
 
-        if (page < pages) {
-            setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+        if (this.page < this.pages) {
+            setButton(this.nextPageIndex, this.nextPage, ClickType.LEFT, (event) -> this.nextPage());
         }
 
         return this;
@@ -723,17 +724,17 @@ public class Gui {
 
     @NotNull
     public Gui setNextPage(int row, int col, @NotNull ItemStack item) {
-        return setNextPage(col + row * inventoryType.columns, item);
+        return setNextPage(col + row * this.inventoryType.columns, item);
     }
 
     @NotNull
     public Gui setPrevPage(int cell, @NotNull ItemStack item) {
-        prevPageItem = cellItems.get(cell);
-        prevPageIndex = cell;
-        prevPage = item;
+        this.prevPageItem = this.cellItems.get(cell);
+        this.prevPageIndex = cell;
+        this.prevPage = item;
 
-        if (page > 1) {
-            setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+        if (this.page > 1) {
+            setButton(this.prevPageIndex, this.prevPage, ClickType.LEFT, (event) -> this.prevPage());
         }
 
         return this;
@@ -741,23 +742,23 @@ public class Gui {
 
     @NotNull
     public Gui setPrevPage(int row, int col, @NotNull ItemStack item) {
-        return setPrevPage(col + row * inventoryType.columns, item);
+        return setPrevPage(col + row * this.inventoryType.columns, item);
     }
 
     public void setPages(int pages) {
         this.pages = Math.max(1, pages);
 
-        if (page > pages) {
+        if (this.page > pages) {
             setPage(pages);
         }
     }
 
     public void setPage(int page) {
         int lastPage = this.page;
-        this.page = Math.max(1, Math.min(pages, page));
+        this.page = Math.max(1, Math.min(this.pages, page));
 
-        if (pager != null && this.page != lastPage) {
-            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+        if (this.pager != null && this.page != lastPage) {
+            this.pager.onPageChange(new GuiPageEvent(this, this.guiManager, lastPage, page));
 
             // page markers
             updatePageNavigation();
@@ -765,11 +766,11 @@ public class Gui {
     }
 
     public void changePage(int direction) {
-        int lastPage = page;
-        this.page = Math.max(1, Math.min(pages, page + direction));
+        int lastPage = this.page;
+        this.page = Math.max(1, Math.min(this.pages, this.page + direction));
 
-        if (pager != null && this.page != lastPage) {
-            pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+        if (this.pager != null && this.page != lastPage) {
+            this.pager.onPageChange(new GuiPageEvent(this, this.guiManager, lastPage, this.page));
 
             // page markers
             updatePageNavigation();
@@ -777,13 +778,13 @@ public class Gui {
     }
 
     public void nextPage() {
-        if (page < pages) {
-            int lastPage = page;
-            ++page;
+        if (this.page < this.pages) {
+            int lastPage = this.page;
+            ++this.page;
 
             // page switch events
-            if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            if (this.pager != null) {
+                this.pager.onPageChange(new GuiPageEvent(this, this.guiManager, lastPage, this.page));
 
                 // page markers
                 updatePageNavigation();
@@ -796,12 +797,12 @@ public class Gui {
     }
 
     public void prevPage() {
-        if (page > 1) {
-            int lastPage = page;
-            --page;
+        if (this.page > 1) {
+            int lastPage = this.page;
+            --this.page;
 
-            if (pager != null) {
-                pager.onPageChange(new GuiPageEvent(this, guiManager, lastPage, page));
+            if (this.pager != null) {
+                this.pager.onPageChange(new GuiPageEvent(this, this.guiManager, lastPage, this.page));
 
                 // page markers
                 updatePageNavigation();
@@ -814,75 +815,75 @@ public class Gui {
     }
 
     protected void updatePageNavigation() {
-        if (prevPage != null) {
-            if (page > 1) {
-                this.setButton(prevPageIndex, prevPage, ClickType.LEFT, (event) -> this.prevPage());
+        if (this.prevPage != null) {
+            if (this.page > 1) {
+                this.setButton(this.prevPageIndex, this.prevPage, ClickType.LEFT, (event) -> this.prevPage());
             } else {
-                this.setItem(prevPageIndex, prevPageItem);
-                this.clearActions(prevPageIndex);
+                this.setItem(this.prevPageIndex, this.prevPageItem);
+                this.clearActions(this.prevPageIndex);
             }
         }
 
-        if (nextPage != null) {
-            if (pages > 1 && page != pages) {
-                this.setButton(nextPageIndex, nextPage, ClickType.LEFT, (event) -> this.nextPage());
+        if (this.nextPage != null) {
+            if (this.pages > 1 && this.page != this.pages) {
+                this.setButton(this.nextPageIndex, this.nextPage, ClickType.LEFT, (event) -> this.nextPage());
             } else {
-                this.setItem(nextPageIndex, nextPageItem);
-                this.clearActions(nextPageIndex);
+                this.setItem(this.nextPageIndex, this.nextPageItem);
+                this.clearActions(this.nextPageIndex);
             }
         }
     }
 
     @NotNull
     protected Inventory getOrCreateInventory(@NotNull GuiManager manager) {
-        return inventory != null ? inventory : generateInventory(manager);
+        return this.inventory != null ? this.inventory : generateInventory(manager);
     }
 
     @NotNull
     protected Inventory generateInventory(@NotNull GuiManager manager) {
         this.guiManager = manager;
-        final int cells = rows * inventoryType.columns;
+        final int cells = this.rows * this.inventoryType.columns;
 
         createInventory();
 
         for (int i = 0; i < cells; ++i) {
-            final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
+            final ItemStack item = this.cellItems.get(i);
+            this.inventory.setItem(i, item != null ? item : (this.unlockedCells.getOrDefault(i, false) ? AIR : this.blankItem));
         }
 
-        return inventory;
+        return this.inventory;
     }
 
     protected void createInventory() {
-        final InventoryType t = inventoryType == null ? InventoryType.CHEST : inventoryType.type;
+        final InventoryType t = this.inventoryType == null ? InventoryType.CHEST : this.inventoryType.type;
 
         switch (t) {
             case DISPENSER:
             case HOPPER:
-                inventory = new GuiHolder(guiManager, this).newInventory(t,
-                        title == null ? "" : trimTitle(title));
+                this.inventory = new GuiHolder(this.guiManager, this).newInventory(t,
+                        this.title == null ? "" : trimTitle(this.title));
                 break;
             default:
-                inventory = new GuiHolder(guiManager, this).newInventory(rows * 9,
-                        title == null ? "" : trimTitle(title));
+                this.inventory = new GuiHolder(this.guiManager, this).newInventory(this.rows * 9,
+                        this.title == null ? "" : trimTitle(this.title));
                 break;
         }
     }
 
     @Nullable
     public Gui getParent() {
-        return parent;
+        return this.parent;
     }
 
     public void update() {
-        if (inventory == null) {
+        if (this.inventory == null) {
             return;
         }
 
-        final int cells = rows * inventoryType.columns;
+        final int cells = this.rows * this.inventoryType.columns;
         for (int i = 0; i < cells; ++i) {
-            final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
+            final ItemStack item = this.cellItems.get(i);
+            this.inventory.setItem(i, item != null ? item : (this.unlockedCells.getOrDefault(i, false) ? AIR : this.blankItem));
         }
     }
 
@@ -899,12 +900,12 @@ public class Gui {
     }
 
     protected boolean onClickOutside(@NotNull GuiManager manager, @NotNull Player player, @NotNull InventoryClickEvent event) {
-        return dropper == null || dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
+        return this.dropper == null || this.dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
     }
 
     protected boolean onClick(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory inventory, @NotNull InventoryClickEvent event) {
         final int cell = event.getSlot();
-        Map<ClickType, Clickable> conditionals = conditionalButtons.get(cell);
+        Map<ClickType, Clickable> conditionals = this.conditionalButtons.get(cell);
 
         Clickable button;
         if (conditionals != null
@@ -912,14 +913,14 @@ public class Gui {
             button.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
         } else {
             // no event for this button
-            if (defaultClicker != null) {
+            if (this.defaultClicker != null) {
                 // this is a default action, not a triggered action
-                defaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
+                this.defaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
             }
 
-            if (privateDefaultClicker != null) {
+            if (this.privateDefaultClicker != null) {
                 // this is a private default action, not a triggered action
-                privateDefaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
+                this.privateDefaultClicker.onClick(new GuiClickEvent(manager, this, player, event, cell, true));
             }
 
             return false;
@@ -934,36 +935,36 @@ public class Gui {
     }
 
     public void onOpen(@NotNull GuiManager manager, @NotNull Player player) {
-        open = true;
-        guiManager = manager;
+        this.open = true;
+        this.guiManager = manager;
 
-        if (opener != null) {
-            opener.onOpen(new GuiOpenEvent(manager, this, player));
+        if (this.opener != null) {
+            this.opener.onOpen(new GuiOpenEvent(manager, this, player));
         }
     }
 
     public void onClose(@NotNull GuiManager manager, @NotNull Player player) {
-        if (!allowClose) {
+        if (!this.allowClose) {
             manager.showGUI(player, this);
             return;
         }
 
-        boolean showParent = open && parent != null;
+        boolean showParent = this.open && this.parent != null;
 
-        if (closer != null) {
-            closer.onClose(new GuiCloseEvent(manager, this, player));
+        if (this.closer != null) {
+            this.closer.onClose(new GuiCloseEvent(manager, this, player));
         }
 
         if (showParent) {
-            manager.showGUI(player, parent);
+            manager.showGUI(player, this.parent);
         }
     }
 
-    public CompatibleSound getDefaultSound() {
-        return defaultSound;
+    public XSound getDefaultSound() {
+        return this.defaultSound;
     }
 
-    public void setDefaultSound(CompatibleSound sound) {
-        defaultSound = sound;
+    public void setDefaultSound(XSound sound) {
+        this.defaultSound = sound;
     }
 }

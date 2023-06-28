@@ -1,11 +1,11 @@
 package com.craftaro.core.configuration.editor;
 
 import com.craftaro.core.SongodaPlugin;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.gui.SimplePagedGui;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,18 +79,18 @@ public class PluginConfigGui extends SimplePagedGui {
     }
 
     private void init() {
-        this.blankItem = GuiUtils.getBorderItem(CompatibleMaterial.LIGHT_GRAY_STAINED_GLASS_PANE);
+        this.blankItem = GuiUtils.getBorderItem(XMaterial.LIGHT_GRAY_STAINED_GLASS_PANE);
 
         // decorate header
         this.setTitle(ChatColor.DARK_BLUE + plugin.getName() + " Plugin Config");
         this.setUseHeader(true);
-        headerBackItem = footerBackItem = GuiUtils.getBorderItem(CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem());
-        this.setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        headerBackItem = footerBackItem = GuiUtils.getBorderItem(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
+        this.setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
 
         // List out all config files that this plugin has
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
-            this.setButton(i++, GuiUtils.createButtonItem(CompatibleMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
+            this.setButton(i++, GuiUtils.createButtonItem(XMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue())));
         }
     }

@@ -3,15 +3,12 @@ package com.craftaro.core.compatibility;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
-import java.util.Random;
 
 public class LegacyPotionEffects {
     private LegacyPotionEffects() {
     }
 
-    protected final static Random rand = new Random();
-
-    private final static HashMap<Integer, String> potionEffectNames = new HashMap<Integer, String>() {
+    private static final HashMap<Integer, String> potionEffectNames = new HashMap<Integer, String>() {
         {
             put(PotionEffectType.SPEED.getId(), "Speed");
             put(PotionEffectType.SLOW.getId(), "Slowness");

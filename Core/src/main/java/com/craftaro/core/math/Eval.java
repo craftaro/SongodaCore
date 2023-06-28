@@ -11,15 +11,15 @@ public class Eval {
     }
 
     private void nextChar() {
-        ch = (++pos < toParse.length()) ? toParse.charAt(pos) : -1;
+        this.ch = (++this.pos < this.toParse.length()) ? this.toParse.charAt(this.pos) : -1;
     }
 
     private boolean eat(int charToEat) {
-        while (ch == ' ') {
+        while (this.ch == ' ') {
             nextChar();
         }
 
-        if (ch == charToEat) {
+        if (this.ch == charToEat) {
             nextChar();
             return true;
         }
@@ -31,8 +31,8 @@ public class Eval {
         nextChar();
 
         double x = parseExpression();
-        if (pos < toParse.length()) {
-            throw new RuntimeException(warningMessage + "Unexpected: '" + (char) ch + "' at position " + pos + " in '" + this.toParse + "'");
+        if (this.pos < this.toParse.length()) {
+            throw new RuntimeException(this.warningMessage + "Unexpected: '" + (char) this.ch + "' at position " + this.pos + " in '" + this.toParse + "'");
         }
 
         return x;
@@ -85,18 +85,18 @@ public class Eval {
         if (eat('(')) { // parentheses
             x = parseExpression();
             eat(')');
-        } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-            while ((ch >= '0' && ch <= '9') || ch == '.') {
+        } else if ((this.ch >= '0' && this.ch <= '9') || this.ch == '.') { // numbers
+            while ((this.ch >= '0' && this.ch <= '9') || this.ch == '.') {
                 nextChar();
             }
 
-            x = Double.parseDouble(toParse.substring(startPos, this.pos));
-        } else if (ch >= 'a' && ch <= 'z') { // functions
-            while (ch >= 'a' && ch <= 'z') {
+            x = Double.parseDouble(this.toParse.substring(startPos, this.pos));
+        } else if (this.ch >= 'a' && this.ch <= 'z') { // functions
+            while (this.ch >= 'a' && this.ch <= 'z') {
                 nextChar();
             }
 
-            String func = toParse.substring(startPos, this.pos);
+            String func = this.toParse.substring(startPos, this.pos);
             x = parseFactor();
 
             switch (func) {
@@ -113,10 +113,10 @@ public class Eval {
                     x = Math.tan(Math.toRadians(x));
                     break;
                 default:
-                    throw new RuntimeException(warningMessage + "Unknown function: " + func);
+                    throw new RuntimeException(this.warningMessage + "Unknown function: " + func);
             }
         } else {
-            throw new RuntimeException(warningMessage + "Unexpected: " + (char) ch);
+            throw new RuntimeException(this.warningMessage + "Unexpected: " + (char) this.ch);
         }
 
         if (eat('^')) {

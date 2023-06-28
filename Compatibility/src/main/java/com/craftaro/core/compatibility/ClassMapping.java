@@ -58,8 +58,8 @@ public enum ClassMapping {
     private final String packageName;
     private final String className;
 
-    ClassMapping(String packageName) {
-        this(null, packageName);
+    ClassMapping(String className) {
+        this(null, className);
     }
 
     ClassMapping(String packageName, String className) {
@@ -72,17 +72,17 @@ public enum ClassMapping {
     }
 
     public Class<?> getClazz(String sub) {
-        String name = sub == null ? className : className + "$" + sub;
+        String name = sub == null ? this.className : this.className + "$" + sub;
 
         try {
-            if (className.startsWith("Craft")) {
+            if (this.className.startsWith("Craft")) {
                 return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
-                        + (packageName == null ? "" : "." + packageName) + "." + name);
+                        + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
             }
 
             return Class.forName("net.minecraft." + (
-                    ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && packageName != null
-                            ? packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
+                    ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && this.packageName != null
+                            ? this.packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }

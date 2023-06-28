@@ -7,8 +7,8 @@ package com.craftaro.core;
  * <p>
  * <b>!! Manually changing the values in this class has to be considered a breaking change. !!</b>
  */
-public class SongodaCoreConstants {
-    private SongodaCoreConstants() {
+public class CraftaroCoreConstants {
+    private CraftaroCoreConstants() {
         throw new IllegalStateException("Utility class");
     }
 
@@ -17,10 +17,10 @@ public class SongodaCoreConstants {
     }
 
     public static String getProjectName() {
-        return "SongodaCore";
+        return "CraftaroCore";
     }
 
     public static String getGitHubProjectUrl() {
-        return "https://github.com/craftaro/SongodaCore";
+        return "https://github.com/craftaro/CraftaroCore";
     }
 }

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Internal class for marking an inventory as a GUI inventory
@@ -18,12 +19,12 @@ class GuiHolder implements InventoryHolder {
     }
 
     @Override
-    public Inventory getInventory() {
-        return gui.inventory;
+    public @NotNull Inventory getInventory() {
+        return this.gui.inventory;
     }
 
     public Gui getGUI() {
-        return gui;
+        return this.gui;
     }
 
     public Inventory newInventory(int size, String title) {

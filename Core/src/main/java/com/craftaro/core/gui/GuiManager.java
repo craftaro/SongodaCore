@@ -1,8 +1,8 @@
 package com.craftaro.core.gui;
 
 import com.craftaro.core.compatibility.ClientVersion;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,17 +43,17 @@ public class GuiManager {
     }
 
     public Plugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     /**
      * Initialize the GUI handlers
      */
     public void init() {
-        Bukkit.getPluginManager().registerEvents(listener, plugin);
+        Bukkit.getPluginManager().registerEvents(this.listener, this.plugin);
 
-        initialized = true;
-        shutdown = false;
+        this.initialized = true;
+        this.shutdown = false;
     }
 
     /**
@@ -62,7 +62,7 @@ public class GuiManager {
      * @return true if the owning plugin has shutdown
      */
     public boolean isClosed() {
-        return shutdown;
+        return this.shutdown;
     }
 
     /**
@@ -72,20 +72,20 @@ public class GuiManager {
      * @param gui    GUI to use
      */
     public void showGUI(Player player, Gui gui) {
-        if (shutdown) {
-            if (!plugin.isEnabled()) {
+        if (this.shutdown) {
+            if (!this.plugin.isEnabled()) {
                 return;
             }
 
             // recover if reloaded without calling init manually
             init();
-        } else if (!initialized) {
+        } else if (!this.initialized) {
             init();
         }
 
         if (gui instanceof AnvilGui) {
             // bukkit throws a fit now if you try to set anvil stuff asynchronously
-            Gui openInv = openInventories.get(player);
+            Gui openInv = this.openInventories.get(player);
 
             if (openInv != null) {
                 openInv.open = false;
@@ -95,15 +95,15 @@ public class GuiManager {
             ((AnvilGui) gui).open();
             gui.onOpen(this, player);
 
-            synchronized (lock) {
-                openInventories.put(player, gui);
+            synchronized (this.lock) {
+                this.openInventories.put(player, gui);
             }
 
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Gui openInv = openInventories.get(player);
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            Gui openInv = this.openInventories.get(player);
 
             if (openInv != null) {
                 openInv.open = false;
@@ -111,32 +111,32 @@ public class GuiManager {
 
             Inventory inv = gui.getOrCreateInventory(this);
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            Bukkit.getScheduler().runTask(this.plugin, () -> {
                 player.openInventory(inv);
                 gui.onOpen(this, player);
 
-                synchronized (lock) {
-                    openInventories.put(player, gui);
+                synchronized (this.lock) {
+                    this.openInventories.put(player, gui);
                 }
             });
         });
     }
 
     public void showPopup(Player player, String message) {
-        showPopup(player, message, CompatibleMaterial.NETHER_STAR, BackgroundType.ADVENTURE);
+        showPopup(player, message, XMaterial.NETHER_STAR, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, CompatibleMaterial icon) {
+    public void showPopup(Player player, String message, XMaterial icon) {
         showPopup(player, message, icon, BackgroundType.ADVENTURE);
     }
 
-    public void showPopup(Player player, String message, CompatibleMaterial icon, BackgroundType background) {
+    public void showPopup(Player player, String message, XMaterial icon, BackgroundType background) {
         if (ClientVersion.getClientVersion(player).isAtLeast(ServerVersion.V1_12)) {
-            PopupMessage popup = new PopupMessage(plugin, icon, message, background);
+            PopupMessage popup = new PopupMessage(this.plugin, icon, message, background);
             popup.add();
             popup.grant(player);
 
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
                 popup.revoke(player);
                 popup.remove();
             }, 70);
@@ -156,13 +156,13 @@ public class GuiManager {
      * Close all active GUIs
      */
     public void closeAll() {
-        synchronized (lock) {
-            openInventories.entrySet().stream()
+        synchronized (this.lock) {
+            this.openInventories.entrySet().stream()
                     .filter(e -> e.getKey().getOpenInventory().getTopInventory().getHolder() instanceof GuiHolder)
                     .collect(Collectors.toList()) // to prevent concurrency exceptions
                     .forEach(e -> e.getKey().closeInventory());
 
-            openInventories.clear();
+            this.openInventories.clear();
         }
     }
 
@@ -182,7 +182,7 @@ public class GuiManager {
             Inventory openInv = event.getInventory();
             Gui gui;
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder
-                    && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
+                    && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(this.manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
                 if (event.getRawSlots().stream()
@@ -205,7 +205,7 @@ public class GuiManager {
 
             Gui gui;
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder &&
-                    ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
+                    ((GuiHolder) openInv.getHolder()).manager.uuid.equals(this.manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
                 if (event.getClick() == ClickType.DOUBLE_CLICK) {
@@ -228,7 +228,7 @@ public class GuiManager {
                 }
 
                 if (event.getSlotType() == SlotType.OUTSIDE) {
-                    if (!gui.onClickOutside(manager, player, event)) {
+                    if (!gui.onClickOutside(this.manager, player, event)) {
                         event.setCancelled(true);
                     }
                 } // did we click the gui or in the user's inventory?
@@ -237,13 +237,13 @@ public class GuiManager {
                     event.setCancelled(gui.unlockedCells.entrySet().stream().noneMatch(e -> event.getSlot() == e.getKey() && e.getValue()));
 
                     // process button press
-                    if (gui.onClick(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), gui.getDefaultSound().getSound(), 1F, 1F);
+                    if (gui.onClick(this.manager, player, openInv, event)) {
+                        gui.getDefaultSound().play(player);
                     }
                 } else {
                     // Player clicked in the bottom inventory while GUI is open
-                    if (gui.onClickPlayerInventory(manager, player, openInv, event)) {
-                        player.playSound(player.getLocation(), gui.getDefaultSound().getSound(), 1F, 1F);
+                    if (gui.onClickPlayerInventory(this.manager, player, openInv, event)) {
+                        gui.getDefaultSound().play(player);
                     } else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         event.setCancelled(true);
 
@@ -260,7 +260,7 @@ public class GuiManager {
             Inventory openInv = event.getInventory();
 
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder &&
-                    ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
+                    ((GuiHolder) openInv.getHolder()).manager.uuid.equals(this.manager.uuid)) {
                 Gui gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
                 if (gui instanceof AnvilGui) {
@@ -277,23 +277,23 @@ public class GuiManager {
                     player.setItemOnCursor(null);
                 }
 
-                if (manager.shutdown) {
-                    gui.onClose(manager, player);
+                if (this.manager.shutdown) {
+                    gui.onClose(this.manager, player);
                 } else {
-                    Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                    Bukkit.getScheduler().runTaskLater(this.manager.plugin, () -> gui.onClose(this.manager, player), 1);
                 }
 
-                manager.openInventories.remove(player);
+                this.manager.openInventories.remove(player);
             }
         }
 
         @EventHandler
         void onDisable(PluginDisableEvent event) {
-            if (event.getPlugin() == manager.plugin) {
+            if (event.getPlugin() == this.manager.plugin) {
                 // uh-oh! Abandon ship!!
-                manager.shutdown = true;
-                manager.closeAll();
-                manager.initialized = false;
+                this.manager.shutdown = true;
+                this.manager.closeAll();
+                this.manager.initialized = false;
             }
         }
     }

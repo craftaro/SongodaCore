@@ -1,5 +1,6 @@
 package com.craftaro.core.compatibility;
 
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -7,7 +8,6 @@ import org.bukkit.entity.Player;
 
 /**
  * TODO: Probably recode to be similar to CompatibleMaterial
- *
  * Sounds that are compatible with server versions 1.7+ <br>
  * TODO: This needs work.
  * Finished 1.8, finished 1.9 blocks, resume with 1.9 entities<br>
@@ -15,7 +15,10 @@ import org.bukkit.entity.Player;
  * sounds were renamed. New sounds have been added by different versions, as
  * well. The intent of this class is to provide either the correct sound or a
  * near equivalent for the current server.
+ *
+ * @deprecated Use {@link XSound} instead.
  */
+@Deprecated
 public enum CompatibleSound {
     // some of these values are missing an API value...
     // would using the raw strings be better?
@@ -1358,19 +1361,19 @@ public enum CompatibleSound {
         if (DEBUG && find == null) {
             System.err.println("Sound for " + name() + " not found!");
         }
-        sound = find;
-        compatibilityMode = find == null;
+        this.sound = find;
+        this.compatibilityMode = find == null;
     }
 
     // if the sound only ever changed from 1.8 -> 1.9
     CompatibleSound(String compatibility_18) {
         try {
-            compatibilityMode = false;
+            this.compatibilityMode = false;
 
             if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
-                sound = Sound.valueOf(compatibility_18);
+                this.sound = Sound.valueOf(compatibility_18);
             } else {
-                sound = Sound.valueOf(name());
+                this.sound = Sound.valueOf(name());
             }
         } catch (Exception ex) {
             System.err.println("ERROR loading " + name());
@@ -1382,8 +1385,8 @@ public enum CompatibleSound {
         try {
             for (Version v : versions) {
                 if (v.sound != null && ServerVersion.isServerVersionAtLeast(v.version)) {
-                    sound = Sound.valueOf(v.sound);
-                    compatibilityMode = v.compatibilityMode;
+                    this.sound = Sound.valueOf(v.sound);
+                    this.compatibilityMode = v.compatibilityMode;
                     return;
                 }
             }
@@ -1404,28 +1407,28 @@ public enum CompatibleSound {
             }
         }
 
-        sound = find;
-        compatibilityMode = find == null;
+        this.sound = find;
+        this.compatibilityMode = find == null;
     }
 
     CompatibleSound(ServerVersion minVersion, Version... versions) {
         try {
             if (ServerVersion.isServerVersionAtLeast(minVersion)) {
                 // should be good to use this sound
-                sound = Sound.valueOf(name());
+                this.sound = Sound.valueOf(name());
             } else {
                 for (Version v : versions) {
                     if (v.sound != null && ServerVersion.isServerVersionAtLeast(v.version)) {
-                        sound = Sound.valueOf(v.sound);
-                        compatibilityMode = v.compatibilityMode;
+                        this.sound = Sound.valueOf(v.sound);
+                        this.compatibilityMode = v.compatibilityMode;
                         return;
                     }
                 }
 
-                sound = null;
+                this.sound = null;
             }
 
-            compatibilityMode = false;
+            this.compatibilityMode = false;
         } catch (Exception ex) {
             System.err.println("ERROR loading " + name() + " (" + minVersion + ")");
             for (Version v : versions) {
@@ -1443,7 +1446,7 @@ public enum CompatibleSound {
      * @return Either the matching sound or a similar sound
      */
     public Sound getSound() {
-        return sound != null ? sound : UI_BUTTON_CLICK.sound;
+        return this.sound != null ? this.sound : UI_BUTTON_CLICK.sound;
     }
 
     /**
@@ -1507,7 +1510,7 @@ public enum CompatibleSound {
      * @return Returns false if we are using a different sound.
      */
     public boolean usesCompatibility() {
-        return !compatibilityMode;
+        return !this.compatibilityMode;
     }
 
     private static Version v(String sound) {

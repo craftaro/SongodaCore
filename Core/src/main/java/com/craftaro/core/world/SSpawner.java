@@ -1,10 +1,10 @@
 package com.craftaro.core.world;
 
-import com.craftaro.core.utils.EntityUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.hooks.EntityStackerManager;
 import com.craftaro.core.nms.Nms;
 import com.craftaro.core.nms.world.SpawnedEntity;
+import com.craftaro.core.utils.EntityUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Location;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -39,9 +39,8 @@ public class SSpawner {
      *
      * @return amount of entities spawned
      */
-    public int spawn(int amountToSpawn, String particle, Set<CompatibleMaterial> canSpawnOn, SpawnedEntity spawned,
-                     EntityType... types) {
-        if (location.getWorld() == null) {
+    public int spawn(int amountToSpawn, String particle, Set<XMaterial> canSpawnOn, SpawnedEntity spawned, EntityType... types) {
+        if (this.location.getWorld() == null) {
             return 0;
         }
 
@@ -60,7 +59,7 @@ public class SSpawner {
         int amountSpawned = 0;
         while (spawnCountUsed-- > 0) {
             EntityType type = types[ThreadLocalRandom.current().nextInt(types.length)];
-            LivingEntity entity = sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
+            LivingEntity entity = this.sSpawner.spawnEntity(type, particle, spawned, canSpawnOn);
 
             if (entity != null) {
                 // If this entity is indeed stackable then spawn a single stack with the desired stack size.
@@ -79,6 +78,6 @@ public class SSpawner {
     }
 
     public Location getLocation() {
-        return location;
+        return this.location;
     }
 }

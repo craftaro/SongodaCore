@@ -29,13 +29,13 @@ public class SWorld {
 
     public List<LivingEntity> getLivingEntities() {
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_17)) {
-            return world.getLivingEntities();
+            return this.world.getLivingEntities();
         }
 
-        return sWorld.getLivingEntities();
+        return this.sWorld.getLivingEntities();
     }
 
     public World getWorld() {
-        return world;
+        return this.world;
     }
 }

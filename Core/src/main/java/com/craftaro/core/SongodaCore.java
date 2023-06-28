@@ -1,6 +1,7 @@
 package com.craftaro.core;
 
 import com.craftaro.core.commands.CommandManager;
+import com.craftaro.core.compatibility.ClientVersion;
 import com.craftaro.core.core.LocaleModule;
 import com.craftaro.core.core.PluginInfo;
 import com.craftaro.core.core.PluginInfoModule;
@@ -10,8 +11,7 @@ import com.craftaro.core.core.SongodaCoreLicenseCommand;
 import com.craftaro.core.core.SongodaCoreUUIDCommand;
 import com.craftaro.core.verification.CraftaroProductVerification;
 import com.craftaro.core.verification.ProductVerificationStatus;
-import com.craftaro.core.compatibility.ClientVersion;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SongodaCore {
-    private static final Logger logger = Logger.getLogger(SongodaCoreConstants.getProjectName());
+    private static final Logger logger = Logger.getLogger(CraftaroCoreConstants.getProjectName());
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -59,10 +59,10 @@ public class SongodaCore {
 
     /**
      * @since coreRevision 6
-     * @deprecated Is being replaced by {@link SongodaCoreConstants#getCoreVersion()} which is automatically kept up to date.
+     * @deprecated Is being replaced by {@link CraftaroCoreConstants#getCoreVersion()} which is automatically kept up to date.
      */
     @Deprecated
-    private static final String coreVersion = SongodaCoreConstants.getCoreVersion();
+    private static final String coreVersion = CraftaroCoreConstants.getCoreVersion();
 
     /**
      * This is specific to the website api
@@ -83,11 +83,11 @@ public class SongodaCore {
 
     public static boolean hasShading() {
         // sneaky hack to check the package name since maven tries to re-shade all references to the package string
-        return !SongodaCore.class.getPackage().getName().equals(new String(new char[] {'c', 'o', 'm', '.', 's', 'o', 'n', 'g', 'o', 'd', 'a', '.', 'c', 'o', 'r', 'e'}));
+        return !SongodaCore.class.getPackage().getName().equals(new String(new char[] {'c', 'o', 'm', '.', 'c', 'r', 'a', 'f', 't', 'a', 'r', 'o', '.', 'c', 'o', 'r', 'e'}));
     }
 
-    public static void registerPlugin(JavaPlugin plugin, int pluginID, CompatibleMaterial icon) {
-        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), SongodaCoreConstants.getCoreVersion());
+    public static void registerPlugin(JavaPlugin plugin, int pluginID, XMaterial icon) {
+        registerPlugin(plugin, pluginID, icon == null ? "STONE" : icon.name(), CraftaroCoreConstants.getCoreVersion());
     }
 
     public static void registerPlugin(JavaPlugin plugin, int pluginID, String icon) {
@@ -182,31 +182,31 @@ public class SongodaCore {
     }
 
     SongodaCore() {
-        commandManager = null;
+        this.commandManager = null;
     }
 
     SongodaCore(JavaPlugin javaPlugin) {
-        piggybackedPlugin = javaPlugin;
-        commandManager = new CommandManager(piggybackedPlugin);
-        loginListener = new EventListener();
+        this.piggybackedPlugin = javaPlugin;
+        this.commandManager = new CommandManager(this.piggybackedPlugin);
+        this.loginListener = new EventListener();
     }
 
     private void init() {
-        shadingListener = new ShadedEventListener();
-        commandManager.registerCommandDynamically(new SongodaCoreCommand())
+        this.shadingListener = new ShadedEventListener();
+        this.commandManager.registerCommandDynamically(new SongodaCoreCommand())
                 .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreUUIDCommand(), new SongodaCoreLicenseCommand());
-        Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
-        Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
+        Bukkit.getPluginManager().registerEvents(this.loginListener, this.piggybackedPlugin);
+        Bukkit.getPluginManager().registerEvents(this.shadingListener, this.piggybackedPlugin);
 
         // we aggressively want to own this command
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+        this.tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(this.piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(this.piggybackedPlugin, "songoda", this.commandManager, this.commandManager),
                 10 * 60));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+        this.tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(this.piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(this.piggybackedPlugin, "songoda", this.commandManager, this.commandManager),
                 20 * 60));
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(piggybackedPlugin, () ->
-                        CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager),
+        this.tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(this.piggybackedPlugin, () ->
+                        CommandManager.registerCommandDynamically(this.piggybackedPlugin, "songoda", this.commandManager, this.commandManager),
                 20 * 60 * 2));
     }
 
@@ -216,17 +216,17 @@ public class SongodaCore {
     private void destroy() {
         Bukkit.getServicesManager().unregister(SongodaCore.class, INSTANCE);
 
-        tasks.stream().filter(Objects::nonNull)
+        this.tasks.stream().filter(Objects::nonNull)
                 .forEach(task -> Bukkit.getScheduler().cancelTask(task.getTaskId()));
 
-        HandlerList.unregisterAll(loginListener);
+        HandlerList.unregisterAll(this.loginListener);
         if (!hasShading()) {
-            HandlerList.unregisterAll(shadingListener);
+            HandlerList.unregisterAll(this.shadingListener);
         }
 
         registeredPlugins.clear();
-        commandManager = null;
-        loginListener = null;
+        this.commandManager = null;
+        this.loginListener = null;
     }
 
     private ArrayList<BukkitTask> tasks = new ArrayList<>();
@@ -247,7 +247,7 @@ public class SongodaCore {
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
         registeredPlugins.add(info);
-        tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
+        this.tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
     }
 
     /**
@@ -300,7 +300,7 @@ public class SongodaCore {
     }
 
     public static String getVersion() {
-        return SongodaCoreConstants.getCoreVersion();
+        return CraftaroCoreConstants.getCoreVersion();
     }
 
     /**
@@ -316,7 +316,7 @@ public class SongodaCore {
      */
     @Deprecated
     public static String getCoreLibraryVersion() {
-        return SongodaCoreConstants.getCoreVersion();
+        return CraftaroCoreConstants.getCoreVersion();
     }
 
     public static int getCoreMajorVersion() {
@@ -337,7 +337,7 @@ public class SongodaCore {
     }
 
     public static String getPrefix() {
-        return "[" + SongodaCoreConstants.getProjectName() + "] ";
+        return "[" + CraftaroCoreConstants.getProjectName() + "] ";
     }
 
     public static Logger getLogger() {
@@ -361,34 +361,34 @@ public class SongodaCore {
         boolean proto = false;
 
         ShadedEventListener() {
-            via = Bukkit.getPluginManager().isPluginEnabled("ViaVersion");
+            this.via = Bukkit.getPluginManager().isPluginEnabled("ViaVersion");
 
-            if (via) {
+            if (this.via) {
                 Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p, getHijackedPlugin()));
                 return;
             }
 
-            proto = Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport");
-            if (proto) {
+            this.proto = Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport");
+            if (this.proto) {
                 Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p, getHijackedPlugin()));
             }
         }
 
         @EventHandler
         void onLogin(PlayerLoginEvent event) {
-            if (via) {
+            if (this.via) {
                 ClientVersion.onLoginVia(event.getPlayer(), getHijackedPlugin());
                 return;
             }
 
-            if (proto) {
+            if (this.proto) {
                 ClientVersion.onLoginProtocol(event.getPlayer(), getHijackedPlugin());
             }
         }
 
         @EventHandler
         void onLogout(PlayerQuitEvent event) {
-            if (via) {
+            if (this.via) {
                 ClientVersion.onLogout(event.getPlayer());
             }
         }
@@ -396,9 +396,9 @@ public class SongodaCore {
         @EventHandler
         void onEnable(PluginEnableEvent event) {
             // technically shouldn't have online players here, but idk
-            if (!via && (via = event.getPlugin().getName().equals("ViaVersion"))) {
+            if (!this.via && (this.via = event.getPlugin().getName().equals("ViaVersion"))) {
                 Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginVia(p, getHijackedPlugin()));
-            } else if (!proto && (proto = event.getPlugin().getName().equals("ProtocolSupport"))) {
+            } else if (!this.proto && (this.proto = event.getPlugin().getName().equals("ProtocolSupport"))) {
                 Bukkit.getOnlinePlayers().forEach(p -> ClientVersion.onLoginProtocol(p, getHijackedPlugin()));
             }
         }
@@ -413,13 +413,13 @@ public class SongodaCore {
 
             // don't spam players with update checks
             long now = System.currentTimeMillis();
-            Long last = lastCheck.get(player.getUniqueId());
+            Long last = this.lastCheck.get(player.getUniqueId());
 
             if (last != null && now - 10000 < last) {
                 return;
             }
 
-            lastCheck.put(player.getUniqueId(), now);
+            this.lastCheck.put(player.getUniqueId(), now);
 
             // is this player good to revieve update notices?
             if (!event.getPlayer().isOp() && !player.hasPermission("songoda.updatecheck")) return;
@@ -441,19 +441,19 @@ public class SongodaCore {
                 registeredPlugins.remove(pi);
             }
 
-            if (event.getPlugin() == piggybackedPlugin) {
+            if (event.getPlugin() == SongodaCore.this.piggybackedPlugin) {
                 // uh-oh! Abandon ship!!
-                Bukkit.getServicesManager().unregisterAll(piggybackedPlugin);
+                Bukkit.getServicesManager().unregisterAll(SongodaCore.this.piggybackedPlugin);
 
                 // can we move somewhere else?
                 if ((pi = registeredPlugins.stream().findFirst().orElse(null)) != null) {
                     // move ourselves to this plugin
-                    piggybackedPlugin = pi.getJavaPlugin();
+                    SongodaCore.this.piggybackedPlugin = pi.getJavaPlugin();
 
-                    Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, piggybackedPlugin, ServicePriority.Normal);
-                    Bukkit.getPluginManager().registerEvents(loginListener, piggybackedPlugin);
-                    Bukkit.getPluginManager().registerEvents(shadingListener, piggybackedPlugin);
-                    CommandManager.registerCommandDynamically(piggybackedPlugin, "songoda", commandManager, commandManager);
+                    Bukkit.getServicesManager().register(SongodaCore.class, INSTANCE, SongodaCore.this.piggybackedPlugin, ServicePriority.Normal);
+                    Bukkit.getPluginManager().registerEvents(SongodaCore.this.loginListener, SongodaCore.this.piggybackedPlugin);
+                    Bukkit.getPluginManager().registerEvents(SongodaCore.this.shadingListener, SongodaCore.this.piggybackedPlugin);
+                    CommandManager.registerCommandDynamically(SongodaCore.this.piggybackedPlugin, "songoda", SongodaCore.this.commandManager, SongodaCore.this.commandManager);
                 }
             }
         }

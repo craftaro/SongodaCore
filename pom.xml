@@ -143,11 +143,6 @@
         </repository>
 
         <repository>
-            <id>ViaVersion</id>
-            <url>https://repo.viaversion.com/</url>
-        </repository>
-
-        <repository>
             <id>PaperMC</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>

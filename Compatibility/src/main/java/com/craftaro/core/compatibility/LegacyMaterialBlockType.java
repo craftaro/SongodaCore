@@ -52,8 +52,8 @@ public enum LegacyMaterialBlockType {
     final String alternateBlockMaterialName;
     final Material blockMaterial, alternateBlockMaterial;
     final boolean requiresData; // some blocks require data to render properly (double blocks)
-    final static Map<String, LegacyMaterialBlockType> lookupTable = new HashMap<>();
-    final static Map<String, LegacyMaterialBlockType> reverseLookupTable = new HashMap<>();
+    static final Map<String, LegacyMaterialBlockType> lookupTable = new HashMap<>();
+    static final Map<String, LegacyMaterialBlockType> reverseLookupTable = new HashMap<>();
 
     static {
         for (LegacyMaterialBlockType t : values()) {
@@ -85,29 +85,29 @@ public enum LegacyMaterialBlockType {
         this.blockMaterialName = blockMaterial;
         this.alternateBlockMaterialName = alternateMaterial;
         this.requiresData = requiresData;
-        this.blockMaterial = Material.getMaterial(blockMaterialName);
-        this.alternateBlockMaterial = Material.getMaterial(alternateBlockMaterialName);
+        this.blockMaterial = Material.getMaterial(this.blockMaterialName);
+        this.alternateBlockMaterial = Material.getMaterial(this.alternateBlockMaterialName);
         this.blockData = data;
     }
 
     public String getBlockMaterialName() {
-        return blockMaterialName;
+        return this.blockMaterialName;
     }
 
     public String getAlternateMaterialName() {
-        return alternateBlockMaterialName;
+        return this.alternateBlockMaterialName;
     }
 
     public Material getBlockMaterial() {
-        return blockMaterial;
+        return this.blockMaterial;
     }
 
     public Material getAlternateBlockMaterial() {
-        return alternateBlockMaterial;
+        return this.alternateBlockMaterial;
     }
 
     public boolean requiresData() {
-        return requiresData;
+        return this.requiresData;
     }
 
     public static LegacyMaterialBlockType getMaterial(String lookup) {

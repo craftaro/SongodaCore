@@ -1,11 +1,11 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.compatibility.ServerVersion;
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.craftaro.core.compatibility.CompatibleMaterial;
-import com.craftaro.core.compatibility.ServerVersion;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -30,19 +30,19 @@ class PopupMessage {
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
     private final TextComponent title;
-    CompatibleMaterial icon;
+    XMaterial icon;
     TriggerType trigger = TriggerType.IMPOSSIBLE;
     FrameType frame = FrameType.GOAL; // TASK is the default
     BackgroundType background = BackgroundType.ADVENTURE;
 
-    PopupMessage(Plugin source, CompatibleMaterial icon, String title) {
-        this.key = new NamespacedKey(source, "popup/" + id);
+    PopupMessage(Plugin source, XMaterial icon, String title) {
+        this.key = new NamespacedKey(source, "popup/" + this.id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;
     }
 
-    PopupMessage(Plugin source, CompatibleMaterial icon, String title, BackgroundType background) {
-        this.key = new NamespacedKey(source, "popup/" + id);
+    PopupMessage(Plugin source, XMaterial icon, String title, BackgroundType background) {
+        this.key = new NamespacedKey(source, "popup/" + this.id);
         this.title = new TextComponent(title.length() < 74 ? title : (title.substring(0, 72) + "..."));
         this.icon = icon;
         this.background = background;
@@ -54,9 +54,9 @@ class PopupMessage {
 
         if (this.icon != null) {
             JsonObject displayIcon = new JsonObject();
-            displayIcon.addProperty("item", "minecraft:" + this.icon.getMaterial().name().toLowerCase());
+            displayIcon.addProperty("item", "minecraft:" + this.icon.parseMaterial().name().toLowerCase());
 
-            if (this.icon.usesData()) {
+            if (this.icon.getData() != 0) {
                 displayIcon.addProperty("data", this.icon.getData());
             }
 
@@ -64,7 +64,7 @@ class PopupMessage {
         }
 
         advDisplay.add("title", gson.fromJson(ComponentSerializer.toString(this.title), JsonElement.class));
-        advDisplay.addProperty("background", background.key);
+        advDisplay.addProperty("background", this.background.key);
         advDisplay.addProperty("description", "");
         advDisplay.addProperty("frame", this.frame.id);
         advDisplay.addProperty("announce_to_chat", false);
@@ -110,11 +110,11 @@ class PopupMessage {
     }
 
     protected void add() {
-        if (!registeredMessages.contains(id)) {
-            registeredMessages.add(id);
+        if (!registeredMessages.contains(this.id)) {
+            registeredMessages.add(this.id);
 
             try {
-                Bukkit.getUnsafe().loadAdvancement(key, getJSON());
+                Bukkit.getUnsafe().loadAdvancement(this.key, getJSON());
             } catch (IllegalArgumentException ex) {
                 Bukkit.getLogger().warning("Failed to create popup advancement!");
             }
@@ -122,14 +122,14 @@ class PopupMessage {
     }
 
     protected void remove() {
-        if (registeredMessages.contains(id)) {
-            registeredMessages.remove(id);
-            Bukkit.getUnsafe().removeAdvancement(key);
+        if (registeredMessages.contains(this.id)) {
+            registeredMessages.remove(this.id);
+            Bukkit.getUnsafe().removeAdvancement(this.key);
         }
     }
 
     public Advancement getAdvancement() {
-        return Bukkit.getAdvancement(key);
+        return Bukkit.getAdvancement(this.key);
     }
 
     public enum FrameType {
@@ -140,7 +140,7 @@ class PopupMessage {
         final String id;
 
         FrameType() {
-            id = name().toLowerCase();
+            this.id = name().toLowerCase();
         }
     }
 
@@ -192,7 +192,7 @@ class PopupMessage {
         }
 
         public String getKey() {
-            return key;
+            return this.key;
         }
     }
 }

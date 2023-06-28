@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 public enum ServerProject {
     UNKNOWN, CRAFTBUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE, MOCK_BUKKIT;
-    private final static ServerProject serverProject = checkProject();
+    private static final ServerProject serverProject = checkProject();
 
     private static ServerProject checkProject() {
         String serverPath = Bukkit.getServer().getClass().getName();

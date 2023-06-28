@@ -8,7 +8,7 @@ import com.craftaro.core.gui.methods.Droppable;
 import com.craftaro.core.gui.methods.Openable;
 import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
-import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -32,31 +32,31 @@ public class DoubleGui extends Gui {
 
     public DoubleGui() {
         super(GuiType.STANDARD);
-        allowDropItems = false;
+        this.allowDropItems = false;
     }
 
     public DoubleGui(GuiType type) {
         super(type);
-        allowDropItems = false;
+        this.allowDropItems = false;
     }
 
     public DoubleGui(int rows) {
         super(rows);
-        allowDropItems = false;
+        this.allowDropItems = false;
     }
 
     public DoubleGui(int rows, Gui parent) {
         super(rows, parent);
-        allowDropItems = false;
+        this.allowDropItems = false;
     }
 
     public DoubleGui(Gui parent) {
         super(parent);
-        allowDropItems = false;
+        this.allowDropItems = false;
     }
 
     public int getPlayerRows() {
-        return playerRows;
+        return this.playerRows;
     }
 
     // 9  -> 0  -> 54
@@ -78,29 +78,29 @@ public class DoubleGui extends Gui {
     }
 
     public DoubleGui setPlayerUnlocked(int cell) {
-        unlockedCells.put(invOffset(cell), true);
+        this.unlockedCells.put(invOffset(cell), true);
         return this;
     }
 
     public DoubleGui setPlayerUnlocked(int row, int col) {
-        unlockedCells.put(invOffset(col + row * 9), true);
+        this.unlockedCells.put(invOffset(col + row * 9), true);
         return this;
     }
 
     public DoubleGui setPlayerUnlocked(int cell, boolean open) {
-        unlockedCells.put(invOffset(cell), open);
+        this.unlockedCells.put(invOffset(cell), open);
         return this;
     }
 
     public DoubleGui setPlayerUnlocked(int row, int col, boolean open) {
-        unlockedCells.put(invOffset(col + row * 9), open);
+        this.unlockedCells.put(invOffset(col + row * 9), open);
         return this;
     }
 
     public DoubleGui setPlayerUnlockedRange(int cellFirst, int cellLast) {
         final int last = invOffset(cellLast);
         for (int cell = invOffset(cellFirst); cell <= last; ++cell) {
-            unlockedCells.put(cell, true);
+            this.unlockedCells.put(cell, true);
         }
         return this;
     }
@@ -109,7 +109,7 @@ public class DoubleGui extends Gui {
         final int last = invOffset(cellLast);
 
         for (int cell = invOffset(cellFirst); cell <= last; ++cell) {
-            unlockedCells.put(cell, open);
+            this.unlockedCells.put(cell, open);
         }
 
         return this;
@@ -119,7 +119,7 @@ public class DoubleGui extends Gui {
         final int last = invOffset(cellColLast + cellRowLast * 9);
 
         for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
-            unlockedCells.put(cell, true);
+            this.unlockedCells.put(cell, true);
         }
 
         return this;
@@ -129,19 +129,19 @@ public class DoubleGui extends Gui {
         final int last = invOffset(cellColLast + cellRowLast * 9);
 
         for (int cell = invOffset(cellColFirst + cellRowFirst * 9); cell <= last; ++cell) {
-            unlockedCells.put(cell, open);
+            this.unlockedCells.put(cell, open);
         }
 
         return this;
     }
 
     public DoubleGui setPlayerItem(int cell, ItemStack item) {
-        cellItems.put(invOffset(cell), item);
+        this.cellItems.put(invOffset(cell), item);
 
-        if (open && cell >= 0 && cell < 36) {
+        if (this.open && cell >= 0 && cell < 36) {
             cell = cell >= 27 ? cell - 27 : cell + 9;
 
-            for (HumanEntity e : inventory.getViewers()) {
+            for (HumanEntity e : this.inventory.getViewers()) {
                 e.getInventory().setItem(cell, item);
             }
         }
@@ -151,12 +151,12 @@ public class DoubleGui extends Gui {
 
     public DoubleGui setPlayerItem(int row, int col, ItemStack item) {
         int cell = col + row * 9;
-        cellItems.put(invOffset(cell), item);
+        this.cellItems.put(invOffset(cell), item);
 
-        if (open && cell >= 0 && cell < 36) {
+        if (this.open && cell >= 0 && cell < 36) {
             cell = cell >= 27 ? cell - 27 : cell + 9;
 
-            for (HumanEntity e : inventory.getViewers()) {
+            for (HumanEntity e : this.inventory.getViewers()) {
                 e.getInventory().setItem(cell, item);
             }
         }
@@ -166,7 +166,7 @@ public class DoubleGui extends Gui {
 
     public DoubleGui highlightPlayerItem(int cell) {
         final int invCell = invOffset(cell);
-        ItemStack item = cellItems.get(invCell);
+        ItemStack item = this.cellItems.get(invCell);
 
         if (item != null) {
             setPlayerItem(cell, ItemUtils.addGlow(item));
@@ -179,7 +179,7 @@ public class DoubleGui extends Gui {
         final int cell = col + row * 9;
         final int invCell = invOffset(cell);
 
-        ItemStack item = cellItems.get(invCell);
+        ItemStack item = this.cellItems.get(invCell);
         if (item != null) {
             setPlayerItem(cell, ItemUtils.addGlow(item));
         }
@@ -244,13 +244,13 @@ public class DoubleGui extends Gui {
     }
 
     public DoubleGui clearPlayerActions(int cell) {
-        conditionalButtons.remove(invOffset(cell));
+        this.conditionalButtons.remove(invOffset(cell));
         return this;
     }
 
     public DoubleGui clearPlayerActions(int row, int col) {
         final int cell = invOffset(col + row * 9);
-        conditionalButtons.remove(cell);
+        this.conditionalButtons.remove(cell);
 
         return this;
     }
@@ -290,7 +290,7 @@ public class DoubleGui extends Gui {
     @Override
     protected boolean onClickPlayerInventory(GuiManager manager, Player player, Inventory openInv, InventoryClickEvent event) {
         final int cell = event.getSlot(), offsetCell = clickOffset(cell);
-        Map<ClickType, Clickable> conditionals = conditionalButtons.get(offsetCell);
+        Map<ClickType, Clickable> conditionals = this.conditionalButtons.get(offsetCell);
         Clickable button;
 
         if (conditionals != null
@@ -301,15 +301,15 @@ public class DoubleGui extends Gui {
             return false;
         }
 
-        event.setCancelled(unlockedCells.entrySet().stream().noneMatch(e -> offsetCell == e.getKey() && e.getValue()));
+        event.setCancelled(this.unlockedCells.entrySet().stream().noneMatch(e -> offsetCell == e.getKey() && e.getValue()));
 
         return true;
     }
 
     @Override
     protected boolean onClickOutside(GuiManager manager, Player player, InventoryClickEvent event) {
-        if (dropper != null) {
-            return dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
+        if (this.dropper != null) {
+            return this.dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
         }
 
         // do not allow by default
@@ -319,7 +319,7 @@ public class DoubleGui extends Gui {
     @Override
     public void onOpen(GuiManager manager, Player player) {
         // replace the player's inventory
-        if (startStashed) {
+        if (this.startStashed) {
             stashItems(player);
         }
 
@@ -337,15 +337,15 @@ public class DoubleGui extends Gui {
     }
 
     protected void restoreStash(Player player) {
-        if (stash.containsKey(player)) {
-            player.getInventory().setContents(stash.remove(player));
+        if (this.stash.containsKey(player)) {
+            player.getInventory().setContents(this.stash.remove(player));
             player.updateInventory();
         }
     }
 
     protected void stashItems(Player player) {
-        if (!stash.containsKey(player)) {
-            stash.put(player, player.getInventory().getContents().clone());
+        if (!this.stash.containsKey(player)) {
+            this.stash.put(player, player.getInventory().getContents().clone());
             player.getInventory().clear();
         }
     }
@@ -461,12 +461,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, String... lore) {
+    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
@@ -481,12 +481,12 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, CompatibleMaterial itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, CompatibleMaterial itemTo, String title, List<String> lore) {
+    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 

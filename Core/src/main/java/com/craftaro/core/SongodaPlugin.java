@@ -1,6 +1,5 @@
 package com.craftaro.core;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.database.DataManager;
 import com.craftaro.core.database.DataMigration;
@@ -9,6 +8,7 @@ import com.craftaro.core.locale.Locale;
 import com.craftaro.core.utils.Metrics;
 import com.craftaro.core.verification.CraftaroProductVerification;
 import com.craftaro.core.verification.ProductVerificationStatus;
+import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,6 +20,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class SongodaPlugin extends JavaPlugin {
@@ -35,7 +36,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
     static {
         /* NBT-API */
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
-        MinecraftVersion.disableUpdateCheck();
         // Disable tips and logo for Jooq
         System.setProperty("org.jooq.no-tips", "true");
         System.setProperty("org.jooq.no-logo", "true");
@@ -63,22 +63,22 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public FileConfiguration getConfig() {
-        return config.getFileConfig();
+        return this.config.getFileConfig();
     }
 
     public Config getCoreConfig() {
-        return config;
+        return this.config;
     }
 
     @Override
     public void reloadConfig() {
-        config.load();
+        this.config.load();
         onConfigReload();
     }
 
     @Override
     public void saveConfig() {
-        config.save();
+        this.config.save();
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
                     ChatColor.YELLOW + "Run the command " + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + " and follow the instructions\n" +
                     ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             this.licensePreventedPluginLoad = true;
-            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (CompatibleMaterial) null);
+            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (XMaterial) null);
 
             getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
                 String pluginName = getDescription().getName();

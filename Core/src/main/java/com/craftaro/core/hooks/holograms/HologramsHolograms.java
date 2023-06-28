@@ -20,7 +20,7 @@ public class HologramsHolograms extends Holograms {
     public HologramsHolograms(Plugin plugin) {
         super(plugin);
 
-        hologramPlugin = (HologramPlugin) Bukkit.getPluginManager().getPlugin("Holograms");
+        this.hologramPlugin = (HologramPlugin) Bukkit.getPluginManager().getPlugin("Holograms");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class HologramsHolograms extends Holograms {
 
     @Override
     public boolean isEnabled() {
-        return hologramPlugin.isEnabled();
+        return this.hologramPlugin.isEnabled();
     }
 
     @Override
@@ -45,38 +45,38 @@ public class HologramsHolograms extends Holograms {
 
     @Override
     public void removeHologram(String id) {
-        Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
+        Hologram hologram = this.hologramPlugin.getHologramManager().getHologram(id);
 
         if (hologram != null) {
             hologram.despawn();
-            hologramPlugin.getHologramManager().removeActiveHologram(hologram);
+            this.hologramPlugin.getHologramManager().removeActiveHologram(hologram);
         }
 
-        ourHolograms.remove(id);
+        this.ourHolograms.remove(id);
     }
 
     @Override
     public void removeAllHolograms() {
-        for (String id : ourHolograms) {
-            Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
+        for (String id : this.ourHolograms) {
+            Hologram hologram = this.hologramPlugin.getHologramManager().getHologram(id);
 
             if (hologram != null) {
                 hologram.despawn();
-                hologramPlugin.getHologramManager().removeActiveHologram(hologram);
+                this.hologramPlugin.getHologramManager().removeActiveHologram(hologram);
             }
         }
 
-        ourHolograms.clear();
+        this.ourHolograms.clear();
     }
 
     @Override
     public boolean isHologramLoaded(String id) {
-        return hologramPlugin.getHologramManager().getHologram(id) != null;
+        return this.hologramPlugin.getHologramManager().getHologram(id) != null;
     }
 
     @Override
     public void updateHologram(String id, List<String> lines) {
-        Hologram hologram = hologramPlugin.getHologramManager().getHologram(id);
+        Hologram hologram = this.hologramPlugin.getHologramManager().getHologram(id);
 
         if (hologram != null) {
             hologram.spawn();
@@ -118,8 +118,8 @@ public class HologramsHolograms extends Holograms {
             hologram.addLine(new TextLine(hologram, line));
         }
 
-        hologramPlugin.getHologramManager().addActiveHologram(hologram);
+        this.hologramPlugin.getHologramManager().addActiveHologram(hologram);
 
-        ourHolograms.add(id);
+        this.ourHolograms.add(id);
     }
 }

@@ -1,7 +1,7 @@
 package com.craftaro.core.lootables.loot;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.lootables.loot.objects.EnchantChance;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.EntityType;
 
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public final class LootBuilder {
         this.loot = new Loot();
     }
 
-    public LootBuilder setMaterial(CompatibleMaterial material) {
+    public LootBuilder setMaterial(XMaterial material) {
         this.loot.setMaterial(material);
         return this;
     }
@@ -52,7 +52,7 @@ public final class LootBuilder {
         return this;
     }
 
-    public LootBuilder setBurnedMaterial(CompatibleMaterial material) {
+    public LootBuilder setBurnedMaterial(XMaterial material) {
         this.loot.setBurnedMaterial(material);
         return this;
     }

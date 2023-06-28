@@ -1,6 +1,7 @@
 package com.craftaro.core.compatibility;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,62 +47,66 @@ public enum CompatibleHand {
     }
 
     /**
-     * Use up whatever item the player is holding in their main hand
+     * Use up whatever item the player is holding in their hand
      *
-     * @param player player to grab item from
+     * @param entity entity to grab item from
      */
-    public void takeItem(Player player) {
-        takeItem(player, 1);
+    public void takeItem(LivingEntity entity) {
+        takeItem(entity, 1);
     }
 
     /**
-     * Use up whatever item the player is holding in their main hand
+     * Use up whatever item the player is holding in their hand
      *
-     * @param player player to grab item from
+     * @param entity entity to grab item from
      * @param amount number of items to use up
      */
-    public void takeItem(Player player, int amount) {
+    public void takeItem(LivingEntity entity, int amount) {
         ItemStack item = this == CompatibleHand.MAIN_HAND
-                ? player.getInventory().getItemInHand() : player.getInventory().getItemInOffHand();
+                ? entity.getEquipment().getItemInHand() : entity.getEquipment().getItemInOffHand();
 
         int result = item.getAmount() - amount;
         item.setAmount(result);
 
         if (this == CompatibleHand.MAIN_HAND) {
-            player.setItemInHand(result > 0 ? item : null);
+            entity.getEquipment().setItemInHand(result > 0 ? item : null);
             return;
         }
 
-        player.getInventory().setItemInOffHand(result > 0 ? item : null);
+        entity.getEquipment().setItemInOffHand(result > 0 ? item : null);
     }
 
     /**
      * Get item in the selected hand
      *
-     * @param player the player to get the item from
+     * @param entity The entity to get the item from
      *
-     * @return the item
+     * @return The item or null
      */
-    public ItemStack getItem(Player player) {
-        if (this == MAIN_HAND) {
-            return player.getItemInHand();
+    public ItemStack getItem(LivingEntity entity) {
+        EntityEquipment equipment = entity.getEquipment();
+        if (equipment == null) {
+            return null;
         }
 
-        return player.getInventory().getItemInOffHand();
+        if (this == MAIN_HAND) {
+            return equipment.getItemInMainHand();
+        }
+        return equipment.getItemInOffHand();
     }
 
     /**
      * Set the item in the selected hand
      *
-     * @param player the player to set the item of
-     * @param item   the item to set
+     * @param entity The entity to set the item of
+     * @param item   The item to set
      */
-    public void setItem(Player player, ItemStack item) {
+    public void setItem(LivingEntity entity, ItemStack item) {
         if (this == MAIN_HAND) {
-            player.setItemInHand(item);
+            entity.getEquipment().setItemInHand(item);
             return;
         }
 
-        player.getInventory().setItemInOffHand(item);
+        entity.getEquipment().setItemInOffHand(item);
     }
 }

@@ -47,7 +47,7 @@ public class DecentHologramsHolograms extends Holograms {
             DecentHologramsAPI.get().getHologramManager().removeHologram(id);
         }
 
-        ourHolograms.remove(id);
+        this.ourHolograms.remove(id);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DecentHologramsHolograms extends Holograms {
 
     @Override
     public void removeAllHolograms() {
-        for (String id : ourHolograms) {
+        for (String id : this.ourHolograms) {
             Hologram hologram = DHAPI.getHologram(id);
 
             if (hologram != null) {
@@ -77,7 +77,7 @@ public class DecentHologramsHolograms extends Holograms {
             }
         }
 
-        ourHolograms.clear();
+        this.ourHolograms.clear();
     }
 
     @Override
@@ -93,6 +93,6 @@ public class DecentHologramsHolograms extends Holograms {
         }
 
         DHAPI.createHologram(id, location, lines);
-        ourHolograms.add(id);
+        this.ourHolograms.add(id);
     }
 }

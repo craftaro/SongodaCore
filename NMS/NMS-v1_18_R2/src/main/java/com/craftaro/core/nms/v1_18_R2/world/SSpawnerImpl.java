@@ -4,6 +4,7 @@ import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.nms.world.SSpawner;
 import com.craftaro.core.nms.world.SpawnedEntity;
+import com.cryptomorin.xseries.XMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +37,7 @@ public class SSpawnerImpl implements SSpawner {
     }
 
     @Override
-    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<CompatibleMaterial> canSpawnOn) {
+    public LivingEntity spawnEntity(EntityType type, String particleType, SpawnedEntity spawned, Set<XMaterial> canSpawnOn) {
         SpawnData data = new SpawnData();
         CompoundTag compound = data.getEntityToSpawn();
 
@@ -46,14 +47,14 @@ public class SSpawnerImpl implements SSpawner {
         compound.putString("id", "minecraft:" + name);
 
         short spawnRange = 4;
-        for (int i = 0; i < 50; i++) {
-            assert spawnerLocation.getWorld() != null;
-            ServerLevel world = ((CraftWorld) spawnerLocation.getWorld()).getHandle();
+        for (int i = 0; i < 50; ++i) {
+            assert this.spawnerLocation.getWorld() != null;
+            ServerLevel world = ((CraftWorld) this.spawnerLocation.getWorld()).getHandle();
 
             Random random = world.getRandom();
-            double x = spawnerLocation.getX() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
-            double y = spawnerLocation.getY() + random.nextInt(3) - 1;
-            double z = spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
+            double x = this.spawnerLocation.getX() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
+            double y = this.spawnerLocation.getY() + random.nextInt(3) - 1;
+            double z = this.spawnerLocation.getZ() + (random.nextDouble() - random.nextDouble()) * (double) spawnRange + 0.5D;
 
             Optional<Entity> optionalEntity = net.minecraft.world.entity.EntityType.create(compound, world);
             if (optionalEntity.isEmpty()) continue;
@@ -68,7 +69,7 @@ public class SSpawnerImpl implements SSpawner {
                 continue;
             }
 
-            Location spot = new Location(spawnerLocation.getWorld(), x, y, z);
+            Location spot = new Location(this.spawnerLocation.getWorld(), x, y, z);
 
             if (!canSpawn(world, entityInsentient, spot, canSpawnOn)) {
                 continue;
@@ -101,29 +102,29 @@ public class SSpawnerImpl implements SSpawner {
         return null;
     }
 
-    private boolean canSpawn(ServerLevel world, Mob entityInsentient, Location location, Set<CompatibleMaterial> canSpawnOn) {
+    private boolean canSpawn(ServerLevel world, Mob entityInsentient, Location location, Set<XMaterial> canSpawnOn) {
         if (!world.noCollision(entityInsentient, entityInsentient.getBoundingBox())) {
             return false;
         }
 
-        CompatibleMaterial spawnedIn = CompatibleMaterial.getMaterial(location.getBlock());
-        CompatibleMaterial spawnedOn = CompatibleMaterial.getMaterial(location.getBlock().getRelative(BlockFace.DOWN));
+        Optional<XMaterial> spawnedIn = CompatibleMaterial.getMaterial(location.getBlock().getType());
+        Optional<XMaterial> spawnedOn = CompatibleMaterial.getMaterial(location.getBlock().getRelative(BlockFace.DOWN).getType());
 
-        if (spawnedIn == null || spawnedOn == null) {
+        if (spawnedIn.isEmpty() || spawnedOn.isEmpty()) {
             return false;
         }
 
-        if (!spawnedIn.isAir() &&
-                spawnedIn != CompatibleMaterial.WATER &&
-                !spawnedIn.name().contains("PRESSURE") &&
-                !spawnedIn.name().contains("SLAB")) {
+        if (!CompatibleMaterial.isAir(spawnedIn.get()) &&
+                spawnedIn.get() != XMaterial.WATER &&
+                !spawnedIn.get().name().contains("PRESSURE") &&
+                !spawnedIn.get().name().contains("SLAB")) {
             return false;
         }
 
-        for (CompatibleMaterial material : canSpawnOn) {
+        for (XMaterial material : canSpawnOn) {
             if (material == null) continue;
 
-            if (spawnedOn.equals(material) || material.isAir()) {
+            if (spawnedOn.get() == material || CompatibleMaterial.isAir(material)) {
                 return true;
             }
         }

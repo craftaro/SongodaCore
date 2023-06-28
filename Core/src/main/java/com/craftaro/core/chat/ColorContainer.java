@@ -1,9 +1,9 @@
 package com.craftaro.core.chat;
 
-import com.craftaro.core.utils.ColorUtils;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.craftaro.core.utils.ColorUtils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ColorContainer {
     private ColorCode colorCode;
@@ -24,26 +24,26 @@ public class ColorContainer {
     }
 
     public ColorCode getColorCode() {
-        return colorCode;
+        return this.colorCode;
     }
 
     public String getHexCode() {
-        return hexCode;
+        return this.hexCode;
     }
 
     public ColorCode getColor() {
-        if (colorCode != null) {
-            return colorCode;
+        if (this.colorCode != null) {
+            return this.colorCode;
         }
 
-        if (hexCode == null) {
+        if (this.hexCode == null) {
             return null;
         }
 
         java.awt.Color jColor = new Color(
-                Integer.valueOf(hexCode.substring(0, 2), 16),
-                Integer.valueOf(hexCode.substring(2, 4), 16),
-                Integer.valueOf(hexCode.substring(4, 6), 16));
+                Integer.valueOf(this.hexCode.substring(0, 2), 16),
+                Integer.valueOf(this.hexCode.substring(2, 4), 16),
+                Integer.valueOf(this.hexCode.substring(4, 6), 16));
 
         return ColorUtils.fromRGB(jColor.getRed(), jColor.getGreen(), jColor.getBlue());
     }

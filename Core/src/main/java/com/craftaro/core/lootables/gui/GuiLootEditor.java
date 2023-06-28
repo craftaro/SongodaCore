@@ -1,13 +1,14 @@
 package com.craftaro.core.lootables.gui;
 
-import com.craftaro.core.lootables.loot.Loot;
-import com.craftaro.core.lootables.loot.LootBuilder;
-import com.craftaro.core.lootables.loot.LootManager;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.gui.AnvilGui;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
+import com.craftaro.core.lootables.loot.Loot;
+import com.craftaro.core.lootables.loot.LootBuilder;
+import com.craftaro.core.lootables.loot.LootManager;
 import com.craftaro.core.utils.TextUtils;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -46,10 +47,10 @@ public class GuiLootEditor extends Gui {
 
         setActionForRange(0, 0, 5, 9, null);
 
-        setButton(8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
+        setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
                 (event) -> guiManager.showGUI(event.player, returnGui));
 
-        setButton(9, GuiUtils.createButtonItem(loot.getMaterial() == null ? CompatibleMaterial.BARRIER : loot.getMaterial(),
+        setButton(9, GuiUtils.createButtonItem(loot.getMaterial() == null ? XMaterial.BARRIER : loot.getMaterial(),
                 TextUtils.formatText("&7Current Material: &6" + (loot.getMaterial() != null
                         ? loot.getMaterial().name() : "None")), TextUtils.formatText(
                         Arrays.asList("",
@@ -57,12 +58,12 @@ public class GuiLootEditor extends Gui {
                                 "&8the material in your hand.")
                 )), (event) -> {
             ItemStack stack = event.player.getInventory().getItemInMainHand();
-            loot.setMaterial(CompatibleMaterial.getMaterial(stack));
+            loot.setMaterial(CompatibleMaterial.getMaterial(stack.getType()).get());
 
             paint();
         });
 
-        setButton(10, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+        setButton(10, GuiUtils.createButtonItem(XMaterial.PAPER,
                         TextUtils.formatText("&7Name Override: &6" + (loot.getName() == null ? "None set" : loot.getName()))),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -74,10 +75,10 @@ public class GuiLootEditor extends Gui {
                     }));
 
                     guiManager.showGUI(event.player, gui);
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, loot.getName()));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, loot.getName()));
                 });
 
-        setButton(11, GuiUtils.createButtonItem(CompatibleMaterial.WRITABLE_BOOK,
+        setButton(11, GuiUtils.createButtonItem(XMaterial.WRITABLE_BOOK,
                         TextUtils.formatText("&7Lore Override:"),
                         TextUtils.formatText(loot.getLore() == null ? Collections.singletonList("&6None set") : loot.getLore())),
                 (event) -> guiManager.showGUI(event.player, new GuiLoreEditor(loot, this)));
@@ -90,14 +91,14 @@ public class GuiLootEditor extends Gui {
             }
         }
 
-        setButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ENCHANTED_BOOK,
+        setButton(12, GuiUtils.createButtonItem(XMaterial.ENCHANTED_BOOK,
                         TextUtils.formatText("&7Enchantments:"),
                         TextUtils.formatText(enchantments.isEmpty() ? Collections.singletonList("&6None set") : enchantments)),
                 (event) -> guiManager.showGUI(event.player, new GuiEnchantEditor(loot, this)));
 
         setButton(13, GuiUtils.createButtonItem(
                         loot.getBurnedMaterial() == null
-                                ? CompatibleMaterial.FIRE_CHARGE
+                                ? XMaterial.FIRE_CHARGE
                                 : loot.getBurnedMaterial(),
                         TextUtils.formatText("&7Current Burned Material: &6"
                                 + (loot.getBurnedMaterial() == null
@@ -109,12 +110,12 @@ public class GuiLootEditor extends Gui {
                         )),
                 (event) -> {
                     ItemStack stack = event.player.getInventory().getItemInMainHand();
-                    loot.setBurnedMaterial(CompatibleMaterial.getMaterial(stack));
+                    loot.setBurnedMaterial(CompatibleMaterial.getMaterial(stack.getType()).get());
 
                     paint();
                 });
 
-        setButton(14, GuiUtils.createButtonItem(CompatibleMaterial.CLOCK,
+        setButton(14, GuiUtils.createButtonItem(XMaterial.CLOCK,
                         TextUtils.formatText("&7Chance: &6" + loot.getChance()),
                         TextUtils.formatText(
                                 Arrays.asList("",
@@ -131,11 +132,11 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getChance())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getChance())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(15, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE,
+        setButton(15, GuiUtils.createButtonItem(XMaterial.REDSTONE,
                         TextUtils.formatText("&7Min Drop Amount: &6" + loot.getMin())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -147,12 +148,12 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER,
                             String.valueOf(loot.getMin())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(16, GuiUtils.createButtonItem(CompatibleMaterial.GLOWSTONE_DUST,
+        setButton(16, GuiUtils.createButtonItem(XMaterial.GLOWSTONE_DUST,
                         TextUtils.formatText("&7Max Drop Amount: &6" + loot.getMax())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -164,11 +165,11 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getMax())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getMax())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(17, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE,
+        setButton(17, GuiUtils.createButtonItem(XMaterial.REDSTONE,
                         TextUtils.formatText("&7Min Item Damage: &6" + loot.getDamageMin())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -179,11 +180,11 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getDamageMin())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getDamageMin())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(18, GuiUtils.createButtonItem(CompatibleMaterial.GLOWSTONE_DUST,
+        setButton(18, GuiUtils.createButtonItem(XMaterial.GLOWSTONE_DUST,
                         TextUtils.formatText("&7Max Item Damage: &6" + loot.getDamageMax())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -194,11 +195,11 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getDamageMax())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getDamageMax())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(19, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+        setButton(19, GuiUtils.createButtonItem(XMaterial.CHEST,
                         TextUtils.formatText("&7Allow Looting Enchantment?: &6" + loot.isAllowLootingEnchant())),
                 (event) -> {
                     loot.setAllowLootingEnchant(!loot.isAllowLootingEnchant());
@@ -207,7 +208,7 @@ public class GuiLootEditor extends Gui {
                     event.player.closeInventory();
                 });
 
-        setButton(20, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE,
+        setButton(20, GuiUtils.createButtonItem(XMaterial.REDSTONE,
                         TextUtils.formatText("&7Min Child Loot Min: &6" + loot.getChildDropCountMin())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -219,11 +220,11 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getChildDropCountMin())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getChildDropCountMin())));
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(21, GuiUtils.createButtonItem(CompatibleMaterial.GLOWSTONE_DUST,
+        setButton(21, GuiUtils.createButtonItem(XMaterial.GLOWSTONE_DUST,
                         TextUtils.formatText("&7Min Child Loot Max: &6" + loot.getChildDropCountMax())),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -235,7 +236,7 @@ public class GuiLootEditor extends Gui {
                         e.player.closeInventory();
                     });
 
-                    gui.setInput(GuiUtils.createButtonItem(CompatibleMaterial.PAPER, String.valueOf(loot.getChildDropCountMax())));
+                    gui.setInput(GuiUtils.createButtonItem(XMaterial.PAPER, String.valueOf(loot.getChildDropCountMax())));
                     guiManager.showGUI(event.player, gui);
                 });
 
@@ -247,19 +248,18 @@ public class GuiLootEditor extends Gui {
             }
         }
 
-        setButton(22, GuiUtils.createButtonItem(CompatibleMaterial.ENCHANTED_BOOK,
+        setButton(22, GuiUtils.createButtonItem(XMaterial.ENCHANTED_BOOK,
                         TextUtils.formatText("&7Only Drop For:"),
                         TextUtils.formatText(entities)),
                 (event) -> guiManager.showGUI(event.player, new GuiEntityEditor(loot, this)));
 
-        setButton(4, 0, GuiUtils.createButtonItem(CompatibleMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Child Loot")),
+        setButton(4, 0, GuiUtils.createButtonItem(XMaterial.LIME_DYE, TextUtils.formatText("&aCreate new Child Loot")),
                 (event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
 
                     gui.setAction((event1 -> {
                         try {
-                            loot.addChildLoots(new LootBuilder().setMaterial(CompatibleMaterial
-                                    .valueOf(gui.getInputText().trim())).build());
+                            loot.addChildLoots(new LootBuilder().setMaterial(XMaterial.valueOf(gui.getInputText().trim())).build());
                         } catch (IllegalArgumentException ignore) {
                             event.player.sendMessage("That is not a valid material.");
                         }
@@ -275,7 +275,7 @@ public class GuiLootEditor extends Gui {
         int i = 9 * 5;
         for (Loot loot : loot.getChildLoot()) {
             ItemStack item = loot.getMaterial() == null
-                    ? CompatibleMaterial.BARRIER.getItem()
+                    ? XMaterial.BARRIER.parseItem()
                     : GuiUtils.createButtonItem(loot.getMaterial(), null,
                     TextUtils.formatText("&6Left click &7to edit"),
                     TextUtils.formatText("&6Right click &7to destroy"));

@@ -13,7 +13,10 @@ import java.util.List;
 
 /**
  * Class based off of https://gist.github.com/graywolf336/8153678
+ *
+ * @deprecated Will be moved into a more appropriate package and refactored.
  */
+@Deprecated
 public class ItemSerializer {
     /**
      * A method to serialize an {@link ItemStack} list to Base64 String.

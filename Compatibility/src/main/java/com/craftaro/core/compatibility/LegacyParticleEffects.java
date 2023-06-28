@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 /**
  * Particle effects for servers 1.8 and below
- *
  * TODO: Needs a recode, this class should not have any advanced logic like NMS magic
  */
 public class LegacyParticleEffects {
@@ -177,7 +176,7 @@ public class LegacyParticleEffects {
         }
         final int rangeSquared = 256; // apparently there is no way to override this (unless to make smaller, of course)
         // collect a list of players to send this packet to
-        List<Player> sendTo = new ArrayList();
+        List<Player> sendTo = new ArrayList<>();
         if (localOnly == null) {
             for (Player p : l.getWorld().getPlayers()) {
                 if (p.getLocation().distanceSquared(l) <= rangeSquared) {

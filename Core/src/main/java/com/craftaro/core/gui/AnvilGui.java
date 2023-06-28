@@ -2,9 +2,9 @@ package com.craftaro.core.gui;
 
 import com.craftaro.core.gui.methods.Clickable;
 import com.craftaro.core.nms.Nms;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.nms.anvil.AnvilCore;
 import com.craftaro.core.nms.anvil.CustomAnvil;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -108,7 +108,7 @@ public class AnvilGui extends Gui {
 
             inventory.setItem(1, item);
         } else if (!acceptsItems) {
-            item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER, " ", " ");
+            item = GuiUtils.createButtonItem(XMaterial.PAPER, " ", " ");
 
             cellItems.put(0, item);
             inventory.setItem(0, item);

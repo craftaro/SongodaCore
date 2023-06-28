@@ -1,7 +1,8 @@
 package com.craftaro.core.core;
 
-import com.craftaro.core.verification.ProductVerificationStatus;
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.verification.ProductVerificationStatus;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
@@ -13,7 +14,7 @@ public final class PluginInfo {
     protected final JavaPlugin javaPlugin;
     protected final int songodaId;
     protected final String coreIcon;
-    protected final CompatibleMaterial icon;
+    protected final XMaterial icon;
     protected final String coreLibraryVersion;
     public final ProductVerificationStatus verificationStatus;
 
@@ -29,7 +30,7 @@ public final class PluginInfo {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;
-        this.icon = CompatibleMaterial.getMaterial(icon);
+        this.icon = CompatibleMaterial.getMaterial(icon).orElse(XMaterial.STONE);
         this.coreLibraryVersion = coreLibraryVersion;
         this.verificationStatus = verificationStatus;
     }

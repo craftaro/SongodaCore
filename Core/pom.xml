@@ -35,7 +35,7 @@
                     <injections>
                         <injection>
                             <value>${project.version}</value>
-                            <pointCut>com.craftaro.core.SongodaCoreConstants.getCoreVersion</pointCut>
+                            <pointCut>com.craftaro.core.CraftaroCoreConstants.getCoreVersion</pointCut>
                         </injection>
                     </injections>
                 </configuration>
@@ -60,7 +60,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.0</version>
 
                 <executions>
                     <execution>
@@ -81,6 +81,7 @@
                                     <include>com.zaxxer:HikariCP</include>
                                     <include>de.tr7zw:item-nbt-api</include>
                                     <include>net.kyori:*</include>
+                                    <include>com.github.cryptomorin:XSeries</include>
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
                                     <include>org.jooq:jooq</include>
@@ -130,7 +131,26 @@
                                     <pattern>org.h2</pattern>
                                     <shadedPattern>com.craftaro.core.third_party.org.h2</shadedPattern>
                                 </relocation>
+
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.com.cryptomorin.xseries</shadedPattern>
+                                </relocation>
                             </relocations>
+
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/INDEX.LIST</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>**/LICENSE*</exclude>
+                                        <exclude>**/NOTICE*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -151,6 +171,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -176,7 +197,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.11.2</version>
+            <version>2.11.3</version>
             <scope>compile</scope>
         </dependency>
 

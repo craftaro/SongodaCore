@@ -45,7 +45,7 @@ public class HolographicDisplaysHolograms extends Holograms {
 
     @Override
     public void removeHologram(String id) {
-        Hologram hologram = holograms.remove(id);
+        Hologram hologram = this.holograms.remove(id);
         if (hologram != null) {
             hologram.delete();
         }
@@ -62,7 +62,7 @@ public class HolographicDisplaysHolograms extends Holograms {
             String id = entry.getKey();
             List<String> lines = entry.getValue();
 
-            Hologram hologram = holograms.get(id);
+            Hologram hologram = this.holograms.get(id);
 
             // only update if there is a change to the text
             boolean isChanged = lines.size() != hologram.size();
@@ -70,7 +70,7 @@ public class HolographicDisplaysHolograms extends Holograms {
             if (!isChanged) {
                 // double-check the lines
                 for (int i = 0; !isChanged && i < lines.size(); ++i) {
-                    isChanged = !hologram.getLine(i).toString().equals(String.format(textLineFormat, lines.get(i)));
+                    isChanged = !hologram.getLine(i).toString().equals(String.format(this.textLineFormat, lines.get(i)));
                 }
             }
 
@@ -85,27 +85,27 @@ public class HolographicDisplaysHolograms extends Holograms {
     }
 
     private void createAt(String id, Location location, List<String> lines) {
-        if (holograms.containsKey(id)) {
+        if (this.holograms.containsKey(id)) {
             return;
         }
 
         location = fixLocation(location);
-        Hologram hologram = HologramsAPI.createHologram(plugin, location);
+        Hologram hologram = HologramsAPI.createHologram(this.plugin, location);
 
         for (String line : lines) {
             hologram.appendTextLine(line);
         }
 
-        holograms.put(id, hologram);
+        this.holograms.put(id, hologram);
     }
 
     @Override
     public void removeAllHolograms() {
-        holograms.values().forEach(Hologram::delete);
+        this.holograms.values().forEach(Hologram::delete);
     }
 
     @Override
     public boolean isHologramLoaded(String id) {
-        return holograms.get(id) != null;
+        return this.holograms.get(id) != null;
     }
 }

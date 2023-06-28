@@ -2,10 +2,12 @@ package com.craftaro.core.configuration;
 
 import com.craftaro.core.SongodaCore;
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 
 public class ConfigSetting {
@@ -109,27 +111,25 @@ public class ConfigSetting {
     }
 
     @NotNull
-    public CompatibleMaterial getMaterial() {
+    public XMaterial getMaterial() {
         String val = config.getString(key);
-        CompatibleMaterial mat = CompatibleMaterial.getMaterial(config.getString(key));
+        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(config.getString(key));
 
-        if (mat == null) {
+        if (!mat.isPresent()) {
             SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
         }
-
-        return mat != null ? mat : CompatibleMaterial.STONE;
+        return mat.orElse(XMaterial.STONE);
     }
 
     @NotNull
-    public CompatibleMaterial getMaterial(@NotNull CompatibleMaterial def) {
+    public XMaterial getMaterial(@NotNull XMaterial def) {
         //return config.getMaterial(key, def);
         String val = config.getString(key);
-        CompatibleMaterial mat = val != null ? CompatibleMaterial.getMaterial(val) : null;
+        Optional<XMaterial> mat = val != null ? CompatibleMaterial.getMaterial(val) : Optional.empty();
 
-        if (mat == null) {
+        if (!mat.isPresent()) {
             SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
         }
-
-        return mat != null ? mat : def;
+        return mat.orElse(def);
     }
 }

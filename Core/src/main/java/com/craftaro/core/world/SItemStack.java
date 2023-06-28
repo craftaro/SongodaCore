@@ -1,9 +1,9 @@
 package com.craftaro.core.world;
 
 import com.craftaro.core.compatibility.CompatibleHand;
-import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class SItemStack {
 
     public SItemStack(CompatibleHand hand, Player player) {
         this.item = hand.getItem(player);
-        this.sItem = Nms.getImplementations().getWorld().getItemStack(item);
+        this.sItem = Nms.getImplementations().getWorld().getItemStack(this.item);
     }
 
     public ItemStack addDamage(Player player, int damage) {
@@ -37,24 +37,24 @@ public class SItemStack {
      * @param damage the amount of damage to apply to the item
      */
     public ItemStack addDamage(Player player, int damage, boolean respectVanillaUnbreakingEnchantments) {
-        if (item == null) {
+        if (this.item == null) {
             return null;
         }
 
-        if (item.getItemMeta() == null) {
-            return item;
+        if (this.item.getItemMeta() == null) {
+            return this.item;
         }
 
-        int maxDurability = item.getType().getMaxDurability();
+        int maxDurability = this.item.getType().getMaxDurability();
         int durability;
 
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
-                ? Nms.getImplementations().getNbt().of(item).has("Unbreakable")
-                : item.getItemMeta().isUnbreakable()) {
-            return item;
+                ? Nms.getImplementations().getNbt().of(this.item).has("Unbreakable")
+                : this.item.getItemMeta().isUnbreakable()) {
+            return this.item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
             // ItemStack.setDurability(short) still works in 1.13-1.14, but use these methods now
-            ItemMeta meta = item.getItemMeta();
+            ItemMeta meta = this.item.getItemMeta();
             if (meta instanceof Damageable) {
                 Damageable damageable = ((Damageable) meta);
 
@@ -63,25 +63,25 @@ public class SItemStack {
                 }
 
                 damageable.setDamage(((Damageable) meta).getDamage() + damage);
-                item.setItemMeta(meta);
+                this.item.setItemMeta(meta);
                 durability = damageable.getDamage();
             } else {
-                return item;
+                return this.item;
             }
         } else {
             if (respectVanillaUnbreakingEnchantments) {
-                damage = shouldApplyDamage(item.getEnchantmentLevel(Enchantment.DURABILITY), damage);
+                damage = shouldApplyDamage(this.item.getEnchantmentLevel(Enchantment.DURABILITY), damage);
             }
 
-            item.setDurability((short) Math.max(0, item.getDurability() + damage));
-            durability = item.getDurability();
+            this.item.setDurability((short) Math.max(0, this.item.getDurability() + damage));
+            durability = this.item.getDurability();
         }
 
         if (durability >= maxDurability && player != null) {
             destroy(player);
         }
 
-        return item;
+        return this.item;
     }
 
     public void destroy(Player player) {
@@ -89,15 +89,15 @@ public class SItemStack {
     }
 
     public void destroy(Player player, int amount) {
-        PlayerItemBreakEvent breakEvent = new PlayerItemBreakEvent(player, item);
+        PlayerItemBreakEvent breakEvent = new PlayerItemBreakEvent(player, this.item);
         Bukkit.getServer().getPluginManager().callEvent(breakEvent);
 
-        sItem.breakItem(player, amount);
-        CompatibleSound.ENTITY_ITEM_BREAK.play(player);
+        this.sItem.breakItem(player, amount);
+        XSound.ENTITY_ITEM_BREAK.play(player);
     }
 
     public ItemStack getItem() {
-        return item;
+        return this.item;
     }
 
     private static int shouldApplyDamage(int unbreakingEnchantLevel, int damageAmount) {
