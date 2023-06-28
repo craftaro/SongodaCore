@@ -219,14 +219,14 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.2.0</version>
+            <version>5.0.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>3.14.0</version>
+            <version>3.14.16</version>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
