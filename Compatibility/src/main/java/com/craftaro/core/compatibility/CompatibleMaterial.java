@@ -317,6 +317,33 @@ public class CompatibleMaterial {
         return null;
     }
 
+    public static boolean isBrewingStandIngredient(XMaterial material) {
+        switch (material) {
+            case NETHER_WART:
+            case REDSTONE:
+            case GLOWSTONE_DUST:
+            case FERMENTED_SPIDER_EYE:
+            case GUNPOWDER:
+            case DRAGON_BREATH:
+
+            case SUGAR:
+            case RABBIT_FOOT:
+            case GLISTERING_MELON_SLICE:
+            case SPIDER_EYE:
+            case PUFFERFISH:
+            case MAGMA_CREAM:
+            case GOLDEN_CARROT:
+            case BLAZE_POWDER:
+            case GHAST_TEAR:
+            case TURTLE_HELMET:
+            case PHANTOM_MEMBRANE:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
     /**
      * TODO: Check if usages on this can be removed otherwise remove deprecation annotation
      */
