@@ -18,6 +18,29 @@ public class H2Connector implements DatabaseConnector {
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
+    H2Connector() {
+        this.plugin = null;
+
+        int poolSize = 2;
+        String password = "password";
+        String username = "username";
+
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:./db_test/CraftaroCoreTest;AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setPassword(username);
+        config.setUsername(password);
+        config.setMaximumPoolSize(poolSize);
+
+        try {
+            this.hikari = new HikariDataSource(config);
+            this.initializedSuccessfully = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            this.initializedSuccessfully = false;
+        }
+    }
+
     public H2Connector(SongodaPlugin plugin) {
         this(plugin, plugin.getDatabaseConfig());
     }
@@ -31,7 +54,7 @@ public class H2Connector implements DatabaseConnector {
 
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
-        config.setJdbcUrl("jdbc:h2:./h2_" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
         config.setPassword(username);
         config.setUsername(password);
         config.setMaximumPoolSize(poolSize);
@@ -70,7 +93,9 @@ public class H2Connector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(connection);
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            if (this.plugin != null) {
+                SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            }
             ex.printStackTrace();
         }
         return OptionalResult.empty();
@@ -81,7 +106,9 @@ public class H2Connector implements DatabaseConnector {
         try (Connection connection = getConnection()){
             callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
-            this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            if (this.plugin != null) {
+                this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            }
             ex.printStackTrace();
         }
     }
@@ -91,7 +118,9 @@ public class H2Connector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            if (this.plugin != null) {
+                SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            }
             ex.printStackTrace();
         }
         return OptionalResult.empty();

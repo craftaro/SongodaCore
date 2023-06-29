@@ -272,21 +272,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @param migrations List of migrations to run.
      */
     protected void initDatabase(List<DataMigration> migrations) {
-        boolean legacy = this.config.contains("MySQL");
-        boolean isSQLite = !this.config.getBoolean("MySQL.Enabled", false);
-        if (legacy && isSQLite) {
-            this.config.set("MySQL", null);
+        File databaseFile = new File(getDataFolder(), getName().toLowerCase() + ".db");
+        boolean legacy = databaseFile.exists();
+
+        if (legacy) {
+            getLogger().warning("SQLite detected, converting to H2...");
             this.dataManager = new DataManager(this, migrations, DatabaseType.SQLITE);
-        } else if (legacy) {
-            //Copy creditental from old config to new config
-            this.databaseConfig.set("MySQL.Hostname", this.config.getString("MySQL.Hostname", "localhost"));
-            this.databaseConfig.set("MySQL.Port", this.config.getInt("MySQL.Port", 3306));
-            this.databaseConfig.set("MySQL.Database", this.config.getString("MySQL.Database", "database"));
-            this.databaseConfig.set("MySQL.Username", this.config.getString("MySQL.Username", "username"));
-            this.databaseConfig.set("MySQL.Password", this.config.getString("MySQL.Password", "password"));
-            this.databaseConfig.set("MySQL.Pool Size", this.config.getInt("MySQL.Pool Size", 5));
-            this.databaseConfig.set("MySQL.Use SSL", this.config.getBoolean("MySQL.Use SSL", false));
-            this.dataManager = new DataManager(this, migrations);
         } else {
             this.dataManager = new DataManager(this, migrations);
         }
@@ -294,10 +285,14 @@ public abstract class SongodaPlugin extends JavaPlugin {
             //Check if the type is SQLite
             if (dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {
                 //Let's convert it to H2
-                DataManager newDataManager = DataMigration.convert(this, DatabaseType.H2);
-                if (newDataManager != null && newDataManager.getDatabaseConnector().isInitialized()) {
-                    //Set the new data manager
-                    setDataManager(newDataManager);
+                try {
+                    DataManager newDataManager = DataMigration.convert(this, DatabaseType.H2);
+                    if (newDataManager != null && newDataManager.getDatabaseConnector().isInitialized()) {
+                        //Set the new data manager
+                        setDataManager(newDataManager);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -312,7 +307,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
         if (this.dataManager == dataManager) return;
         //Make sure to shut down the old data manager.
         if (this.dataManager != null) {
-            dataManager.shutdown();
+            this.dataManager.shutdown();
+            this.dataManager = null;
         }
         this.dataManager = dataManager;
     }

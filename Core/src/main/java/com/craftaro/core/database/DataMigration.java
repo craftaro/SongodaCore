@@ -5,9 +5,13 @@ import com.craftaro.core.SongodaPlugin;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +37,7 @@ public abstract class DataMigration {
      * @param toType The new database type
      * @return The new data manager instance
      */
-    public static DataManager convert(SongodaPlugin plugin, DatabaseType toType) {
+    public static DataManager convert(SongodaPlugin plugin, DatabaseType toType) throws Exception {
         DataManager from = plugin.getDataManager();
         if (from.getDatabaseConnector().getType() == toType) {
             plugin.getLogger().severe("Cannot convert to the same database type!");
@@ -45,65 +49,117 @@ public abstract class DataMigration {
             return null;
         }
 
+        plugin.getLogger().info("Converting data from " + from.getDatabaseConnector().getType().name() + " to " + toType.name() + "...");
         DatabaseConnector fromConnector = from.getDatabaseConnector();
         DatabaseConnector toConnector = to.getDatabaseConnector();
 
-        Connection fromConnection;
-        Connection toConnection = null;
+        Connection fromConnection = fromConnector.getConnection();
+        Connection toConnection = toConnector.getConnection();
 
         try {
-            fromConnection = fromConnector.getConnection();
-            toConnection = toConnector.getConnection();
-            toConnection.setAutoCommit(false);
 
-            // Retrieve the list of tables from the old database
-            List<String> tableNames = new ArrayList<>();
-            try (ResultSet rs = fromConnection.getMetaData().getTables(null, null, null, new String[] {"TABLE"})) {
-                while (rs.next()) {
-                    String tableName = rs.getString("TABLE_NAME");
-                    tableNames.add(tableName);
-                }
-            }
+            // Export schema
+            DatabaseMetaData meta = fromConnection.getMetaData();
+            ResultSet tables = meta.getTables(null, null, null, new String[]{"TABLE"});
 
-            // Transfer the data from the old database to the new database
-            for (String tableName : tableNames) {
-                try (
-                        PreparedStatement fromStmt = fromConnection.prepareStatement("SELECT * FROM " + tableName);
-                        ResultSet rs = fromStmt.executeQuery();
-                        PreparedStatement toStmt = toConnection.prepareStatement("INSERT INTO " + tableName + " VALUES (" + String.join(",", Collections.nCopies(rs.getMetaData().getColumnCount(), "?")) + ")")
-                ) {
-                    while (rs.next()) {
-                        for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                            toStmt.setObject(i, rs.getObject(i));
-                        }
-                        toStmt.executeUpdate();
+            while (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
+                Statement stmt = fromConnection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName);
+
+                ResultSetMetaData metaRs = rs.getMetaData();
+                int columnCount = metaRs.getColumnCount();
+
+                StringBuilder createTableQuery = new StringBuilder();
+                createTableQuery.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" (");
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaRs.getColumnName(i);
+                    String columnType = metaRs.getColumnTypeName(i);
+                    int columnSize = metaRs.getColumnDisplaySize(i);
+
+                    createTableQuery.append(columnName).append(" ").append(columnType).append("(").append(columnSize).append(")");
+
+                    if (i < columnCount) {
+                        createTableQuery.append(", ");
                     }
+                }
+
+                createTableQuery.append(")");
+
+                toConnection.createStatement().execute(createTableQuery.toString());
+
+                while (rs.next()) {
+                    StringBuilder insertQuery = new StringBuilder();
+                    insertQuery.append("INSERT INTO ").append(tableName).append(" VALUES (");
+
+                    for (int i = 1; i <= columnCount; i++) {
+                        Object value = rs.getObject(i);
+
+                        if (value == null) {
+                            insertQuery.append("NULL");
+                        } else if (value instanceof String || value instanceof Timestamp) {
+                            insertQuery.append("'").append(value).append("'");
+                        } else {
+                            insertQuery.append(value);
+                        }
+
+                        if (i < columnCount) {
+                            insertQuery.append(", ");
+                        }
+                    }
+
+                    insertQuery.append(")");
+                    toConnection.createStatement().execute(insertQuery.toString());
                 }
             }
 
             toConnection.commit();
+            plugin.getLogger().info("Successfully migrated data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
         } catch (Exception e) {
-            if (toConnection != null)
+            if (toConnection != null) {
                 try {
                     toConnection.rollback();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
-                    SongodaCore.getInstance().getLogger().severe("Failed to rollback data for the new database");
+                    plugin.getLogger().severe("Failed to rollback data for the new database");
                 }
+            }
             e.printStackTrace();
-            SongodaCore.getInstance().getLogger().severe("Failed to migrate data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
+            plugin.getLogger().severe("Failed to migrate data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
             return null;
-        } finally {
-            SongodaCore.getInstance().getLogger().info("Successfully migrated data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
         }
         fromConnector.closeConnection();
-        //Get rid of the old database file
+        //Get rid of the old SQLite database file if it exists and create a backup
         File databaseFile = new File(plugin.getDataFolder(), plugin.getName().toLowerCase()+".db");
         if (databaseFile.exists()) {
 
             //rename it to .old
-            databaseFile.renameTo(new File(plugin.getDataFolder(), plugin.getName().toLowerCase()+".old"));
+            databaseFile.renameTo(new File(plugin.getDataFolder(), plugin.getName().toLowerCase() + ".db.old"));
+            plugin.getLogger().info("Old database file renamed to " + plugin.getName().toLowerCase() + ".db.old");
         }
         return to;
+    }
+
+    private String getTableColumns(Connection connection, String tableName) {
+        StringBuilder columns = new StringBuilder();
+        try {
+            DatabaseMetaData meta = connection.getMetaData();
+            ResultSet rs = meta.getColumns(null, null, tableName, null);
+
+            while (rs.next()) {
+                String columnName = rs.getString("COLUMN_NAME");
+                String columnType = rs.getString("TYPE_NAME");
+
+                columns.append(columnName).append(" ").append(columnType).append(", ");
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        columns.setLength(columns.length() - 2);
+        return columns.toString();
     }
 }

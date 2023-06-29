@@ -5,6 +5,8 @@ import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.configuration.Config;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
@@ -19,11 +21,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -46,6 +50,22 @@ public class DataManager {
 
     @Deprecated
     private static final Map<String, LinkedList<Runnable>> queues = new HashMap<>();
+
+
+
+    DataManager() {
+        this.databaseConfig = null;
+        this.plugin = null;
+        this.migrations = Collections.emptyList();
+        this.databaseConnector = new H2Connector();
+    }
+
+    DataManager(DatabaseType type) {
+        this.databaseConfig = null;
+        this.plugin = null;
+        this.migrations = Collections.emptyList();
+        this.databaseConnector = new SQLiteConnector();
+    }
 
     public DataManager(SongodaPlugin plugin, List<DataMigration> migrations) {
         this.plugin = plugin;
@@ -77,15 +97,7 @@ public class DataManager {
                     break;
                 }
                 case "SQLITE": {
-                    //Lets check if we have the sqlite file in the plugin folder
-                    File databaseFile = new File(plugin.getDataFolder(), plugin.getName().toLowerCase()+".db");
-                    if (!databaseFile.exists()) {
-                        //Lets start SQLite and it will be converted to H2
-                        this.databaseConnector = new SQLiteConnector(plugin);
-                    } else {
-                        //No need for conversion, lets use H2 instead
-                        this.databaseConnector = new H2Connector(plugin);
-                    }
+                    this.databaseConnector = new SQLiteConnector(plugin);
                     break;
                 }
                 default: {
@@ -116,6 +128,9 @@ public class DataManager {
      * @return the prefix to be used by all table names
      */
     public String getTablePrefix() {
+        if (this.plugin == null) {
+            return "";
+        }
         return this.plugin.getDescription().getName().toLowerCase() + '_';
     }
 
@@ -226,7 +241,7 @@ public class DataManager {
             databaseConnector.connectDSL(context -> {
                 context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                         .set(data.serialize())
-                        .onConflict(DSL.field("id")).doUpdate()
+                        .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
                         .set(data.serialize())
                         .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
                         .execute();
@@ -241,7 +256,7 @@ public class DataManager {
         databaseConnector.connectDSL(context -> {
             context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                     .set(data.serialize())
-                    .onConflict(DSL.field("id")).doUpdate()
+                    .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
                     .set(data.serialize())
                     .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
                     .execute();
@@ -258,7 +273,7 @@ public class DataManager {
                 for (Data data : dataBatch) {
                     queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                             .set(data.serialize())
-                            .onConflict(DSL.field("id")).doUpdate()
+                            .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
                             .set(data.serialize())
                             .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString())));
                 }
@@ -277,7 +292,7 @@ public class DataManager {
             for (Data data : dataBatch) {
                 queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                         .set(data.serialize())
-                        .onConflict(DSL.field("id")).doUpdate()
+                        .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
                         .set(data.serialize())
                         .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString())));
             }
@@ -308,19 +323,25 @@ public class DataManager {
     public <T extends Data> T load(int id, Class<?> clazz, String table) {
         try {
             AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicBoolean found = new AtomicBoolean(false);
             databaseConnector.connectDSL(context -> {
                 try {
-                    data.set((Data) clazz.getDeclaredConstructor().newInstance());
                     data.get().deserialize(Objects.requireNonNull(context.select()
                                     .from(DSL.table(getTablePrefix() + table))
                                     .where(DSL.field("id").eq(id))
                                     .fetchOne())
                             .intoMap());
+                    found.set(true);
+                } catch (NullPointerException ignored) {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             });
-            return (T) data.get();
+            if (found.get()) {
+                return (T) data.get();
+            } else {
+                return null;
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -329,6 +350,8 @@ public class DataManager {
     /**
      * Loads the data from the database
      * @param uuid The uuid of the data
+     * @param clazz The class of the data
+     * @param table The table of the data without prefix
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -346,7 +369,42 @@ public class DataManager {
                             .intoMap());
                     found.set(true);
                 } catch (NullPointerException ignored) {
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            if (found.get()) {
+                return (T) data.get();
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
+    /**
+     * Loads the data from the database
+     * @param uuid The uuid of the data
+     * @param clazz The class of the data
+     * @param table The table of the data without prefix
+     * @param uuidColumn The column of the uuid
+     * @return The loaded data
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Data> T load(UUID uuid, Class<?> clazz, String table, String uuidColumn) {
+        try {
+            AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicBoolean found = new AtomicBoolean(false);
+            databaseConnector.connectDSL(context -> {
+                try {
+                    data.get().deserialize(Objects.requireNonNull(context.select()
+                                    .from(DSL.table(table))
+                                    .where(DSL.field(uuidColumn).eq(uuid.toString()))
+                                    .fetchOne())
+                            .intoMap());
+                    found.set(true);
+                } catch (NullPointerException ignored) {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

@@ -1,6 +1,7 @@
 package com.craftaro.core.database;
 
 import com.craftaro.core.SongodaCore;
+import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -15,6 +16,11 @@ public class SQLiteConnector implements DatabaseConnector {
     private final Plugin plugin;
     private final String connectionString;
     private Connection connection;
+
+    SQLiteConnector() {
+        this.plugin = null;
+        this.connectionString = "jdbc:sqlite:" + "."+File.separator+"db_test"+File.separator+"CraftaroCoreTestSQLite.db";
+    }
 
     public SQLiteConnector(Plugin plugin) {
         this.plugin = plugin;
