@@ -1,11 +1,16 @@
 package com.craftaro.core.compatibility;
 
 import com.cryptomorin.xseries.XMaterial;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 public class CompatibleMaterial {
@@ -295,11 +300,28 @@ public class CompatibleMaterial {
         }
     }
 
+    public static @Nullable ItemStack getFurnaceResult(XMaterial material) {
+        Iterator<Recipe> recipes = Bukkit.recipeIterator();
+        while (recipes.hasNext()) {
+            Recipe recipe = recipes.next();
+            if (!(recipe instanceof FurnaceRecipe)) {
+                continue;
+            }
+
+            FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
+            if (material.isSimilar(furnaceRecipe.getInput())) {
+                return furnaceRecipe.getResult();
+            }
+        }
+
+        return null;
+    }
+
     /**
      * TODO: Check if usages on this can be removed otherwise remove deprecation annotation
      */
     @Deprecated
-    public static XMaterial getGlassPaneColor(int color) {
+    public static XMaterial getGlassPaneForColor(int color) {
         switch (color) {
             case 0:
                 return XMaterial.WHITE_STAINED_GLASS_PANE;
