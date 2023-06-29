@@ -1,16 +1,18 @@
 package com.craftaro.core.hooks.stackers;
 
-import com.songoda.ultimatestacker.stackable.entity.EntityStack;
+import com.craftaro.ultimatestacker.api.UltimateStackerAPI;
+import com.craftaro.ultimatestacker.api.stack.entity.EntityStack;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
 public class UltimateStacker extends Stacker {
-    private final com.songoda.ultimatestacker.UltimateStacker plugin;
+    private final Plugin plugin;
 
     public UltimateStacker() {
-        this.plugin = com.songoda.ultimatestacker.UltimateStacker.getInstance();
+        this.plugin = Bukkit.getPluginManager().getPlugin("UltimateStacker");
     }
 
     @Override
@@ -35,37 +37,38 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void setItemAmount(Item item, int amount) {
-        com.songoda.ultimatestacker.UltimateStacker.updateItemAmount(item, amount);
+        UltimateStackerAPI.getStackedItemManager().getStackedItem(item, true).setAmount(amount);
     }
 
     @Override
     public int getItemAmount(Item item) {
-        return com.songoda.ultimatestacker.UltimateStacker.getActualItemAmount(item);
+        return UltimateStackerAPI.getStackedItemManager().getActualItemAmount(item);
     }
 
     @Override
     public boolean isStacked(LivingEntity entity) {
-        return plugin.getEntityStackManager().isStackedEntity(entity);
+        return UltimateStackerAPI.getEntityStackManager().isStackedEntity(entity);
     }
 
     @Override
     public int getSize(LivingEntity entity) {
-        return isStacked(entity) ? plugin.getEntityStackManager().getStack(entity).getAmount() : 0;
+        return isStacked(entity) ? UltimateStackerAPI.getEntityStackManager().getStackedEntity(entity).getAmount() : 0;
     }
 
     @Override
     public void remove(LivingEntity entity, int amount) {
-        EntityStack stack = plugin.getEntityStackManager().getStack(entity);
-        stack.removeEntityFromStack(amount);
+        EntityStack stack = UltimateStackerAPI.getEntityStackManager().getStackedEntity(entity);
+        stack.take(amount);
     }
 
     @Override
     public void add(LivingEntity entity, int amount) {
-        plugin.getEntityStackManager().addStack(entity, amount);
+        EntityStack stack = UltimateStackerAPI.getEntityStackManager().getStackedEntity(entity);
+        stack.add(amount);
     }
 
     @Override
     public int getMinStackSize(EntityType type) {
-        return ((Plugin) plugin).getConfig().getInt("Entities.Min Stack Amount");
+        return ((Plugin) plugin).getConfig().getInt("Entities.Min Stack Amount", 1);
     }
 }

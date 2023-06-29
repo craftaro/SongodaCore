@@ -84,6 +84,10 @@
                                     <include>com.github.cryptomorin:XSeries</include>
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
+                                    <include>org.jooq:jooq</include>
+                                    <include>org.reactivestreams:reactive-streams</include>
+                                    <include>org.mariadb.jdbc:mariadb-java-client</include>
+                                    <include>com.h2database:h2</include>
                                 </includes>
                             </artifactSet>
 
@@ -106,6 +110,26 @@
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.craftaro.core.third_party.org.apache.commons</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.jooq</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.org.jooq</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.reactivestreams</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.org.reactivestreams</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.mariadb.jdbc</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.org.mariadb.jdbc</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.h2</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.org.h2</shadedPattern>
                                 </relocation>
 
                                 <relocation>
@@ -191,12 +215,30 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- DB Stuff Start -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.2.0</version>
+            <version>5.0.1</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.14.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+        </dependency>
+        <!-- DB Stuff End -->
 
         <!-- Start Plugin Hooks -->
         <dependency>
@@ -256,9 +298,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>UltimateStacker</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.craftaro</groupId>
+            <artifactId>UltimateStackerAPI</artifactId>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
 
