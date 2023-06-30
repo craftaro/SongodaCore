@@ -78,12 +78,15 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.craftaro:*</include>
-                                    <include>com.zaxxer:HikariCP</include>
+
                                     <include>de.tr7zw:item-nbt-api</include>
                                     <include>net.kyori:*</include>
                                     <include>com.github.cryptomorin:XSeries</include>
+
                                     <include>org.apache.commons:commons-lang3</include>
                                     <include>org.apache.commons:commons-text</include>
+
+                                    <include>com.zaxxer:HikariCP</include>
                                     <include>org.jooq:jooq</include>
                                     <include>org.reactivestreams:reactive-streams</include>
                                     <include>org.mariadb.jdbc:mariadb-java-client</include>
