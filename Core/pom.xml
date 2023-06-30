@@ -302,8 +302,8 @@
 
         <dependency>
             <groupId>com.craftaro</groupId>
-            <artifactId>UltimateStackerAPI</artifactId>
-            <version>1.0.0</version>
+            <artifactId>UltimateStacker-API</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

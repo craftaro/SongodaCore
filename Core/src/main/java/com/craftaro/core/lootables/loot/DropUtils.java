@@ -1,7 +1,7 @@
 package com.craftaro.core.lootables.loot;
 
 import com.craftaro.core.SongodaCore;
-import com.craftaro.ultimatestacker.api.UltimateStackerAPI;
+import com.craftaro.ultimatestacker.api.UltimateStackerApi;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -68,7 +68,7 @@ public class DropUtils {
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
         if (SongodaCore.isRegistered("UltimateStacker")) {
             List<StackedItem> stacks = new ArrayList<>();
-            int maxSize = UltimateStackerAPI.getSettings().getMaxItemStackSize() - 64;
+            int maxSize = UltimateStackerApi.getSettings().getMaxItemStackSize() - 64;
             for (ItemStack item : items) {
                 StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).findFirst().orElse(null);
                 if (stack == null) {
@@ -80,11 +80,11 @@ public class DropUtils {
                     newAmount -= maxSize;
                     stacks.add(new StackedItem(item, maxSize));
                 }
-                stack.setamount(newAmount);
+                stack.setAmount(newAmount);
             }
-            Bukkit.getScheduler().runTask(UltimateStackerAPI.getPlugin(), () -> {
+            Bukkit.getScheduler().runTask(UltimateStackerApi.getPlugin(), () -> {
                 for (StackedItem stack : stacks) {
-                    UltimateStackerAPI.getStackedItemManager().createStack(stack.getItem(), event.getEntity().getLocation(), stack.getAmount());
+                    UltimateStackerApi.getStackedItemManager().createStack(stack.getItem(), event.getEntity().getLocation(), stack.getAmount());
                 }
             });
             return;
@@ -107,11 +107,9 @@ public class DropUtils {
                 }
             }
         });
-
     }
 
     private static class StackedItem {
-
         private final ItemStack item;
         private int amount;
 
@@ -121,18 +119,26 @@ public class DropUtils {
         }
 
         public Material getMaterial() {
-            return item.getType();
+            return this.item.getType();
         }
 
         public ItemStack getItem() {
-            return item;
+            return this.item;
         }
 
         public int getAmount() {
-            return amount;
+            return this.amount;
         }
 
+        /**
+         * @deprecated Use {@link #setAmount(int)} instead.
+         */
+        @Deprecated
         public void setamount(int amount) {
+            this.amount = amount;
+        }
+
+        public void setAmount(int amount) {
             this.amount = amount;
         }
     }
