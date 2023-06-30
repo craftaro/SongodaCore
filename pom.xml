@@ -156,6 +156,11 @@
             <id>enginehub-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+
+        <repository>
+            <id>songoda-public</id>
+            <url>https://repo.craftaro.com/repository/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
