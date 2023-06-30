@@ -123,8 +123,8 @@
 
     <repositories>
         <repository>
-            <id>songoda</id>
-            <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
+            <id>craftaro-minecraft-plugins</id>
+            <url>https://repo.craftaro.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
