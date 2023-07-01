@@ -125,6 +125,13 @@ public class DataManager {
     }
 
     /**
+     * @return the database executor service
+     */
+    public ExecutorService getAsyncPool() {
+        return asyncPool;
+    }
+
+    /**
      * @return the prefix to be used by all table names
      */
     public String getTablePrefix() {
@@ -322,15 +329,16 @@ public class DataManager {
     @SuppressWarnings("unchecked")
     public <T extends Data> T load(int id, Class<?> clazz, String table) {
         try {
-            AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
             databaseConnector.connectDSL(context -> {
                 try {
-                    data.get().deserialize(Objects.requireNonNull(context.select()
+                    Data newData = (Data) clazz.getConstructor().newInstance();
+                    data.set(newData.deserialize(Objects.requireNonNull(context.select()
                                     .from(DSL.table(getTablePrefix() + table))
                                     .where(DSL.field("id").eq(id))
                                     .fetchOne())
-                            .intoMap());
+                            .intoMap()));
                     found.set(true);
                 } catch (NullPointerException ignored) {
                 } catch (Exception ex) {
@@ -357,16 +365,16 @@ public class DataManager {
     @SuppressWarnings("unchecked")
     public <T extends Data> T load(UUID uuid, Class<?> clazz, String table) {
         try {
-            AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
             databaseConnector.connectDSL(context -> {
                 try {
-                    data.set((Data) clazz.getDeclaredConstructor().newInstance());
-                    data.get().deserialize(Objects.requireNonNull(context.select()
+                    Data newData = (Data) clazz.getConstructor().newInstance();
+                    data.set(newData.deserialize(Objects.requireNonNull(context.select()
                                     .from(DSL.table(getTablePrefix() + table))
                                     .where(DSL.field("uuid").eq(uuid.toString()))
                                     .fetchOne())
-                            .intoMap());
+                            .intoMap()));
                     found.set(true);
                 } catch (NullPointerException ignored) {
                 } catch (Exception ex) {
@@ -394,15 +402,16 @@ public class DataManager {
     @SuppressWarnings("unchecked")
     public <T extends Data> T load(UUID uuid, Class<?> clazz, String table, String uuidColumn) {
         try {
-            AtomicReference<Data> data = new AtomicReference<>((Data) clazz.getConstructor().newInstance());
+            AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
             databaseConnector.connectDSL(context -> {
                 try {
-                    data.get().deserialize(Objects.requireNonNull(context.select()
-                                    .from(DSL.table(table))
+                    Data newData = (Data) clazz.getConstructor().newInstance();
+                    data.set(newData.deserialize(Objects.requireNonNull(context.select()
+                                    .from(DSL.table(getTablePrefix() + table))
                                     .where(DSL.field(uuidColumn).eq(uuid.toString()))
                                     .fetchOne())
-                            .intoMap());
+                            .intoMap()));
                     found.set(true);
                 } catch (NullPointerException ignored) {
                 } catch (Exception ex) {
@@ -433,8 +442,7 @@ public class DataManager {
                             .from(DSL.table(getTablePrefix() + table))
                             .fetchArray())) {
                         Data data = (Data)clazz.getDeclaredConstructor().newInstance();
-                        data.deserialize(record.intoMap());
-                        dataList.add(data);
+                        dataList.add(data.deserialize(record.intoMap()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
