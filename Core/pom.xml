@@ -19,7 +19,7 @@
             <plugin>
                 <groupId>de.m3y.maven</groupId>
                 <artifactId>inject-maven-plugin</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
 
                 <executions>
                     <execution>
