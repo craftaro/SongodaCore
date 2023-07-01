@@ -52,7 +52,7 @@ public class H2Connector implements DatabaseConnector {
         String password = databaseConfig.getString("Connection Settings.Password");
 
         HikariConfig config = new HikariConfig();
-        config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
+        config.setDriverClassName("org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase() + ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
         config.setUsername(username);
         config.setPassword(password);
