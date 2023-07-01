@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class H2Connector implements DatabaseConnector {
-
     private final Plugin plugin;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
@@ -54,7 +53,7 @@ public class H2Connector implements DatabaseConnector {
 
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
-        config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
+        config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase() + ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
         config.setUsername(username);
         config.setPassword(password);
         config.setMaximumPoolSize(poolSize);
@@ -94,7 +93,7 @@ public class H2Connector implements DatabaseConnector {
             return callback.accept(connection);
         } catch (Exception ex) {
             if (this.plugin != null) {
-                SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+                SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             }
             ex.printStackTrace();
         }
@@ -103,7 +102,7 @@ public class H2Connector implements DatabaseConnector {
 
     @Override
     public void connectDSL(DSLContextCallback callback) {
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             if (this.plugin != null) {
@@ -119,7 +118,7 @@ public class H2Connector implements DatabaseConnector {
             return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             if (this.plugin != null) {
-                SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+                SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             }
             ex.printStackTrace();
         }
