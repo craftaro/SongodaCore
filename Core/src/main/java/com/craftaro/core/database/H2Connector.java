@@ -22,14 +22,14 @@ public class H2Connector implements DatabaseConnector {
         this.plugin = null;
 
         int poolSize = 2;
-        String password = "password";
         String username = "username";
+        String password = "password";
 
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:./db_test/CraftaroCoreTest;AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
-        config.setPassword(username);
-        config.setUsername(password);
+        config.setUsername(username);
+        config.setPassword(password);
         config.setMaximumPoolSize(poolSize);
 
         try {
@@ -49,14 +49,14 @@ public class H2Connector implements DatabaseConnector {
         this.plugin = plugin;
 
         int poolSize = databaseConfig.getInt("Connection Settings.Pool Size");
-        String password = databaseConfig.getString("Connection Settings.Password");
         String username = databaseConfig.getString("Connection Settings.Username");
+        String password = databaseConfig.getString("Connection Settings.Password");
 
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("com.craftaro.core.third_party.org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:./" + plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/" + plugin.getDescription().getName().toLowerCase()+ ";AUTO_RECONNECT=TRUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE");
-        config.setPassword(username);
-        config.setUsername(password);
+        config.setUsername(username);
+        config.setPassword(password);
         config.setMaximumPoolSize(poolSize);
 
         try {
