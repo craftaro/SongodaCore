@@ -47,6 +47,26 @@ public class CompatibleMaterial {
         return getMaterial(type.name() + "_SPAWN_EGG");
     }
 
+    public static EntityType getEntityForSpawnEgg(XMaterial material) {
+        if (!material.name().endsWith("_SPAWN_EGG")) {
+            throw new IllegalArgumentException("Material is not a spawn egg");
+        }
+
+        String entityName = material.name().substring(0, material.name().length() - "_SPAWN_EGG".length());
+
+        if (entityName.equals("MOOSHROOM")) {
+            entityName = "MUSHROOM_COW";
+        } else if (entityName.equals("ZOMBIE_PIGMAN")) {
+            entityName = "PIG_ZOMBIE";
+        }
+
+        try {
+            return EntityType.valueOf(entityName);
+        } catch (IllegalArgumentException ignore) {
+        }
+        return null;
+    }
+
     public static @Nullable XMaterial getYieldForCrop(XMaterial material) {
         switch (material) {
             case BEETROOTS:
