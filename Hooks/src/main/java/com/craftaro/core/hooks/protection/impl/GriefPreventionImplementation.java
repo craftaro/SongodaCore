@@ -6,10 +6,13 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.DataStore;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class GriefPreventionImplementation implements IProtection {
 
-    private     DataStore dataStore;
+    private DataStore dataStore;
+
+    public GriefPreventionImplementation(Plugin plugin) {}
 
     @Override
     public String getHookName() {

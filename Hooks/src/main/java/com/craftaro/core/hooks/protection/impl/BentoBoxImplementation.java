@@ -3,6 +3,7 @@ package com.craftaro.core.hooks.protection.impl;
 import com.craftaro.core.hooks.protection.IProtection;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
@@ -13,6 +14,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import java.util.Optional;
 
 public class BentoBoxImplementation implements IProtection {
+
+    public BentoBoxImplementation(Plugin plugin) {}
 
     private IslandsManager islandsManager;
 

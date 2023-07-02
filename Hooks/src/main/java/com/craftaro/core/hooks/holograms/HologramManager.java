@@ -14,8 +14,8 @@ public class HologramManager extends HookManager<AbstractHologram> {
 
     @Override
     protected void registerDefaultHooks() {
-        registerHook("HolographicDisplays", new HolographicDisplaysImplementation(plugin));
-        registerHook("DecentHolograms", new DecentHologramsImplementation());
+        registerHook("HolographicDisplays", HolographicDisplaysImplementation.class);
+        registerHook("DecentHolograms", DecentHologramsImplementation.class);
     }
 
     @Override

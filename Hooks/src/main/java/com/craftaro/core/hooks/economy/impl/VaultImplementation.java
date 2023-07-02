@@ -4,9 +4,12 @@ import com.craftaro.core.hooks.economy.IEconomy;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultImplementation implements IEconomy {
+
+    public VaultImplementation(Plugin plugin) {}
 
     private Economy economy;
 

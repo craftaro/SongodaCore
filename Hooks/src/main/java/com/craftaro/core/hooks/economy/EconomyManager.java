@@ -13,7 +13,7 @@ public class EconomyManager extends HookManager<IEconomy> {
 
     @Override
     protected void registerDefaultHooks() {
-        registerHook("Vault", new VaultImplementation());
+        registerHook("Vault", VaultImplementation.class);
     }
 
     @Override

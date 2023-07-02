@@ -3,8 +3,10 @@ package com.craftaro.core.hooks.protection.impl;
 import com.craftaro.core.hooks.protection.IProtection;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class DummyProtectionImplementation implements IProtection {
+
     @Override
     public String getHookName() {
         return "None";

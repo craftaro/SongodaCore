@@ -2,11 +2,13 @@ package com.craftaro.core.hooks.holograms.impl;
 
 import com.craftaro.core.hooks.holograms.AbstractHologram;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import java.util.Map;
 
 public class DummyHologramImplementation extends AbstractHologram {
+
     @Override
     public String getHookName() {
         return "None";

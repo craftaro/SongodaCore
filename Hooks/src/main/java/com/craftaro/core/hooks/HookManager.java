@@ -3,6 +3,7 @@ package com.craftaro.core.hooks;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,20 @@ public abstract class HookManager<T extends PluginHook> {
         return registeredHooks.values();
     }
 
-    public void registerHook(T hook) {
+    public void registerHook(Class<? extends T> hook) {
         registerHook(null, hook);
     }
 
-    public void registerHook(String requiredPlugin, T hook) {
+    public void registerHook(String requiredPlugin, Class<? extends T> hookClazz) {
         if (requiredPlugin != null && !Bukkit.getPluginManager().isPluginEnabled(requiredPlugin)) {
             return;
+        }
+
+        T hook = null;
+        try {
+            hook = hookClazz.getConstructor(Plugin.class).newInstance(plugin);
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
         }
 
         if (!hook.enableHook()) {

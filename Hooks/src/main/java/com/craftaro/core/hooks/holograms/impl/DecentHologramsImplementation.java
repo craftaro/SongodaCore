@@ -5,11 +5,14 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
 public class DecentHologramsImplementation extends AbstractHologram {
     private final Map<String, Hologram> holograms = new HashMap<>();
+
+    public DecentHologramsImplementation(Plugin plugin) {}
 
     @Override
     public String getHookName() {

@@ -17,15 +17,16 @@ public class ProtectionManager extends HookManager<IProtection> {
 
     @Override
     protected void registerDefaultHooks() {
-        registerHook("BentoBox", new BentoBoxImplementation());
-        registerHook("GriefPrevention", new GriefPreventionImplementation());
-        registerHook("WorldGuard", new WorldGuardImplementation());
+        registerHook("BentoBox", BentoBoxImplementation.class);
+        registerHook("GriefPrevention", GriefPreventionImplementation.class);
+        registerHook("WorldGuard", WorldGuardImplementation.class);
     }
 
     @Override
     protected IProtection getDummyHook() {
         return new DummyProtectionImplementation();
     }
+
     public ProtectionSet getHooksByName(List<String> names) {
         ProtectionSet hooks = new ProtectionSet();
         for (String name : names) {
