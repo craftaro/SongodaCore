@@ -66,7 +66,7 @@ public class DropUtils {
     }
 
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
-        if (SongodaCore.isRegistered("UltimateStacker")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("UltimateStacker")) {
             List<StackedItem> stacks = new ArrayList<>();
             int maxSize = UltimateStackerApi.getSettings().getMaxItemStackSize() - 64;
             for (ItemStack item : items) {
