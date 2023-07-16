@@ -37,7 +37,7 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void setItemAmount(Item item, int amount) {
-        UltimateStackerApi.getStackedItemManager().getStackedItem(item, true).setAmount(amount);
+        UltimateStackerApi.getStackedItemManager().updateStack(item, amount);
     }
 
     @Override
