@@ -8,6 +8,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,21 +71,23 @@ public class DropUtils {
             List<StackedItem> stacks = new ArrayList<>();
             int maxSize = UltimateStackerApi.getSettings().getMaxItemStackSize() - 64;
             for (ItemStack item : items) {
-                StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).findFirst().orElse(null);
+                StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).filter(stackedItem -> stackedItem.getAmount() < Integer.MAX_VALUE/2).findFirst().orElse(null);
                 if (stack == null) {
                     stacks.add(new StackedItem(item, item.getAmount()));
                     continue;
                 }
-                int newAmount = stack.getAmount() + item.getAmount();
-                while (newAmount > maxSize) {
-                    newAmount -= maxSize;
+                BigDecimal newAmount = BigDecimal.valueOf(stack.getAmount() + item.getAmount());
+                //newAmount > maxSize
+                while (newAmount.compareTo(BigDecimal.valueOf(maxSize)) > 0) {
+                    //newAmount -= maxSize;
+                    newAmount = newAmount.subtract(BigDecimal.valueOf(maxSize));
                     stacks.add(new StackedItem(item, maxSize));
                 }
-                stack.setAmount(newAmount);
+                stack.setAmount(newAmount.intValue());
             }
             Bukkit.getScheduler().runTask(UltimateStackerApi.getPlugin(), () -> {
                 for (StackedItem stack : stacks) {
-                    UltimateStackerApi.getStackedItemManager().createStack(stack.getItem(), event.getEntity().getLocation(), stack.getAmount());
+                    UltimateStackerApi.getStackedItemManager().createStack(stack.getItemToDrop(), event.getEntity().getLocation(), stack.getAmount());
                 }
             });
             return;
@@ -123,6 +126,11 @@ public class DropUtils {
         }
 
         public ItemStack getItem() {
+            return this.item;
+        }
+
+        public ItemStack getItemToDrop() {
+            this.item.setAmount(32);
             return this.item;
         }
 
