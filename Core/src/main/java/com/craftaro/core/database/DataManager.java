@@ -322,6 +322,19 @@ public class DataManager {
     }
 
     /**
+     * Deletes the data from the database
+     */
+    public void delete(Data data, String uuidColumn) {
+        asyncPool.execute(() -> {
+            databaseConnector.connectDSL(context -> {
+                context.delete(DSL.table(getTablePrefix() + data.getTableName()))
+                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field(uuidColumn).eq(data.getUniqueId().toString()))
+                        .execute();
+            });
+        });
+    }
+
+    /**
      * Loads the data from the database
      * @param id The id of the data
      * @return The loaded data
@@ -440,6 +453,33 @@ public class DataManager {
                 try {
                     for (@NotNull Record record : Objects.requireNonNull(context.select()
                             .from(DSL.table(getTablePrefix() + table))
+                            .fetchArray())) {
+                        Data data = (Data)clazz.getDeclaredConstructor().newInstance();
+                        dataList.add(data.deserialize(record.intoMap()));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            return (List<T>) dataList;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Loads the data in batch from the database
+     * @return The loaded data
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Data> List<T> loadBatch(Class<?> clazz, String table, Condition... conditions) {
+        try {
+            List<Data> dataList = Collections.synchronizedList(new ArrayList<>());
+            databaseConnector.connectDSL(context -> {
+                try {
+                    for (@NotNull Record record : Objects.requireNonNull(context.select()
+                            .from(DSL.table(getTablePrefix() + table))
+                                    .where(conditions)
                             .fetchArray())) {
                         Data data = (Data)clazz.getDeclaredConstructor().newInstance();
                         dataList.add(data.deserialize(record.intoMap()));
