@@ -57,14 +57,19 @@ public class UltimateStacker extends Stacker {
 
     @Override
     public void remove(LivingEntity entity, int amount) {
+        if (!isStacked(entity)) return;
         EntityStack stack = UltimateStackerApi.getEntityStackManager().getStackedEntity(entity);
         stack.take(amount);
     }
 
     @Override
     public void add(LivingEntity entity, int amount) {
-        EntityStack stack = UltimateStackerApi.getEntityStackManager().getStackedEntity(entity);
-        stack.add(amount);
+        if (!isStacked(entity)) {
+            UltimateStackerApi.getEntityStackManager().createStackedEntity(entity, amount+1);
+        } else {
+            EntityStack stack = UltimateStackerApi.getEntityStackManager().getStackedEntity(entity);
+            stack.add(amount);
+        }
     }
 
     @Override
