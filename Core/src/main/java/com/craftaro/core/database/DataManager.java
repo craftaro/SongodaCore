@@ -51,8 +51,6 @@ public class DataManager {
     @Deprecated
     private static final Map<String, LinkedList<Runnable>> queues = new HashMap<>();
 
-
-
     DataManager() {
         this.databaseConfig = null;
         this.plugin = null;
@@ -233,26 +231,49 @@ public class DataManager {
 //                }, () -> this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1)));
 //
                 //recreate upper method using java 8 syntax
-                Optional<Integer> max = context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().map(record -> record.get(0, Integer.class));
-                this.autoIncrementCache.put(prefixedTable, new AtomicInteger(max.orElse(1)));
+                try {
+                    Optional<Integer> max = context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().map(record -> record.get(0, Integer.class));
+                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(max.orElse(1)));
+                } catch (Exception e) {
+                    //Table is empty
+                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1));
+                }
             });
         }
         return this.autoIncrementCache.get(prefixedTable).incrementAndGet();
     }
+
+    //TODO: Fix/create javadocs for all methods
 
     /**
      * Saves the data to the database
      */
     public void save(Data data) {
         asyncPool.execute(() -> {
-            databaseConnector.connectDSL(context -> {
-                context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
-                        .set(data.serialize())
-                        .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
-                        .set(data.serialize())
-                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
-                        .execute();
-            });
+            saveSync(data);
+        });
+    }
+
+    /**
+     * Saves the data to the database
+     */
+    public void save(Data data, String idField, Object idValue) {
+        asyncPool.execute(() -> {
+            saveSync(data, idField, idValue);
+        });
+    }
+
+    /**
+     * Saves the data to the database
+     */
+    public void saveSync(Data data, String idField, Object idValue) {
+        databaseConnector.connectDSL(context -> {
+            context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
+                    .set(data.serialize())
+                    .onConflict(DSL.field(idField)).doUpdate()
+                    .set(data.serialize())
+                    .where(DSL.field(idField).eq(idValue))
+                    .execute();
         });
     }
 
@@ -275,18 +296,7 @@ public class DataManager {
      */
     public void saveBatch(Collection<Data> dataBatch) {
         asyncPool.execute(() -> {
-            databaseConnector.connectDSL(context -> {
-                List<Query> queries = new ArrayList<>();
-                for (Data data : dataBatch) {
-                    queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
-                            .set(data.serialize())
-                            .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
-                            .set(data.serialize())
-                            .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString())));
-                }
-
-                context.batch(queries).execute();
-            });
+            saveBatchSync(dataBatch);
         });
     }
 
@@ -313,11 +323,18 @@ public class DataManager {
      */
     public void delete(Data data) {
         asyncPool.execute(() -> {
-            databaseConnector.connectDSL(context -> {
-                context.delete(DSL.table(getTablePrefix() + data.getTableName()))
-                        .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
-                        .execute();
-            });
+            deleteSync(data);
+        });
+    }
+
+    /**
+     * Deletes the data from the database
+     */
+    public void deleteSync(Data data) {
+        databaseConnector.connectDSL(context -> {
+            context.delete(DSL.table(getTablePrefix() + data.getTableName()))
+                    .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
+                    .execute();
         });
     }
 
