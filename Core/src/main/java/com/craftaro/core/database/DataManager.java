@@ -233,10 +233,10 @@ public class DataManager {
                 //recreate upper method using java 8 syntax
                 try {
                     Optional<Integer> max = context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().map(record -> record.get(0, Integer.class));
-                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(max.orElse(1)));
+                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(max.orElse(0)));
                 } catch (Exception e) {
                     //Table is empty
-                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1));
+                    this.autoIncrementCache.put(prefixedTable, new AtomicInteger(0));
                 }
             });
         }
@@ -334,6 +334,20 @@ public class DataManager {
         databaseConnector.connectDSL(context -> {
             context.delete(DSL.table(getTablePrefix() + data.getTableName()))
                     .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
+                    .execute();
+        });
+    }
+
+    public void delete(Data data, String idField, Object idValue) {
+        asyncPool.execute(() -> {
+            deleteSync(data, idField, idValue);
+        });
+    }
+
+    public void deleteSync(Data data, String idField, Object idValue) {
+        databaseConnector.connectDSL(context -> {
+            context.delete(DSL.table(getTablePrefix() + data.getTableName()))
+                    .where(DSL.field(idField).eq(idValue))
                     .execute();
         });
     }
