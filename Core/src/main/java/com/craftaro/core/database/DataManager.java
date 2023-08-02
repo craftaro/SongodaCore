@@ -188,7 +188,7 @@ public class DataManager {
 
             // Migrate the data
             for (DataMigration dataMigration : requiredMigrations) {
-                dataMigration.migrate(databaseConnector, getTablePrefix());
+                dataMigration.migrate(connection, getTablePrefix());
             }
 
             // Set the new current migration to be the highest migrated to

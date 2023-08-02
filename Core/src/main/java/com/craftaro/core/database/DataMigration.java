@@ -23,7 +23,7 @@ public abstract class DataMigration {
         this.revision = revision;
     }
 
-    public abstract void migrate(DatabaseConnector connector, String tablePrefix) throws SQLException;
+    public abstract void migrate(Connection connection, String tablePrefix) throws SQLException;
 
     /**
      * @return the revision number of this migration
@@ -99,7 +99,7 @@ public abstract class DataMigration {
                         if (value == null) {
                             insertQuery.append("NULL");
                         } else if (value instanceof String || value instanceof Timestamp) {
-                            insertQuery.append("'").append(value).append("'");
+                            insertQuery.append("'").append(value instanceof String ? ((String) value).replaceAll("'", "''") : value).append("'");
                         } else {
                             insertQuery.append(value);
                         }
