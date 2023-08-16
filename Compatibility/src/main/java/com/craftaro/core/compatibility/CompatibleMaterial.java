@@ -15,10 +15,14 @@ import java.util.Optional;
 
 public class CompatibleMaterial {
     public static Optional<XMaterial> getMaterial(@NotNull Material material) {
-        return XMaterial.matchXMaterial(material.name());
+        return getMaterial(material.name());
     }
 
-    public static Optional<XMaterial> getMaterial(@NotNull String name) {
+    public static Optional<XMaterial> getMaterial(String name) {
+        if (name == null || name.isEmpty()) {
+            return Optional.empty();
+        }
+
         return XMaterial.matchXMaterial(name);
     }
 
