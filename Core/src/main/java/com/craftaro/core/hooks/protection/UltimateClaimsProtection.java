@@ -6,6 +6,7 @@ import com.craftaro.ultimateclaims.member.ClaimPerm;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class UltimateClaimsProtection extends Protection {
     private final UltimateClaims instance;
@@ -13,7 +14,7 @@ public class UltimateClaimsProtection extends Protection {
     public UltimateClaimsProtection(Plugin plugin) {
         super(plugin);
 
-        instance = UltimateClaims.getInstance();
+        this.instance = JavaPlugin.getPlugin(UltimateClaims.class);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class UltimateClaimsProtection extends Protection {
     }
 
     private boolean hasPerms(Player player, Location location, ClaimPerm claimPerm) {
-        Claim claim = instance.getClaimManager().getClaim(location.getChunk());
+        Claim claim = this.instance.getClaimManager().getClaim(location.getChunk());
         if (claim == null) {
             return true;
         }
@@ -47,6 +48,6 @@ public class UltimateClaimsProtection extends Protection {
 
     @Override
     public boolean isEnabled() {
-        return instance != null;
+        return this.instance != null;
     }
 }
