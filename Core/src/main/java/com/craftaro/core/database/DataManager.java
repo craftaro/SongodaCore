@@ -147,9 +147,15 @@ public class DataManager {
             int currentMigration = -1;
             boolean migrationsExist;
 
-            DatabaseMetaData meta = connection.getMetaData();
-            ResultSet res = meta.getTables(null, null, this.getMigrationsTableName(), new String[] {"TABLE"});
-            migrationsExist = res.next();
+//            DatabaseMetaData meta = connection.getMetaData();
+//            ResultSet res = meta.getTables(null, null, this.getMigrationsTableName(), new String[] {"TABLE"});
+//            migrationsExist = res.next();
+            try {
+                connection.createStatement().execute("SELECT 1 FROM " + this.getMigrationsTableName());
+                migrationsExist = true;
+            } catch (Exception ex) {
+                migrationsExist = false;
+            }
 
             if (!migrationsExist) {
                 // No migration table exists, create one
