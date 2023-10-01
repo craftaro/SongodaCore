@@ -19,7 +19,7 @@ jobs:
   Tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Prepare Workspace
         uses: ./.github/actions/setup_project_workspace
 
@@ -32,7 +32,7 @@ jobs:
     needs: [ Tests ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Prepare Workspace
         uses: ./.github/actions/setup_project_workspace
         with:
@@ -89,7 +89,7 @@ jobs:
     if: ${{ always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development' || github.ref_type == 'tag') }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Notify Webhook
         uses: craftaro/GH-Commons/.github/actions/discord_send_job_results@master
         with:
