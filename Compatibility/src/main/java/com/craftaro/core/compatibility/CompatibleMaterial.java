@@ -10,7 +10,9 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 
 public class CompatibleMaterial {
@@ -324,17 +326,23 @@ public class CompatibleMaterial {
         }
     }
 
-    public static @Nullable ItemStack getFurnaceResult(XMaterial material) {
-        Iterator<Recipe> recipes = Bukkit.recipeIterator();
-        while (recipes.hasNext()) {
-            Recipe recipe = recipes.next();
-            if (!(recipe instanceof FurnaceRecipe)) {
-                continue;
-            }
+    private static final Map<XMaterial, ItemStack> RECIPE_CACHE = new HashMap<>();
 
-            FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
-            if (material.isSimilar(furnaceRecipe.getInput())) {
-                return furnaceRecipe.getResult();
+    public static @Nullable ItemStack getFurnaceResult(XMaterial material) {
+        if (RECIPE_CACHE.containsKey(material)) {
+            return RECIPE_CACHE.get(material);
+        }
+
+        Iterator<Recipe> recipes = Bukkit.recipeIterator();
+
+        while(recipes.hasNext()) {
+            Recipe recipe = (Recipe)recipes.next();
+            if (recipe instanceof FurnaceRecipe) {
+                FurnaceRecipe furnaceRecipe = (FurnaceRecipe)recipe;
+                if (material.isSimilar(furnaceRecipe.getInput())) {
+                    RECIPE_CACHE.put(material, furnaceRecipe.getInput());
+                    return furnaceRecipe.getResult();
+                }
             }
         }
 
