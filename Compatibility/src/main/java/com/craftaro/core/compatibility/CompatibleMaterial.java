@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class CompatibleMaterial {
+    private static final Map<XMaterial, ItemStack> FURNACE_RESULT_CACHE = new HashMap<>();
+
     public static Optional<XMaterial> getMaterial(@NotNull Material material) {
         return getMaterial(material.name());
     }
@@ -326,23 +328,22 @@ public class CompatibleMaterial {
         }
     }
 
-    private static final Map<XMaterial, ItemStack> RECIPE_CACHE = new HashMap<>();
-
     public static @Nullable ItemStack getFurnaceResult(XMaterial material) {
-        if (RECIPE_CACHE.containsKey(material)) {
-            return RECIPE_CACHE.get(material);
+        if (FURNACE_RESULT_CACHE.containsKey(material)) {
+            return FURNACE_RESULT_CACHE.get(material);
         }
 
         Iterator<Recipe> recipes = Bukkit.recipeIterator();
 
-        while(recipes.hasNext()) {
-            Recipe recipe = (Recipe)recipes.next();
-            if (recipe instanceof FurnaceRecipe) {
-                FurnaceRecipe furnaceRecipe = (FurnaceRecipe)recipe;
-                if (material.isSimilar(furnaceRecipe.getInput())) {
-                    RECIPE_CACHE.put(material, furnaceRecipe.getResult());
-                    return furnaceRecipe.getResult();
-                }
+        while (recipes.hasNext()) {
+            Recipe recipe = recipes.next();
+            if (!(recipe instanceof FurnaceRecipe)) {
+                continue;
+            }
+
+            if (material.isSimilar(((FurnaceRecipe) recipe).getInput())) {
+                FURNACE_RESULT_CACHE.put(material, recipe.getResult());
+                return recipe.getResult();
             }
         }
 
