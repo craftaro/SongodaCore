@@ -340,7 +340,7 @@ public class CompatibleMaterial {
             if (recipe instanceof FurnaceRecipe) {
                 FurnaceRecipe furnaceRecipe = (FurnaceRecipe)recipe;
                 if (material.isSimilar(furnaceRecipe.getInput())) {
-                    RECIPE_CACHE.put(material, furnaceRecipe.getInput());
+                    RECIPE_CACHE.put(material, furnaceRecipe.getResult());
                     return furnaceRecipe.getResult();
                 }
             }
