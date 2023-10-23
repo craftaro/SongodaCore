@@ -106,13 +106,13 @@ public class DataManager {
             }
             this.type = databaseConnector.getType();
             this.plugin.getLogger().info("Data handler connected using " + databaseConnector.getType().name() + ".");
+
+            runMigrations();
         } catch (Exception ex) {
             this.plugin.getLogger().severe("Fatal error trying to connect to database. Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
             ex.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this.plugin);
         }
-
-        runMigrations();
     }
 
     /**
