@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,53 +67,49 @@ public class DataManager {
     }
 
     public DataManager(SongodaPlugin plugin, List<DataMigration> migrations) {
-        this.plugin = plugin;
-        this.migrations = migrations;
-        this.databaseConfig = plugin.getDatabaseConfig();
-        load(null);
+        this(plugin, migrations, null);
     }
 
     public DataManager(SongodaPlugin plugin, List<DataMigration> migrations, DatabaseType forcedType) {
         this.plugin = plugin;
         this.migrations = migrations;
         this.databaseConfig = plugin.getDatabaseConfig();
-        load(forcedType);
+
+        try {
+            load(forcedType);
+        } catch (Exception ex) {
+            // FIXME: This try-catch exists for backwards-compatibility reasons (I basically don't want to invest the necessary time to do it properly)
+            throw new RuntimeException(ex);
+        }
     }
 
-    private void load(DatabaseType forcedType) {
-        try {
-            String databaseType = databaseConfig.getString("Connection Settings.Type").toUpperCase();
-            if (forcedType != null) {
-                databaseType = forcedType.name();
-            }
-            switch (databaseType) {
-                case "MYSQL": {
-                    this.databaseConnector = new MySQLConnector(plugin, databaseConfig);
-                    break;
-                }
-                case "MARIADB": {
-                    this.databaseConnector = new MariaDBConnector(plugin, databaseConfig);
-                    break;
-                }
-                case "SQLITE": {
-                    this.databaseConnector = new SQLiteConnector(plugin);
-                    break;
-                }
-                default: {
-                    //H2
-                    this.databaseConnector = new H2Connector(plugin);
-                    break;
-                }
-            }
-            this.type = databaseConnector.getType();
-            this.plugin.getLogger().info("Data handler connected using " + databaseConnector.getType().name() + ".");
-
-            runMigrations();
-        } catch (Exception ex) {
-            this.plugin.getLogger().severe("Fatal error trying to connect to database. Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
-            ex.printStackTrace();
-            Bukkit.getPluginManager().disablePlugin(this.plugin);
+    private void load(DatabaseType forcedType) throws SQLException {
+        String databaseType = databaseConfig.getString("Connection Settings.Type").toUpperCase();
+        if (forcedType != null) {
+            databaseType = forcedType.name();
         }
+        switch (databaseType) {
+            case "MYSQL": {
+                this.databaseConnector = new MySQLConnector(plugin, databaseConfig);
+                break;
+            }
+            case "MARIADB": {
+                this.databaseConnector = new MariaDBConnector(plugin, databaseConfig);
+                break;
+            }
+            case "SQLITE": {
+                this.databaseConnector = new SQLiteConnector(plugin);
+                break;
+            }
+            default: {
+                this.databaseConnector = new H2Connector(plugin);
+                break;
+            }
+        }
+        this.type = databaseConnector.getType();
+        this.plugin.getLogger().info("Data handler connected using " + databaseConnector.getType().name() + ".");
+
+        runMigrations();
     }
 
     /**
@@ -142,7 +139,7 @@ public class DataManager {
     /**
      * Runs any needed data migrations
      */
-    public void runMigrations() {
+    public void runMigrations() throws SQLException {
         try (Connection connection = this.databaseConnector.getConnection()) {
             int currentMigration = -1;
             boolean migrationsExist;
@@ -208,8 +205,6 @@ public class DataManager {
                 statement.setInt(1, currentMigration);
                 statement.execute();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
 
     }
