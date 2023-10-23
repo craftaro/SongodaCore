@@ -20,7 +20,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class SongodaPlugin extends JavaPlugin {
@@ -281,6 +280,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
         } else {
             this.dataManager = new DataManager(this, migrations);
         }
+
         if (dataManager.getDatabaseConnector().isInitialized()) {
             //Check if the type is SQLite
             if (dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {

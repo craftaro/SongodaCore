@@ -1,20 +1,16 @@
 package com.craftaro.core.database;
 
-import com.craftaro.core.SongodaCore;
 import com.craftaro.core.SongodaPlugin;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public abstract class DataMigration {
     private final int revision;

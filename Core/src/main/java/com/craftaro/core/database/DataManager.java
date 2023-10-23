@@ -1,19 +1,15 @@
 package com.craftaro.core.database;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.configuration.Config;
-import org.bukkit.Bukkit;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,13 +18,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,7 +41,7 @@ public class DataManager {
     protected DatabaseType type;
     private final Map<String, AtomicInteger> autoIncrementCache = new HashMap<>();
 
-    protected final ExecutorService asyncPool = new ThreadPoolExecutor(1, 5, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName()+"-Database-Async-%d").build());
+    protected final ExecutorService asyncPool = new ThreadPoolExecutor(1, 5, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName() + "-Database-Async-%d").build());
 
     @Deprecated
     private static final Map<String, LinkedList<Runnable>> queues = new HashMap<>();
@@ -206,7 +200,6 @@ public class DataManager {
                 statement.execute();
             }
         }
-
     }
 
     /**
@@ -368,7 +361,9 @@ public class DataManager {
 
     /**
      * Loads the data from the database
+     *
      * @param id The id of the data
+     *
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -402,9 +397,11 @@ public class DataManager {
 
     /**
      * Loads the data from the database
-     * @param uuid The uuid of the data
+     *
+     * @param uuid  The uuid of the data
      * @param clazz The class of the data
      * @param table The table of the data without prefix
+     *
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -438,10 +435,12 @@ public class DataManager {
 
     /**
      * Loads the data from the database
-     * @param uuid The uuid of the data
-     * @param clazz The class of the data
-     * @param table The table of the data without prefix
+     *
+     * @param uuid       The uuid of the data
+     * @param clazz      The class of the data
+     * @param table      The table of the data without prefix
      * @param uuidColumn The column of the uuid
+     *
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -475,6 +474,7 @@ public class DataManager {
 
     /**
      * Loads the data in batch from the database
+     *
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -486,7 +486,7 @@ public class DataManager {
                     for (@NotNull Record record : Objects.requireNonNull(context.select()
                             .from(DSL.table(getTablePrefix() + table))
                             .fetchArray())) {
-                        Data data = (Data)clazz.getDeclaredConstructor().newInstance();
+                        Data data = (Data) clazz.getDeclaredConstructor().newInstance();
                         dataList.add(data.deserialize(record.intoMap()));
                     }
                 } catch (Exception ex) {
@@ -501,6 +501,7 @@ public class DataManager {
 
     /**
      * Loads the data in batch from the database
+     *
      * @return The loaded data
      */
     @SuppressWarnings("unchecked")
@@ -511,9 +512,9 @@ public class DataManager {
                 try {
                     for (@NotNull Record record : Objects.requireNonNull(context.select()
                             .from(DSL.table(getTablePrefix() + table))
-                                    .where(conditions)
+                            .where(conditions)
                             .fetchArray())) {
-                        Data data = (Data)clazz.getDeclaredConstructor().newInstance();
+                        Data data = (Data) clazz.getDeclaredConstructor().newInstance();
                         dataList.add(data.deserialize(record.intoMap()));
                     }
                 } catch (Exception ex) {
@@ -536,6 +537,7 @@ public class DataManager {
 
     /**
      * Force shutdown the async pool and close the database
+     *
      * @return Tasks that didn't finish in the async pool
      */
     public List<Runnable> shutdownNow() {

@@ -1,7 +1,6 @@
 package com.craftaro.core.database;
 
 import com.craftaro.core.SongodaCore;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
