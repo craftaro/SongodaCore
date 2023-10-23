@@ -63,7 +63,7 @@ public class SQLiteConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(connection);
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();
@@ -74,7 +74,7 @@ public class SQLiteConnector implements DatabaseConnector {
         try (Connection connection = getConnection()){
             callback.accept(DSL.using(connection, SQLDialect.SQLITE));
         } catch (Exception ex) {
-            this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            this.plugin.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -84,7 +84,7 @@ public class SQLiteConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(DSL.using(connection, SQLDialect.SQLITE));
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            SongodaCore.getInstance().getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();

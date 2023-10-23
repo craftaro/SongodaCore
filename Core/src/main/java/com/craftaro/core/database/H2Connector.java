@@ -82,7 +82,7 @@ public class H2Connector implements DatabaseConnector {
         try (Connection connection = this.hikari.getConnection()) {
             callback.accept(connection);
         } catch (SQLException ex) {
-            this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            this.plugin.getLogger().severe("An error occurred executing a H2 query: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -93,7 +93,7 @@ public class H2Connector implements DatabaseConnector {
             return callback.accept(connection);
         } catch (Exception ex) {
             if (this.plugin != null) {
-                SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+                SongodaCore.getLogger().severe("An error occurred executing a H2 query: " + ex.getMessage());
             }
             ex.printStackTrace();
         }
@@ -106,7 +106,7 @@ public class H2Connector implements DatabaseConnector {
             callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             if (this.plugin != null) {
-                this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+                this.plugin.getLogger().severe("An error occurred executing a H2 query: " + ex.getMessage());
             }
             ex.printStackTrace();
         }
@@ -118,7 +118,7 @@ public class H2Connector implements DatabaseConnector {
             return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             if (this.plugin != null) {
-                SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+                SongodaCore.getLogger().severe("An error occurred executing a H2 query: " + ex.getMessage());
             }
             ex.printStackTrace();
         }
