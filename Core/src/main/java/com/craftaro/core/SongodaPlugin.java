@@ -99,7 +99,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         CommandSender console = Bukkit.getConsoleSender();
 
-        // Check plugin access, don't load plugin if user don't have access
+        // Check plugin access, don't load the plugin if the user doesn't have access
         if (CraftaroProductVerification.getOwnProductVerificationStatus() != ProductVerificationStatus.VERIFIED) {
             console.sendMessage("\n" +
                     ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
