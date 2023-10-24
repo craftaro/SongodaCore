@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -255,7 +256,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @return DataManager for this plugin.
      */
     public DataManager getDataManager() {
-        return dataManager;
+        return this.dataManager;
     }
 
     /**
@@ -263,6 +264,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
      */
     protected void initDatabase() {
         initDatabase(Collections.emptyList());
+    }
+
+    protected void initDatabase(DataMigration... migrations) {
+        initDatabase(Arrays.asList(migrations));
     }
 
     /**
@@ -281,9 +286,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
             this.dataManager = new DataManager(this, migrations);
         }
 
-        if (dataManager.getDatabaseConnector().isInitialized()) {
+        if (this.dataManager.getDatabaseConnector().isInitialized()) {
             //Check if the type is SQLite
-            if (dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {
+            if (this.dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {
                 //Let's convert it to H2
                 try {
                     DataManager newDataManager = DataMigration.convert(this, DatabaseType.H2);
@@ -291,8 +296,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
                         //Set the new data manager
                         setDataManager(newDataManager);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ex) {
+                    // Throwing for keeping backwards compatible – Not a fan of just logging a potential critical error here
+                    throw new RuntimeException(ex);
                 }
             }
         }
@@ -305,10 +311,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public void setDataManager(DataManager dataManager) {
         if (dataManager == null) throw new IllegalArgumentException("DataManager cannot be null!");
         if (this.dataManager == dataManager) return;
-        //Make sure to shut down the old data manager.
+
+        // Make sure to shut down the old data manager.
         if (this.dataManager != null) {
             this.dataManager.shutdown();
-            this.dataManager = null;
         }
         this.dataManager = dataManager;
     }
