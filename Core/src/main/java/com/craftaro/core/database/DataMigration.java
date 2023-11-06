@@ -3,6 +3,7 @@ package com.craftaro.core.database;
 import com.craftaro.core.SongodaPlugin;
 
 import java.io.File;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -73,6 +74,11 @@ public abstract class DataMigration {
                     String columnName = metaRs.getColumnName(i);
                     String columnType = metaRs.getColumnTypeName(i);
                     int columnSize = metaRs.getColumnDisplaySize(i);
+                    //Fix EpicHoppers BIT column type from corrupted db
+                    if (columnType.equals("BIT") && plugin.getName().toLowerCase().equals("epichoppers")) {
+                        columnType = "VARCHAR";
+                        columnSize = 20;
+                    }
 
                     createTableQuery.append(columnName).append(" ").append(columnType).append("(").append(columnSize).append(")");
 
@@ -96,6 +102,9 @@ public abstract class DataMigration {
                             insertQuery.append("NULL");
                         } else if (value instanceof String || value instanceof Timestamp) {
                             insertQuery.append("'").append(value instanceof String ? ((String) value).replaceAll("'", "''") : value).append("'");
+                        } else if (value instanceof byte[]) {
+                            // Handle BLOB columns
+                            insertQuery.append("X'").append(bytesToHex((byte[]) value)).append("'");
                         } else {
                             insertQuery.append(value);
                         }
@@ -157,5 +166,15 @@ public abstract class DataMigration {
 
         columns.setLength(columns.length() - 2);
         return columns.toString();
+    }
+
+
+    // Utility method to convert byte array to hexadecimal string
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            hexString.append(String.format("%02x", b));
+        }
+        return hexString.toString();
     }
 }
