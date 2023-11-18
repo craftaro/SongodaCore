@@ -31,8 +31,8 @@ public class SerializedLocation {
                 (double) map.get("x"),
                 (double) map.get("y"),
                 (double) map.get("z"),
-                (float) map.getOrDefault("yaw", 0.0f),
-                (float) map.getOrDefault("pitch", 0.0f));
+                Double.valueOf((double)map.getOrDefault("yaw", 0.0)).floatValue(),
+                Double.valueOf((double)map.getOrDefault("pitch", 0.0)).floatValue());
     }
 
     public static Map<String, Object> of(Location location) {
