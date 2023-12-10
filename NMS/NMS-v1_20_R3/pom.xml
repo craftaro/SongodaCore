@@ -16,7 +16,7 @@
         <java.version>17</java.version>
         <java.release>17</java.release>
 
-        <nms.ver>1.20.3-R0.1-SNAPSHOT</nms.ver>
+        <nms.ver>1.20.4-R0.1-SNAPSHOT</nms.ver>
     </properties>
 
     <build>
