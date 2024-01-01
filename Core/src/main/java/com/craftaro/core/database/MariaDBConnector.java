@@ -33,7 +33,7 @@ public class MariaDBConnector implements DatabaseConnector {
         int poolSize = databaseConfig.getInt("Connection Settings.Pool Size");
 
         try {
-            Class.forName("com.craftaro.core.third_party.org.mariadb.jdbc.Driver");
+            Class.forName("com.craftaro.third_party.org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

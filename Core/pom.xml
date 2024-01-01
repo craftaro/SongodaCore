@@ -80,24 +80,16 @@
                                     <include>com.craftaro:*</include>
 
                                     <include>de.tr7zw:item-nbt-api</include>
-                                    <include>net.kyori:*</include>
-                                    <include>com.github.cryptomorin:XSeries</include>
 
-                                    <include>org.apache.commons:commons-lang3</include>
-                                    <include>org.apache.commons:commons-text</include>
-
-                                    <include>com.zaxxer:HikariCP</include>
-                                    <include>org.jooq:jooq</include>
-                                    <include>org.reactivestreams:reactive-streams</include>
-                                    <include>org.mariadb.jdbc:mariadb-java-client</include>
-                                    <include>com.h2database:h2</include>
+                                    <include>me.lucko:jar-relocator</include>
+                                    <include>com.georgev22.api:libraryloader</include>
                                 </includes>
                             </artifactSet>
 
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.com.zaxxer</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.com.zaxxer</shadedPattern>
                                 </relocation>
 
                                 <relocation>
@@ -107,37 +99,42 @@
 
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.net.kyori</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.net.kyori</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.org.apache.commons</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.org.apache.commons</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.jooq</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.org.jooq</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>org.reactivestreams</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.org.reactivestreams</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.org.jooq</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.mariadb.jdbc</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.org.mariadb.jdbc</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.org.mariadb.jdbc</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.h2</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.org.h2</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.org.h2</shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>com.cryptomorin.xseries</pattern>
-                                    <shadedPattern>com.craftaro.core.third_party.com.cryptomorin.xseries</shadedPattern>
+                                    <shadedPattern>com.craftaro.third_party.com.cryptomorin.xseries</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>me.lucko.jarrelocator</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.me.lucko.jarrelocator</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>com.georgev22.api</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.com.georgev22.api</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -215,6 +212,20 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
             <version>4.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>jar-relocator</artifactId>
+            <version>1.7</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.georgev22.api</groupId>
+            <artifactId>libraryloader</artifactId>
+            <version>1.6.1</version>
             <scope>compile</scope>
         </dependency>
 

@@ -4,6 +4,9 @@ import com.craftaro.core.configuration.Config;
 import com.craftaro.core.database.DataManager;
 import com.craftaro.core.database.DataMigration;
 import com.craftaro.core.database.DatabaseType;
+import com.craftaro.core.dependency.Dependency;
+import com.craftaro.core.dependency.DependencyLoader;
+import com.craftaro.core.dependency.Relocation;
 import com.craftaro.core.locale.Locale;
 import com.craftaro.core.utils.Metrics;
 import com.craftaro.core.verification.CraftaroProductVerification;
@@ -21,11 +24,12 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 public abstract class SongodaPlugin extends JavaPlugin {
     protected Locale locale;
-    protected Config config = new Config(this);
+    protected Config config;
     protected Config databaseConfig;
     protected DataManager dataManager;
     protected long dataLoadDelay = 20L;
@@ -40,6 +44,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
         System.setProperty("org.jooq.no-tips", "true");
         System.setProperty("org.jooq.no-logo", "true");
     }
+
+    protected abstract Set<Dependency> getDependencies();
 
     public abstract void onPluginLoad();
 
@@ -83,7 +89,32 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onLoad() {
+
         try {
+            //Load Core dependencies
+            DependencyLoader.initParentClassLoader(getClass().getClassLoader());
+            Set<Dependency> dependencies = getDependencies();
+            //Use ; instead of . so maven plugin won't relocate it
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-text", "1.9"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-lang3", "3.12.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-bukkit", "4.1.1"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-api", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;zaxxer", "HikariCP", "5.1.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;reactivestreams", "reactive-streams", "1.0.2", false));
+            //dependencies.add(new Dependency("https://repo1.maven.org/maven2", "io;r2dbc", "r2dbc-spi", "1.0.0.RELEASE", false));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;jooq", "jooq", "3.14.16")); //3.19.1
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;mariadb;jdbc", "mariadb-java-client", "3.2.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;h2database", "h2", "1.4.200",
+                    new Relocation("org;h2", "com;craftaro;third_party;org;h2")) //Custom relocation if the package names not match with the groupdId
+            );
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;github;cryptomorin", "XSeries", "9.8.0",
+                    new Relocation("com;cryptomorin;xseries", "com;craftaro;third_party;com;cryptomorin;xseries")) //Custom relocation if the package names not match with the groupdId
+            );
+
+            //Load plugin dependencies
+            DependencyLoader.loadDependencies(dependencies);
+
+            this.config = new Config(this);
             onPluginLoad();
         } catch (Throwable th) {
             criticalErrorOnPluginStartup(th);
