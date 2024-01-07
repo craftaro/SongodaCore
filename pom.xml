@@ -160,11 +160,6 @@
         </repository>
 
         <repository>
-            <id>github-georgev220-libraryloader</id>
-            <url>https://maven.pkg.github.com/GeorgeV220/LibraryLoader</url>
-        </repository>
-
-        <repository>
             <id>songoda-public</id>
             <url>https://repo.craftaro.com/repository/public/</url>
         </repository>

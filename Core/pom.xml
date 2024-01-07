@@ -234,9 +234,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.georgev22.api</groupId>
-            <artifactId>libraryloader</artifactId>
-            <version>1.6.1</version>
+            <groupId>com.github.GeorgeV220</groupId>
+            <artifactId>LibraryLoader</artifactId>
+            <version>v1.6.1</version>
             <scope>compile</scope>
         </dependency>
 
