@@ -93,7 +93,7 @@
                                     <include>com.h2database:h2</include>
 
                                     <include>me.lucko:jar-relocator</include>
-                                    <include>com.georgev22.api:libraryloader</include>
+                                    <include>com.github.GeorgeV220:LibraryLoader</include>
                                 </includes>
                             </artifactSet>
 
