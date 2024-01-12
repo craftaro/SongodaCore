@@ -94,7 +94,9 @@
 
                                     <include>me.lucko:jar-relocator</include>
                                     <include>com.github.GeorgeV220:LibraryLoader</include>
-                                    <include>org.ow2.asm:asm</include>
+                                    <include>com.github.consulo:objectweb-asm</include>
+                                    <include>com.github.consulo.objectweb-asm:asm</include>
+                                    <include>com.github.consulo.objectweb-asm:asm-commons</include>
                                 </includes>
                             </artifactSet>
 
@@ -252,9 +254,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>9.6</version>
+            <groupId>com.github.consulo</groupId>
+            <artifactId>objectweb-asm</artifactId>
+            <version>ASM_6_2</version>
             <scope>compile</scope>
         </dependency>
 
