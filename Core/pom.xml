@@ -94,6 +94,7 @@
 
                                     <include>me.lucko:jar-relocator</include>
                                     <include>com.github.GeorgeV220:LibraryLoader</include>
+                                    <include>org.ow2.asm:asm</include>
                                 </includes>
                             </artifactSet>
 
@@ -116,6 +117,11 @@
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.craftaro.third_party.org.apache.commons</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.reactivestreams</pattern>
+                                    <shadedPattern>com.craftaro.third_party.org.reactivestreams</shadedPattern>
                                 </relocation>
 
                                 <relocation>
@@ -146,6 +152,11 @@
                                 <relocation>
                                     <pattern>com.georgev22.api</pattern>
                                     <shadedPattern>com.craftaro.core.third_party.com.georgev22.api</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.objectweb.asm</pattern>
+                                    <shadedPattern>com.craftaro.core.third_party.org.objectweb.asm</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -237,6 +248,13 @@
             <groupId>com.github.GeorgeV220</groupId>
             <artifactId>LibraryLoader</artifactId>
             <version>v1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.6</version>
             <scope>compile</scope>
         </dependency>
 
