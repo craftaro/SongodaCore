@@ -23,6 +23,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -89,11 +90,10 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onLoad() {
-
         try {
             //Load Core dependencies
             DependencyLoader.initParentClassLoader(getClass().getClassLoader());
-            Set<Dependency> dependencies = getDependencies();
+            Set<Dependency> dependencies = new HashSet<>(getDependencies());
             //Use ; instead of . so maven plugin won't relocate it
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-text", "1.9"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-lang3", "3.12.0"));
