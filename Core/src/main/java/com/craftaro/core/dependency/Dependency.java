@@ -2,30 +2,21 @@ package com.craftaro.core.dependency;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class Dependency {
-
     private final String repositoryUrl;
     private final String groupId;
     private final String artifactId;
     private final String version;
     private boolean relocate;
-    private Relocation relocation;
+    private final Relocation relocation;
 
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version) {
-        this.repositoryUrl = repositoryUrl;
-        this.groupId = groupId.replaceAll(";", ".");
-        this.artifactId = artifactId;
-        this.version = version;
-        this.relocate = true;
+        this(repositoryUrl, groupId, artifactId, version, true);
     }
 
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version, boolean relocate) {
-        this.repositoryUrl = repositoryUrl;
-        this.groupId = groupId.replaceAll(";", ".");
-        this.artifactId = artifactId;
-        this.version = version;
+        this(repositoryUrl, groupId, artifactId, version, null);
+        this.relocate = relocate;
     }
 
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version, @Nullable Relocation relocation) {
@@ -38,26 +29,26 @@ public class Dependency {
     }
 
     public String getRepositoryUrl() {
-        return repositoryUrl;
+        return this.repositoryUrl;
     }
 
     public String getGroupId() {
-        return groupId;
+        return this.groupId;
     }
 
     public String getArtifactId() {
-        return artifactId;
+        return this.artifactId;
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 
     public Relocation getRelocation() {
-        return relocation;
+        return this.relocation;
     }
 
     public boolean relocate() {
-        return relocate;
+        return this.relocate;
     }
 }
