@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.Connection;
@@ -46,7 +47,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
         System.setProperty("org.jooq.no-logo", "true");
     }
 
-    protected abstract Set<Dependency> getDependencies();
+    protected @NotNull Set<Dependency> getDependencies() {
+        return Collections.emptySet();
+    }
 
     public abstract void onPluginLoad();
 
