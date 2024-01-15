@@ -163,7 +163,8 @@ public class DataManager {
                 }
             } else {
                 // Grab the current migration version
-                String selectVersion = "SELECT migration_version FROM " + this.getMigrationsTableName();
+                // Due to the automatic SQLite to H2 conversion that might have happened, two entries (one of them -1) might exist
+                String selectVersion = "SELECT migration_version FROM " + this.getMigrationsTableName() + " ORDER BY migration_version DESC LIMIT 1";
                 try (PreparedStatement statement = connection.prepareStatement(selectVersion)) {
                     ResultSet result = statement.executeQuery();
                     result.next();
