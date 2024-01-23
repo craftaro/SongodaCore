@@ -37,22 +37,14 @@ import java.util.zip.ZipOutputStream;
 public class DependencyLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DependencyLoader.class);
-    private static final Set<Dependency> loadedDependencies = new HashSet<>();
-    private static LibraryLoader libraryLoader;
+    private static final LibraryLoader libraryLoader = new LibraryLoader(new File("craftaro"));
 
     public static LibraryLoader getLibraryLoader() {
         return libraryLoader;
     }
 
-    public static void initParentClassLoader(ClassLoader parent) {
-        libraryLoader = new LibraryLoader(parent, new File("craftaro"));
-    }
-
     public static void loadDependencies(Set<Dependency> dependencies) {
         for (Dependency dependency : dependencies) {
-            if (loadedDependencies.contains(dependency)) {
-                continue;
-            }
             loadDependency(dependency);
         }
     }
@@ -69,6 +61,11 @@ public class DependencyLoader {
         File outputFile = new File(libraryLoader.getLibFolder(), dependency.getGroupId().replace(".", File.separator) + File.separator + dependency.getArtifactId().replace(".", File.separator) + File.separator + dependency.getVersion() + File.separator + "raw-" + name + ".jar");
         File relocatedFile = new File(outputFile.getParentFile(), name.replace("raw-", "") + ".jar");
         if (relocatedFile.exists()) {
+            //Check if the file is already loaded to the classpath
+            if (isLoaded(relocatedFile)) {
+                return;
+            }
+
             //Load dependency into the classpath
             loadJarIntoClasspath(relocatedFile, dependency);
             return;
@@ -148,7 +145,11 @@ public class DependencyLoader {
                 }
             }
 
-            libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
+            try {
+                libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
+            } catch (InvalidDependencyException e) {
+                //already loaded
+            }
 
         } catch (Exception e) {
             logger.error("[CraftaroCore] Failed to load dependency " + file, e);
@@ -166,6 +167,32 @@ public class DependencyLoader {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean isLoaded(File file) {
+        //Find the first class file in the jar and try Class.forName
+        try (ZipFile zipFile = new ZipFile(file)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().startsWith("META-INF")) {
+                    continue;
+                }
+
+                if (entry.getName().endsWith(".class")) {
+                    String className = entry.getName().replace("/", ".").replace(".class", "");
+                    try {
+                        Class.forName(className);
+                        return true;
+                    } catch (Exception | Error e) {
+                        return false;
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
