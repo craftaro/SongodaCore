@@ -95,7 +95,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public final void onLoad() {
         try {
             //Load Core dependencies
-            DependencyLoader.initParentClassLoader(getClass().getClassLoader());
             Set<Dependency> dependencies = new HashSet<>(getDependencies());
             //Use ; instead of . so maven plugin won't relocate it
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-text", "1.9"));
