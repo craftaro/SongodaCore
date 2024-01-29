@@ -4,10 +4,12 @@ import com.craftaro.core.SongodaPlugin;
 import com.georgev22.api.libraryloader.LibraryLoader;
 import com.georgev22.api.libraryloader.exceptions.InvalidDependencyException;
 import com.georgev22.api.libraryloader.exceptions.UnknownDependencyException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.lucko.jarrelocator.JarRelocator;
 import me.lucko.jarrelocator.Relocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -36,7 +39,7 @@ import java.util.zip.ZipOutputStream;
 
 public class DependencyLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger(DependencyLoader.class);
+    private static final Logger logger = Logger.getLogger("CraftaroCore");
     private static final LibraryLoader libraryLoader = new LibraryLoader(new File("craftaro"));
 
     public static LibraryLoader getLibraryLoader() {
@@ -101,7 +104,7 @@ public class DependencyLoader {
             out.close();
 
             //Load dependency into the classpath
-            logger.info("[CraftaroCore] Loading dependency " + groupId + ":" + artifactId + ":" + version);
+            logger.info("[CraftaroCore] Downloaded dependency " + groupId + ":" + artifactId + ":" + version);
             loadJarIntoClasspath(outputFile, dependency);
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,51 +112,40 @@ public class DependencyLoader {
     }
 
     public static void loadJarIntoClasspath(File file, Dependency dependency) {
-        try {
-            if (!isRelocated(file) && dependency.relocate()) {
+            if (!isRelocated(file) && dependency.shouldRelocate()) {
                 logger.info("[CraftaroCore] Loading dependency for relocation " + file);
                 //relocate package to com.craftaro.core.third_party to avoid conflicts
+                List<Relocation> relocations = new ArrayList<>();
+
+                for (com.craftaro.core.dependency.Relocation r : dependency.getRelocations()) {
+                    relocations.add(new Relocation(r.getFrom(), r.getTo()));
+                }
+
+                //Relocate the classes
+                File finalJar = new File(file.getParentFile(), file.getName().replace("raw-", ""));
+                JarRelocator relocator = new JarRelocator(file, finalJar, relocations);
                 try {
-                    List<Relocation> relocations = new ArrayList<>();
-                    //Create a new zip file with the relocated classes
-                    ZipEntry entry;
-                    String com = "com.";
-                    String craftaro = "craftaro.";
-                    String third_party = "third_party.";
-                    String relocation = com + craftaro + third_party;
-
-                    if (dependency.getRelocation() != null) {
-                        relocations.add(new Relocation(dependency.getRelocation().getFrom(), dependency.getRelocation().getTo()));
-                    } else {
-                        //Use artifactId as the relocation
-                        relocations.add(new Relocation(dependency.getGroupId(), relocation + dependency.getGroupId()));
-                    }
-
-                    //Relocate the classes
-                    File finalJar = new File(file.getParentFile(), file.getName().replace("raw-", ""));
-                    JarRelocator relocator = new JarRelocator(file, finalJar, relocations);
-                    try {
-                        relocator.run();
-                    } catch (Exception e) {
-                        logger.error("[CraftaroCore] Failed to relocate dependency " + file, e);
-                    }
+                    relocator.run();
+                    logger.info("[CraftaroCore] Relocated dependency " + file);
                     //Delete the old jar
                     file.delete();
-
                 } catch (Exception e) {
-                    logger.error("[CraftaroCore] Failed to relocate dependency " + file, e);
+                    logger.severe("[CraftaroCore] Failed to relocate dependency1 " + file);
+                    if (e.getMessage().contains("zip file is empty")) {
+                        logger.severe("Try deleting the 'server root/craftaro' folder and restarting the server");
+                    }
+                    e.printStackTrace();
+                    //Delete the new jar cuz it's probably corrupted
+                    finalJar.delete();
                 }
-            }
 
+            }
             try {
                 libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
-            } catch (InvalidDependencyException e) {
+            } catch (Exception ignored) {
                 //already loaded
             }
-
-        } catch (Exception e) {
-            logger.error("[CraftaroCore] Failed to load dependency " + file, e);
-        }
+        logger.info("[CraftaroCore] ----------------------------");
     }
 
     private static boolean isRelocated(File file) {
