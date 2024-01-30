@@ -25,4 +25,17 @@ public class LocationUtils {
                 location.getY() >= y1 && location.getY() <= y2 &&
                 location.getZ() >= z1 && location.getZ() <= z2;
     }
+
+    public static Location getCenter(Location location) {
+        double xOffset = location.getBlockX() > 0 ? 0.5 : -0.5;
+        double zOffset = location.getBlockZ() > 0 ? 0.5 : -0.5;
+        return new Location(
+                location.getWorld(),
+                location.getBlockX() + xOffset,
+                location.getBlockY(),
+                location.getBlockZ() + zOffset,
+                0,
+                0
+        );
+    }
 }

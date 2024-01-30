@@ -7,6 +7,7 @@ import com.craftaro.core.database.DatabaseType;
 import com.craftaro.core.dependency.Dependency;
 import com.craftaro.core.dependency.DependencyLoader;
 import com.craftaro.core.dependency.Relocation;
+import com.craftaro.core.hooks.HookRegistryManager;
 import com.craftaro.core.locale.Locale;
 import com.craftaro.core.utils.Metrics;
 import com.craftaro.core.verification.CraftaroProductVerification;
@@ -38,6 +39,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     private boolean licensePreventedPluginLoad = false;
     private boolean emergencyStop = false;
+
+    private final HookRegistryManager hookRegistryManager = new HookRegistryManager(this);
 
     static {
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
@@ -221,6 +224,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
         } catch (Exception ignored) {
         }
 
+        this.hookRegistryManager.deactivateAllActiveHooks();
+
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(" "); // blank line to separate chatter
     }
@@ -356,5 +361,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
             this.dataManager.shutdown();
         }
         this.dataManager = dataManager;
+    }
+
+    public HookRegistryManager getHookManager() {
+        return this.hookRegistryManager;
     }
 }
