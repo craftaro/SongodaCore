@@ -40,9 +40,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
     private boolean emergencyStop = false;
 
     static {
-        /* NBT-API */
         MinecraftVersion.getLogger().setLevel(Level.WARNING);
-        // Disable tips and logo for Jooq
+        MinecraftVersion.disableUpdateCheck();
+
         System.setProperty("org.jooq.no-tips", "true");
         System.setProperty("org.jooq.no-logo", "true");
     }
