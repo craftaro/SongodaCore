@@ -101,6 +101,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-lang3", "3.12.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-bukkit", "4.1.1"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-api", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-minimessage", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-plain", "4.11.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;slf4j", "slf4j-api", "2.0.11"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;zaxxer", "HikariCP", "4.0.3", true,
                     new Relocation("org.slf4j", "com.craftaro.third_party.org.slf4j"))
