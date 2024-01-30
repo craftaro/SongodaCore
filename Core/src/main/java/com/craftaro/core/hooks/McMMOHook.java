@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.mcmmo.McMMOHandler;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -7,6 +8,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class McMMOHook {
     static boolean canHook = false;
 

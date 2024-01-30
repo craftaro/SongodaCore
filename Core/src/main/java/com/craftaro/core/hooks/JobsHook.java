@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.jobs.JobsHandler;
 import com.craftaro.core.hooks.jobs.JobsPlayerHandler;
 import org.bukkit.block.Block;
@@ -11,6 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class JobsHook {
     static boolean canHook;
 

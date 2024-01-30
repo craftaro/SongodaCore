@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.log.Log;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -7,7 +8,10 @@ import org.bukkit.block.Block;
 
 /**
  * A convenience class for static access to a Log HookManager
+ *
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
  */
+@Deprecated
 public class LogManager {
     private static final HookManager<Log> manager = new HookManager(Log.class);
 

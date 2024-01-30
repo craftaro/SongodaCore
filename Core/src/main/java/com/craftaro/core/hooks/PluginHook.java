@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.economies.Economy;
 import com.craftaro.core.hooks.economies.PlayerPointsEconomy;
 import com.craftaro.core.hooks.economies.ReserveEconomy;
@@ -35,6 +36,10 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public final class PluginHook<T extends Class> {
     public static final PluginHook ECO_VAULT = new PluginHook(Economy.class, "Vault", VaultEconomy.class);
     public static final PluginHook ECO_PLAYER_POINTS = new PluginHook(Economy.class, "PlayerPoints", PlayerPointsEconomy.class);

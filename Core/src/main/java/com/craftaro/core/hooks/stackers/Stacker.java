@@ -1,10 +1,15 @@
 package com.craftaro.core.hooks.stackers;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public abstract class Stacker implements OutdatedHookInterface {
     public abstract boolean supportsItemStacking();
 

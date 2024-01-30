@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.holograms.Holograms;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -9,7 +10,10 @@ import java.util.Map;
 
 /**
  * A convenience class for static access to a Holograms HookManager
+ *
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()} and {@link com.craftaro.core.hooks.hologram.HologramHook}
  */
+@Deprecated
 public class HologramManager {
     private static final HookManager<Holograms> manager = new HookManager(Holograms.class);
 

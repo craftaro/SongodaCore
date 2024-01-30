@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.mcmmo;
 
+import com.craftaro.core.SongodaPlugin;
 import com.gmail.nossr50.api.AbilityAPI;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.config.experience.ExperienceConfig;
@@ -26,6 +27,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class McMMOHandler {
     static boolean mcmmo_v2 = false;
     static boolean legacy_v13 = false;

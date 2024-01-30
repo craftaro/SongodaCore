@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.worldguard.WorldGuardFlagHandler;
 import com.craftaro.core.hooks.worldguard.WorldGuardRegionHandler;
 import org.bukkit.Chunk;
@@ -12,6 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class WorldGuardHook {
     static boolean canHook = false;
 

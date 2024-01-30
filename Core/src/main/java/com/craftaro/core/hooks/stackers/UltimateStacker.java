@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.stackers;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.ultimatestacker.api.UltimateStackerApi;
 import com.craftaro.ultimatestacker.api.stack.entity.EntityStack;
 import org.bukkit.Bukkit;
@@ -8,6 +9,10 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class UltimateStacker extends Stacker {
     private final Plugin plugin;
 

@@ -1,12 +1,16 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.stackers.Stacker;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 /**
  * A convenience class for static access to a Stacker HookManager
+ *
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
  */
+@Deprecated
 public class EntityStackerManager {
     private static final HookManager<Stacker> manager = new HookManager(Stacker.class);
 

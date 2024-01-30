@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.protection;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.ultimateclaims.UltimateClaims;
 import com.craftaro.ultimateclaims.claim.Claim;
 import com.craftaro.ultimateclaims.member.ClaimPerm;
@@ -8,6 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class UltimateClaimsProtection extends Protection {
     private final UltimateClaims instance;
 

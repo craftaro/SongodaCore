@@ -1,11 +1,16 @@
 package com.craftaro.core.hooks.economies;
 
+import com.craftaro.core.SongodaPlugin;
 import net.tnemc.core.Reserve;
 import net.tnemc.core.economy.EconomyAPI;
 import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class ReserveEconomy extends Economy {
     EconomyAPI economyAPI;
 

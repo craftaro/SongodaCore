@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.worldguard;
 
+import com.craftaro.core.SongodaPlugin;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -18,6 +19,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class WorldGuardRegionHandler {
     static boolean wgPlugin;
     static Object worldGuardPlugin;

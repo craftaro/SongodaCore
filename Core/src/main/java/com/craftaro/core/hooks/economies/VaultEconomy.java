@@ -1,9 +1,14 @@
 package com.craftaro.core.hooks.economies;
 
+import com.craftaro.core.SongodaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class VaultEconomy extends Economy {
     private final net.milkbowl.vault.economy.Economy vault;
 

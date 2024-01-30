@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.protection;
 
+import com.craftaro.core.SongodaPlugin;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -12,6 +13,10 @@ import world.bentobox.bentobox.managers.IslandsManager;
 
 import java.util.Optional;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class BentoBoxProtection extends Protection {
     private final IslandsManager islandsManager;
 

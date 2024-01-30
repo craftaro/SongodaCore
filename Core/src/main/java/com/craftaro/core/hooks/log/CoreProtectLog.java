@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.log;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.compatibility.ServerVersion;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
@@ -7,6 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class CoreProtectLog extends Log {
     private CoreProtectAPI api;
     private boolean useDeprecatedMethod = ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12);

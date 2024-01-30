@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.protection;
 
+import com.craftaro.core.SongodaPlugin;
 import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.flags.type.Flags;
 import me.angeschossen.lands.api.flags.type.RoleFlag;
@@ -8,6 +9,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class LandsProtection extends Protection {
     private final LandsIntegration landsIntegration;
 

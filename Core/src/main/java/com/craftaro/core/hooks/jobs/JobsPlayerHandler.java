@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.jobs;
 
+import com.craftaro.core.SongodaPlugin;
 import com.gamingmesh.jobs.CMILib.CMIEnchantment;
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.actions.BlockActionInfo;
@@ -23,6 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class JobsPlayerHandler {
     protected final JobsPlayer jPlayer;
 

@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.protection;
 
+import com.craftaro.core.SongodaPlugin;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -8,6 +9,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class PlotSquaredProtection extends Protection {
     public PlotSquaredProtection(Plugin plugin) {
         super(plugin);

@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.holograms;
 
+import com.craftaro.core.SongodaPlugin;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
@@ -11,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @deprecated See {@link SongodaPlugin#getHookManager()} and {@link com.craftaro.core.hooks.hologram.HologramHook}
+ */
+@Deprecated
 public class DecentHologramsHolograms extends Holograms {
     private final Set<String> ourHolograms = new HashSet<>();
 

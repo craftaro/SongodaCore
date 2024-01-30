@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.holograms;
 
+import com.craftaro.core.SongodaPlugin;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Bukkit;
@@ -11,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class HolographicDisplaysHolograms extends Holograms {
 
     private final Map<String, Hologram> holograms = new HashMap<>();

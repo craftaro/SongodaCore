@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.stackers;
 
+import com.craftaro.core.SongodaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -7,6 +8,10 @@ import org.bukkit.entity.LivingEntity;
 import uk.antiperson.stackmob.api.EntityManager;
 import uk.antiperson.stackmob.api.StackedEntity;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class StackMob extends Stacker {
     private final EntityManager plugin;
 

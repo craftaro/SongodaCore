@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.holograms;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -8,6 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated See {@link SongodaPlugin#getHookManager()} and {@link com.craftaro.core.hooks.hologram.HologramHook}
+ */
+@Deprecated
 public abstract class Holograms implements OutdatedHookInterface {
     protected double xOffset = 0.5;
     protected double yOffset = 0.5;

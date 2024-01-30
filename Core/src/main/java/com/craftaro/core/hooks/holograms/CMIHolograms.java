@@ -3,6 +3,7 @@ package com.craftaro.core.hooks.holograms;
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
 import com.Zrips.CMI.Modules.Holograms.HologramManager;
+import com.craftaro.core.SongodaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -16,6 +17,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class CMIHolograms extends Holograms {
     private static CMI cmi;
     private static HologramManager cmiHologramManager;

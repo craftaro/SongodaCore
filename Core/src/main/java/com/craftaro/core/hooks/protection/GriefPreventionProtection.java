@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.protection;
 
+import com.craftaro.core.SongodaPlugin;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.DataStore;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -7,6 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class GriefPreventionProtection extends Protection {
     private final DataStore dataStore;
 

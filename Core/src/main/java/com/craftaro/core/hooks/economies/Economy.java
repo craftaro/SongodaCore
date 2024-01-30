@@ -1,8 +1,13 @@
 package com.craftaro.core.hooks.economies;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.OfflinePlayer;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public abstract class Economy implements OutdatedHookInterface {
     /**
      * Get the players available balance

@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.worldguard;
 
+import com.craftaro.core.SongodaPlugin;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
@@ -30,7 +31,10 @@ import java.util.stream.Stream;
  * Hooks for adding a custom WorldGuard flag
  * <p>
  * Note: Hooks must be added before WG loads!
+ *
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
  */
+@Deprecated
 public class WorldGuardFlagHandler {
     static boolean wgPlugin;
     static Object worldGuardPlugin;

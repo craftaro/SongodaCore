@@ -1,9 +1,14 @@
 package com.craftaro.core.hooks.economies;
 
+import com.craftaro.core.SongodaPlugin;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class PlayerPointsEconomy extends Economy {
     private final PlayerPoints playerPoints;
 

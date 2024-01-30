@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -9,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class HookManager<T extends OutdatedHookInterface> {
     private final Class typeClass;
     private T defaultHook = null;

@@ -1,12 +1,16 @@
 package com.craftaro.core.hooks;
 
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.hooks.economies.Economy;
 import com.craftaro.core.utils.NumberUtils;
 import org.bukkit.OfflinePlayer;
 
 /**
  * A convenience class for static access to an Economy HookManager
+ *
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
  */
+@Deprecated
 public class EconomyManager {
     private static char currencySymbol = '$';
 

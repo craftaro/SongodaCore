@@ -1,5 +1,6 @@
 package com.craftaro.core.hooks.holograms;
 
+import com.craftaro.core.SongodaPlugin;
 import com.sainttx.holograms.api.Hologram;
 import com.sainttx.holograms.api.HologramPlugin;
 import com.sainttx.holograms.api.line.HologramLine;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @deprecated This class is part of the old hook system and will be deleted very soon – See {@link SongodaPlugin#getHookManager()}
+ */
+@Deprecated
 public class HologramsHolograms extends Holograms {
     private final HologramPlugin hologramPlugin;
     private final Set<String> ourHolograms = new HashSet<>();
