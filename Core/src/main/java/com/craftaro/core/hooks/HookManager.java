@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HookManager<T extends Hook> {
+public class HookManager<T extends OutdatedHookInterface> {
     private final Class typeClass;
     private T defaultHook = null;
     private boolean loaded = false;

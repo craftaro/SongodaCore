@@ -1,11 +1,11 @@
 package com.craftaro.core.hooks.stackers;
 
-import com.craftaro.core.hooks.Hook;
+import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 
-public abstract class Stacker implements Hook {
+public abstract class Stacker implements OutdatedHookInterface {
     public abstract boolean supportsItemStacking();
 
     public abstract boolean supportsEntityStacking();

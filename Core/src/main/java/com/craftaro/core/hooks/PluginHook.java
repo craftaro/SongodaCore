@@ -63,7 +63,7 @@ public final class PluginHook<T extends Class> {
     protected Constructor pluginConstructor; // for passing the plugin loading the hook to the plugin hook
 
     private PluginHook(T type, String pluginName, Class handler) {
-        if (!Hook.class.isAssignableFrom(handler)) {
+        if (!OutdatedHookInterface.class.isAssignableFrom(handler)) {
             throw new RuntimeException("Tried to register a non-Hook plugin hook! " + pluginName + " -> " + handler.getName());
         }
 
@@ -104,13 +104,13 @@ public final class PluginHook<T extends Class> {
         return new PluginHook(type, pluginName, handler);
     }
 
-    protected static Map<PluginHook, Hook> loadHooks(Class type, Plugin plugin) {
-        Map<PluginHook, Hook> loaded = new LinkedHashMap<>();
+    protected static Map<PluginHook, OutdatedHookInterface> loadHooks(Class type, Plugin plugin) {
+        Map<PluginHook, OutdatedHookInterface> loaded = new LinkedHashMap<>();
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         for (PluginHook hook : getHooks(type)) {
             if (pluginManager.isPluginEnabled(hook.plugin)) {
-                Hook handler = (Hook) (plugin != null ? hook.load(plugin) : hook.load());
+                OutdatedHookInterface handler = (OutdatedHookInterface) (plugin != null ? hook.load(plugin) : hook.load());
 
                 if (handler != null && handler.isEnabled()) {
                     loaded.put(hook, handler);

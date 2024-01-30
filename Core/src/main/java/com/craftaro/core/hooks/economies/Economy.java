@@ -1,9 +1,9 @@
 package com.craftaro.core.hooks.economies;
 
-import com.craftaro.core.hooks.Hook;
+import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.OfflinePlayer;
 
-public abstract class Economy implements Hook {
+public abstract class Economy implements OutdatedHookInterface {
     /**
      * Get the players available balance
      *

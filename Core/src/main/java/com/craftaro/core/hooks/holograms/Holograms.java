@@ -1,6 +1,6 @@
 package com.craftaro.core.hooks.holograms;
 
-import com.craftaro.core.hooks.Hook;
+import com.craftaro.core.hooks.OutdatedHookInterface;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Holograms implements Hook {
+public abstract class Holograms implements OutdatedHookInterface {
     protected double xOffset = 0.5;
     protected double yOffset = 0.5;
     protected double zOffset = 0.5;

@@ -1,6 +1,10 @@
 package com.craftaro.core.hooks;
 
-public interface Hook {
+/**
+ * This interface is part of the old hook system and is being replaced
+ */
+@Deprecated
+public interface OutdatedHookInterface {
     /**
      * Get the name of the plugin being used
      */
