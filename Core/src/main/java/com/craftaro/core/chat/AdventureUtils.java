@@ -39,10 +39,10 @@ public class AdventureUtils {
     }
 
     //Send message
-    public static void sendMessage(Plugin plugin, Component message, Player... target) {
+    public static void sendMessage(Plugin plugin, Component message, CommandSender... target) {
         try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(plugin)){
-            for (Player player : target) {
-                bukkitAudiences.player(player).sendMessage(message);
+            for (CommandSender sender : target) {
+                bukkitAudiences.sender(sender).sendMessage(message);
             }
         }
     }
