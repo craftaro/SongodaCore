@@ -1,13 +1,8 @@
 package com.craftaro.core.dependency;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class Dependency {
     private final String repositoryUrl;
@@ -18,35 +13,32 @@ public class Dependency {
     private final List<Relocation> relocations;
 
     /**
-     *
      * @param repositoryUrl The repository url to download the dependency from.
-     * @param groupId The groupId of the dependency.
-     * @param artifactId The artifactId of the dependency.
-     * @param version The version of the dependency.
+     * @param groupId       The groupId of the dependency.
+     * @param artifactId    The artifactId of the dependency.
+     * @param version       The version of the dependency.
      */
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version) {
         this(repositoryUrl, groupId, artifactId, version, true);
     }
 
     /**
-     *
      * @param repositoryUrl The repository url to download the dependency from.
-     * @param groupId The groupId of the dependency.
-     * @param artifactId The artifactId of the dependency.
-     * @param version The version of the dependency.
-     * @param baseRelocate If the dependency should be relocated to com.craftaro.third_party.
+     * @param groupId       The groupId of the dependency.
+     * @param artifactId    The artifactId of the dependency.
+     * @param version       The version of the dependency.
+     * @param baseRelocate  If the dependency should be relocated to com.craftaro.third_party.
      */
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version, boolean baseRelocate) {
         this(repositoryUrl, groupId, artifactId, version, baseRelocate, new Relocation[0]);
     }
 
     /**
-     *
-     * @param repositoryUrl The repository url to download the dependency from.
-     * @param groupId The groupId of the dependency.
-     * @param artifactId The artifactId of the dependency.
-     * @param version The version of the dependency.
-     * @param baseRelocate If the dependency should be relocated to com.craftaro.third_party.
+     * @param repositoryUrl    The repository url to download the dependency from.
+     * @param groupId          The groupId of the dependency.
+     * @param artifactId       The artifactId of the dependency.
+     * @param version          The version of the dependency.
+     * @param baseRelocate     If the dependency should be relocated to com.craftaro.third_party.
      * @param extraRelocations Extra relocations to apply to the dependency.
      */
     public Dependency(String repositoryUrl, String groupId, String artifactId, String version, boolean baseRelocate, Relocation... extraRelocations) {
@@ -85,6 +77,14 @@ public class Dependency {
     }
 
     public boolean shouldRelocate() {
-        return this.relocate || !relocations.isEmpty();
+        return this.relocate || !this.relocations.isEmpty();
+    }
+
+    public String buildArtifactUrl() {
+        return this.repositoryUrl + "/" +
+                this.groupId.replace('.', '/') + "/" +
+                this.artifactId + "/" +
+                this.version + "/" +
+                this.artifactId + "-" + this.version + ".jar";
     }
 }
