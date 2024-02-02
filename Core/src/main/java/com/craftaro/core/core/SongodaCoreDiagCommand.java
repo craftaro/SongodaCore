@@ -52,10 +52,11 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("Plugins:");
 
         for (PluginInfo plugin : SongodaCore.getPlugins()) {
-            sender.sendMessage(String.format("%s v%s (Core v%s)",
+            sender.sendMessage(String.format("%s v%s (Core v%s) (Dependency: %s)",
                     plugin.getJavaPlugin().getName(),
                     plugin.getJavaPlugin().getDescription().getVersion(),
-                    plugin.getCoreLibraryVersion()));
+                    plugin.getCoreLibraryVersion()),
+                    plugin.getDependencyVersion());
         }
 
         sender.sendMessage("");

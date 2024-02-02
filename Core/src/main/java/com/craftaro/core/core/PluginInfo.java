@@ -1,6 +1,7 @@
 package com.craftaro.core.core;
 
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.dependency.DependencyLoader;
 import com.craftaro.core.verification.ProductVerificationStatus;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -109,5 +110,9 @@ public final class PluginInfo {
 
     public String getCoreLibraryVersion() {
         return coreLibraryVersion;
+    }
+
+    public String getDependencyVersion() {
+        return DependencyLoader.DEPENDENCY_VERSION;
     }
 }

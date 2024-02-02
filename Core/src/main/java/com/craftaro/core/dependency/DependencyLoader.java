@@ -39,8 +39,9 @@ import java.util.zip.ZipOutputStream;
 
 public class DependencyLoader {
 
+    public static final String DEPENDENCY_VERSION = "v1";
     private static final Logger logger = Logger.getLogger("CraftaroCore");
-    private static final LibraryLoader libraryLoader = new LibraryLoader(new File("craftaro"));
+    private static final LibraryLoader libraryLoader = new LibraryLoader(new File("plugins/CraftaroCore/dependencies/" + DEPENDENCY_VERSION));
 
     public static LibraryLoader getLibraryLoader() {
         return libraryLoader;
