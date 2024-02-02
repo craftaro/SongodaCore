@@ -133,7 +133,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             );
 
             //Load plugin dependencies
-            DependencyLoader.loadDependencies(dependencies);
+            new DependencyLoader(this).loadDependencies(dependencies);
 
             this.config = new Config(this);
             onPluginLoad();

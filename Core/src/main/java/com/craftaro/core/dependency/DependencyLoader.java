@@ -1,9 +1,12 @@
 package com.craftaro.core.dependency;
 
+import com.craftaro.core.CraftaroCoreConstants;
 import com.craftaro.core.SongodaCore;
 import com.georgev22.api.libraryloader.LibraryLoader;
 import me.lucko.jarrelocator.JarRelocator;
 import me.lucko.jarrelocator.Relocation;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,20 +22,26 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class DependencyLoader {
-    public static final String DEPENDENCY_VERSION = "v1";
-    private static final LibraryLoader libraryLoader = new LibraryLoader(DependencyLoader.class.getClassLoader(), new File("plugins/CraftaroCore/dependencies/" + DEPENDENCY_VERSION), SongodaCore.getLogger());
+    @ApiStatus.Internal
+    public static final int DEPENDENCY_VERSION = 1;
 
-    public static LibraryLoader getLibraryLoader() {
-        return libraryLoader;
+    private final LibraryLoader libraryLoader;
+
+    public DependencyLoader(Plugin plugin) {
+        this.libraryLoader = new LibraryLoader(
+                DependencyLoader.class.getClassLoader(),
+                new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
+                SongodaCore.getLogger()
+        );
     }
 
-    public static void loadDependencies(Set<Dependency> dependencies) {
+    public void loadDependencies(Set<Dependency> dependencies) {
         for (Dependency dependency : dependencies) {
             loadDependency(dependency);
         }
     }
 
-    public static void loadDependency(Dependency dependency) {
+    public void loadDependency(Dependency dependency) {
         String repositoryUrl = dependency.getRepositoryUrl();
         String groupId = dependency.getGroupId();
         String artifactId = dependency.getArtifactId();
@@ -41,7 +50,7 @@ public class DependencyLoader {
         //Check if we have the dependency downloaded already
         String name = dependency.getArtifactId() + "-" + dependency.getVersion();
 
-        File outputFile = new File(libraryLoader.getLibFolder(), dependency.getGroupId().replace(".", File.separator) + File.separator + dependency.getArtifactId().replace(".", File.separator) + File.separator + dependency.getVersion() + File.separator + "raw-" + name + ".jar");
+        File outputFile = new File(this.libraryLoader.getLibFolder(), dependency.getGroupId().replace(".", File.separator) + File.separator + dependency.getArtifactId().replace(".", File.separator) + File.separator + dependency.getVersion() + File.separator + "raw-" + name + ".jar");
         File relocatedFile = new File(outputFile.getParentFile(), name.replace("raw-", "") + ".jar");
         if (relocatedFile.exists()) {
             //Check if the file is already loaded to the classpath
@@ -91,7 +100,7 @@ public class DependencyLoader {
         }
     }
 
-    public static void loadJarIntoClasspath(File file, Dependency dependency) {
+    public void loadJarIntoClasspath(File file, Dependency dependency) {
         if (!isRelocated(file) && dependency.shouldRelocate()) {
             SongodaCore.getLogger().info("Loading dependency for relocation " + file);
             //relocate package to com.craftaro.core.third_party to avoid conflicts
@@ -121,14 +130,14 @@ public class DependencyLoader {
 
         }
         try {
-            libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
+            this.libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
         } catch (Exception ignored) {
             //already loaded
         }
         SongodaCore.getLogger().info("----------------------------");
     }
 
-    private static boolean isRelocated(File file) {
+    private boolean isRelocated(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -144,7 +153,7 @@ public class DependencyLoader {
         return false;
     }
 
-    private static boolean isLoaded(File file) {
+    private boolean isLoaded(File file) {
         //Find the first class file in the jar and try Class.forName
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();

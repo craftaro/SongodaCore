@@ -112,7 +112,7 @@ public final class PluginInfo {
         return coreLibraryVersion;
     }
 
-    public String getDependencyVersion() {
+    public int getDependencyVersion() {
         return DependencyLoader.DEPENDENCY_VERSION;
     }
 }
