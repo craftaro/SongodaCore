@@ -102,14 +102,22 @@ public abstract class SongodaPlugin extends JavaPlugin {
             //Use ; instead of . so maven plugin won't relocate it
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-text", "1.9"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-lang3", "3.12.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-bukkit", "4.1.1"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-api", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-key", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-nbt", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-api", "4.1.1"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-bukkit", "4.1.1"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-facet", "4.1.1"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-viaversion", "4.1.1"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-minimessage", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson-legacy-impl", "4.11.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-legacy", "4.11.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-plain", "4.11.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;slf4j", "slf4j-api", "2.0.11"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;zaxxer", "HikariCP", "4.0.3", true,
-                    new Relocation("org.slf4j", "com.craftaro.third_party.org.slf4j"))
-            );
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-api", "1.3.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-string", "1.3.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;slf4j", "slf4j-api", "2.0.11", false));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;zaxxer", "HikariCP", "4.0.3"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;reactivestreams", "reactive-streams", "1.0.2", true));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;jooq", "jooq", "3.14.16", true,
                     new Relocation("org;reactivestreams", "com.craftaro.third_party.org.reactivestreams")) //Relocate reactive-streams to avoid conflicts
