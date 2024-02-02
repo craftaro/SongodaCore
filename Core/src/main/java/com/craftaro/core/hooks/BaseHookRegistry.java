@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 /**
  * This hook registry makes use of priorities to automatically activate the highest priority hook that is available if no hook has been activated programmatically.
  */
+// TODO: Allow multiple hooks to be active at the same time (useful for using multiple specific Eco/Protection/... hooks/plugins)
+// TODO: Allow specifying a hook-name-string as "prefered" to be auto-active (maybe String[] or comma-separated String?)
+//       (null means use priority, otherwise try to activate the hook with the given name first)
 public abstract class BaseHookRegistry<T extends Hook> extends HookRegistry<T> {
     private final Plugin plugin;
 
