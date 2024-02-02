@@ -1,7 +1,7 @@
 package com.craftaro.core.core;
 
-import com.craftaro.core.commands.AbstractCommand;
 import com.craftaro.core.SongodaCore;
+import com.craftaro.core.commands.AbstractCommand;
 import com.craftaro.core.compatibility.ClassMapping;
 import com.craftaro.core.compatibility.ServerProject;
 import com.craftaro.core.compatibility.ServerVersion;
@@ -52,11 +52,13 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         sender.sendMessage("Plugins:");
 
         for (PluginInfo plugin : SongodaCore.getPlugins()) {
-            sender.sendMessage(String.format("%s v%s (Core v%s) (Dependency: %s)",
+            sender.sendMessage(String.format(
+                    "%s v%s (Core v%s) (Dependencies v%s)",
                     plugin.getJavaPlugin().getName(),
                     plugin.getJavaPlugin().getDescription().getVersion(),
-                    plugin.getCoreLibraryVersion()),
-                    plugin.getDependencyVersion());
+                    plugin.getCoreLibraryVersion(),
+                    plugin.getDependencyVersion()
+            ));
         }
 
         sender.sendMessage("");
