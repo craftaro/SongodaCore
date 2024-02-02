@@ -96,6 +96,8 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onLoad() {
+        SongodaCore.getLogger().setPlugin(this);
+
         try {
             //Load Core dependencies
             Set<Dependency> dependencies = new HashSet<>(getDependencies());

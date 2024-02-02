@@ -43,10 +43,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SongodaCore {
-    private static final Logger logger = Logger.getLogger(CraftaroCoreConstants.getProjectName());
+    private static final CoreLogger LOGGER = CoreLogger.getInstance();
 
     /**
      * Whenever we make a major change to the core GUI, updater,
@@ -237,11 +236,11 @@ public class SongodaCore {
             try {
                 verificationStatus = CraftaroProductVerification.getProductVerificationStatus(pluginID);
             } catch (IOException ex) {
-                logger.log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
+                getLogger().log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
             }
         }
 
-        logger.info(getPrefix() + "Hooked " + plugin.getName() + ".");
+        getLogger().info(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion, verificationStatus);
 
         // don't forget to check for language pack updates ;)
@@ -289,9 +288,9 @@ public class SongodaCore {
             }
         } catch (IOException ex) {
             final String er = ex.getMessage();
-            logger.log(Level.FINE, "Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
+            getLogger().log(Level.FINE, "Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
         } catch (ParseException ex) {
-            logger.log(Level.FINE, "Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
+            getLogger().log(Level.FINE, "Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
         }
     }
 
@@ -340,8 +339,8 @@ public class SongodaCore {
         return "[" + CraftaroCoreConstants.getProjectName() + "] ";
     }
 
-    public static Logger getLogger() {
-        return logger;
+    public static CoreLogger getLogger() {
+        return LOGGER;
     }
 
     public static boolean isRegistered(String plugin) {

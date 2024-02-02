@@ -1,5 +1,6 @@
 package com.craftaro.core.dependency;
 
+import com.craftaro.core.SongodaCore;
 import com.georgev22.api.libraryloader.LibraryLoader;
 import me.lucko.jarrelocator.JarRelocator;
 import me.lucko.jarrelocator.Relocation;
@@ -14,14 +15,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class DependencyLoader {
     public static final String DEPENDENCY_VERSION = "v1";
-    private static final Logger logger = Logger.getLogger("CraftaroCore");
-    private static final LibraryLoader libraryLoader = new LibraryLoader(new File("plugins/CraftaroCore/dependencies/" + DEPENDENCY_VERSION));
+    private static final LibraryLoader libraryLoader = new LibraryLoader(DependencyLoader.class.getClassLoader(), new File("plugins/CraftaroCore/dependencies/" + DEPENDENCY_VERSION), SongodaCore.getLogger());
 
     public static LibraryLoader getLibraryLoader() {
         return libraryLoader;
@@ -56,7 +55,7 @@ public class DependencyLoader {
         }
 
         try {
-            logger.info("[CraftaroCore] Downloading dependency " + groupId + ":" + artifactId + ":" + version + " from " + repositoryUrl);
+            SongodaCore.getLogger().info("Downloading dependency " + groupId + ":" + artifactId + ":" + version + " from " + repositoryUrl);
             // Construct the URL for the artifact in the Maven repository
             String artifactUrl = repositoryUrl + "/" +
                     groupId.replace('.', '/') + "/" +
@@ -85,7 +84,7 @@ public class DependencyLoader {
             out.close();
 
             //Load dependency into the classpath
-            logger.info("[CraftaroCore] Downloaded dependency " + groupId + ":" + artifactId + ":" + version);
+            SongodaCore.getLogger().info("Downloaded dependency " + groupId + ":" + artifactId + ":" + version);
             loadJarIntoClasspath(outputFile, dependency);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +93,7 @@ public class DependencyLoader {
 
     public static void loadJarIntoClasspath(File file, Dependency dependency) {
         if (!isRelocated(file) && dependency.shouldRelocate()) {
-            logger.info("[CraftaroCore] Loading dependency for relocation " + file);
+            SongodaCore.getLogger().info("Loading dependency for relocation " + file);
             //relocate package to com.craftaro.core.third_party to avoid conflicts
             List<Relocation> relocations = new ArrayList<>();
 
@@ -107,13 +106,13 @@ public class DependencyLoader {
             JarRelocator relocator = new JarRelocator(file, finalJar, relocations);
             try {
                 relocator.run();
-                logger.info("[CraftaroCore] Relocated dependency " + file);
+                SongodaCore.getLogger().info("Relocated dependency " + file);
                 //Delete the old jar
                 file.delete();
             } catch (Exception e) {
-                logger.severe("[CraftaroCore] Failed to relocate dependency1 " + file);
+                SongodaCore.getLogger().severe("Failed to relocate dependency1 " + file);
                 if (e.getMessage().contains("zip file is empty")) {
-                    logger.severe("Try deleting the 'server root/craftaro' folder and restarting the server");
+                    SongodaCore.getLogger().severe("Try deleting the 'server root/craftaro' folder and restarting the server");
                 }
                 e.printStackTrace();
                 //Delete the new jar cuz it's probably corrupted
@@ -126,7 +125,7 @@ public class DependencyLoader {
         } catch (Exception ignored) {
             //already loaded
         }
-        logger.info("[CraftaroCore] ----------------------------");
+        SongodaCore.getLogger().info("----------------------------");
     }
 
     private static boolean isRelocated(File file) {
