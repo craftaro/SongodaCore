@@ -113,6 +113,6 @@ public final class PluginInfo {
     }
 
     public int getDependencyVersion() {
-        return DependencyLoader.DEPENDENCY_VERSION;
+        return DependencyLoader.getDependencyVersion();
     }
 }
