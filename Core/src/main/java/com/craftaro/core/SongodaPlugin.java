@@ -122,7 +122,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;zaxxer", "HikariCP", "4.0.3"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;reactivestreams", "reactive-streams", "1.0.2", true));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;jooq", "jooq", "3.14.16", true,
-                    new Relocation("org;reactivestreams", "com.craftaro.third_party.org.reactivestreams")) // Relocate reactive-streams to avoid conflicts
+                    new Relocation("org;reactivestreams", "com;craftaro;third_party;org;reactivestreams")) // Relocate reactive-streams to avoid conflicts
             );
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;mariadb;jdbc", "mariadb-java-client", "3.2.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "com;h2database", "h2", "1.4.200", false,
