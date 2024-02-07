@@ -2,6 +2,7 @@ package com.craftaro.core.dependency;
 
 import com.craftaro.core.CraftaroCoreConstants;
 import com.craftaro.core.SongodaCore;
+import com.georgev22.api.libraryloader.ClassLoaderAccess;
 import com.georgev22.api.libraryloader.LibraryLoader;
 import com.georgev22.api.libraryloader.exceptions.InvalidDependencyException;
 import com.georgev22.api.libraryloader.exceptions.UnknownDependencyException;
@@ -12,7 +13,10 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +29,16 @@ public class DependencyLoader {
     private static final int DEPENDENCY_VERSION = 1;
 
     private final LibraryLoader libraryLoader;
-
+    private final ClassLoaderAccess parentClassLoaderAccess;
     public DependencyLoader(Plugin plugin) {
+        //Bind loaded dependencies to the plugin's parent class loader so classes could be accessed across plugins
+        URLClassLoader parentClassLoader = (URLClassLoader) plugin.getClass().getClassLoader().getParent();
         this.libraryLoader = new LibraryLoader(
-                DependencyLoader.class.getClassLoader(),
+                parentClassLoader,
                 new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
                 SongodaCore.getLogger()
         );
+        this.parentClassLoaderAccess = new ClassLoaderAccess(parentClassLoader);
     }
 
     public void loadDependencies(Collection<Dependency> dependencies) throws IOException {
@@ -45,7 +52,7 @@ public class DependencyLoader {
         File outputFile = new File(this.libraryLoader.getLibFolder(), dependency.getGroupId().replace(".", File.separator) + File.separator + dependency.getArtifactId().replace(".", File.separator) + File.separator + dependency.getVersion() + File.separator + "raw-" + name + ".jar");
         File relocatedFile = new File(outputFile.getParentFile(), name.replace("raw-", "") + ".jar");
         if (relocatedFile.exists()) {
-            if (isLoaded(relocatedFile)) {
+            if (isJarLoaded(relocatedFile)) {
                 return;
             }
 
@@ -94,11 +101,11 @@ public class DependencyLoader {
         }
 
         try {
-            this.libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), true);
-        } catch (InvalidDependencyException ignored) {
-            // Already loaded
-        } catch (UnknownDependencyException ex) {
-            throw new RuntimeException(ex);
+            //Do not check path here, it uses the original non relocated paths. Use isJarLoaded instead
+            this.libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), false);
+        } catch (Exception e) {
+            // Something went wrong
+            e.printStackTrace();
         }
         SongodaCore.getLogger().info("----------------------------");
     }
@@ -120,31 +127,13 @@ public class DependencyLoader {
     /**
      * Finds the first .class file in the jar and check if it's loaded
      */
-    private boolean isLoaded(File jarFile) throws IOException {
-        try (ZipFile zipFile = new ZipFile(jarFile)) {
-            Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-            while (zipEntries.hasMoreElements()) {
-                ZipEntry zipEntry = zipEntries.nextElement();
-                if (zipEntry.getName().startsWith("META-INF")) {
-                    continue;
-                }
-                if (!zipEntry.getName().endsWith(".class")) {
-                    continue;
-                }
-
-                String className = zipEntry.getName()
-                        .substring(0, zipEntry.getName().length() - ".class".length())
-                        .replace("/", ".");
-                try {
-                    Class.forName(className);
-                    return true;
-                } catch (Throwable th) {
-                    return false;
-                }
-            }
+    private boolean isJarLoaded(File jarFile) throws IOException {
+        URL jarFileURL = jarFile.toURI().toURL();
+        try {
+            return this.parentClassLoaderAccess.getPathURLs().stream().anyMatch(url -> url.getFile().equals(jarFileURL.getFile()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        return false;
     }
 
     public static int getDependencyVersion() {
