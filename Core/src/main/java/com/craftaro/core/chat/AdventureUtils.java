@@ -1,20 +1,17 @@
 package com.craftaro.core.chat;
 
-import com.bekvon.bukkit.residence.commands.list;
 import com.craftaro.core.compatibility.ServerProject;
 import com.craftaro.core.compatibility.ServerVersion;
-import com.gamingmesh.jobs.commands.list.placeholders;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -22,25 +19,110 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AdventureUtils {
 
     private static Method displayNameMethod = null;
     private static Method loreMethod = null;
+    private static Class<?> componentClass;
+    private static Object gsonComponentSerializer;
+    private static Method gsonDeserializeMethod;
 
     static {
-        if (ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
+        if (ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_18)) {
             try {
-                displayNameMethod = ItemMeta.class.getDeclaredMethod("displayName", Component.class);
+                componentClass = Class.forName("net;kyori;adventure;text;Component".replace(";", "."));
+                displayNameMethod = ItemMeta.class.getDeclaredMethod("displayName", componentClass);
                 loreMethod = ItemMeta.class.getDeclaredMethod("lore", List.class);
+                gsonComponentSerializer = Class.forName("net;kyori;adventure;text;serializer;gson;GsonComponentSerializer".replace(";", ".")).getDeclaredMethod("gson").invoke(null);
+                gsonDeserializeMethod = gsonComponentSerializer.getClass().getDeclaredMethod("deserialize", String.class);
+                gsonDeserializeMethod.setAccessible(true);
+
             } catch (Exception ignored) {}
         }
     }
 
-    //Send message
+    /**
+     * Convert a shaded component to a json string
+     * @param component The shaded Component to convert
+     * @return Json string
+     */
+    public static String convertToJson(Component component) {
+        return GsonComponentSerializer.gson().serialize(component);
+    }
+
+    /**
+     * Convert a json string to the non-shaded component
+     * Cast it to the correct type
+     * @param json Json string
+     * @return Non-shaded component
+     */
+    public static Object convertToOriginalComponent(String json) {
+        try {
+            return gsonDeserializeMethod.invoke(gsonComponentSerializer, json);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Convert the shaded Component to the original one
+     * Cast it to the correct type
+     * @param component Shaded component
+     * @return Original component
+     */
+    public static Object convertToOriginalComponent(Component component) {
+        try {
+            return gsonDeserializeMethod.invoke(gsonComponentSerializer, convertToJson(component));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Convert a list of shaded components to a list of original components
+     * Cast it to the correct type
+     * @param component List of shaded components
+     * @return List of original components
+     */
+    public static Object convertToOriginalComponent(List<Component> component) {
+        try {
+            LinkedList<Object> list = new LinkedList<>();
+            for (Component c : component) {
+                list.add(convertToOriginalComponent(c));
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Convert a list of shaded components to a list of original components
+     * Cast it to the correct type
+     * @param component List of shaded components
+     * @return List of original components
+     */
+    public static Object convertToOriginalComponent(Component... component) {
+        try {
+            LinkedList<Object> list = new LinkedList<>();
+            for (Component c : component) {
+                list.add(convertToOriginalComponent(c));
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public static void sendMessage(Plugin plugin, Component message, CommandSender... target) {
-        try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(plugin)){
+        try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(plugin)) {
             for (CommandSender sender : target) {
                 bukkitAudiences.sender(sender).sendMessage(message);
             }
@@ -48,64 +130,62 @@ public class AdventureUtils {
     }
 
     //Items
-    public static ItemStack formatItemName(ItemStack item, String name) {
-        return formatItemName(item, formatComponent(name));
+    public static void formatItemName(ItemStack item, String name) {
+        formatItemName(item, formatComponent(name));
     }
 
-    public static ItemStack formatItemLore(ItemStack item, List<String> lore) {
-        return formatItemLore(item, lore.toArray(new String[0]));
+    public static void formatItemLore(ItemStack item, List<String> lore) {
+        formatItemLore(item, lore.toArray(new String[0]));
     }
 
-    public static ItemStack formatItemLore(ItemStack item, String... lore) {
-        return formatItemLore(item, formatComponent(lore));
+    public static void formatItemLore(ItemStack item, String... lore) {
+        formatItemLore(item, formatComponent(lore));
     }
 
-    public static ItemStack formatItemLore(ItemStack item, List<Component> lore, String... unused) {
-        return formatItemLore(item, lore.toArray(new Component[0]));
+    public static void formatItemLore(ItemStack item, List<Component> lore, String... unused) {
+        formatItemLore(item, lore.toArray(new Component[0]));
     }
 
-    public static ItemStack formatItemName(ItemStack item, Component name) {
-        return setItemName(item, name);
+    public static void formatItemName(ItemStack item, Component name) {
+        setItemName(item, name);
     }
 
-    public static ItemStack formatItemLore(ItemStack item, Component... lore) {
-        return setItemLore(item, lore);
+    public static void formatItemLore(ItemStack item, Component... lore) {
+        setItemLore(item, lore);
     }
 
     public static boolean isMiniMessageEnabled() {
         return ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16) && displayNameMethod != null && loreMethod != null;
     }
 
-    private static ItemStack setItemName(ItemStack item, Component name) {
+    private static void setItemName(ItemStack item, Component name) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
+        if (meta == null) return;
         if (isMiniMessageEnabled()) {
-            //Set names as component
+            //Set name as component
             try {
-                displayNameMethod.invoke(meta, name);
+                displayNameMethod.invoke(meta, convertToOriginalComponent(name));
                 item.setItemMeta(meta);
-                return item;
+                return;
             } catch (Exception ignored) {}
         }
         meta.setDisplayName(toLegacy(name));
         item.setItemMeta(meta);
-        return item;
     }
 
-    private static ItemStack setItemLore(ItemStack item, Component... lore) {
+    private static void setItemLore(ItemStack item, Component... lore) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
+        if (meta == null) return;
         if (isMiniMessageEnabled()) {
-            //Set names as component
+            //Set lore as component
             try {
-                loreMethod.invoke(meta, Arrays.asList(lore));
+                loreMethod.invoke(meta, convertToOriginalComponent(lore));
                 item.setItemMeta(meta);
-                return item;
+                return;
             } catch (Exception ignored) {}
         }
         meta.setLore(toLegacy(lore));
         item.setItemMeta(meta);
-        return item;
     }
 
     //Formatting stuff
@@ -131,6 +211,10 @@ public class AdventureUtils {
         return component;
     }
 
+    public static Component formatComponent(String text, List<MiniMessagePlaceholder> placeholders) {
+        return formatComponent(text, placeholders.toArray(new MiniMessagePlaceholder[0]));
+    }
+
     public static List<Component> formatComponent(List<String> list) {
         List<Component> result = new ArrayList<>();
         for (String line : list) {
@@ -154,6 +238,10 @@ public class AdventureUtils {
             result.add(formatComponent(line, placeholders));
         }
         return result;
+    }
+
+    public static List<Component> formatComponent(List<String> list, List<MiniMessagePlaceholder> placeholders) {
+        return formatComponent(list, placeholders.toArray(new MiniMessagePlaceholder[0]));
     }
 
     public static String formatLegacy(String text) {
@@ -217,6 +305,10 @@ public class AdventureUtils {
                     continue;
                 }
                 String color = getColor(next);
+                if (color == null) {
+                    builder.append(current);
+                    continue;
+                }
                 builder.append(color);
                 i++;
             } else {
@@ -275,7 +367,7 @@ public class AdventureUtils {
             case 'r':
                 return  "<reset>";
             default:
-                return "";
+                return null;
         }
     }
 
