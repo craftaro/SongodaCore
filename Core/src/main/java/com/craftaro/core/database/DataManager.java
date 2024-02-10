@@ -532,18 +532,28 @@ public class DataManager {
      * Close the database and shutdown the async pool
      */
     public void shutdown() {
-        asyncPool.shutdown();
-        databaseConnector.closeConnection();
+        this.asyncPool.shutdown();
+        try {
+            if (!this.asyncPool.awaitTermination(30, TimeUnit.SECONDS)) {
+                this.plugin.getLogger().warning("Failed to shutdown the async DataManager pool in time. Forcing shutdown");
+            }
+        } catch (InterruptedException ex) {
+            this.plugin.getLogger().warning("Error while shutting down the async DataManager pool: " + ex.getMessage());
+        }
+        this.asyncPool.shutdownNow();
+
+        this.databaseConnector.closeConnection();
     }
 
     /**
      * Force shutdown the async pool and close the database
      *
-     * @return Tasks that didn't finish in the async pool
+     * @return Tasks that were still in the pool's queue
      */
     public List<Runnable> shutdownNow() {
-        databaseConnector.closeConnection();
-        return asyncPool.shutdownNow();
+        List<Runnable> tasksLeftInQueue = this.asyncPool.shutdownNow();
+        this.databaseConnector.closeConnection();
+        return tasksLeftInQueue;
     }
 
     public void shutdownTaskQueue() {
