@@ -32,7 +32,7 @@ public class DependencyLoader {
     private final ClassLoaderAccess parentClassLoaderAccess;
     public DependencyLoader(Plugin plugin) {
         //Bind loaded dependencies to the plugin's parent class loader so classes could be accessed across plugins
-        URLClassLoader parentClassLoader = (URLClassLoader) plugin.getClass().getClassLoader().getParent();
+        ClassLoader parentClassLoader = plugin.getClass().getClassLoader().getParent();
         this.libraryLoader = new LibraryLoader(
                 parentClassLoader,
                 new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
