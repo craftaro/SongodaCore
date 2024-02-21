@@ -4,8 +4,6 @@ import com.craftaro.core.CraftaroCoreConstants;
 import com.craftaro.core.SongodaCore;
 import com.georgev22.api.libraryloader.ClassLoaderAccess;
 import com.georgev22.api.libraryloader.LibraryLoader;
-import com.georgev22.api.libraryloader.exceptions.InvalidDependencyException;
-import com.georgev22.api.libraryloader.exceptions.UnknownDependencyException;
 import me.lucko.jarrelocator.JarRelocator;
 import me.lucko.jarrelocator.Relocation;
 import org.bukkit.plugin.Plugin;
@@ -13,8 +11,6 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -30,6 +26,7 @@ public class DependencyLoader {
 
     private final LibraryLoader libraryLoader;
     private final ClassLoaderAccess parentClassLoaderAccess;
+
     public DependencyLoader(Plugin plugin) {
         //Bind loaded dependencies to the plugin's parent class loader so classes could be accessed across plugins
         ClassLoader parentClassLoader = plugin.getClass().getClassLoader().getParent();
@@ -39,6 +36,7 @@ public class DependencyLoader {
                     new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
                     SongodaCore.getLogger()
             );
+            this.parentClassLoaderAccess = new ClassLoaderAccess((URLClassLoader) parentClassLoader);
         } else {
             //We have AppClassLoader here
             this.libraryLoader = new LibraryLoader(
@@ -46,9 +44,8 @@ public class DependencyLoader {
                     new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
                     SongodaCore.getLogger()
             );
+            this.parentClassLoaderAccess = new ClassLoaderAccess(parentClassLoader);
         }
-
-        this.parentClassLoaderAccess = new ClassLoaderAccess(parentClassLoader);
     }
 
     public void loadDependencies(Collection<Dependency> dependencies) throws IOException {
