@@ -329,24 +329,22 @@ public class CompatibleMaterial {
     }
 
     public static @Nullable ItemStack getFurnaceResult(XMaterial material) {
-        if (FURNACE_RESULT_CACHE.containsKey(material)) {
-            return FURNACE_RESULT_CACHE.get(material);
-        }
+        if (FURNACE_RESULT_CACHE.isEmpty()) {
+            Iterator<Recipe> recipes = Bukkit.recipeIterator();
+            while (recipes.hasNext()) {
+                Recipe recipe = recipes.next();
+                if (!(recipe instanceof FurnaceRecipe)) {
+                    continue;
+                }
 
-        Iterator<Recipe> recipes = Bukkit.recipeIterator();
-
-        while (recipes.hasNext()) {
-            Recipe recipe = recipes.next();
-            if (!(recipe instanceof FurnaceRecipe)) {
-                continue;
-            }
-
-            if (material.isSimilar(((FurnaceRecipe) recipe).getInput())) {
-                FURNACE_RESULT_CACHE.put(material, recipe.getResult());
-                return recipe.getResult();
+                FURNACE_RESULT_CACHE.put(XMaterial.matchXMaterial(((FurnaceRecipe) recipe).getInput()), recipe.getResult());
             }
         }
 
+        ItemStack furnaceResult = FURNACE_RESULT_CACHE.get(material);
+        if (furnaceResult != null) {
+            return furnaceResult.clone();
+        }
         return null;
     }
 
