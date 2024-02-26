@@ -44,7 +44,7 @@ jobs:
         with:
           append_snapshot: ${{ github.ref_type == 'tag' && 'false' || 'true' }}
           version: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
-          increment_version: ${{ github.ref_type == 'tag' && '' || 'patch' }}
+          increment_version: ${{ github.ref_type != 'tag' && 'patch' || '' }}
           increment_version_only_if_not_snapshot_version: ${{ github.ref == 'refs/heads/development' && 'true' || 'false' }}
 
       - name: Build with Maven
