@@ -45,7 +45,15 @@ public class BBaseSpawnerImpl implements BBaseSpawner {
             this.setNextSpawnDataMethod.setAccessible(true);
         }
 
-        this.getOrCreateNextSpawnDataMethod = this.spawner.getClass().getSuperclass().getDeclaredMethod("b", Level.class, RandomSource.class, BlockPos.class);
+        // Spigot mappings changed again mid-nms-version :<
+        Method getOrCreateNextSpawnDataMethodLocal;
+        try {
+            getOrCreateNextSpawnDataMethodLocal = this.spawner.getClass().getSuperclass().getDeclaredMethod("a", Level.class, RandomSource.class, BlockPos.class);
+        } catch (NoSuchMethodException ex) {
+            getOrCreateNextSpawnDataMethodLocal = this.spawner.getClass().getSuperclass().getDeclaredMethod("b", Level.class, RandomSource.class, BlockPos.class);
+        }
+
+        this.getOrCreateNextSpawnDataMethod = getOrCreateNextSpawnDataMethodLocal;
         if (!this.getOrCreateNextSpawnDataMethod.canAccess(this.spawner)) {
             this.getOrCreateNextSpawnDataMethod.setAccessible(true);
         }
