@@ -1,19 +1,12 @@
 package com.craftaro.core.gui;
 
 import com.craftaro.core.compatibility.ServerVersion;
-import com.craftaro.core.gui.events.GuiClickEvent;
-import com.craftaro.core.gui.events.GuiCloseEvent;
-import com.craftaro.core.gui.events.GuiDropItemEvent;
-import com.craftaro.core.gui.events.GuiOpenEvent;
-import com.craftaro.core.gui.events.GuiPageEvent;
-import com.craftaro.core.gui.methods.Clickable;
-import com.craftaro.core.gui.methods.Closable;
-import com.craftaro.core.gui.methods.Droppable;
-import com.craftaro.core.gui.methods.Openable;
-import com.craftaro.core.gui.methods.Pagable;
+import com.craftaro.core.gui.events.*;
+import com.craftaro.core.gui.methods.*;
 import com.craftaro.core.utils.ItemUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -24,11 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +62,7 @@ public class Gui {
         switch (type) {
             case HOPPER:
             case DISPENSER:
+            case FURNACE:
                 this.rows = 1;
                 break;
             default:
@@ -288,6 +278,7 @@ public class Gui {
         switch (this.inventoryType) {
             case HOPPER:
             case DISPENSER:
+            case FURNACE:
                 break;
             default:
                 this.rows = Math.max(1, Math.min(6, rows));
@@ -860,6 +851,7 @@ public class Gui {
         switch (t) {
             case DISPENSER:
             case HOPPER:
+            case FURNACE:
                 this.inventory = new GuiHolder(this.guiManager, this).newInventory(t,
                         this.title == null ? "" : trimTitle(this.title));
                 break;
