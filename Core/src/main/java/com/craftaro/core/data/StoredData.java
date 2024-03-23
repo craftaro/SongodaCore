@@ -42,6 +42,10 @@ public class StoredData {
         return Long.parseLong(string);
     }
 
+    public float asFloat() {
+        return Float.parseFloat(asString());
+    }
+
     public Instant asInstant() {
         return Instant.ofEpochMilli(asLong());
     }

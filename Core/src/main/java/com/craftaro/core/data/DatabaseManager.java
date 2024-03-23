@@ -7,9 +7,6 @@ import com.craftaro.core.data.connector.MariaDBConnector;
 import com.craftaro.core.data.connector.MySQLConnector;
 import com.craftaro.core.data.connector.SQLiteConnector;
 import com.craftaro.core.thread.MonitoredThread;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
