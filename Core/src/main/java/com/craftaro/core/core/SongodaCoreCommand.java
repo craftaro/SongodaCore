@@ -25,8 +25,6 @@ public class SongodaCoreCommand extends AbstractCommand {
             guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
         } else {
             sender.sendMessage("/craftaro diag");
-            sender.sendMessage("/craftaro uuid");
-            sender.sendMessage("/craftaro license");
         }
 
         return ReturnType.SUCCESS;

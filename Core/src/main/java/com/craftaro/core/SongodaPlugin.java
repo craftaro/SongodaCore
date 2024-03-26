@@ -152,27 +152,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         CommandSender console = Bukkit.getConsoleSender();
 
-        // Check plugin access, don't load the plugin if the user doesn't have access
-        if (CraftaroProductVerification.getOwnProductVerificationStatus() != ProductVerificationStatus.VERIFIED) {
-            console.sendMessage("\n" +
-                    ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-                    ChatColor.RED + "You do not have access to the " + getDescription().getName() + " plugin.\n" +
-                    ChatColor.YELLOW + "Please purchase a license at https://craftaro.com/\n" +
-                    ChatColor.YELLOW + "or set up your license\n" +
-                    ChatColor.YELLOW + "And setup it up:\n" +
-                    ChatColor.YELLOW + "Run the command " + ChatColor.GOLD + "/craftaro license" + ChatColor.YELLOW + " and follow the instructions\n" +
-                    ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            this.licensePreventedPluginLoad = true;
-            SongodaCore.registerPlugin(this, CraftaroProductVerification.getProductId(), (XMaterial) null);
-
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                String pluginName = getDescription().getName();
-                String pluginUrl = "https://craftaro.com/marketplace/product/" + CraftaroProductVerification.getProductId();
-                Bukkit.broadcastMessage(ChatColor.RED + pluginName + " has not been activated. Please download " + pluginName + " here: " + pluginUrl);
-            }, 5 * 20, 60 * 20);
-            return;
-        }
-
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
         console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY, getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));

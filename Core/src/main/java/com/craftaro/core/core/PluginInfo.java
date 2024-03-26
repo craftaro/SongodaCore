@@ -2,7 +2,6 @@ package com.craftaro.core.core;
 
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.dependency.DependencyLoader;
-import com.craftaro.core.verification.ProductVerificationStatus;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
@@ -17,7 +16,6 @@ public final class PluginInfo {
     protected final String coreIcon;
     protected final XMaterial icon;
     protected final String coreLibraryVersion;
-    public final ProductVerificationStatus verificationStatus;
 
     private final List<PluginInfoModule> modules = new ArrayList<>();
     private boolean hasUpdate = false;
@@ -27,13 +25,12 @@ public final class PluginInfo {
     private String marketplaceLink;
     private JSONObject json;
 
-    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon, String coreLibraryVersion, ProductVerificationStatus verificationStatus) {
+    public PluginInfo(JavaPlugin javaPlugin, int songodaId, String icon, String coreLibraryVersion) {
         this.javaPlugin = javaPlugin;
         this.songodaId = songodaId;
         this.coreIcon = icon;
         this.icon = CompatibleMaterial.getMaterial(icon).orElse(XMaterial.STONE);
         this.coreLibraryVersion = coreLibraryVersion;
-        this.verificationStatus = verificationStatus;
     }
 
     public String getLatestVersion() {

@@ -7,10 +7,6 @@ import com.craftaro.core.core.PluginInfo;
 import com.craftaro.core.core.PluginInfoModule;
 import com.craftaro.core.core.SongodaCoreCommand;
 import com.craftaro.core.core.SongodaCoreDiagCommand;
-import com.craftaro.core.core.SongodaCoreLicenseCommand;
-import com.craftaro.core.core.SongodaCoreUUIDCommand;
-import com.craftaro.core.verification.CraftaroProductVerification;
-import com.craftaro.core.verification.ProductVerificationStatus;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -54,7 +50,7 @@ public class SongodaCore {
      * @deprecated The Core's version should be used instead as it uses Semantic Versioning
      */
     @Deprecated
-    private static final int coreRevision = 10;
+    private static final int coreRevision = 11;
 
     /**
      * @since coreRevision 6
@@ -193,7 +189,7 @@ public class SongodaCore {
     private void init() {
         this.shadingListener = new ShadedEventListener();
         this.commandManager.registerCommandDynamically(new SongodaCoreCommand())
-                .addSubCommands(new SongodaCoreDiagCommand(), new SongodaCoreUUIDCommand(), new SongodaCoreLicenseCommand());
+                .addSubCommands(new SongodaCoreDiagCommand());
         Bukkit.getPluginManager().registerEvents(this.loginListener, this.piggybackedPlugin);
         Bukkit.getPluginManager().registerEvents(this.shadingListener, this.piggybackedPlugin);
 
@@ -231,17 +227,8 @@ public class SongodaCore {
     private ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
-        ProductVerificationStatus verificationStatus = ProductVerificationStatus.VERIFIED;
-        if (pluginID > 0) {
-            try {
-                verificationStatus = CraftaroProductVerification.getProductVerificationStatus(pluginID);
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, "Error verifying plugin " + plugin.getName(), ex);
-            }
-        }
-
         getLogger().info(getPrefix() + "Hooked " + plugin.getName() + ".");
-        PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion, verificationStatus);
+        PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
 
         // don't forget to check for language pack updates ;)
         info.addModule(new LocaleModule());
