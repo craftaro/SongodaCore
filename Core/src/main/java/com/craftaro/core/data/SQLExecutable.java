@@ -2,11 +2,8 @@ package com.craftaro.core.data;
 
 import org.jooq.DSLContext;
 import org.jooq.Query;
-import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.ResultQuery;
-import org.jooq.SelectSelectStep;
-import org.jooq.UpdateReturningStep;
 
 import java.util.List;
 import java.util.stream.Stream;

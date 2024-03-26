@@ -1,7 +1,7 @@
 package com.craftaro.core.nms.v1_16_R3.world.spawner;
 
-import com.craftaro.core.nms.world.BBaseSpawner;
 import com.craftaro.core.nms.ReflectionUtils;
+import com.craftaro.core.nms.world.BBaseSpawner;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.Entity;

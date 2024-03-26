@@ -3,7 +3,6 @@ package com.craftaro.core.database;
 import com.craftaro.core.SongodaPlugin;
 
 import java.io.File;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

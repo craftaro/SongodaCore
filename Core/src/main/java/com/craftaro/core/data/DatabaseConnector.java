@@ -2,7 +2,6 @@ package com.craftaro.core.data;
 
 import org.jooq.DSLContext;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface DatabaseConnector {

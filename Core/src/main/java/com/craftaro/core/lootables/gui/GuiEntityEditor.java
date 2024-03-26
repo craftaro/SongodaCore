@@ -1,7 +1,7 @@
 package com.craftaro.core.lootables.gui;
 
-import com.craftaro.core.lootables.loot.Loot;
 import com.craftaro.core.gui.Gui;
+import com.craftaro.core.lootables.loot.Loot;
 import org.bukkit.entity.EntityType;
 
 import java.util.List;

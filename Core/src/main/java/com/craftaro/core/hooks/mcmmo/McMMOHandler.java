@@ -1,6 +1,7 @@
 package com.craftaro.core.hooks.mcmmo;
 
 import com.craftaro.core.SongodaPlugin;
+import com.craftaro.core.compatibility.ServerVersion;
 import com.gmail.nossr50.api.AbilityAPI;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.config.experience.ExperienceConfig;
@@ -13,7 +14,6 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.gmail.nossr50.util.random.RandomChanceUtil;
 import com.gmail.nossr50.util.skills.RankUtils;
 import com.gmail.nossr50.util.skills.SkillActivationType;
-import com.craftaro.core.compatibility.ServerVersion;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;

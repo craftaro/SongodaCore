@@ -1,7 +1,6 @@
 package com.craftaro.core.thread;
 
 import com.craftaro.core.SongodaPlugin;
-
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Iterator;

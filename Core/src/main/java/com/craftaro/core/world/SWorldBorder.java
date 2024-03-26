@@ -1,11 +1,11 @@
 package com.craftaro.core.world;
 
-import com.craftaro.core.nms.world.NmsWorldBorder;
-import com.craftaro.core.utils.NMSUtils;
 import com.craftaro.core.compatibility.ClassMapping;
 import com.craftaro.core.compatibility.MethodMapping;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
+import com.craftaro.core.nms.world.NmsWorldBorder;
+import com.craftaro.core.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

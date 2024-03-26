@@ -4,7 +4,6 @@ import com.craftaro.core.data.DatabaseConnector;
 import com.craftaro.core.data.DatabaseManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
