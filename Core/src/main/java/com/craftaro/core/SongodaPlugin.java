@@ -34,7 +34,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
     protected DataManager dataManager;
     protected long dataLoadDelay = 20L;
 
-    private boolean licensePreventedPluginLoad = false;
     private boolean emergencyStop = false;
 
     private final HookRegistryManager hookRegistryManager = new HookRegistryManager(this);
@@ -190,7 +189,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
     @Override
     public final void onDisable() {
-        if (this.emergencyStop || this.licensePreventedPluginLoad) {
+        if (this.emergencyStop) {
             return;
         }
 
