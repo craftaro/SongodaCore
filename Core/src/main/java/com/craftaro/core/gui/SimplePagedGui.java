@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -58,12 +59,12 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    public SimplePagedGui setItem(int row, int col, ItemStack item) {
+    public @NotNull SimplePagedGui setItem(int row, int col, ItemStack item) {
         return setItem(col + row * 9, item);
     }
 
     @Override
-    public SimplePagedGui setItem(int cell, ItemStack item) {
+    public @NotNull SimplePagedGui setItem(int cell, ItemStack item) {
         // set the cell relative to the current page
         int cellIndex = cell < 0 ? cell : (this.page == 1 || (this.useHeader && cell < 9) ? cell : (cell + (this.page - 1) * (this.rowsPerPage * 9)));
 
@@ -130,7 +131,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    protected Inventory generateInventory(GuiManager manager) {
+    protected @NotNull Inventory generateInventory(@NotNull GuiManager manager) {
         this.guiManager = manager;
 
         // calculate pages here
@@ -189,7 +190,7 @@ public class SimplePagedGui extends Gui {
             }
         }
 
-        // last row is dedicated to pagation
+        // the last row is dedicated to pagination
         final int cells = this.rows * 9;
         for (int i = cells - 9; i < cells; ++i) {
             this.inventory.setItem(i, this.footerBackItem != null ? this.footerBackItem : this.blankItem);
@@ -207,7 +208,7 @@ public class SimplePagedGui extends Gui {
     }
 
     @Override
-    protected boolean onClick(GuiManager manager, Player player, Inventory inventory, InventoryClickEvent event) {
+    protected boolean onClick(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory inventory, InventoryClickEvent event) {
         int cell = event.getSlot();
         Map<ClickType, Clickable> conditionals;
 

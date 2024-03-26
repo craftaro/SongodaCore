@@ -31,14 +31,14 @@ public abstract class AbstractGuiListEditor extends Gui {
         setButton(2, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
+                    this.guiManager.showGUI(event.player, this.returnGui);
+                    ((GuiLootEditor) this.returnGui).paint();
                 });
         setButton(6, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
+                    this.guiManager.showGUI(event.player, this.returnGui);
+                    ((GuiLootEditor) this.returnGui).paint();
                 });
         setButton(3, GuiUtils.createButtonItem(XMaterial.ARROW,
                         TextUtils.formatText("&aAdd new line")),
@@ -54,7 +54,7 @@ public abstract class AbstractGuiListEditor extends Gui {
                         }
                     }));
                     gui.setTitle("Enter a new line");
-                    guiManager.showGUI(event.player, gui);
+                    this.guiManager.showGUI(event.player, gui);
                 }));
 
         setItem(4, GuiUtils.createButtonItem(XMaterial.WRITABLE_BOOK,

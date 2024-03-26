@@ -1,7 +1,8 @@
 package com.craftaro.core.math;
 
 public class Eval {
-    private int pos = -1, ch;
+    private int pos = -1;
+    private int ch;
     private final String toParse;
     private final String warningMessage;
 

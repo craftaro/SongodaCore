@@ -39,7 +39,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
     public SimpleDataStore(@NotNull Plugin plugin, @NotNull String filename, @NotNull Function<ConfigurationSection, T> loadFunction) {
         this.plugin = plugin;
         this.filename = filename;
-        dirName = null;
+        this.dirName = null;
         this.getFromSection = loadFunction;
     }
 
@@ -52,23 +52,22 @@ public class SimpleDataStore<T extends DataStoreObject> {
 
     @NotNull
     public File getFile() {
-        if (file == null) {
-            if (dirName != null) {
-                this.file = new File(plugin.getDataFolder() + dirName, filename != null ? filename : "data.yml");
+        if (this.file == null) {
+            if (this.dirName != null) {
+                this.file = new File(this.plugin.getDataFolder() + this.dirName, this.filename != null ? this.filename : "data.yml");
             } else {
-                this.file = new File(plugin.getDataFolder(), filename != null ? filename : "data.yml");
+                this.file = new File(this.plugin.getDataFolder(), this.filename != null ? this.filename : "data.yml");
             }
         }
 
-        return file;
+        return this.file;
     }
 
     /**
-     * @return a directly-modifiable instance of the data mapping for this
-     *         storage
+     * @return a directly modifiable instance of the data mapping for this storage
      */
     public Map<Object, T> getData() {
-        return data;
+        return this.data;
     }
 
     /**
@@ -82,7 +81,7 @@ public class SimpleDataStore<T extends DataStoreObject> {
      */
     @Nullable
     public T get(Object key) {
-        return data.get(key);
+        return this.data.get(key);
     }
 
     /**
@@ -97,8 +96,8 @@ public class SimpleDataStore<T extends DataStoreObject> {
     public T remove(@NotNull Object key) {
         T temp;
 
-        synchronized (lock) {
-            temp = data.remove(key);
+        synchronized (this.lock) {
+            temp = this.data.remove(key);
         }
 
         save();
@@ -122,8 +121,8 @@ public class SimpleDataStore<T extends DataStoreObject> {
 
         T temp;
 
-        synchronized (lock) {
-            temp = data.remove(value.getKey());
+        synchronized (this.lock) {
+            temp = this.data.remove(value.getKey());
         }
 
         save();
@@ -148,8 +147,8 @@ public class SimpleDataStore<T extends DataStoreObject> {
 
         T temp;
 
-        synchronized (lock) {
-            temp = data.put(value.getKey(), value);
+        synchronized (this.lock) {
+            temp = this.data.put(value.getKey(), value);
         }
 
         save();
@@ -168,10 +167,10 @@ public class SimpleDataStore<T extends DataStoreObject> {
             return;
         }
 
-        synchronized (lock) {
+        synchronized (this.lock) {
             for (T t : value) {
                 if (t != null) {
-                    data.put(t.getKey(), t);
+                    this.data.put(t.getKey(), t);
                 }
             }
         }
@@ -191,10 +190,10 @@ public class SimpleDataStore<T extends DataStoreObject> {
             return;
         }
 
-        synchronized (lock) {
+        synchronized (this.lock) {
             for (T v : value) {
                 if (v != null) {
-                    data.put(v.getKey(), v);
+                    this.data.put(v.getKey(), v);
                 }
             }
         }
@@ -213,27 +212,27 @@ public class SimpleDataStore<T extends DataStoreObject> {
         try {
             YamlConfiguration f = new YamlConfiguration();
             f.options().pathSeparator('\0');
-            f.load(file);
+            f.load(this.file);
 
-            synchronized (lock) {
-                data.clear();
+            synchronized (this.lock) {
+                this.data.clear();
 
                 f.getValues(false).values().stream()
                         .filter(ConfigurationSection.class::isInstance)
-                        .map(v -> getFromSection.apply((ConfigurationSection) v))
-                        .forEach(v -> data.put(v.getKey(), v));
+                        .map(v -> this.getFromSection.apply((ConfigurationSection) v))
+                        .forEach(v -> this.data.put(v.getKey(), v));
             }
         } catch (IOException | InvalidConfigurationException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load data from " + file.getName(), ex);
+            this.plugin.getLogger().log(Level.SEVERE, "Failed to load data from " + this.file.getName(), ex);
         }
     }
 
     /**
-     * Optionally save this storage's data to file if there have been changes
+     * Optionally, save this storage's data to file if there have been changes
      * made
      */
     public void saveChanges() {
-        if (saveTask != null || data.values().stream().anyMatch(DataStoreObject::hasChanged)) {
+        if (this.saveTask != null || this.data.values().stream().anyMatch(DataStoreObject::hasChanged)) {
             flushSave();
         }
     }
@@ -243,9 +242,9 @@ public class SimpleDataStore<T extends DataStoreObject> {
      */
     public void save() {
         // save async even if no plugin or if plugin disabled
-        if (saveTask == null) {
-            autosaveTimer = new Timer((plugin != null ? plugin.getName() + "-DataStoreSave-" : "DataStoreSave-") + getFile().getName());
-            autosaveTimer.schedule(saveTask = new SaveTask(), autosaveInterval * 1000L);
+        if (this.saveTask == null) {
+            this.autosaveTimer = new Timer((this.plugin != null ? this.plugin.getName() + "-DataStoreSave-" : "DataStoreSave-") + getFile().getName());
+            this.autosaveTimer.schedule(this.saveTask = new SaveTask(), this.autosaveInterval * 1000L);
         }
     }
 
@@ -253,25 +252,25 @@ public class SimpleDataStore<T extends DataStoreObject> {
      * Force a new save of this storage's data
      */
     public void flushSave() {
-        if (saveTask != null) {
+        if (this.saveTask != null) {
             //Close Threads
-            saveTask.cancel();
-            autosaveTimer.cancel();
-            saveTask = null;
-            autosaveTimer = null;
+            this.saveTask.cancel();
+            this.autosaveTimer.cancel();
+            this.saveTask = null;
+            this.autosaveTimer = null;
         }
 
-        YamlConfiguration f = new YamlConfiguration();
+        YamlConfiguration yamlConfig = new YamlConfiguration();
 
-        synchronized (lock) {
-            data.values().forEach(e -> e.saveToSection(f.createSection(e.getConfigKey())));
+        synchronized (this.lock) {
+            this.data.values().forEach(e -> e.saveToSection(yamlConfig.createSection(e.getConfigKey())));
         }
 
         try {
-            f.save(getFile());
-            data.values().forEach(e -> e.setChanged(false));
+            yamlConfig.save(getFile());
+            this.data.values().forEach(e -> e.setChanged(false));
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to save data to " + file.getName(), ex);
+            this.plugin.getLogger().log(Level.SEVERE, "Failed to save data to " + this.file.getName(), ex);
         }
     }
 

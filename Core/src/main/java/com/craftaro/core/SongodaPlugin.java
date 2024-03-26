@@ -71,7 +71,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
     public abstract List<Config> getExtraConfig();
 
     @Override
-    public FileConfiguration getConfig() {
+    public @NotNull FileConfiguration getConfig() {
         return this.config.getFileConfig();
     }
 
@@ -172,7 +172,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
                 return;
             }
 
-            // Start Metrics
             Metrics.start(this);
         } catch (Throwable th) {
             criticalErrorOnPluginStartup(th);
@@ -225,7 +224,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
      * @param localeName locale to use, eg "en_US"
      * @param reload     optionally reload the loaded locale if the locale didn't
      *                   change
-     *
      * @return true if the locale exists and was loaded successfully
      */
     public boolean setLocale(String localeName, boolean reload) {
@@ -233,9 +231,9 @@ public abstract class SongodaPlugin extends JavaPlugin {
             return !reload || this.locale.reloadMessages();
         }
 
-        Locale l = Locale.loadLocale(this, localeName);
-        if (l != null) {
-            this.locale = l;
+        Locale loadedLocale = Locale.loadLocale(this, localeName);
+        if (loadedLocale != null) {
+            this.locale = loadedLocale;
             return true;
         }
 
@@ -249,23 +247,23 @@ public abstract class SongodaPlugin extends JavaPlugin {
     }
 
     /**
-     * Logs one or multiple errors that occurred during plugin startup and calls {@link #emergencyStop()} afterwards
+     * Logs one or multiple errors that occurred during plugin startup and calls {@link #emergencyStop()} afterward
      *
-     * @param th The error(s) that occurred
+     * @param throwable The error(s) that occurred
      */
-    protected void criticalErrorOnPluginStartup(Throwable th) {
+    protected void criticalErrorOnPluginStartup(Throwable throwable) {
         Bukkit.getLogger().log(Level.SEVERE,
                 String.format(
                         "Unexpected error while loading %s v%s (core v%s): Disabling plugin!",
                         getDescription().getName(),
                         getDescription().getVersion(),
                         SongodaCore.getVersion()
-                ), th);
+                ), throwable);
 
         emergencyStop();
     }
 
-    //New database stuff
+    // New database stuff
     public Config getDatabaseConfig() {
         File databaseFile = new File(getDataFolder(), "database.yml");
         if (!databaseFile.exists()) {
@@ -316,13 +314,13 @@ public abstract class SongodaPlugin extends JavaPlugin {
         }
 
         if (this.dataManager.getDatabaseConnector().isInitialized()) {
-            //Check if the type is SQLite
+            // Check if the type is SQLite
             if (this.dataManager.getDatabaseConnector().getType() == DatabaseType.SQLITE) {
-                //Let's convert it to H2
+                // Let's convert it to H2
                 try {
                     DataManager newDataManager = DataMigration.convert(this, DatabaseType.H2);
                     if (newDataManager != null && newDataManager.getDatabaseConnector().isInitialized()) {
-                        //Set the new data manager
+                        // Set the new data manager
                         setDataManager(newDataManager);
                     }
                 } catch (Exception ex) {

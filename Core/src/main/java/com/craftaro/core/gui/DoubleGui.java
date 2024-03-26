@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -288,7 +289,7 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    protected boolean onClickPlayerInventory(GuiManager manager, Player player, Inventory openInv, InventoryClickEvent event) {
+    protected boolean onClickPlayerInventory(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory openInv, InventoryClickEvent event) {
         final int cell = event.getSlot(), offsetCell = clickOffset(cell);
         Map<ClickType, Clickable> conditionals = this.conditionalButtons.get(offsetCell);
         Clickable button;
@@ -307,7 +308,7 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    protected boolean onClickOutside(GuiManager manager, Player player, InventoryClickEvent event) {
+    protected boolean onClickOutside(@NotNull GuiManager manager, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (this.dropper != null) {
             return this.dropper.onDrop(new GuiDropItemEvent(manager, this, player, event));
         }
@@ -317,7 +318,7 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public void onOpen(GuiManager manager, Player player) {
+    public void onOpen(@NotNull GuiManager manager, @NotNull Player player) {
         // replace the player's inventory
         if (this.startStashed) {
             stashItems(player);
@@ -328,7 +329,7 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public void onClose(GuiManager manager, Player player) {
+    public void onClose(@NotNull GuiManager manager, @NotNull Player player) {
         // restore the player's inventory
         restoreStash(player);
 
@@ -361,32 +362,32 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui setUnlocked(int cell) {
+    public @NotNull DoubleGui setUnlocked(int cell) {
         return (DoubleGui) super.setUnlocked(cell);
     }
 
     @Override
-    public DoubleGui setUnlocked(int cell, boolean open) {
+    public @NotNull DoubleGui setUnlocked(int cell, boolean open) {
         return (DoubleGui) super.setUnlocked(cell, open);
     }
 
     @Override
-    public DoubleGui setUnlocked(int row, int col) {
+    public @NotNull DoubleGui setUnlocked(int row, int col) {
         return (DoubleGui) super.setUnlocked(row, col);
     }
 
     @Override
-    public DoubleGui setUnlocked(int row, int col, boolean open) {
+    public @NotNull DoubleGui setUnlocked(int row, int col, boolean open) {
         return (DoubleGui) super.setUnlocked(row, col, open);
     }
 
     @Override
-    public DoubleGui setUnlockedRange(int cellFirst, int cellLast) {
+    public @NotNull DoubleGui setUnlockedRange(int cellFirst, int cellLast) {
         return (DoubleGui) super.setUnlockedRange(cellFirst, cellLast);
     }
 
     @Override
-    public DoubleGui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
+    public @NotNull DoubleGui setUnlockedRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast) {
         return (DoubleGui) super.setUnlockedRange(cellRowFirst, cellColFirst, cellRowLast, cellColLast);
     }
 
@@ -401,192 +402,192 @@ public class DoubleGui extends Gui {
     }
 
     @Override
-    public DoubleGui setTitle(String title) {
+    public @NotNull DoubleGui setTitle(String title) {
         return (DoubleGui) super.setTitle(title);
     }
 
     @Override
-    public DoubleGui setRows(int rows) {
+    public @NotNull DoubleGui setRows(int rows) {
         return (DoubleGui) super.setRows(rows);
     }
 
     @Override
-    public DoubleGui setDefaultItem(ItemStack item) {
+    public @NotNull DoubleGui setDefaultItem(ItemStack item) {
         return (DoubleGui) super.setDefaultItem(item);
     }
 
     @Override
-    public DoubleGui setItem(int cell, ItemStack item) {
+    public @NotNull DoubleGui setItem(int cell, ItemStack item) {
         return (DoubleGui) super.setItem(cell, item);
     }
 
     @Override
-    public DoubleGui setItem(int row, int col, ItemStack item) {
+    public @NotNull DoubleGui setItem(int row, int col, ItemStack item) {
         return (DoubleGui) super.setItem(row, col, item);
     }
 
     @Override
-    public DoubleGui highlightItem(int cell) {
+    public @NotNull DoubleGui highlightItem(int cell) {
         return (DoubleGui) super.highlightItem(cell);
     }
 
     @Override
-    public DoubleGui highlightItem(int row, int col) {
+    public @NotNull DoubleGui highlightItem(int row, int col) {
         return (DoubleGui) super.highlightItem(row, col);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, String name, String... lore) {
+    public @NotNull DoubleGui updateItem(int cell, String name, String... lore) {
         return (DoubleGui) super.updateItem(cell, name, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, String name, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int row, int col, String name, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, name, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, String name, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int cell, @NotNull String name, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, name, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, ItemStack itemTo, String title, String... lore) {
+    public @NotNull DoubleGui updateItem(int row, int col, @NotNull ItemStack itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, ItemStack itemTo, String title, String... lore) {
+    public @NotNull DoubleGui updateItem(int cell, @NotNull ItemStack itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, String... lore) {
+    public @NotNull DoubleGui updateItem(int row, int col, @NotNull XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, String... lore) {
+    public @NotNull DoubleGui updateItem(int cell, @NotNull XMaterial itemTo, String title, String... lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, ItemStack itemTo, String title, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int row, int col, @NotNull ItemStack itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, ItemStack itemTo, String title, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int cell, @NotNull ItemStack itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int row, int col, XMaterial itemTo, String title, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int row, int col, @NotNull XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(col + row * 9, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui updateItem(int cell, XMaterial itemTo, String title, List<String> lore) {
+    public @NotNull DoubleGui updateItem(int cell, @NotNull XMaterial itemTo, String title, List<String> lore) {
         return (DoubleGui) super.updateItem(cell, itemTo, title, lore);
     }
 
     @Override
-    public DoubleGui setAction(int cell, Clickable action) {
+    public @NotNull DoubleGui setAction(int cell, Clickable action) {
         return (DoubleGui) super.setAction(cell, action);
     }
 
     @Override
-    public DoubleGui setAction(int row, int col, Clickable action) {
+    public @NotNull DoubleGui setAction(int row, int col, Clickable action) {
         return (DoubleGui) super.setAction(row, col, action);
     }
 
     @Override
-    public DoubleGui setAction(int cell, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setAction(int cell, ClickType type, Clickable action) {
         return (DoubleGui) super.setAction(cell, type, action);
     }
 
     @Override
-    public DoubleGui setAction(int row, int col, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setAction(int row, int col, ClickType type, Clickable action) {
         return (DoubleGui) super.setAction(row, col, type, action);
     }
 
     @Override
-    public DoubleGui setActionForRange(int cellFirst, int cellLast, Clickable action) {
+    public @NotNull DoubleGui setActionForRange(int cellFirst, int cellLast, Clickable action) {
         return (DoubleGui) super.setActionForRange(cellFirst, cellLast, action);
     }
 
     @Override
-    public DoubleGui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, Clickable action) {
+    public @NotNull DoubleGui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, Clickable action) {
         return (DoubleGui) super.setActionForRange(cellRowFirst, cellColFirst, cellRowLast, cellColLast, action);
     }
 
     @Override
-    public DoubleGui setActionForRange(int cellFirst, int cellLast, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setActionForRange(int cellFirst, int cellLast, ClickType type, Clickable action) {
         return (DoubleGui) super.setActionForRange(cellFirst, cellLast, type, action);
     }
 
     @Override
-    public DoubleGui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setActionForRange(int cellRowFirst, int cellColFirst, int cellRowLast, int cellColLast, ClickType type, Clickable action) {
         return (DoubleGui) super.setActionForRange(cellRowFirst, cellColFirst, cellRowLast, cellColLast, type, action);
     }
 
     @Override
-    public DoubleGui clearActions(int cell) {
+    public @NotNull DoubleGui clearActions(int cell) {
         return (DoubleGui) super.clearActions(cell);
     }
 
     @Override
-    public DoubleGui clearActions(int row, int col) {
+    public @NotNull DoubleGui clearActions(int row, int col) {
         return (DoubleGui) super.clearActions(row, col);
     }
 
     @Override
-    public DoubleGui setButton(int cell, ItemStack item, Clickable action) {
+    public @NotNull DoubleGui setButton(int cell, ItemStack item, Clickable action) {
         return (DoubleGui) super.setButton(cell, item, action);
     }
 
     @Override
-    public DoubleGui setButton(int row, int col, ItemStack item, Clickable action) {
+    public @NotNull DoubleGui setButton(int row, int col, ItemStack item, Clickable action) {
         return (DoubleGui) super.setButton(row, col, item, action);
     }
 
     @Override
-    public DoubleGui setButton(int cell, ItemStack item, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setButton(int cell, ItemStack item, ClickType type, Clickable action) {
         return (DoubleGui) super.setButton(cell, item, type, action);
     }
 
     @Override
-    public DoubleGui setButton(int row, int col, ItemStack item, ClickType type, Clickable action) {
+    public @NotNull DoubleGui setButton(int row, int col, ItemStack item, ClickType type, Clickable action) {
         return (DoubleGui) super.setButton(row, col, item, type, action);
     }
 
     @Override
-    public DoubleGui setOnOpen(Openable action) {
+    public @NotNull DoubleGui setOnOpen(Openable action) {
         return (DoubleGui) super.setOnOpen(action);
     }
 
     @Override
-    public DoubleGui setOnClose(Closable action) {
+    public @NotNull DoubleGui setOnClose(Closable action) {
         return (DoubleGui) super.setOnClose(action);
     }
 
     @Override
-    public DoubleGui setOnDrop(Droppable action) {
+    public @NotNull DoubleGui setOnDrop(Droppable action) {
         return (DoubleGui) super.setOnDrop(action);
     }
 
     @Override
-    public DoubleGui setOnPage(Pagable action) {
+    public @NotNull DoubleGui setOnPage(Pagable action) {
         return (DoubleGui) super.setOnPage(action);
     }
 
     @Override
-    public DoubleGui setNextPage(int row, int col, ItemStack item) {
+    public @NotNull DoubleGui setNextPage(int row, int col, @NotNull ItemStack item) {
         return (DoubleGui) super.setNextPage(row, col, item);
     }
 
     @Override
-    public DoubleGui setPrevPage(int row, int col, ItemStack item) {
+    public @NotNull DoubleGui setPrevPage(int row, int col, @NotNull ItemStack item) {
         return (DoubleGui) super.setPrevPage(row, col, item);
     }
 }

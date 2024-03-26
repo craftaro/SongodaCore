@@ -19,7 +19,7 @@ public class SQLResult {
                 Object value = record.get(fieldName);
                 map.put(fieldName, new StoredData(value));
             }
-            results.add(new StoredRecord(map));
+            this.results.add(new StoredRecord(map));
         }
     }
 
@@ -30,11 +30,11 @@ public class SQLResult {
             Object value = record.get(fieldName);
             map.put(fieldName, new StoredData(value));
         }
-        results.add(new StoredRecord(map));
+        this.results.add(new StoredRecord(map));
     }
 
     public List<StoredRecord> getResults() {
-        return results;
+        return this.results;
     }
 
     public interface SQLResultI {
@@ -49,15 +49,15 @@ public class SQLResult {
         }
 
         public StoredData get(String key) {
-            return record.get(key);
+            return this.record.get(key);
         }
 
         public boolean has(String key) {
-            return record.containsKey(key) && record.get(key).asString() != null;
+            return this.record.containsKey(key) && this.record.get(key).asString() != null;
         }
 
         public boolean isNull(String key) {
-            return record.containsKey(key) && record.get(key).isNull();
+            return this.record.containsKey(key) && this.record.get(key).isNull();
         }
     }
 }

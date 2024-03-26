@@ -29,6 +29,7 @@ public interface DatabaseConnector {
      * Executes a callback with a Connection passed and automatically closes it when finished
      *
      * @param callback The callback to execute once the connection is retrieved
+     *
      * @return The result of the callback
      */
     OptionalResult connectOptional(ConnectionOptionalCallback callback);
@@ -44,6 +45,7 @@ public interface DatabaseConnector {
      * Executes a callback with a DSLContext passed and automatically closes it when finished
      *
      * @param callback The callback to execute once the connection is retrieved
+     *
      * @return The result of the callback
      */
     OptionalResult connectDSLOptional(DSLContextOptionalCallback callback);
@@ -82,12 +84,14 @@ public interface DatabaseConnector {
 
     /**
      * Gets a connection from the database
+     *
      * @return The connection
      */
     Connection getConnection() throws SQLException;
 
     /**
      * Gets the database type
+     *
      * @return The database type
      */
     DatabaseType getType();

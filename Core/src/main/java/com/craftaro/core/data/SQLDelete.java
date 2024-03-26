@@ -4,7 +4,6 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 public class SQLDelete extends SQLBase {
-
     private SQLDelete(DSLContext ctx) {
         super(ctx);
     }
@@ -14,11 +13,11 @@ public class SQLDelete extends SQLBase {
     }
 
     public void delete(String table, String id, Object value) {
-        new SQLExecutable(ctx, ctx.delete(DSL.table(table)).where(DSL.field(id).eq(value))).execute();
+        new SQLExecutable(this.ctx, this.ctx.delete(DSL.table(table)).where(DSL.field(id).eq(value))).execute();
     }
 
     public void delete(String table, String id, Object value, String id2, Object value2) {
-        new SQLExecutable(ctx, ctx.delete(DSL.table(table)).where(DSL.field(id).eq(value))
+        new SQLExecutable(this.ctx, this.ctx.delete(DSL.table(table)).where(DSL.field(id).eq(value))
                 .and(DSL.field(id2).eq(value2))).execute();
     }
 }

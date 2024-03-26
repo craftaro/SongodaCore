@@ -7,7 +7,6 @@ import org.jooq.impl.DSL;
 import java.util.Collection;
 
 public class SQLBase {
-
     protected final DSLContext ctx;
 
     public SQLBase(DSLContext ctx) {
@@ -39,8 +38,10 @@ public class SQLBase {
 
     protected Field getField(String field, Class<?> type) {
         String fieldFinal = "`" + field + "`";
-        if (type == boolean.class)
+        if (type == boolean.class) {
             return DSL.field(fieldFinal, int.class);
+        }
+
         return type == null ? DSL.field(fieldFinal) : DSL.field(fieldFinal, type);
     }
 }

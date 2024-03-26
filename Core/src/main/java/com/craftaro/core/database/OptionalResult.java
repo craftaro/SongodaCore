@@ -1,7 +1,6 @@
 package com.craftaro.core.database;
 
 public class OptionalResult {
-
     private final Object value;
     private final boolean present;
 
@@ -11,15 +10,15 @@ public class OptionalResult {
     }
 
     public <T> T get(Class<T> clazz) {
-        return clazz.cast(value);
+        return clazz.cast(this.value);
     }
 
     public boolean isPresent() {
-        return present;
+        return this.present;
     }
 
     public <V> V getOrDefault(V defaultValue) {
-        return present ? (V) value : defaultValue;
+        return this.present ? (V) this.value : defaultValue;
     }
 
     public static OptionalResult empty() {

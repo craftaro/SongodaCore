@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class StoredData {
-
     private Object object;
 
     public StoredData(Object object) {
@@ -15,16 +14,20 @@ public class StoredData {
     }
 
     public Object getObject() {
-        return object;
+        return this.object;
     }
 
     public String asString() {
-        if (object == null) return null;
-        return object.toString();
+        if (this.object == null) {
+            return null;
+        }
+        return this.object.toString();
     }
 
     public int asInt() {
-        if (object == null) return 0;
+        if (this.object == null) {
+            return 0;
+        }
         return Integer.parseInt(asString());
     }
 
@@ -34,7 +37,9 @@ public class StoredData {
 
     public long asLong() {
         String string = asString();
-        if (string == null) return 0;
+        if (string == null) {
+            return 0;
+        }
         return Long.parseLong(string);
     }
 
@@ -47,8 +52,9 @@ public class StoredData {
     }
 
     public boolean asBoolean() {
-        if (object instanceof Integer)
-            return (int) object == 1;
+        if (this.object instanceof Integer) {
+            return (int) this.object == 1;
+        }
         return Boolean.parseBoolean(asString());
     }
 
@@ -57,12 +63,12 @@ public class StoredData {
     }
 
     public boolean isNull() {
-        return object == null;
+        return this.object == null;
     }
 
     // get longblob
     public byte[] asBytes() {
-        return (byte[]) object;
+        return (byte[]) this.object;
     }
 
     public UUID asUniqueID() {

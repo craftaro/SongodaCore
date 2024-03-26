@@ -3,7 +3,6 @@ package com.craftaro.core.data;
 import org.jooq.SQLDialect;
 
 public enum DatabaseType {
-
     MARIADB,
     MYSQL,
     H2,

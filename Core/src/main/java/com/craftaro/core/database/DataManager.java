@@ -78,30 +78,30 @@ public class DataManager {
     }
 
     private void load(DatabaseType forcedType) throws SQLException {
-        String databaseType = databaseConfig.getString("Connection Settings.Type").toUpperCase();
+        String databaseType = this.databaseConfig.getString("Connection Settings.Type").toUpperCase();
         if (forcedType != null) {
             databaseType = forcedType.name();
         }
         switch (databaseType) {
             case "MYSQL": {
-                this.databaseConnector = new MySQLConnector(plugin, databaseConfig);
+                this.databaseConnector = new MySQLConnector(this.plugin, this.databaseConfig);
                 break;
             }
             case "MARIADB": {
-                this.databaseConnector = new MariaDBConnector(plugin, databaseConfig);
+                this.databaseConnector = new MariaDBConnector(this.plugin, this.databaseConfig);
                 break;
             }
             case "SQLITE": {
-                this.databaseConnector = new SQLiteConnector(plugin);
+                this.databaseConnector = new SQLiteConnector(this.plugin);
                 break;
             }
             default: {
-                this.databaseConnector = new H2Connector(plugin);
+                this.databaseConnector = new H2Connector(this.plugin);
                 break;
             }
         }
-        this.type = databaseConnector.getType();
-        this.plugin.getLogger().info("Data handler connected using " + databaseConnector.getType().name() + ".");
+        this.type = this.databaseConnector.getType();
+        this.plugin.getLogger().info("Data handler connected using " + this.databaseConnector.getType().name() + ".");
 
         runMigrations();
     }
@@ -110,14 +110,14 @@ public class DataManager {
      * @return the database connector
      */
     public DatabaseConnector getDatabaseConnector() {
-        return databaseConnector;
+        return this.databaseConnector;
     }
 
     /**
      * @return the database executor service
      */
     public ExecutorService getAsyncPool() {
-        return asyncPool;
+        return this.asyncPool;
     }
 
     /**
@@ -216,7 +216,7 @@ public class DataManager {
     public synchronized int getNextId(String table) {
         String prefixedTable = getTablePrefix() + table;
         if (!this.autoIncrementCache.containsKey(prefixedTable)) {
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
 //                context.select(DSL.max(DSL.field("id"))).from(prefixedTable).fetchOptional().ifPresentOrElse(record -> {
 //                    if (record.get(0, Integer.class) == null) {
 //                        this.autoIncrementCache.put(prefixedTable, new AtomicInteger(1));
@@ -238,13 +238,13 @@ public class DataManager {
         return this.autoIncrementCache.get(prefixedTable).incrementAndGet();
     }
 
-    //TODO: Fix/create javadocs for all methods
+    // TODO: Fix/create javadocs for all methods
 
     /**
      * Saves the data to the database
      */
     public void save(Data data) {
-        asyncPool.execute(() -> {
+        this.asyncPool.execute(() -> {
             saveSync(data);
         });
     }
@@ -253,7 +253,7 @@ public class DataManager {
      * Saves the data to the database
      */
     public void save(Data data, String idField, Object idValue) {
-        asyncPool.execute(() -> {
+        this.asyncPool.execute(() -> {
             saveSync(data, idField, idValue);
         });
     }
@@ -262,7 +262,7 @@ public class DataManager {
      * Saves the data to the database
      */
     public void saveSync(Data data, String idField, Object idValue) {
-        databaseConnector.connectDSL(context -> {
+        this.databaseConnector.connectDSL(context -> {
             context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                     .set(data.serialize())
                     .onConflict(DSL.field(idField)).doUpdate()
@@ -276,7 +276,7 @@ public class DataManager {
      * Saves the data to the database synchronously
      */
     public void saveSync(Data data) {
-        databaseConnector.connectDSL(context -> {
+        this.databaseConnector.connectDSL(context -> {
             context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
                     .set(data.serialize())
                     .onConflict(data.getId() != -1 ? DSL.field("id") : DSL.field("uuid")).doUpdate()
@@ -290,7 +290,7 @@ public class DataManager {
      * Saves the data in batch to the database
      */
     public void saveBatch(Collection<Data> dataBatch) {
-        asyncPool.execute(() -> {
+        this.asyncPool.execute(() -> {
             saveBatchSync(dataBatch);
         });
     }
@@ -299,7 +299,7 @@ public class DataManager {
      * Saves the data in batch to the database
      */
     public void saveBatchSync(Collection<Data> dataBatch) {
-        databaseConnector.connectDSL(context -> {
+        this.databaseConnector.connectDSL(context -> {
             List<Query> queries = new ArrayList<>();
             for (Data data : dataBatch) {
                 queries.add(context.insertInto(DSL.table(getTablePrefix() + data.getTableName()))
@@ -317,7 +317,7 @@ public class DataManager {
      * Deletes the data from the database
      */
     public void delete(Data data) {
-        asyncPool.execute(() -> {
+        this.asyncPool.execute(() -> {
             deleteSync(data);
         });
     }
@@ -326,7 +326,7 @@ public class DataManager {
      * Deletes the data from the database
      */
     public void deleteSync(Data data) {
-        databaseConnector.connectDSL(context -> {
+        this.databaseConnector.connectDSL(context -> {
             context.delete(DSL.table(getTablePrefix() + data.getTableName()))
                     .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field("uuid").eq(data.getUniqueId().toString()))
                     .execute();
@@ -334,13 +334,13 @@ public class DataManager {
     }
 
     public void delete(Data data, String idField, Object idValue) {
-        asyncPool.execute(() -> {
+        this.asyncPool.execute(() -> {
             deleteSync(data, idField, idValue);
         });
     }
 
     public void deleteSync(Data data, String idField, Object idValue) {
-        databaseConnector.connectDSL(context -> {
+        this.databaseConnector.connectDSL(context -> {
             context.delete(DSL.table(getTablePrefix() + data.getTableName()))
                     .where(DSL.field(idField).eq(idValue))
                     .execute();
@@ -351,8 +351,8 @@ public class DataManager {
      * Deletes the data from the database
      */
     public void delete(Data data, String uuidColumn) {
-        asyncPool.execute(() -> {
-            databaseConnector.connectDSL(context -> {
+        this.asyncPool.execute(() -> {
+            this.databaseConnector.connectDSL(context -> {
                 context.delete(DSL.table(getTablePrefix() + data.getTableName()))
                         .where(data.getId() != -1 ? DSL.field("id").eq(data.getId()) : DSL.field(uuidColumn).eq(data.getUniqueId().toString()))
                         .execute();
@@ -372,7 +372,7 @@ public class DataManager {
         try {
             AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
                 try {
                     Data newData = (Data) clazz.getConstructor().newInstance();
                     data.set(newData.deserialize(Objects.requireNonNull(context.select()
@@ -410,7 +410,7 @@ public class DataManager {
         try {
             AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
                 try {
                     Data newData = (Data) clazz.getConstructor().newInstance();
                     data.set(newData.deserialize(Objects.requireNonNull(context.select()
@@ -449,7 +449,7 @@ public class DataManager {
         try {
             AtomicReference<Data> data = new AtomicReference<>();
             AtomicBoolean found = new AtomicBoolean(false);
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
                 try {
                     Data newData = (Data) clazz.getConstructor().newInstance();
                     data.set(newData.deserialize(Objects.requireNonNull(context.select()
@@ -482,7 +482,7 @@ public class DataManager {
     public <T extends Data> List<T> loadBatch(Class<?> clazz, String table) {
         try {
             List<Data> dataList = Collections.synchronizedList(new ArrayList<>());
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
                 try {
                     for (@NotNull Record record : Objects.requireNonNull(context.select()
                             .from(DSL.table(getTablePrefix() + table))
@@ -509,7 +509,7 @@ public class DataManager {
     public <T extends Data> List<T> loadBatch(Class<?> clazz, String table, Condition... conditions) {
         try {
             List<Data> dataList = Collections.synchronizedList(new ArrayList<>());
-            databaseConnector.connectDSL(context -> {
+            this.databaseConnector.connectDSL(context -> {
                 try {
                     for (@NotNull Record record : Objects.requireNonNull(context.select()
                             .from(DSL.table(getTablePrefix() + table))

@@ -30,11 +30,11 @@ public final class LootBuilder {
         return this;
     }
 
-    public LootBuilder addEnchants(Tuple... tuples) {
+    public LootBuilder addEnchants(Tuple<String, Integer>... tuples) {
         Map<String, Integer> enchants = new HashMap<>();
 
-        for (Tuple tuple : tuples) {
-            enchants.put((String) tuple.getKey(), (int) tuple.getValue());
+        for (Tuple<String, Integer> tuple : tuples) {
+            enchants.put(tuple.getKey(), tuple.getValue());
         }
 
         this.loot.setEnchants(enchants);

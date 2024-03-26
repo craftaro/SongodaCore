@@ -13,10 +13,10 @@ public class Lootables {
     }
 
     public String getLootablesDir() {
-        return lootablesDir;
+        return this.lootablesDir;
     }
 
     public LootManager getLootManager() {
-        return lootManager;
+        return this.lootManager;
     }
 }

@@ -7,60 +7,66 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class LazyList<T> {
-
     private final List<T> list;
     private List<Lazy<T>> lazyList;
 
-    public LazyList(List list) {
+    public LazyList(List<T> list) {
         this.list = list == null ? new LinkedList<>() : list;
         this.lazyList = new LinkedList<>();
     }
 
     public List<T> getList() {
         loadList();
-        return list;
+        return this.list;
     }
 
     public Set<T> getSet() {
         loadList();
-        return new HashSet<>(list);
+        return new HashSet<>(this.list);
     }
 
     public void add(Supplier<T> supplier) {
-        if (lazyList == null)
-            list.add(supplier.get());
-        else if (supplier != null)
-            lazyList.add(new Lazy<T>().set(supplier));
+        if (this.lazyList == null) {
+            this.list.add(supplier.get());
+        } else if (supplier != null) {
+            this.lazyList.add(new Lazy<T>().set(supplier));
+        }
     }
 
     public void add(T items) {
-        list.add(items);
+        this.list.add(items);
     }
 
     public void addAll(List<T> items) {
-        list.addAll(items);
+        this.list.addAll(items);
     }
 
     public void addAll(Supplier<T>... suppliers) {
-        for (Supplier<T> supplier : suppliers)
+        for (Supplier<T> supplier : suppliers) {
             add(supplier);
+        }
     }
 
     private void loadList() {
-        if (lazyList == null) return;
-        for (Lazy<T> lazy : lazyList)
-            list.add(lazy.get());
-        lazyList = null;
+        if (this.lazyList == null) {
+            return;
+        }
+
+        for (Lazy<T> lazy : this.lazyList) {
+            this.list.add(lazy.get());
+        }
+        this.lazyList = null;
     }
 
     public void clear() {
-        list.clear();
-        lazyList.clear();
+        this.list.clear();
+        this.lazyList.clear();
     }
 
     public boolean isEmpty() {
-        if (lazyList != null)
-            return lazyList.isEmpty();
-        return list.isEmpty();
+        if (this.lazyList != null) {
+            return this.lazyList.isEmpty();
+        }
+        return this.list.isEmpty();
     }
 }

@@ -52,11 +52,11 @@ public enum ColorCode {
     }
 
     public char getCode() {
-        return code;
+        return this.code;
     }
 
     public ChatColor getChatColor() {
-        return chatColor;
+        return this.chatColor;
     }
 
     public boolean isColor() {

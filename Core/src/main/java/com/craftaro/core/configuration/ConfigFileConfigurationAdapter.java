@@ -22,62 +22,62 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
     }
 
     public Config getCoreConfig() {
-        return config;
+        return this.config;
     }
 
     @Override
     public String saveToString() {
-        return config.saveToString();
+        return this.config.saveToString();
     }
 
     @Override
     public void loadFromString(String string) throws InvalidConfigurationException {
-        config.loadFromString(string);
+        this.config.loadFromString(string);
     }
 
     @Override
     protected String buildHeader() {
-        return "#" + String.join("\n#", config.getHeader());
+        return "#" + String.join("\n#", this.config.getHeader());
     }
 
     @Override
     public ConfigOptionsAdapter options() {
-        return new ConfigOptionsAdapter(config);
+        return new ConfigOptionsAdapter(this.config);
     }
 
     @Override
     public Set<String> getKeys(boolean deep) {
-        return config.getKeys(deep);
+        return this.config.getKeys(deep);
     }
 
     @Override
     public Map<String, Object> getValues(boolean deep) {
-        return config.getValues(deep);
+        return this.config.getValues(deep);
     }
 
     @Override
     public boolean contains(String path) {
-        return config.contains(path);
+        return this.config.contains(path);
     }
 
     @Override
     public boolean isSet(String path) {
-        return config.isSet(path);
+        return this.config.isSet(path);
     }
 
     @Override
     public String getCurrentPath() {
-        return config.getCurrentPath();
+        return this.config.getCurrentPath();
     }
 
     @Override
     public String getName() {
-        return config.getName();
+        return this.config.getName();
     }
 
     @Override
     public Configuration getRoot() {
-        return config;
+        return this.config;
     }
 
     @Override
@@ -87,186 +87,186 @@ public class ConfigFileConfigurationAdapter extends FileConfiguration {
 
     @Override
     public void addDefault(String path, Object value) {
-        config.addDefault(path, value);
+        this.config.addDefault(path, value);
     }
 
     @Override
     public ConfigurationSection getDefaultSection() {
-        return config.getDefaultSection();
+        return this.config.getDefaultSection();
     }
 
     @Override
     public void set(String path, Object value) {
-        config.set(path, value);
+        this.config.set(path, value);
     }
 
     @Override
     public Object get(String path) {
-        return config.get(path);
+        return this.config.get(path);
     }
 
     @Override
     public Object get(String path, Object def) {
-        return config.get(path, def);
+        return this.config.get(path, def);
     }
 
     @Override
     public ConfigurationSection createSection(String path) {
-        return config.createSection(path);
+        return this.config.createSection(path);
     }
 
     @Override
     public ConfigurationSection createSection(String path, Map<?, ?> map) {
-        return config.createSection(path, map);
+        return this.config.createSection(path, map);
     }
 
     // Other non-FileConfiguration methods
 
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path) {
-        return config.createDefaultSection(path);
+        return this.config.createDefaultSection(path);
     }
 
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
-        return config.createDefaultSection(path, comment);
+        return this.config.createDefaultSection(path, comment);
     }
 
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
-        return config.createDefaultSection(path, commentStyle, comment);
+        return this.config.createDefaultSection(path, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
-        return config.setComment(path, commentStyle, lines);
+        return this.config.setComment(path, commentStyle, lines);
     }
 
     @NotNull
     public ConfigSection setComment(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
-        return config.setComment(path, commentStyle, lines);
+        return this.config.setComment(path, commentStyle, lines);
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, String... lines) {
-        return config.setDefaultComment(path, lines);
+        return this.config.setDefaultComment(path, lines);
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
-        return config.setDefaultComment(path, lines);
+        return this.config.setDefaultComment(path, lines);
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
-        return config.setDefaultComment(path, commentStyle, lines);
+        return this.config.setDefaultComment(path, commentStyle, lines);
     }
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
-        return config.setDefaultComment(path, commentStyle, lines);
+        return this.config.setDefaultComment(path, commentStyle, lines);
     }
 
     @Nullable
     public Comment getComment(@NotNull String path) {
-        return config.getComment(path);
+        return this.config.getComment(path);
     }
 
     @Nullable
     public String getCommentString(@NotNull String path) {
-        return config.getCommentString(path);
+        return this.config.getCommentString(path);
     }
 
     @NotNull
     public List<ConfigSection> getSections(String path) {
-        return config.getSections(path);
+        return this.config.getSections(path);
     }
 
     @NotNull
     public ConfigSection set(@NotNull String path, @Nullable Object value, String... comment) {
-        return config.set(path, value, comment);
+        return this.config.set(path, value, comment);
     }
 
     @NotNull
     public ConfigSection set(@NotNull String path, @Nullable Object value, List<String> comment) {
-        return config.set(path, value, comment);
+        return this.config.set(path, value, comment);
     }
 
     @NotNull
     public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
-        return config.set(path, value, commentStyle, comment);
+        return this.config.set(path, value, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection set(@NotNull String path, @Nullable Object value, @Nullable ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
-        return config.set(path, value, commentStyle, comment);
+        return this.config.set(path, value, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection setDefault(@NotNull String path, @Nullable Object value) {
-        return config.setDefault(path, value);
+        return this.config.setDefault(path, value);
     }
 
     @NotNull
     public ConfigSection setDefault(@NotNull String path, @Nullable Object value, String... comment) {
-        return config.setDefault(path, value, comment);
+        return this.config.setDefault(path, value, comment);
     }
 
     @NotNull
     public ConfigSection setDefault(@NotNull String path, @Nullable Object value, List<String> comment) {
-        return config.setDefault(path, value, comment);
+        return this.config.setDefault(path, value, comment);
     }
 
     @NotNull
     public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
-        return config.setDefault(path, value, commentStyle, comment);
+        return this.config.setDefault(path, value, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection setDefault(@NotNull String path, @Nullable Object value, ConfigFormattingRules.CommentStyle commentStyle, List<String> comment) {
-        return config.setDefault(path, value, commentStyle, comment);
+        return this.config.setDefault(path, value, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, String... comment) {
-        return config.createSection(path, comment);
+        return this.config.createSection(path, comment);
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable List<String> comment) {
-        return config.createSection(path, comment);
+        return this.config.createSection(path, comment);
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
-        return config.createSection(path, commentStyle, comment);
+        return this.config.createSection(path, commentStyle, comment);
     }
 
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
-        return config.createSection(path, commentStyle, comment);
+        return this.config.createSection(path, commentStyle, comment);
     }
 
     public char getChar(@NotNull String path) {
-        return config.getChar(path);
+        return this.config.getChar(path);
     }
 
     public char getChar(@NotNull String path, char def) {
-        return config.getChar(path, def);
+        return this.config.getChar(path, def);
     }
 
     @Nullable
     public XMaterial getMaterial(@NotNull String path) {
-        return config.getMaterial(path);
+        return this.config.getMaterial(path);
     }
 
     @Nullable
     public XMaterial getMaterial(@NotNull String path, @Nullable XMaterial def) {
-        return config.getMaterial(path, def);
+        return this.config.getMaterial(path, def);
     }
 
     @NotNull
     public ConfigSection getOrCreateConfigurationSection(@NotNull String path) {
-        return config.getOrCreateConfigurationSection(path);
+        return this.config.getOrCreateConfigurationSection(path);
     }
 }

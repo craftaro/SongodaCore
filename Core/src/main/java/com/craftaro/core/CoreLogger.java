@@ -20,7 +20,7 @@ public final class CoreLogger extends Logger {
         LogManager.getLogManager().addLogger(this);
     }
 
-    protected void setPlugin(Plugin plugin) {
+    void setPlugin(Plugin plugin) {
         this.pluginPrefix = "[" + plugin.getName() + "] ";
     }
 

@@ -39,11 +39,11 @@ public abstract class AbstractCommand {
     }
 
     public final List<String> getCommands() {
-        return Collections.unmodifiableList(_handledCommands);
+        return Collections.unmodifiableList(this._handledCommands);
     }
 
     public final void addSubCommand(String command) {
-        _handledCommands.add(command);
+        this._handledCommands.add(command);
     }
 
     protected abstract ReturnType runCommand(CommandSender sender, String... args);
@@ -57,11 +57,11 @@ public abstract class AbstractCommand {
     public abstract String getDescription();
 
     public boolean hasArgs() {
-        return _hasArgs;
+        return this._hasArgs;
     }
 
     public boolean isNoConsole() {
-        return _cmdType == CommandType.PLAYER_ONLY;
+        return this._cmdType == CommandType.PLAYER_ONLY;
     }
 
     public enum ReturnType {SUCCESS, NEEDS_PLAYER, FAILURE, SYNTAX_ERROR}

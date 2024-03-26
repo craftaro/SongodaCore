@@ -33,13 +33,13 @@ public class LootManager {
     }
 
     public Lootable addLootable(Lootable lootable) {
-        return registeredLootables.put(lootable.getKey(), lootable);
+        return this.registeredLootables.put(lootable.getKey(), lootable);
     }
 
     public void removeLootable(String key) {
-        registeredLootables.remove(key);
+        this.registeredLootables.remove(key);
 
-        File file = new File(lootables.getLootablesDir(), key.toLowerCase() + ".json");
+        File file = new File(this.lootables.getLootablesDir(), key.toLowerCase() + ".json");
         file.delete();
     }
 
@@ -58,12 +58,13 @@ public class LootManager {
                 ((Math.random() * 100) - rerollChance < 0 || rerollChance == 100) &&
                         loot.runChance(looting, murderWeapon)) {
 
-            if (loot.getOnlyDropFor().size() != 0
+            if (!loot.getOnlyDropFor().isEmpty()
                     && loot.getOnlyDropFor().stream().noneMatch(type -> looter != null && type == looter)
-                    || !isCharged && loot.isRequireCharged())
+                    || !isCharged && loot.isRequireCharged()) {
                 return toDrop;
+            }
 
-            if (loot.getChildLoot().size() > 0) {
+            if (!loot.getChildLoot().isEmpty()) {
                 List<Loot> childLoot = loot.getChildLoot();
                 Collections.shuffle(childLoot);
 
@@ -153,9 +154,9 @@ public class LootManager {
     }
 
     public void loadLootables() {
-        registeredLootables.clear();
+        this.registeredLootables.clear();
 
-        File dir = new File(lootables.getLootablesDir());
+        File dir = new File(this.lootables.getLootablesDir());
         File[] directoryListing = dir.listFiles();
 
         if (directoryListing != null) {
@@ -170,7 +171,7 @@ public class LootManager {
 
                     Lootable lootable = gson.fromJson(reader, Lootable.class);
 
-                    if (lootable.getRegisteredLoot().size() != 0) {
+                    if (!lootable.getRegisteredLoot().isEmpty()) {
                         addLootable(lootable);
                     }
 
@@ -183,13 +184,13 @@ public class LootManager {
     }
 
     public void saveLootables(boolean defaults) {
-        File dir = new File(lootables.getLootablesDir());
+        File dir = new File(this.lootables.getLootablesDir());
         dir.mkdir();
 
         // Save to file
-        for (Lootable lootable : registeredLootables.values()) {
+        for (Lootable lootable : this.registeredLootables.values()) {
             try {
-                File file = new File(lootables.getLootablesDir(), lootable.getKey().toLowerCase() + ".json");
+                File file = new File(this.lootables.getLootablesDir(), lootable.getKey().toLowerCase() + ".json");
 
                 if (file.exists() && defaults) {
                     continue;
@@ -205,11 +206,11 @@ public class LootManager {
         }
 
         if (defaults) {
-            registeredLootables.clear();
+            this.registeredLootables.clear();
         }
     }
 
     public Map<String, Lootable> getRegisteredLootables() {
-        return Collections.unmodifiableMap(registeredLootables);
+        return Collections.unmodifiableMap(this.registeredLootables);
     }
 }

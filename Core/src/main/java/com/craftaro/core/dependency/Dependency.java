@@ -48,7 +48,7 @@ public class Dependency {
         this.artifactId = artifactId;
         this.version = version;
         if (baseRelocate) {
-            //Add base relocate
+            // Add base relocate
             this.relocations.add(new Relocation(groupId, "com.craftaro.third_party." + groupId));
         }
         if (extraRelocations.length > 0) {

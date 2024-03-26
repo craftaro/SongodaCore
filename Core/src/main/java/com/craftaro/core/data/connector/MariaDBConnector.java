@@ -53,7 +53,10 @@ public class MariaDBConnector implements DatabaseConnector {
             }
         };
 
-        if (sqlThread) DatabaseManager.getInstance().execute(runnable);
-        else runnable.run();
+        if (sqlThread) {
+            DatabaseManager.getInstance().execute(runnable);
+        } else {
+            runnable.run();
+        }
     }
 }

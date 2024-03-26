@@ -14,14 +14,14 @@ public class EnchantChance {
     }
 
     public Enchantment getEnchantment() {
-        return enchantment;
+        return this.enchantment;
     }
 
     public int getLevel() {
-        return level;
+        return this.level;
     }
 
     public double getChanceOverride() {
-        return chanceOverride;
+        return this.chanceOverride;
     }
 }

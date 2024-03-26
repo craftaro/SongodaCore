@@ -29,7 +29,7 @@ public class CustomizableGui extends Gui {
     private static boolean showGuiKeys = false;
     private int activationCount = 0;
 
-    private static final Map<String, CustomContent> loadedGuis = new HashMap<>();
+    private static final Map<String, CustomContent> LOADED_GUIS = new HashMap<>();
     private final CustomContent customContent;
 
     public CustomizableGui(Plugin plugin, String guiKey) {
@@ -39,9 +39,8 @@ public class CustomizableGui extends Gui {
     public CustomizableGui(@NotNull Plugin plugin, @NotNull String guiKey, @Nullable Gui parent) {
         super(parent);
 
-        if (!loadedGuis.containsKey(guiKey) || showGuiKeys) {
+        if (!LOADED_GUIS.containsKey(guiKey) || showGuiKeys) {
             File localeFolder = new File(plugin.getDataFolder(), "gui/");
-
             if (!localeFolder.exists()) {
                 localeFolder.mkdir();
             }
@@ -74,8 +73,8 @@ public class CustomizableGui extends Gui {
                 config.saveChanges();
             }
 
-            CustomContent customContent = loadedGuis.computeIfAbsent(guiKey, g -> new CustomContent(guiKey));
-            loadedGuis.put(guiKey, customContent);
+            CustomContent customContent = LOADED_GUIS.computeIfAbsent(guiKey, g -> new CustomContent(guiKey));
+            LOADED_GUIS.put(guiKey, customContent);
             this.customContent = customContent;
 
             int rows = config.getInt("overrides.__ROWS__", -1);
@@ -113,7 +112,7 @@ public class CustomizableGui extends Gui {
                 customContent.disableButton(disabled);
             }
         } else {
-            this.customContent = loadedGuis.get(guiKey);
+            this.customContent = LOADED_GUIS.get(guiKey);
         }
 
         setPrivateDefaultAction(event -> {

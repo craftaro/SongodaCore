@@ -18,7 +18,7 @@ public class SQLiteConnector implements DatabaseConnector {
 
     SQLiteConnector() {
         this.plugin = null;
-        this.connectionString = "jdbc:sqlite:" + "."+File.separator+"db_test"+File.separator+"CraftaroCoreTestSQLite.db";
+        this.connectionString = "jdbc:sqlite:" + "." + File.separator + "db_test" + File.separator + "CraftaroCoreTestSQLite.db";
     }
 
     public SQLiteConnector(Plugin plugin) {
@@ -63,7 +63,7 @@ public class SQLiteConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(connection);
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();
@@ -71,7 +71,7 @@ public class SQLiteConnector implements DatabaseConnector {
 
     @Override
     public void connectDSL(DSLContextCallback callback) {
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             callback.accept(DSL.using(connection, SQLDialect.SQLITE));
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
@@ -84,7 +84,7 @@ public class SQLiteConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(DSL.using(connection, SQLDialect.SQLITE));
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();

@@ -44,12 +44,12 @@ public class MainCommand extends AbstractCommand {
     }
 
     public MainCommand addSubCommand(AbstractCommand command) {
-        nestedCommands.addSubCommand(command);
+        this.nestedCommands.addSubCommand(command);
         return this;
     }
 
     public MainCommand addSubCommands(AbstractCommand... commands) {
-        nestedCommands.addSubCommands(commands);
+        this.nestedCommands.addSubCommands(commands);
         return this;
     }
 
@@ -57,38 +57,38 @@ public class MainCommand extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
 
-        if (header != null) {
-            sender.sendMessage(header);
+        if (this.header != null) {
+            sender.sendMessage(this.header);
         } else {
             new ChatMessage().fromText(String.format("#ff8080&l%s &8» &7Version %s Created with <3 by #ec4e74&l&oS#fa5b65&l&oo#ff6c55&l&on#ff7f44&l&og#ff9432&l&oo#ffaa1e&l&od#f4c009&l&oa",
-                            plugin.getDescription().getName(), plugin.getDescription().getVersion()), sender instanceof ConsoleCommandSender)
+                            this.plugin.getDescription().getName(), this.plugin.getDescription().getVersion()), sender instanceof ConsoleCommandSender)
                     .sendTo(sender);
         }
 
         sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/songoda" + ChatColor.GRAY + " - Opens the Songoda plugin GUI");
         sender.sendMessage("");
 
-        if (nestedCommands != null) {
-            List<String> commands = nestedCommands.children.values().stream().distinct().map(c -> c.getCommands().get(0)).collect(Collectors.toList());
+        if (this.nestedCommands != null) {
+            List<String> commands = this.nestedCommands.children.values().stream().distinct().map(c -> c.getCommands().get(0)).collect(Collectors.toList());
 
-            if (sortHelp) {
+            if (this.sortHelp) {
                 Collections.sort(commands);
             }
 
             boolean isPlayer = sender instanceof Player;
-            // todo? pagation if commands.size is too large? (player-only)
+            // todo? pagination if commands.size is too large? (player-only)
             sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + getSyntax() + ChatColor.GRAY + " - " + getDescription());
 
             for (String cmdStr : commands) {
-                final AbstractCommand cmd = nestedCommands.children.get(cmdStr);
+                final AbstractCommand cmd = this.nestedCommands.children.get(cmdStr);
                 if (cmd == null) continue;
                 if (!isPlayer) {
                     sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
                     ChatMessage chatMessage = new ChatMessage();
-                    final String c = "/" + command + " ";
+                    final String command = "/" + this.command + " ";
                     chatMessage.addMessage(ChatColor.DARK_GRAY + "- ")
-                            .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
+                            .addPromptCommand(ChatColor.YELLOW + command + cmd.getSyntax(), ChatColor.YELLOW + command + cmdStr, command + cmdStr)
                             .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
                     chatMessage.sendTo(sender);
                 }
@@ -114,11 +114,11 @@ public class MainCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/" + command;
+        return "/" + this.command;
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return this.description;
     }
 }

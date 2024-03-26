@@ -17,8 +17,6 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -28,6 +26,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,7 +65,7 @@ public class Config extends ConfigSection {
     final Plugin plugin;
     final DumperOptions yamlOptions = new DumperOptions();
     final Representer yamlRepresenter = new YamlRepresenter();
-    final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+    final Yaml yaml = new Yaml(new YamlConstructor(), this.yamlRepresenter, this.yamlOptions);
     Charset defaultCharset = StandardCharsets.UTF_8;
     SaveTask saveTask;
     Timer autosaveTimer;
@@ -117,59 +116,59 @@ public class Config extends ConfigSection {
         this.plugin = null;
         this.file = null;
 
-        dirName = null;
-        fileName = null;
+        this.dirName = null;
+        this.fileName = null;
     }
 
     public Config(@NotNull File file) {
         this.plugin = null;
         this.file = file.getAbsoluteFile();
 
-        dirName = null;
-        fileName = null;
+        this.dirName = null;
+        this.fileName = null;
     }
 
     public Config(@NotNull Plugin plugin) {
         this.plugin = plugin;
 
-        dirName = null;
-        fileName = null;
+        this.dirName = null;
+        this.fileName = null;
     }
 
     public Config(@NotNull Plugin plugin, @NotNull String file) {
         this.plugin = plugin;
 
-        dirName = null;
-        fileName = file;
+        this.dirName = null;
+        this.fileName = file;
     }
 
     public Config(@NotNull Plugin plugin, @Nullable String directory, @NotNull String file) {
         this.plugin = plugin;
 
-        dirName = directory;
-        fileName = file;
+        this.dirName = directory;
+        this.fileName = file;
     }
 
     @NotNull
     public ConfigFileConfigurationAdapter getFileConfig() {
-        return config;
+        return this.config;
     }
 
     @NotNull
     public File getFile() {
-        if (file == null) {
-            if (dirName != null) {
-                this.file = new File(plugin.getDataFolder() + dirName, fileName != null ? fileName : "config.yml");
+        if (this.file == null) {
+            if (this.dirName != null) {
+                this.file = new File(this.plugin.getDataFolder() + this.dirName, this.fileName != null ? this.fileName : "config.yml");
             } else {
-                this.file = new File(plugin.getDataFolder(), fileName != null ? fileName : "config.yml");
+                this.file = new File(this.plugin.getDataFolder(), this.fileName != null ? this.fileName : "config.yml");
             }
         }
 
-        return file;
+        return this.file;
     }
 
     public Charset getDefaultCharset() {
-        return defaultCharset;
+        return this.defaultCharset;
     }
 
     /**
@@ -195,7 +194,7 @@ public class Config extends ConfigSection {
     }
 
     public boolean getLoadComments() {
-        return loadComments;
+        return this.loadComments;
     }
 
     /**
@@ -208,7 +207,7 @@ public class Config extends ConfigSection {
     }
 
     public boolean getAutosave() {
-        return autosave;
+        return this.autosave;
     }
 
     /**
@@ -226,7 +225,7 @@ public class Config extends ConfigSection {
     }
 
     public int getAutosaveInterval() {
-        return autosaveInterval;
+        return this.autosaveInterval;
     }
 
     /**
@@ -244,7 +243,7 @@ public class Config extends ConfigSection {
     }
 
     public boolean getAutoremove() {
-        return autoremove;
+        return this.autoremove;
     }
 
     /**
@@ -268,7 +267,7 @@ public class Config extends ConfigSection {
      */
     @Nullable
     public ConfigFormattingRules.CommentStyle getDefaultNodeCommentFormat() {
-        return defaultNodeCommentFormat;
+        return this.defaultNodeCommentFormat;
     }
 
     /**
@@ -287,7 +286,7 @@ public class Config extends ConfigSection {
      */
     @Nullable
     public ConfigFormattingRules.CommentStyle getDefaultSectionCommentFormat() {
-        return defaultSectionCommentFormat;
+        return this.defaultSectionCommentFormat;
     }
 
     /**
@@ -305,7 +304,7 @@ public class Config extends ConfigSection {
      * Extra lines to put between root nodes
      */
     public int getRootNodeSpacing() {
-        return rootNodeSpacing;
+        return this.rootNodeSpacing;
     }
 
     /**
@@ -324,7 +323,7 @@ public class Config extends ConfigSection {
      * This is separate from rootNodeSpacing, if applicable.
      */
     public int getCommentSpacing() {
-        return commentSpacing;
+        return this.commentSpacing;
     }
 
     /**
@@ -342,9 +341,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@NotNull String... description) {
         if (description.length == 0) {
-            headerComment = null;
+            this.headerComment = null;
         } else {
-            headerComment = new Comment(description);
+            this.headerComment = new Comment(description);
         }
 
         return this;
@@ -353,9 +352,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @NotNull String... description) {
         if (description.length == 0) {
-            headerComment = null;
+            this.headerComment = null;
         } else {
-            headerComment = new Comment(commentStyle, description);
+            this.headerComment = new Comment(commentStyle, description);
         }
 
         return this;
@@ -364,9 +363,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable List<String> description) {
         if (description == null || description.isEmpty()) {
-            headerComment = null;
+            this.headerComment = null;
         } else {
-            headerComment = new Comment(description);
+            this.headerComment = new Comment(description);
         }
 
         return this;
@@ -375,9 +374,9 @@ public class Config extends ConfigSection {
     @NotNull
     public Config setHeader(@Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> description) {
         if (description == null || description.isEmpty()) {
-            headerComment = null;
+            this.headerComment = null;
         } else {
-            headerComment = new Comment(commentStyle, description);
+            this.headerComment = new Comment(commentStyle, description);
         }
 
         return this;
@@ -385,28 +384,28 @@ public class Config extends ConfigSection {
 
     @NotNull
     public List<String> getHeader() {
-        if (headerComment != null) {
-            return headerComment.getLines();
+        if (this.headerComment != null) {
+            return this.headerComment.getLines();
         }
 
         return Collections.emptyList();
     }
 
     public Config clearConfig(boolean clearDefaults) {
-        root.values.clear();
-        root.configComments.clear();
+        this.root.values.clear();
+        this.root.configComments.clear();
 
         if (clearDefaults) {
-            root.defaultComments.clear();
-            root.defaults.clear();
+            this.root.defaultComments.clear();
+            this.root.defaults.clear();
         }
 
         return this;
     }
 
     public Config clearDefaults() {
-        root.defaultComments.clear();
-        root.defaults.clear();
+        this.root.defaultComments.clear();
+        this.root.defaults.clear();
 
         return this;
     }
@@ -418,19 +417,19 @@ public class Config extends ConfigSection {
     public boolean load(@NotNull File file) {
         Validate.notNull(file, "File cannot be null");
         if (file.exists()) {
-            try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 Charset charset = TextUtils.detectCharset(stream, StandardCharsets.UTF_8);
 
                 // upgrade charset if file was saved in a more complex format
                 if (charset == StandardCharsets.UTF_16BE || charset == StandardCharsets.UTF_16LE) {
-                    defaultCharset = StandardCharsets.UTF_16;
+                    this.defaultCharset = StandardCharsets.UTF_16;
                 }
 
                 this.load(new InputStreamReader(stream, charset));
 
                 return true;
             } catch (IOException | InvalidConfigurationException ex) {
-                (plugin != null ? plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
+                (this.plugin != null ? this.plugin.getLogger() : Bukkit.getLogger()).log(Level.SEVERE, "Failed to load config file: " + file.getName(), ex);
             }
 
             return false;
@@ -461,7 +460,7 @@ public class Config extends ConfigSection {
         Map<?, ?> input;
 
         try {
-            input = (Map<?, ?>) this.yaml.load(contents);
+            input = this.yaml.load(contents);
         } catch (YAMLException e2) {
             throw new InvalidConfigurationException(e2);
         } catch (ClassCastException e3) {
@@ -469,7 +468,7 @@ public class Config extends ConfigSection {
         }
 
         if (input != null) {
-            if (loadComments) {
+            if (this.loadComments) {
                 this.parseComments(contents, input);
             }
 
@@ -511,7 +510,7 @@ public class Config extends ConfigSection {
                     if (firstNode && !commentBlock.isEmpty()) {
                         // header comment
                         firstNode = false;
-                        headerComment = Comment.loadComment(commentBlock);
+                        this.headerComment = Comment.loadComment(commentBlock);
                         commentBlock.clear();
                     }
                     continue;
@@ -525,10 +524,10 @@ public class Config extends ConfigSection {
                 int lineOffset = getOffset(line);
                 insideScalar &= lineOffset <= index;
                 Matcher m;
-                if (!insideScalar && (m = yamlNode.matcher(line)).find()) {
+                if (!insideScalar && (m = this.yamlNode.matcher(line)).find()) {
                     // we found a config node! ^.^
                     // check to see what the full path is
-                    int depth = (m.group(1).length() / indentation);
+                    int depth = (m.group(1).length() / this.indentation);
                     while (depth < currentPath.size()) {
                         currentPath.removeLast();
                     }
@@ -536,7 +535,7 @@ public class Config extends ConfigSection {
 
                     // do we have a comment for this node?
                     if (!commentBlock.isEmpty()) {
-                        String path = currentPath.stream().collect(Collectors.joining(String.valueOf(pathChar)));
+                        String path = currentPath.stream().collect(Collectors.joining(String.valueOf(this.pathChar)));
                         Comment comment = Comment.loadComment(commentBlock);
                         commentBlock.clear();
                         setComment(path, comment);
@@ -553,7 +552,7 @@ public class Config extends ConfigSection {
             }
 
             if (!commentBlock.isEmpty()) {
-                footerComment = Comment.loadComment(commentBlock);
+                this.footerComment = Comment.loadComment(commentBlock);
                 commentBlock.clear();
             }
         } catch (IOException ex) {
@@ -563,53 +562,53 @@ public class Config extends ConfigSection {
 
     public void deleteNonDefaultSettings() {
         // Delete old config values (thread-safe)
-        List<String> defaultKeys = Arrays.asList(defaults.keySet().toArray(new String[0]));
+        List<String> defaultKeys = Arrays.asList(this.defaults.keySet().toArray(new String[0]));
 
-        for (String key : values.keySet().toArray(new String[0])) {
+        for (String key : this.values.keySet().toArray(new String[0])) {
             if (!defaultKeys.contains(key)) {
-                values.remove(key);
+                this.values.remove(key);
             }
         }
     }
 
     @Override
     protected void onChange() {
-        if (autosave) {
+        if (this.autosave) {
             delaySave();
         }
     }
 
     public void delaySave() {
         // save async even if no plugin or if plugin disabled
-        if (saveTask == null && (changed || hasNewDefaults())) {
-            autosaveTimer = new Timer((plugin != null ? plugin.getName() + "-ConfigSave-" : "ConfigSave-") + getFile().getName());
-            autosaveTimer.schedule(saveTask = new SaveTask(), autosaveInterval * 1000L);
+        if (this.saveTask == null && (this.changed || hasNewDefaults())) {
+            this.autosaveTimer = new Timer((this.plugin != null ? this.plugin.getName() + "-ConfigSave-" : "ConfigSave-") + getFile().getName());
+            this.autosaveTimer.schedule(this.saveTask = new SaveTask(), this.autosaveInterval * 1000L);
         }
     }
 
     public boolean saveChanges() {
         boolean saved = true;
 
-        if (changed || hasNewDefaults()) {
+        if (this.changed || hasNewDefaults()) {
             saved = save();
         }
 
-        if (saveTask != null) {
+        if (this.saveTask != null) {
             //Close Threads
-            saveTask.cancel();
-            autosaveTimer.cancel();
-            saveTask = null;
-            autosaveTimer = null;
+            this.saveTask.cancel();
+            this.autosaveTimer.cancel();
+            this.saveTask = null;
+            this.autosaveTimer = null;
         }
 
         return saved;
     }
 
     boolean hasNewDefaults() {
-        if (file != null && !file.exists()) return true;
+        if (this.file != null && !this.file.exists()) return true;
 
-        for (String def : defaults.keySet()) {
-            if (!values.containsKey(def)) {
+        for (String def : this.defaults.keySet()) {
+            if (!this.values.containsKey(def)) {
                 return true;
             }
         }
@@ -618,12 +617,12 @@ public class Config extends ConfigSection {
     }
 
     public boolean save() {
-        if (saveTask != null) {
+        if (this.saveTask != null) {
             //Close Threads
-            saveTask.cancel();
-            autosaveTimer.cancel();
-            saveTask = null;
-            autosaveTimer = null;
+            this.saveTask.cancel();
+            this.autosaveTimer.cancel();
+            this.saveTask = null;
+            this.autosaveTimer = null;
         }
 
         return save(getFile());
@@ -642,7 +641,7 @@ public class Config extends ConfigSection {
         }
 
         String data = this.saveToString();
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), defaultCharset)) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), this.defaultCharset)) {
             writer.write(data);
         } catch (IOException ex) {
             return false;
@@ -654,30 +653,30 @@ public class Config extends ConfigSection {
     @NotNull
     public String saveToString() {
         try {
-            if (autoremove) {
+            if (this.autoremove) {
                 deleteNonDefaultSettings();
             }
 
-            yamlOptions.setIndent(indentation);
-            yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            yamlOptions.setSplitLines(false);
-            yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            this.yamlOptions.setIndent(this.indentation);
+            this.yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            this.yamlOptions.setSplitLines(false);
+            this.yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
             StringWriter str = new StringWriter();
 
-            if (headerComment != null) {
-                headerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
+            if (this.headerComment != null) {
+                this.headerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
                 str.write("\n"); // add one space after the header
             }
 
-            String dump = yaml.dump(this.getValues(false));
+            String dump = this.yaml.dump(this.getValues(false));
             if (!dump.equals(BLANK_CONFIG)) {
                 writeComments(dump, str);
             }
 
-            if (footerComment != null) {
+            if (this.footerComment != null) {
                 str.write("\n");
-                footerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
+                this.footerComment.writeComment(str, 0, ConfigFormattingRules.CommentStyle.BLOCKED);
             }
 
             return str.toString();
@@ -711,20 +710,20 @@ public class Config extends ConfigSection {
             int lineOffset = getOffset(line);
             insideScalar &= lineOffset <= index;
             Matcher m;
-            if (!insideScalar && (m = yamlNode.matcher(line)).find()) {
+            if (!insideScalar && (m = this.yamlNode.matcher(line)).find()) {
                 // we found a config node! ^.^
                 // check to see what the full path is
-                int depth = (m.group(1).length() / indentation);
+                int depth = (m.group(1).length() / this.indentation);
                 while (depth < currentPath.size()) {
                     currentPath.removeLast();
                 }
 
                 currentPath.add(m.group(2));
-                String path = currentPath.stream().collect(Collectors.joining(String.valueOf(pathChar)));
+                String path = currentPath.stream().collect(Collectors.joining(String.valueOf(this.pathChar)));
 
                 // if this is a root-level node, apply extra spacing if we aren't the first node
-                if (!firstNode && depth == 0 && rootNodeSpacing > 0) {
-                    out.write((new String(new char[rootNodeSpacing])).replace("\0", "\n")); // yes it's silly, but it works :>
+                if (!firstNode && depth == 0 && this.rootNodeSpacing > 0) {
+                    out.write((new String(new char[this.rootNodeSpacing])).replace("\0", "\n")); // yes it's silly, but it works :>
                 }
                 firstNode = false; // we're no longer on the first node
 
@@ -733,7 +732,7 @@ public class Config extends ConfigSection {
                 if (comment != null) {
                     // add spacing between previous nodes and comments
                     if (depth != 0) {
-                        out.write((new String(new char[commentSpacing])).replace("\0", "\n"));
+                        out.write((new String(new char[this.commentSpacing])).replace("\0", "\n"));
                     }
 
                     // formatting style for this node
@@ -742,7 +741,7 @@ public class Config extends ConfigSection {
                         // check to see what type of node this is
                         if (!m.group(3).trim().isEmpty()) {
                             // setting node
-                            style = defaultNodeCommentFormat;
+                            style = this.defaultNodeCommentFormat;
                         } else {
                             // probably a section? (need to peek ahead to check if this is a list)
                             in.mark(1000);
@@ -750,9 +749,9 @@ public class Config extends ConfigSection {
                             in.reset();
                             if (nextLine.startsWith("-")) {
                                 // not a section :P
-                                style = defaultNodeCommentFormat;
+                                style = this.defaultNodeCommentFormat;
                             } else {
-                                style = defaultSectionCommentFormat;
+                                style = this.defaultSectionCommentFormat;
                             }
                         }
                     }

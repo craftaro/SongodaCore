@@ -23,11 +23,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatMessage {
-    private static final Gson gson = new GsonBuilder().create();
+    private static final Gson GSON = new GsonBuilder().create();
     private final List<JsonObject> textList = new ArrayList<>();
 
     public void clear() {
-        textList.clear();
+        this.textList.clear();
     }
 
     public ChatMessage fromText(String text) {
@@ -44,7 +44,7 @@ public class ChatMessage {
             ColorContainer color = null;
             String match1 = matcher.group(1);
 
-            if (matcher.groupCount() == 0 || match1.length() == 0) {
+            if (matcher.groupCount() == 0 || match1.isEmpty()) {
                 continue;
             }
 
@@ -69,7 +69,9 @@ public class ChatMessage {
             List<ColorCode> stackedCodes = new ArrayList<>();
             while (subMatcher.find()) {
                 String match2 = subMatcher.group(1);
-                if (match2.length() == 0) continue;
+                if (match2.isEmpty()) {
+                    continue;
+                }
 
                 ColorCode code = ColorCode.getByChar(Character.toLowerCase(match2.charAt(0)));
 
@@ -81,7 +83,7 @@ public class ChatMessage {
                     match2 = match2.substring(1);
                 }
 
-                if (match2.length() != 0) {
+                if (!match2.isEmpty()) {
                     addMessage(match2, color, stackedCodes);
                 }
             }
@@ -97,7 +99,7 @@ public class ChatMessage {
     public String toText(boolean noHex) {
         StringBuilder text = new StringBuilder();
 
-        for (JsonObject object : textList) {
+        for (JsonObject object : this.textList) {
             if (object.has("color")) {
                 String color = object.get("color").getAsString();
                 text.append("&");
@@ -110,7 +112,9 @@ public class ChatMessage {
             }
 
             for (ColorCode code : ColorCode.values()) {
-                if (code.isColor()) continue;
+                if (code.isColor()) {
+                    continue;
+                }
 
                 String c = code.name().toLowerCase();
                 if (object.has(c) && object.get(c).getAsBoolean()) {
@@ -128,7 +132,7 @@ public class ChatMessage {
         JsonObject txt = new JsonObject();
         txt.addProperty("text", s);
 
-        textList.add(txt);
+        this.textList.add(txt);
 
         return this;
     }
@@ -151,7 +155,7 @@ public class ChatMessage {
             }
         }
 
-        textList.add(txt);
+        this.textList.add(txt);
         return this;
     }
 
@@ -169,7 +173,7 @@ public class ChatMessage {
         click.addProperty("value", cmd);
         txt.add("clickEvent", click);
 
-        textList.add(txt);
+        this.textList.add(txt);
         return this;
     }
 
@@ -187,7 +191,7 @@ public class ChatMessage {
         click.addProperty("value", cmd);
         txt.add("clickEvent", click);
 
-        textList.add(txt);
+        this.textList.add(txt);
         return this;
     }
 
@@ -205,13 +209,13 @@ public class ChatMessage {
         click.addProperty("value", url);
         txt.add("clickEvent", hover);
 
-        textList.add(txt);
+        this.textList.add(txt);
         return this;
     }
 
     @Override
     public String toString() {
-        return gson.toJson(textList);
+        return GSON.toJson(this.textList);
     }
 
     public void sendTo(CommandSender sender) {
@@ -226,14 +230,14 @@ public class ChatMessage {
 
                 Object packet;
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)), mc_PacketPlayOutChat_new_1_19_0 ? 1 : false);
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)), mc_PacketPlayOutChat_new_1_19_0 ? 1 : false);
                 } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
                     packet = mc_PacketPlayOutChat_new.newInstance(
-                            mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)),
+                            mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)),
                             mc_chatMessageType_Chat.get(null),
                             ((Player) sender).getUniqueId());
                 } else {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, gson.toJson(textList)));
+                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)));
                 }
 
                 Nms.getImplementations().getPlayer().sendPacket((Player) sender, packet);
@@ -250,10 +254,9 @@ public class ChatMessage {
 
     private static boolean enabled = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_8);
 
-    private static Class<?> mc_ChatMessageType;
-    private static Method mc_IChatBaseComponent_ChatSerializer_a, cb_craftPlayer_getHandle;
-    private static Constructor mc_PacketPlayOutChat_new;
-    private static Field mc_entityPlayer_playerConnection, mc_chatMessageType_Chat;
+    private static Method mc_IChatBaseComponent_ChatSerializer_a;
+    private static Constructor<?> mc_PacketPlayOutChat_new;
+    private static Field mc_chatMessageType_Chat;
     private static boolean mc_PacketPlayOutChat_new_1_19_0 = false;
 
     static {
@@ -263,14 +266,8 @@ public class ChatMessage {
     static void init() {
         if (enabled) {
             try {
-                final String version = ServerVersion.getServerVersionString();
-                Class<?> cb_craftPlayerClazz, mc_entityPlayerClazz,
-                        mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
+                Class<?> mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
 
-                cb_craftPlayerClazz = ClassMapping.CRAFT_PLAYER.getClazz();
-                cb_craftPlayer_getHandle = cb_craftPlayerClazz.getDeclaredMethod("getHandle");
-                mc_entityPlayerClazz = ClassMapping.ENTITY_PLAYER.getClazz();
-                mc_entityPlayer_playerConnection = mc_entityPlayerClazz.getDeclaredField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "b" : "playerConnection");
                 mc_IChatBaseComponent = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz();
                 mc_IChatBaseComponent_ChatSerializer = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz("ChatSerializer");
                 mc_IChatBaseComponent_ChatSerializer_a = mc_IChatBaseComponent_ChatSerializer.getMethod("a", String.class);
@@ -284,7 +281,7 @@ public class ChatMessage {
                         mc_PacketPlayOutChat_new_1_19_0 = true;
                     }
                 } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
+                    Class<?> mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
                     mc_chatMessageType_Chat = mc_ChatMessageType.getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "a" : "CHAT");
                     mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, mc_ChatMessageType, UUID.class);
                 } else {
@@ -298,7 +295,7 @@ public class ChatMessage {
     }
 
     public ChatMessage replaceAll(String toReplace, String replaceWith) {
-        for (JsonObject object : textList) {
+        for (JsonObject object : this.textList) {
             String text = object.get("text").getAsString().replaceAll(toReplace, replaceWith);
 
             object.remove("text");

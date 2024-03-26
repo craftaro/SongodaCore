@@ -14,12 +14,12 @@ public class GuiEntityEditor extends AbstractGuiListEditor {
 
     @Override
     protected List<String> getData() {
-        return loot.getOnlyDropFor().stream().map(Enum::name).collect(Collectors.toList());
+        return this.loot.getOnlyDropFor().stream().map(Enum::name).collect(Collectors.toList());
     }
 
     @Override
     protected void updateData(List<String> list) {
-        loot.setOnlyDropFor(list.stream().map(EntityType::valueOf).collect(Collectors.toList()));
+        this.loot.setOnlyDropFor(list.stream().map(EntityType::valueOf).collect(Collectors.toList()));
     }
 
     @Override

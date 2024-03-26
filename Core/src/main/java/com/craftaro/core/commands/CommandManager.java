@@ -13,6 +13,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -62,11 +63,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public Set<String> getCommands() {
-        return Collections.unmodifiableSet(commands.keySet());
+        return Collections.unmodifiableSet(this.commands.keySet());
     }
 
     public List<String> getSubCommands(String command) {
-        SimpleNestedCommand nested = command == null ? null : commands.get(command.toLowerCase());
+        SimpleNestedCommand nested = command == null ? null : this.commands.get(command.toLowerCase());
 
         if (nested == null) {
             return Collections.emptyList();
@@ -78,13 +79,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public Set<AbstractCommand> getAllCommands() {
         HashSet<AbstractCommand> all = new HashSet<>();
 
-        commands.values().stream()
-                .filter(c -> c.parent != null && !all.contains(c.parent))
-                .forEach(c -> {
-                    all.add(c.parent);
+        this.commands.values()
+                .stream()
+                .filter(cmd -> cmd.parent != null && !all.contains(cmd.parent))
+                .forEach(cmd -> {
+                    all.add(cmd.parent);
 
-                    c.children.values().stream()
-                            .filter(s -> !all.contains(s))
+                    cmd.children.values()
+                            .stream()
+                            .filter(child -> !all.contains(child))
                             .forEach(all::add);
                 });
 
@@ -92,7 +95,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public CommandManager registerCommandDynamically(String command) {
-        CommandManager.registerCommandDynamically(plugin, command, this, this);
+        CommandManager.registerCommandDynamically(this.plugin, command, this, this);
         return this;
     }
 
@@ -100,15 +103,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
 
         abstractCommand.getCommands().forEach(cmd -> {
-            CommandManager.registerCommandDynamically(plugin, cmd, this, this);
-            commands.put(cmd.toLowerCase(), nested);
-            PluginCommand pcmd = plugin.getCommand(cmd);
+            CommandManager.registerCommandDynamically(this.plugin, cmd, this, this);
+            this.commands.put(cmd.toLowerCase(), nested);
+            PluginCommand pcmd = this.plugin.getCommand(cmd);
 
             if (pcmd != null) {
                 pcmd.setExecutor(this);
                 pcmd.setTabCompleter(this);
             } else {
-                plugin.getLogger().warning("Failed to register command: /" + cmd);
+                this.plugin.getLogger().warning("Failed to register command: /" + cmd);
             }
         });
 
@@ -119,38 +122,38 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
 
         abstractCommand.getCommands().forEach(cmd -> {
-            commands.put(cmd.toLowerCase(), nested);
-            PluginCommand pcmd = plugin.getCommand(cmd);
+            this.commands.put(cmd.toLowerCase(), nested);
+            PluginCommand pluginCommand = this.plugin.getCommand(cmd);
 
-            if (pcmd == null) {
-                plugin.getLogger().warning("Failed to register command: /" + cmd);
+            if (pluginCommand == null) {
+                this.plugin.getLogger().warning("Failed to register command: /" + cmd);
                 return;
             }
 
-            pcmd.setExecutor(this);
-            pcmd.setTabCompleter(this);
+            pluginCommand.setExecutor(this);
+            pluginCommand.setTabCompleter(this);
         });
 
         return nested;
     }
 
     public MainCommand addMainCommand(String command) {
-        MainCommand nested = new MainCommand(plugin, command);
-        commands.put(command.toLowerCase(), nested.nestedCommands);
+        MainCommand nested = new MainCommand(this.plugin, command);
+        this.commands.put(command.toLowerCase(), nested.nestedCommands);
 
-        PluginCommand pcmd = plugin.getCommand(command);
-        if (pcmd != null) {
-            pcmd.setExecutor(this);
-            pcmd.setTabCompleter(this);
+        PluginCommand pluginCommand = this.plugin.getCommand(command);
+        if (pluginCommand != null) {
+            pluginCommand.setExecutor(this);
+            pluginCommand.setTabCompleter(this);
         } else {
-            plugin.getLogger().warning("Failed to register command: /" + command);
+            this.plugin.getLogger().warning("Failed to register command: /" + command);
         }
 
         return nested;
     }
 
     public MainCommand getMainCommand(String command) {
-        SimpleNestedCommand nested = command == null ? null : commands.get(command.toLowerCase());
+        SimpleNestedCommand nested = command == null ? null : this.commands.get(command.toLowerCase());
 
         if (nested != null && nested.parent instanceof MainCommand) {
             return (MainCommand) nested.parent;
@@ -168,26 +171,26 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public CommandManager setExecutor(String command) {
-        PluginCommand pcmd = command == null ? null : plugin.getCommand(command);
+        PluginCommand pluginCommand = command == null ? null : this.plugin.getCommand(command);
 
-        if (pcmd != null) {
-            pcmd.setExecutor(this);
+        if (pluginCommand != null) {
+            pluginCommand.setExecutor(this);
         } else {
-            plugin.getLogger().warning("Failed to register command: /" + command);
+            this.plugin.getLogger().warning("Failed to register command: /" + command);
         }
 
         return this;
     }
 
-    public CommandManager setUseClosestCommand(boolean bool) {
-        allowLooseCommands = bool;
+    public CommandManager setUseClosestCommand(boolean allowLooseCommands) {
+        this.allowLooseCommands = allowLooseCommands;
         return this;
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         // grab the specific command that's being called
-        SimpleNestedCommand nested = commands.get(command.getName().toLowerCase());
+        SimpleNestedCommand nested = this.commands.get(command.getName().toLowerCase());
 
         if (nested != null) {
             // check to see if we're trying to call a sub-command
@@ -204,19 +207,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     System.arraycopy(args, i, newArgs, 0, newArgs.length);
 
                     // now process the command
-                    processRequirements(sub, commandSender, newArgs);
+                    processRequirements(sub, sender, newArgs);
                     return true;
                 }
             }
 
             // if we've gotten this far, then just use the command we have
             if (nested.parent != null) {
-                processRequirements(nested.parent, commandSender, args);
+                processRequirements(nested.parent, sender, args);
                 return true;
             }
         }
 
-        commandSender.sendMessage(msg_noCommand);
+        sender.sendMessage(this.msg_noCommand);
         return true;
     }
 
@@ -227,7 +230,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         String match = null;
-        // support for mulit-argument subcommands
+        // support for multi-argument subcommands
         if (args.length >= 2 && nested.children.keySet().stream().anyMatch(k -> k.indexOf(' ') != -1)) {
             for (int len = args.length; len > 1; --len) {
                 String cmd2 = String.join(" ", Arrays.copyOf(args, len)).toLowerCase();
@@ -238,12 +241,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         // if we don't have a subcommand, should we search for one?
-        if (allowLooseCommands) {
+        if (this.allowLooseCommands) {
             // do a "closest match"
             int count = 0;
-            for (String c : nested.children.keySet()) {
-                if (c.startsWith(cmd)) {
-                    match = c;
+            for (String child : nested.children.keySet()) {
+                if (child.startsWith(cmd)) {
+                    match = child;
                     if (++count > 1) {
                         // there can only be one!
                         match = null;
@@ -258,7 +261,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private void processRequirements(AbstractCommand command, CommandSender sender, String[] args) {
         if (!(sender instanceof Player) && command.isNoConsole()) {
-            sender.sendMessage(msg_noConsole);
+            sender.sendMessage(this.msg_noConsole);
             return;
         }
 
@@ -266,12 +269,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             AbstractCommand.ReturnType returnType = command.runCommand(sender, args);
 
             if (returnType == AbstractCommand.ReturnType.NEEDS_PLAYER) {
-                sender.sendMessage(msg_noConsole);
+                sender.sendMessage(this.msg_noConsole);
                 return;
             }
 
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                for (String s : msg_syntaxError) {
+                for (String s : this.msg_syntaxError) {
                     sender.sendMessage(s.replace("%syntax%", command.getSyntax()));
                 }
             }
@@ -279,13 +282,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return;
         }
 
-        sender.sendMessage(msg_noPerms);
+        sender.sendMessage(this.msg_noPerms);
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String alias, String[] args) {
         // grab the specific command that's being called
-        SimpleNestedCommand nested = commands.get(command.getName().toLowerCase());
+        SimpleNestedCommand nested = this.commands.get(command.getName().toLowerCase());
 
         if (nested != null) {
             if (args.length == 0 || nested.children.isEmpty()) {
@@ -332,7 +335,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (args.length != 0) {
             String str = args[args.length - 1];
 
-            if (list != null && str != null && str.length() >= 1) {
+            if (list != null && str != null && !str.isEmpty()) {
                 try {
                     list.removeIf(s -> !s.toLowerCase().startsWith(str.toLowerCase()));
                 } catch (UnsupportedOperationException ignore) {
@@ -381,12 +384,4 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             ex.printStackTrace();
         }
     }
-
-    /*
-    private class DCommand extends PluginCommand {
-
-        protected DCommand(@NotNull String name, @NotNull Plugin owner) {
-            super(name, owner);
-        }
-    } */
 }

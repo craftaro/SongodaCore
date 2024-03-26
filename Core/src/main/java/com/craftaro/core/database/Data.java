@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface Data {
-
     /**
      * Gets the auto increment id of this data
      *
@@ -40,6 +39,7 @@ public interface Data {
 
     /**
      * No plugin prefix is required for the table
+     *
      * @return The table name where the data should be stored
      */
     String getTableName();

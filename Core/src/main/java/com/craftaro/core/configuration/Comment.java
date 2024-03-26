@@ -39,7 +39,7 @@ public class Comment {
     }
 
     public ConfigFormattingRules.CommentStyle getCommentStyle() {
-        return commentStyle;
+        return this.commentStyle;
     }
 
     public void setCommentStyle(ConfigFormattingRules.CommentStyle commentStyle) {
@@ -47,12 +47,12 @@ public class Comment {
     }
 
     public List<String> getLines() {
-        return lines;
+        return this.lines;
     }
 
     @Override
     public String toString() {
-        return lines.isEmpty() ? "" : String.join("\n", lines);
+        return this.lines.isEmpty() ? "" : String.join("\n", this.lines);
     }
 
     public static Comment loadComment(List<String> lines) {
@@ -66,13 +66,13 @@ public class Comment {
     }
 
     public void writeComment(Writer output, int offset, ConfigFormattingRules.CommentStyle defaultStyle) throws IOException {
-        ConfigFormattingRules.CommentStyle style = commentStyle != null ? commentStyle : defaultStyle;
+        ConfigFormattingRules.CommentStyle style = this.commentStyle != null ? this.commentStyle : defaultStyle;
         int minSpacing = 0, borderSpacing = 0;
 
         // first draw the top of the comment
         if (style.drawBorder) {
             // grab the longest line in the list of lines
-            minSpacing = lines.stream().max(Comparator.comparingInt(String::length)).orElse("").length();
+            minSpacing = this.lines.stream().max(Comparator.comparingInt(String::length)).orElse("").length();
             borderSpacing = minSpacing + style.commentPrefix.length() + style.commentSuffix.length();
 
             // draw the first line
@@ -89,7 +89,7 @@ public class Comment {
         }
 
         // then the actual comment lines
-        for (String line : lines) {
+        for (String line : this.lines) {
             // todo? should we auto-wrap comment lines that are longer than 80 characters?
             output.write((new String(new char[offset])).replace('\0', ' ') + "#" + style.commentPrefix
                     + (minSpacing == 0 ? line : line + (new String(new char[minSpacing - line.length()])).replace('\0', ' ')) + style.commentSuffix + (style.drawBorder ? "#\n" : "\n"));

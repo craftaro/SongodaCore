@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class TaskScheduler {
-
     private final SongodaPlugin plugin;
     private final Map<TaskWrapper, Long> tasks = new ConcurrentHashMap<>();
     private BukkitRunnable runnable;
@@ -18,31 +17,31 @@ public abstract class TaskScheduler {
     }
 
     private void startScheduler() {
-        if (runnable == null || runnable.isCancelled()) {
-            runnable = new BukkitRunnable() {
+        if (this.runnable == null || this.runnable.isCancelled()) {
+            this.runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
                     executeTasks();
                 }
             };
-            runnable.runTaskTimerAsynchronously(plugin, 20L, 20L);
+            this.runnable.runTaskTimerAsynchronously(this.plugin, 20L, 20L);
         }
     }
 
     private void stopScheduler() {
-        if (runnable != null && !runnable.isCancelled()) {
-            runnable.cancel();
+        if (this.runnable != null && !this.runnable.isCancelled()) {
+            this.runnable.cancel();
         }
     }
 
     private void executeTasks() {
-        if (tasks.isEmpty()) {
+        if (this.tasks.isEmpty()) {
             stopScheduler();
             return;
         }
 
         long currentTime = System.currentTimeMillis();
-        Iterator<Map.Entry<TaskWrapper, Long>> iterator = tasks.entrySet().iterator();
+        Iterator<Map.Entry<TaskWrapper, Long>> iterator = this.tasks.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Map.Entry<TaskWrapper, Long> entry = iterator.next();
@@ -55,7 +54,7 @@ public abstract class TaskScheduler {
                         public void run() {
                             taskWrapper.getTask().run();
                         }
-                    }.runTaskAsynchronously(plugin);
+                    }.runTaskAsynchronously(this.plugin);
                 } else {
                     // Run the task synchronously
                     new BukkitRunnable() {
@@ -63,7 +62,7 @@ public abstract class TaskScheduler {
                         public void run() {
                             taskWrapper.getTask().run();
                         }
-                    }.runTask(plugin);
+                    }.runTask(this.plugin);
                 }
                 iterator.remove();
             }
@@ -71,7 +70,7 @@ public abstract class TaskScheduler {
     }
 
     public synchronized void addTask(Runnable task, long delay, boolean async) {
-        tasks.put(new TaskWrapper(task, async), System.currentTimeMillis() + delay);
+        this.tasks.put(new TaskWrapper(task, async), System.currentTimeMillis() + delay);
         startScheduler();
     }
 
@@ -89,11 +88,11 @@ public abstract class TaskScheduler {
         }
 
         public Runnable getTask() {
-            return task;
+            return this.task;
         }
 
         public boolean isAsync() {
-            return async;
+            return this.async;
         }
     }
 }

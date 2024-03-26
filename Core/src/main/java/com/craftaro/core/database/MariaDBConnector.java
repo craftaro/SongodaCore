@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MariaDBConnector implements DatabaseConnector {
-
     private final SongodaPlugin plugin;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
@@ -78,7 +77,7 @@ public class MariaDBConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(connection);
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MariaDB query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a MariaDB query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();
@@ -99,7 +98,7 @@ public class MariaDBConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(DSL.using(connection, SQLDialect.MARIADB));
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MariaDB query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a MariaDB query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();

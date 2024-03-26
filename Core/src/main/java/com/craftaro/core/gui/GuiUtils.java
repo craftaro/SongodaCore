@@ -56,8 +56,8 @@ public class GuiUtils {
         // fix newlines
         ArrayList<String> newLore = new ArrayList<>();
 
-        for (String l : lines) {
-            for (String l2 : l.split("\n")) {
+        for (String line : lines) {
+            for (String l2 : line.split("\n")) {
                 if (l2.length() < 54) {
                     newLore.add(l2);
                     continue;
@@ -66,7 +66,7 @@ public class GuiUtils {
                 // try to shorten the string
                 String shorterString = l2;
                 ChatColor lastColor = null; // todo? probably should also track formatting codes..
-                int line = 0;
+                int lineNumber = 0;
                 while (shorterString.length() > 50) {
                     int breakingSpace = -1;
 
@@ -80,18 +80,18 @@ public class GuiUtils {
 
                     if (breakingSpace == -1) {
                         breakingSpace = Math.max(50, shorterString.length());
-                        newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace) + "-");
+                        newLore.add((lineNumber != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace) + "-");
                         shorterString = breakingSpace == shorterString.length() ? "" : shorterString.substring(breakingSpace + 1);
                     } else {
-                        newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace));
+                        newLore.add((lineNumber != 0 && lastColor != null ? lastColor.toString() : "") + shorterString.substring(0, breakingSpace));
                         shorterString = breakingSpace == shorterString.length() ? "" : shorterString.substring(breakingSpace + 1);
                     }
 
-                    ++line;
+                    ++lineNumber;
                 }
 
                 if (!shorterString.isEmpty()) {
-                    newLore.add((line != 0 && lastColor != null ? lastColor.toString() : "") + "   " + shorterString);
+                    newLore.add((lineNumber != 0 && lastColor != null ? lastColor.toString() : "") + "   " + shorterString);
                 }
             }
         }

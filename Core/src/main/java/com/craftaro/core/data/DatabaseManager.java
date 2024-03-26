@@ -12,49 +12,48 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseManager {
-
     private static DatabaseManager INSTANCE;
 
     private final MonitoredThread thread;
-    private DatabaseConnector connector;
+    private final DatabaseConnector connector;
 
     private final Config databaseConfig;
 
     public DatabaseManager(SongodaPlugin plugin) {
         INSTANCE = this;
-        thread = new MonitoredThread(plugin.getName().toLowerCase() + "-sql-thread", 15, TimeUnit.SECONDS);
-        databaseConfig = new Config(plugin, "database.yml");
+        this.thread = new MonitoredThread(plugin.getName().toLowerCase() + "-sql-thread", 15, TimeUnit.SECONDS);
+        this.databaseConfig = new Config(plugin, "database.yml");
 
         if (!new File(plugin.getDataFolder(), "database.yml").exists())
             plugin.saveResource("database.yml", false);
-        databaseConfig.load();
+        this.databaseConfig.load();
 
-        String type = databaseConfig.getString("type", "H2").toUpperCase();
-        String host = databaseConfig.getString("host", "localhost");
-        int port = databaseConfig.getInt("port", 3306);
-        String database = databaseConfig.getString("database", "plugin");
-        String username = databaseConfig.getString("username", "root");
-        String password = databaseConfig.getString("password", "");
-        int poolSize = databaseConfig.getInt("poolSize", 10);
-        boolean useSSL = databaseConfig.getBoolean("useSSL", false);
-        boolean autoReconnect = databaseConfig.getBoolean("autoReconnect", true);
+        String type = this.databaseConfig.getString("type", "H2").toUpperCase();
+        String host = this.databaseConfig.getString("host", "localhost");
+        int port = this.databaseConfig.getInt("port", 3306);
+        String database = this.databaseConfig.getString("database", "plugin");
+        String username = this.databaseConfig.getString("username", "root");
+        String password = this.databaseConfig.getString("password", "");
+        int poolSize = this.databaseConfig.getInt("poolSize", 10);
+        boolean useSSL = this.databaseConfig.getBoolean("useSSL", false);
+        boolean autoReconnect = this.databaseConfig.getBoolean("autoReconnect", true);
 
         String dataPath = plugin.getDataFolder().getPath().replaceAll("\\\\", "/") + "/";
 
-        String dbFile = "./" + dataPath + databaseConfig.getString("file", "data");
+        String dbFile = "./" + dataPath + this.databaseConfig.getString("file", "data");
 
         switch (DatabaseType.valueOf(type)) {
             case H2:
-                connector = new H2Connector(dbFile, poolSize);
+                this.connector = new H2Connector(dbFile, poolSize);
                 break;
             case MYSQL:
-                connector = new MySQLConnector(host, port, database, username, password, useSSL, autoReconnect, poolSize);
+                this.connector = new MySQLConnector(host, port, database, username, password, useSSL, autoReconnect, poolSize);
                 break;
             case SQLITE:
-                connector = new SQLiteConnector(dbFile, poolSize);
+                this.connector = new SQLiteConnector(dbFile, poolSize);
                 break;
             case MARIADB:
-                connector = new MariaDBConnector(host, port, database, username, password, useSSL, autoReconnect, poolSize);
+                this.connector = new MariaDBConnector(host, port, database, username, password, useSSL, autoReconnect, poolSize);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid database type: " + type);
@@ -66,7 +65,7 @@ public class DatabaseManager {
     }
 
     public void execute(Runnable runnable, boolean nonDisruptable) {
-        thread.execute(runnable, nonDisruptable);
+        this.thread.execute(runnable, nonDisruptable);
     }
 
     public void load(String name, Runnable load) {
@@ -75,11 +74,11 @@ public class DatabaseManager {
     }
 
     public DatabaseConnector getDatabaseConnector() {
-        return connector;
+        return this.connector;
     }
 
     public Config getConfig() {
-        return databaseConfig;
+        return this.databaseConfig;
     }
 
     public static DatabaseManager getInstance() {

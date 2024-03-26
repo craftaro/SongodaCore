@@ -33,8 +33,8 @@ public class GuiLootableEditor extends Gui {
     }
 
     private void paint() {
-        if (inventory != null) {
-            inventory.clear();
+        if (this.inventory != null) {
+            this.inventory.clear();
         }
 
         setActionForRange(0, 0, 5, 9, null);
@@ -44,7 +44,7 @@ public class GuiLootableEditor extends Gui {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setAction((event1 -> {
                         try {
-                            lootable.registerLoot(new LootBuilder().setMaterial(XMaterial.valueOf(gui.getInputText().trim().toUpperCase())).build());
+                            this.lootable.registerLoot(new LootBuilder().setMaterial(XMaterial.valueOf(gui.getInputText().trim().toUpperCase())).build());
                         } catch (IllegalArgumentException ex) {
                             event.player.sendMessage("That is not a valid material.");
                         }
@@ -54,14 +54,14 @@ public class GuiLootableEditor extends Gui {
                     }));
 
                     gui.setTitle("Enter a material");
-                    guiManager.showGUI(event.player, gui);
+                    this.guiManager.showGUI(event.player, gui);
                 }));
 
         setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, TextUtils.formatText("&cBack")),
-                (event -> guiManager.showGUI(event.player, returnGui)));
+                (event -> this.guiManager.showGUI(event.player, this.returnGui)));
 
         int i = 9;
-        for (Loot loot : lootable.getRegisteredLoot()) {
+        for (Loot loot : this.lootable.getRegisteredLoot()) {
             ItemStack item = loot.getMaterial() == null
                     ? XMaterial.BARRIER.parseItem()
                     : GuiUtils.createButtonItem(loot.getMaterial(), null,
@@ -71,14 +71,14 @@ public class GuiLootableEditor extends Gui {
             setButton(i, item,
                     (event) -> {
                         if (event.clickType == ClickType.RIGHT) {
-                            lootable.removeLoot(loot);
+                            this.lootable.removeLoot(loot);
                             paint();
 
                             return;
                         }
 
                         if (event.clickType == ClickType.LEFT) {
-                            guiManager.showGUI(event.player, new GuiLootEditor(lootManager, loot, this));
+                            this.guiManager.showGUI(event.player, new GuiLootEditor(this.lootManager, loot, this));
                         }
                     });
 

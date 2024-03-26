@@ -5,7 +5,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MonitoredThreadPool {
-
     private final HashSet<MonitoredThread> threads = new HashSet<>();
     private final String name;
     private final int size;
@@ -19,13 +18,14 @@ public class MonitoredThreadPool {
         this.size = size;
         this.threadTimeout = timeout;
         this.threadTimeoutUnit = timeUnit;
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; ++i) {
             createThread(name);
+        }
     }
 
     public MonitoredThread createThread(String name) {
-        MonitoredThread thread = new MonitoredThread((name + "-" + latestThread++).toLowerCase(), threadTimeout, threadTimeoutUnit);
-        threads.add(thread);
+        MonitoredThread thread = new MonitoredThread((name + "-" + this.latestThread++).toLowerCase(), this.threadTimeout, this.threadTimeoutUnit);
+        this.threads.add(thread);
         return thread;
     }
 
@@ -49,7 +49,7 @@ public class MonitoredThreadPool {
     }
 
     private MonitoredThread getHealthyThread() {
-        for (MonitoredThread thread : threads) {
+        for (MonitoredThread thread : this.threads) {
             if (!thread.isRunning()) {
                 return thread;
             } else if (thread.isStalled()) {
@@ -63,9 +63,11 @@ public class MonitoredThreadPool {
 
     public int getRunningThreads() {
         int runningThreads = 0;
-        for (MonitoredThread thread : threads)
-            if (thread.isRunning())
+        for (MonitoredThread thread : this.threads) {
+            if (thread.isRunning()) {
                 runningThreads++;
+            }
+        }
         return runningThreads;
     }
 

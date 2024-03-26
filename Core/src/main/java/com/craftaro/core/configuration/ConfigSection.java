@@ -42,13 +42,13 @@ public class ConfigSection extends MemoryConfiguration {
     ConfigSection() {
         this.root = this;
         this.parent = null;
-        isDefault = false;
-        nodeKey = fullPath = "";
+        this.isDefault = false;
+        this.nodeKey = this.fullPath = "";
 
-        configComments = new HashMap<>();
-        defaultComments = new HashMap<>();
-        defaults = new LinkedHashMap<>();
-        values = new LinkedHashMap<>();
+        this.configComments = new HashMap<>();
+        this.defaultComments = new HashMap<>();
+        this.defaults = new LinkedHashMap<>();
+        this.values = new LinkedHashMap<>();
     }
 
     ConfigSection(ConfigSection root, ConfigSection parent, String nodeKey, boolean isDefault) {
@@ -57,22 +57,22 @@ public class ConfigSection extends MemoryConfiguration {
         this.nodeKey = nodeKey;
         this.fullPath = nodeKey != null ? parent.fullPath + nodeKey + root.pathChar : parent.fullPath;
         this.isDefault = isDefault;
-        configComments = defaultComments = null;
-        defaults = null;
-        values = null;
+        this.configComments = this.defaultComments = null;
+        this.defaults = null;
+        this.values = null;
     }
 
     public int getIndent() {
-        return root.indentation;
+        return this.root.indentation;
     }
 
     public void setIndent(int indentation) {
-        root.indentation = indentation;
+        this.root.indentation = indentation;
     }
 
     protected void onChange() {
-        if (parent != null) {
-            root.onChange();
+        if (this.parent != null) {
+            this.root.onChange();
         }
     }
 
@@ -83,29 +83,29 @@ public class ConfigSection extends MemoryConfiguration {
      * @param pathChar character to use
      */
     public void setPathSeparator(char pathChar) {
-        if (!root.values.isEmpty() || !root.defaults.isEmpty()) {
+        if (!this.root.values.isEmpty() || !this.root.defaults.isEmpty()) {
             throw new RuntimeException("Path change after config initialization");
         }
 
-        root.pathChar = pathChar;
+        this.root.pathChar = pathChar;
     }
 
     public char getPathSeparator() {
-        return root.pathChar;
+        return this.root.pathChar;
     }
 
     /**
      * @return The full key for this section node
      */
     public String getKey() {
-        return !fullPath.endsWith(String.valueOf(root.pathChar)) ? fullPath : fullPath.substring(0, fullPath.length() - 1);
+        return !this.fullPath.endsWith(String.valueOf(this.root.pathChar)) ? this.fullPath : this.fullPath.substring(0, this.fullPath.length() - 1);
     }
 
     /**
      * @return The specific key that was used from the last node to get to this node
      */
     public String getNodeKey() {
-        return nodeKey;
+        return this.nodeKey;
     }
 
     /**
@@ -116,19 +116,19 @@ public class ConfigSection extends MemoryConfiguration {
      * @param useDefault set to true if this is a default value
      */
     protected void createNodePath(@NotNull String path, boolean useDefault) {
-        if (path.indexOf(root.pathChar) != -1) {
+        if (path.indexOf(this.root.pathChar) != -1) {
             // if any intermediate nodes don't exist, create them
-            String[] pathParts = path.split(Pattern.quote(String.valueOf(root.pathChar)));
-            StringBuilder nodePath = new StringBuilder(fullPath);
-            LinkedHashMap<String, Object> writeTo = useDefault ? root.defaults : root.values;
+            String[] pathParts = path.split(Pattern.quote(String.valueOf(this.root.pathChar)));
+            StringBuilder nodePath = new StringBuilder(this.fullPath);
+            LinkedHashMap<String, Object> writeTo = useDefault ? this.root.defaults : this.root.values;
             ConfigSection travelNode = this;
 
-            synchronized (root.lock) {
+            synchronized (this.root.lock) {
                 for (int i = 0; i < pathParts.length - 1; ++i) {
-                    final String node = (i != 0 ? nodePath.append(root.pathChar) : nodePath).append(pathParts[i]).toString();
+                    final String node = (i != 0 ? nodePath.append(this.root.pathChar) : nodePath).append(pathParts[i]).toString();
 
                     if (!(writeTo.get(node) instanceof ConfigSection)) {
-                        writeTo.put(node, travelNode = new ConfigSection(root, travelNode, pathParts[i], useDefault));
+                        writeTo.put(node, travelNode = new ConfigSection(this.root, travelNode, pathParts[i], useDefault));
                     } else {
                         travelNode = (ConfigSection) writeTo.get(node);
                     }
@@ -140,10 +140,10 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path) {
         createNodePath(path, true);
-        ConfigSection section = new ConfigSection(root, this, path, true);
+        ConfigSection section = new ConfigSection(this.root, this, path, true);
 
-        synchronized (root.lock) {
-            root.defaults.put(fullPath + path, section);
+        synchronized (this.root.lock) {
+            this.root.defaults.put(this.fullPath + path, section);
         }
 
         return section;
@@ -152,11 +152,11 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, String... comment) {
         createNodePath(path, true);
-        ConfigSection section = new ConfigSection(root, this, path, true);
+        ConfigSection section = new ConfigSection(this.root, this, path, true);
 
-        synchronized (root.lock) {
-            root.defaults.put(fullPath + path, section);
-            root.defaultComments.put(fullPath + path, new Comment(comment));
+        synchronized (this.root.lock) {
+            this.root.defaults.put(this.fullPath + path, section);
+            this.root.defaultComments.put(this.fullPath + path, new Comment(comment));
         }
 
         return section;
@@ -165,11 +165,11 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     public ConfigSection createDefaultSection(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, String... comment) {
         createNodePath(path, true);
-        ConfigSection section = new ConfigSection(root, this, path, true);
+        ConfigSection section = new ConfigSection(this.root, this, path, true);
 
-        synchronized (root.lock) {
-            root.defaults.put(fullPath + path, section);
-            root.defaultComments.put(fullPath + path, new Comment(commentStyle, comment));
+        synchronized (this.root.lock) {
+            this.root.defaults.put(this.fullPath + path, section);
+            this.root.defaultComments.put(this.fullPath + path, new Comment(commentStyle, comment));
         }
 
         return section;
@@ -187,11 +187,11 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection setComment(@NotNull String path, @Nullable Comment comment) {
-        synchronized (root.lock) {
-            if (isDefault) {
-                root.defaultComments.put(fullPath + path, comment);
+        synchronized (this.root.lock) {
+            if (this.isDefault) {
+                this.root.defaultComments.put(this.fullPath + path, comment);
             } else {
-                root.configComments.put(fullPath + path, comment);
+                this.root.configComments.put(this.fullPath + path, comment);
             }
         }
 
@@ -205,8 +205,8 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, @Nullable List<String> lines) {
-        synchronized (root.lock) {
-            root.defaultComments.put(fullPath + path, new Comment(lines));
+        synchronized (this.root.lock) {
+            this.root.defaultComments.put(this.fullPath + path, new Comment(lines));
         }
 
         return this;
@@ -219,8 +219,8 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> lines) {
-        synchronized (root.lock) {
-            root.defaultComments.put(fullPath + path, new Comment(commentStyle, lines));
+        synchronized (this.root.lock) {
+            this.root.defaultComments.put(this.fullPath + path, new Comment(commentStyle, lines));
         }
 
         return this;
@@ -228,8 +228,8 @@ public class ConfigSection extends MemoryConfiguration {
 
     @NotNull
     public ConfigSection setDefaultComment(@NotNull String path, @Nullable Comment comment) {
-        synchronized (root.lock) {
-            root.defaultComments.put(fullPath + path, comment);
+        synchronized (this.root.lock) {
+            this.root.defaultComments.put(this.fullPath + path, comment);
         }
 
         return this;
@@ -237,10 +237,10 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Nullable
     public Comment getComment(@NotNull String path) {
-        Comment result = root.configComments.get(fullPath + path);
+        Comment result = this.root.configComments.get(this.fullPath + path);
 
         if (result == null) {
-            result = root.defaultComments.get(fullPath + path);
+            result = this.root.defaultComments.get(this.fullPath + path);
         }
 
         return result;
@@ -248,10 +248,10 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Nullable
     public String getCommentString(@NotNull String path) {
-        Comment result = root.configComments.get(fullPath + path);
+        Comment result = this.root.configComments.get(this.fullPath + path);
 
         if (result == null) {
-            result = root.defaultComments.get(fullPath + path);
+            result = this.root.defaultComments.get(this.fullPath + path);
         }
 
         return result != null ? result.toString() : null;
@@ -261,8 +261,8 @@ public class ConfigSection extends MemoryConfiguration {
     public void addDefault(@NotNull String path, @Nullable Object value) {
         createNodePath(path, true);
 
-        synchronized (root.lock) {
-            root.defaults.put(fullPath + path, value);
+        synchronized (this.root.lock) {
+            this.root.defaults.put(this.fullPath + path, value);
         }
     }
 
@@ -273,56 +273,56 @@ public class ConfigSection extends MemoryConfiguration {
     }
 
     @Override
-    public void setDefaults(Configuration c) {
-        if (fullPath.isEmpty()) {
-            root.defaults.clear();
+    public void setDefaults(Configuration cfg) {
+        if (this.fullPath.isEmpty()) {
+            this.root.defaults.clear();
         } else {
-            root.defaults.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath))
-                    .forEach(root.defaults::remove);
+            this.root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(this.fullPath))
+                    .forEach(this.root.defaults::remove);
         }
 
-        addDefaults(c);
+        addDefaults(cfg);
     }
 
     @Override
     public ConfigSection getDefaults() {
-        return new ConfigSection(root, this, null, true);
+        return new ConfigSection(this.root, this, null, true);
     }
 
     @Override
     public ConfigSection getDefaultSection() {
-        return new ConfigSection(root, this, null, true);
+        return new ConfigSection(this.root, this, null, true);
     }
 
     @Override
     public ConfigOptionsAdapter options() {
-        return new ConfigOptionsAdapter(root);
+        return new ConfigOptionsAdapter(this.root);
     }
 
     @NotNull
     @Override
     public Set<String> getKeys(boolean deep) {
         LinkedHashSet<String> result = new LinkedHashSet<>();
-        int pathIndex = fullPath.lastIndexOf(root.pathChar);
+        int pathIndex = this.fullPath.lastIndexOf(this.root.pathChar);
 
         if (deep) {
-            result.addAll(root.defaults.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath))
-                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+            result.addAll(this.root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(this.fullPath))
+                    .map(k -> !k.endsWith(String.valueOf(this.root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
-            result.addAll(root.values.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath))
-                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+            result.addAll(this.root.values.keySet().stream()
+                    .filter(k -> k.startsWith(this.fullPath))
+                    .map(k -> !k.endsWith(String.valueOf(this.root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         } else {
-            result.addAll(root.defaults.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
-                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+            result.addAll(this.root.defaults.keySet().stream()
+                    .filter(k -> k.startsWith(this.fullPath) && k.lastIndexOf(this.root.pathChar) == pathIndex)
+                    .map(k -> !k.endsWith(String.valueOf(this.root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
-            result.addAll(root.values.keySet().stream()
-                    .filter(k -> k.startsWith(fullPath) && k.lastIndexOf(root.pathChar) == pathIndex)
-                    .map(k -> !k.endsWith(String.valueOf(root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
+            result.addAll(this.root.values.keySet().stream()
+                    .filter(k -> k.startsWith(this.fullPath) && k.lastIndexOf(this.root.pathChar) == pathIndex)
+                    .map(k -> !k.endsWith(String.valueOf(this.root.pathChar)) ? k.substring(pathIndex + 1) : k.substring(pathIndex + 1, k.length() - 1))
                     .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
 
@@ -333,43 +333,43 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public Map<String, Object> getValues(boolean deep) {
         LinkedHashMap<String, Object> result = new LinkedHashMap<>();
-        int pathIndex = fullPath.lastIndexOf(root.pathChar);
+        int pathIndex = this.fullPath.lastIndexOf(this.root.pathChar);
 
         if (deep) {
-            result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
-                    .filter(k -> k.getKey().startsWith(fullPath))
+            result.putAll((Map<String, Object>) this.root.defaults.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(this.fullPath))
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
+                            e -> !e.getKey().endsWith(String.valueOf(this.root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
 
-            result.putAll((Map<String, Object>) root.values.entrySet().stream()
-                    .filter(k -> k.getKey().startsWith(fullPath))
+            result.putAll((Map<String, Object>) this.root.values.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(this.fullPath))
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
+                            e -> !e.getKey().endsWith(String.valueOf(this.root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
         } else {
-            result.putAll((Map<String, Object>) root.defaults.entrySet().stream()
-                    .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
+            result.putAll((Map<String, Object>) this.root.defaults.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(this.fullPath) && k.getKey().lastIndexOf(this.root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
+                            e -> !e.getKey().endsWith(String.valueOf(this.root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
                             }, // never going to be merging keys
                             LinkedHashMap::new)));
 
-            result.putAll((Map<String, Object>) root.values.entrySet().stream()
-                    .filter(k -> k.getKey().startsWith(fullPath) && k.getKey().lastIndexOf(root.pathChar) == pathIndex)
+            result.putAll((Map<String, Object>) this.root.values.entrySet().stream()
+                    .filter(k -> k.getKey().startsWith(this.fullPath) && k.getKey().lastIndexOf(this.root.pathChar) == pathIndex)
                     .collect(Collectors.toMap(
-                            e -> !e.getKey().endsWith(String.valueOf(root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
+                            e -> !e.getKey().endsWith(String.valueOf(this.root.pathChar)) ? e.getKey().substring(pathIndex + 1) : e.getKey().substring(pathIndex + 1, e.getKey().length() - 1),
                             Map.Entry::getValue,
                             (v1, v2) -> {
                                 throw new IllegalStateException();
@@ -399,51 +399,51 @@ public class ConfigSection extends MemoryConfiguration {
 
     @Override
     public boolean contains(@NotNull String path) {
-        return root.defaults.containsKey(fullPath + path) || root.values.containsKey(fullPath + path);
+        return this.root.defaults.containsKey(this.fullPath + path) || this.root.values.containsKey(this.fullPath + path);
     }
 
     @Override
     public boolean contains(@NotNull String path, boolean ignoreDefault) {
-        return (!ignoreDefault && root.defaults.containsKey(fullPath + path)) || root.values.containsKey(fullPath + path);
+        return (!ignoreDefault && this.root.defaults.containsKey(this.fullPath + path)) || this.root.values.containsKey(this.fullPath + path);
     }
 
     @Override
     public boolean isSet(@NotNull String path) {
-        return root.defaults.get(fullPath + path) != null || root.values.get(fullPath + path) != null;
+        return this.root.defaults.get(this.fullPath + path) != null || this.root.values.get(this.fullPath + path) != null;
     }
 
     @Override
     public String getCurrentPath() {
-        return fullPath.isEmpty() ? "" : fullPath.substring(0, fullPath.length() - 1);
+        return this.fullPath.isEmpty() ? "" : this.fullPath.substring(0, this.fullPath.length() - 1);
     }
 
     @Override
     public String getName() {
-        if (fullPath.isEmpty()) {
+        if (this.fullPath.isEmpty()) {
             return "";
         }
 
-        String[] parts = fullPath.split(Pattern.quote(String.valueOf(root.pathChar)));
+        String[] parts = this.fullPath.split(Pattern.quote(String.valueOf(this.root.pathChar)));
         return parts[parts.length - 1];
     }
 
     @Override
     public ConfigSection getRoot() {
-        return root;
+        return this.root;
     }
 
     @Override
     public ConfigSection getParent() {
-        return parent;
+        return this.parent;
     }
 
     @Nullable
     @Override
     public Object get(@NotNull String path) {
-        Object result = root.values.get(fullPath + path);
+        Object result = this.root.values.get(this.fullPath + path);
 
         if (result == null) {
-            result = root.defaults.get(fullPath + path);
+            result = this.root.defaults.get(this.fullPath + path);
         }
 
         return result;
@@ -452,36 +452,36 @@ public class ConfigSection extends MemoryConfiguration {
     @Nullable
     @Override
     public Object get(@NotNull String path, @Nullable Object def) {
-        Object result = root.values.get(fullPath + path);
+        Object result = this.root.values.get(this.fullPath + path);
 
         return result != null ? result : def;
     }
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        if (isDefault) {
+        if (this.isDefault) {
             addDefault(path, value);
             return;
         }
 
         createNodePath(path, false);
         Object last;
-        synchronized (root.lock) {
+        synchronized (this.root.lock) {
             if (value != null) {
-                root.changed |= (last = root.values.put(fullPath + path, value)) != value;
+                this.root.changed |= (last = this.root.values.put(this.fullPath + path, value)) != value;
             } else {
-                root.changed |= (last = root.values.remove(fullPath + path)) != null;
+                this.root.changed |= (last = this.root.values.remove(this.fullPath + path)) != null;
             }
         }
 
         if (last != value && last instanceof ConfigSection) {
             // clean up orphaned nodes
-            final String trim = fullPath + path + root.pathChar;
-            synchronized (root.lock) {
-                root.values.keySet().stream()
+            final String trim = this.fullPath + path + this.root.pathChar;
+            synchronized (this.root.lock) {
+                this.root.values.keySet().stream()
                         .filter(k -> k.startsWith(trim))
                         .collect(Collectors.toSet())
-                        .forEach(root.values::remove);
+                        .forEach(this.root.values::remove);
             }
         }
 
@@ -546,13 +546,13 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public ConfigSection createSection(@NotNull String path) {
         createNodePath(path, false);
-        ConfigSection section = new ConfigSection(root, this, path, false);
+        ConfigSection section = new ConfigSection(this.root, this, path, false);
 
-        synchronized (root.lock) {
-            root.values.put(fullPath + path, section);
+        synchronized (this.root.lock) {
+            this.root.values.put(this.fullPath + path, section);
         }
 
-        root.changed = true;
+        this.root.changed = true;
         onChange();
 
         return section;
@@ -576,14 +576,14 @@ public class ConfigSection extends MemoryConfiguration {
     @NotNull
     public ConfigSection createSection(@NotNull String path, @Nullable ConfigFormattingRules.CommentStyle commentStyle, @Nullable List<String> comment) {
         createNodePath(path, false);
-        ConfigSection section = new ConfigSection(root, this, path, false);
+        ConfigSection section = new ConfigSection(this.root, this, path, false);
 
-        synchronized (root.lock) {
-            root.values.put(fullPath + path, section);
+        synchronized (this.root.lock) {
+            this.root.values.put(this.fullPath + path, section);
         }
 
         setComment(path, commentStyle, comment);
-        root.changed = true;
+        this.root.changed = true;
         onChange();
 
         return section;
@@ -593,10 +593,10 @@ public class ConfigSection extends MemoryConfiguration {
     @Override
     public ConfigSection createSection(@NotNull String path, Map<?, ?> map) {
         createNodePath(path, false);
-        ConfigSection section = new ConfigSection(root, this, path, false);
+        ConfigSection section = new ConfigSection(this.root, this, path, false);
 
-        synchronized (root.lock) {
-            root.values.put(fullPath + path, section);
+        synchronized (this.root.lock) {
+            this.root.values.put(this.fullPath + path, section);
         }
 
         for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -608,7 +608,7 @@ public class ConfigSection extends MemoryConfiguration {
             section.set(entry.getKey().toString(), entry.getValue());
         }
 
-        root.changed = true;
+        this.root.changed = true;
         onChange();
 
         return section;

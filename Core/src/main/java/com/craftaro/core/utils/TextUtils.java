@@ -17,23 +17,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TextUtils {
-    private static final List<Charset> supportedCharsets = new ArrayList<>();
+    private static final List<Charset> SUPPORTED_CHARSETS = new ArrayList<>();
 
     static {
-        supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
-        supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
+        SUPPORTED_CHARSETS.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
+        SUPPORTED_CHARSETS.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
 //        supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
 //        supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
 //        supportedCharsets.add(StandardCharsets.UTF_16);
 
         // FIXME: One unsupported charset causes other ones not to be tried
         try {
-            supportedCharsets.add(Charset.forName("windows-1253"));
-            supportedCharsets.add(Charset.forName("ISO-8859-7"));
-        } catch (Exception ignore) {    // UnsupportedCharsetException technically can be thrown, but can also be ignored
+            SUPPORTED_CHARSETS.add(Charset.forName("windows-1253"));
+            SUPPORTED_CHARSETS.add(Charset.forName("ISO-8859-7"));
+        } catch (
+                Exception ignore) {    // UnsupportedCharsetException technically can be thrown, but can also be ignored
         }
 
-        supportedCharsets.add(StandardCharsets.US_ASCII);
+        SUPPORTED_CHARSETS.add(StandardCharsets.US_ASCII);
     }
 
     public static String formatText(String text) {
@@ -41,7 +42,7 @@ public class TextUtils {
     }
 
     public static String formatText(String text, boolean capitalize) {
-        if (text == null || text.equals("")) {
+        if (text == null || text.isEmpty()) {
             return "";
         }
 
@@ -103,11 +104,10 @@ public class TextUtils {
      * Note: Do not use semi-colons or § in this string, or they will be lost when decoding!
      *
      * @param s string to convert
-     *
      * @return encoded string
      */
     public static String convertToInvisibleLoreString(String s) {
-        if (s == null || s.equals("")) {
+        if (s == null || s.isEmpty()) {
             return "";
         }
 
@@ -126,14 +126,13 @@ public class TextUtils {
     /**
      * Convert a string to an invisible colored string <br />
      * (Not safe to use as lore) <br />
-     * Note: Do not use semi-colons or § in this string, or they will be lost when decoding!
+     * Note: Do not use semicolons or § in this string, or they will be lost when decoding!
      *
      * @param s string to convert
-     *
      * @return encoded string
      */
     public static String convertToInvisibleString(String s) {
-        if (s == null || s.equals("")) {
+        if (s == null || s.isEmpty()) {
             return "";
         }
 
@@ -147,27 +146,27 @@ public class TextUtils {
     }
 
     // TODO: Is there a more reliable way?
+
     /**
      * Removes color markers used to encode strings as invisible text
      *
      * @param s encoded string
-     *
      * @return string with color markers removed
      */
     public static String convertFromInvisibleString(String s) {
-        if (s == null || s.equals("")) {
+        if (s == null || s.isEmpty()) {
             return "";
         }
 
         return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
     }
 
-    public static Charset detectCharset(File f, Charset def) {
+    public static Charset detectCharset(File file, Charset def) {
         byte[] buffer = new byte[2048];
         int len;
 
         // Read the first 2 KiB of the file and test the file's encoding
-        try (FileInputStream input = new FileInputStream(f)) {
+        try (FileInputStream input = new FileInputStream(file)) {
             len = input.read(buffer);
         } catch (Exception ex) {
             return null;
@@ -205,10 +204,12 @@ public class TextUtils {
             }
         }
 
-        // Look for last Whitespace Character and ignore potentially broken words/multi-byte characters
+        // Look for the last Whitespace Character and ignore potentially broken words/multibyte characters
         int newLen = len;
         for (; newLen > 0; --newLen) {
-            if (Character.isWhitespace(data[newLen - 1])) break;
+            if (Character.isWhitespace(data[newLen - 1])) {
+                break;
+            }
         }
 
         // Buffer got too small? => checking whole buffer
@@ -219,7 +220,7 @@ public class TextUtils {
         ByteBuffer bBuff = ByteBuffer.wrap(data, 0, newLen).asReadOnlyBuffer();
 
         // Check through a list of charsets and return the first one that could decode the buffer
-        for (Charset charset : supportedCharsets) {
+        for (Charset charset : SUPPORTED_CHARSETS) {
             if (charset != null && isCharset(bBuff, charset)) {
                 return charset;
             }

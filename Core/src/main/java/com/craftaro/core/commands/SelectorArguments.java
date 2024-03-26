@@ -38,20 +38,20 @@ public class SelectorArguments {
             return null;
         }
 
-        Matcher m = selectorPattern.matcher(argument);
-        if (!m.find()) {
+        Matcher matcher = selectorPattern.matcher(argument);
+        if (!matcher.find()) {
             return null;
         }
 
-        SelectorType type = SelectorType.getType(m.group(1));
+        SelectorType type = SelectorType.getType(matcher.group(1));
         if (type == null) {
             return null;
         }
 
         SelectorArguments selector = new SelectorArguments(sender, type);
 
-        if (m.group(3) != null) {
-            selector.parseArguments(m.group(3));
+        if (matcher.group(3) != null) {
+            selector.parseArguments(matcher.group(3));
         }
 
         return selector;
@@ -82,17 +82,17 @@ public class SelectorArguments {
                     Matcher distGroup = selectorRangePattern.matcher(v[1]);
                     if (distGroup.find()) {
                         if (distGroup.group(1) != null) {
-                            rangeMin = Double.parseDouble(distGroup.group(1));
+                            this.rangeMin = Double.parseDouble(distGroup.group(1));
                         }
 
                         if (distGroup.group(3) == null) {
-                            rangeMax = rangeMin;
+                            this.rangeMax = this.rangeMin;
                         } else if (distGroup.group(4) != null) {
-                            rangeMax = Double.parseDouble(distGroup.group(4));
+                            this.rangeMax = Double.parseDouble(distGroup.group(4));
                         }
                     }
                 } else if (v[0].equals("type")) {
-                    entityType = EntityNamespace.minecraftToBukkit(v[1]);
+                    this.entityType = EntityNamespace.minecraftToBukkit(v[1]);
                 }
 
                 // more arguments can be parsed here (TODO)
@@ -126,7 +126,7 @@ public class SelectorArguments {
     }
 
     public Collection<Entity> getSelection() {
-        final Location location = sender instanceof Player ? ((Player) sender).getLocation() : ((BlockCommandSender) sender).getBlock().getLocation();
+        final Location location = this.sender instanceof Player ? ((Player) this.sender).getLocation() : ((BlockCommandSender) this.sender).getBlock().getLocation();
         Collection<Entity> list = preSelect(location);
 
         if (list.isEmpty()) {
@@ -139,7 +139,7 @@ public class SelectorArguments {
             return list2;
         }
 
-        switch (selector) {
+        switch (this.selector) {
             case PLAYER:
                 list2.sort((o1, o2) -> (int) (o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location)));
 
@@ -157,22 +157,22 @@ public class SelectorArguments {
     }
 
     protected Collection<Entity> preSelect(Location location) {
-        switch (selector) {
+        switch (this.selector) {
             case PLAYER:
             case RANDOM_PLAYER:
             case ALL_PLAYER:
-                return rangeMax == Double.POSITIVE_INFINITY
+                return this.rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntitiesByClasses(Player.class)
-                        : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2).stream()
+                        : location.getWorld().getNearbyEntities(location, this.rangeMax * 2, this.rangeMax * 2, this.rangeMax * 2).stream()
                         .filter(Player.class::isInstance).collect(Collectors.toSet());
 
             case ALL_ENTITIES:
-                return rangeMax == Double.POSITIVE_INFINITY
+                return this.rangeMax == Double.POSITIVE_INFINITY
                         ? location.getWorld().getEntities()
-                        : location.getWorld().getNearbyEntities(location, rangeMax * 2, rangeMax * 2, rangeMax * 2);
+                        : location.getWorld().getNearbyEntities(location, this.rangeMax * 2, this.rangeMax * 2, this.rangeMax * 2);
 
             case SELF:
-                return sender instanceof Entity ? Arrays.asList((Entity) sender) : Collections.emptyList();
+                return this.sender instanceof Entity ? Arrays.asList((Entity) this.sender) : Collections.emptyList();
         }
 
         return Collections.emptyList();
@@ -180,8 +180,8 @@ public class SelectorArguments {
 
     protected List<Entity> filter(Location location, Collection<Entity> list) {
         Stream<Entity> stream = list.stream()
-                .filter(p -> rangeMin == 0 || p.getLocation().distance(location) > rangeMin)
-                .filter(e -> entityType == null || e.getType() == entityType);
+                .filter(p -> this.rangeMin == 0 || p.getLocation().distance(location) > this.rangeMin)
+                .filter(e -> this.entityType == null || e.getType() == this.entityType);
 
         return stream.collect(Collectors.toList());
     }

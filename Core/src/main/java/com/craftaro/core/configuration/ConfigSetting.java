@@ -35,88 +35,88 @@ public class ConfigSetting {
 
     @NotNull
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     public List<Integer> getIntegerList() {
-        return config.getIntegerList(key);
+        return this.config.getIntegerList(this.key);
     }
 
     public List<String> getStringList() {
-        return config.getStringList(key);
+        return this.config.getStringList(this.key);
     }
 
     public boolean getBoolean() {
-        return config.getBoolean(key);
+        return this.config.getBoolean(this.key);
     }
 
     public boolean getBoolean(boolean def) {
-        return config.getBoolean(key, def);
+        return this.config.getBoolean(this.key, def);
     }
 
     public int getInt() {
-        return config.getInt(key);
+        return this.config.getInt(this.key);
     }
 
     public int getInt(int def) {
-        return config.getInt(key, def);
+        return this.config.getInt(this.key, def);
     }
 
     public long getLong() {
-        return config.getLong(key);
+        return this.config.getLong(this.key);
     }
 
     public long getLong(long def) {
-        return config.getLong(key, def);
+        return this.config.getLong(this.key, def);
     }
 
     public double getDouble() {
-        return config.getDouble(key);
+        return this.config.getDouble(this.key);
     }
 
     public double getDouble(double def) {
-        return config.getDouble(key, def);
+        return this.config.getDouble(this.key, def);
     }
 
     public String getString() {
-        return config.getString(key);
+        return this.config.getString(this.key);
     }
 
     public String getString(String def) {
-        return config.getString(key, def);
+        return this.config.getString(this.key, def);
     }
 
     public Object getObject() {
-        return config.get(key);
+        return this.config.get(this.key);
     }
 
     public Object getObject(Object def) {
-        return config.get(key, def);
+        return this.config.get(this.key, def);
     }
 
     public <T> T getObject(@NotNull Class<T> clazz) {
-        return config.getObject(key, clazz);
+        return this.config.getObject(this.key, clazz);
     }
 
     public <T> T getObject(@NotNull Class<T> clazz, @Nullable T def) {
-        return config.getObject(key, clazz, def);
+        return this.config.getObject(this.key, clazz, def);
     }
 
     public char getChar() {
-        return config.getChar(key);
+        return this.config.getChar(this.key);
     }
 
     public char getChar(char def) {
-        return config.getChar(key, def);
+        return this.config.getChar(this.key, def);
     }
 
     @NotNull
     public XMaterial getMaterial() {
-        String val = config.getString(key);
-        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(config.getString(key));
+        String val = this.config.getString(this.key);
+        Optional<XMaterial> mat = CompatibleMaterial.getMaterial(this.config.getString(this.key));
 
         if (!mat.isPresent()) {
-            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
+            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", this.key, val));
         }
         return mat.orElse(XMaterial.STONE);
     }
@@ -124,11 +124,11 @@ public class ConfigSetting {
     @NotNull
     public XMaterial getMaterial(@NotNull XMaterial def) {
         //return config.getMaterial(key, def);
-        String val = config.getString(key);
+        String val = this.config.getString(this.key);
         Optional<XMaterial> mat = val != null ? CompatibleMaterial.getMaterial(val) : Optional.empty();
 
         if (!mat.isPresent()) {
-            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
+            SongodaCore.getLogger().log(Level.WARNING, String.format("Config value \"%s\" has an invalid material name: \"%s\"", this.key, val));
         }
         return mat.orElse(def);
     }

@@ -18,11 +18,11 @@ public class SongodaCoreCommand extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (sender instanceof Player) {
-            if (guiManager == null || guiManager.isClosed()) {
-                guiManager = new GuiManager(SongodaCore.getHijackedPlugin());
+            if (this.guiManager == null || this.guiManager.isClosed()) {
+                this.guiManager = new GuiManager(SongodaCore.getHijackedPlugin());
             }
 
-            guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
+            this.guiManager.showGUI((Player) sender, new SongodaCoreOverviewGUI());
         } else {
             sender.sendMessage("/songoda diag");
         }

@@ -22,19 +22,19 @@ public class Lootable {
     public Lootable(String key, Loot... loots) {
         this.type = key;
 
-        registeredLoot.addAll(Arrays.asList(loots));
+        this.registeredLoot.addAll(Arrays.asList(loots));
     }
 
     public List<Loot> getRegisteredLoot() {
-        return new ArrayList<>(registeredLoot);
+        return new ArrayList<>(this.registeredLoot);
     }
 
     public void registerLoot(Loot... loots) {
-        registeredLoot.addAll(Arrays.asList(loots));
+        this.registeredLoot.addAll(Arrays.asList(loots));
     }
 
     public String getKey() {
-        return type;
+        return this.type;
     }
 
     public void removeLoot(Loot loot) {

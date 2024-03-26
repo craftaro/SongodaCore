@@ -12,13 +12,13 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -191,7 +191,9 @@ public class Locale {
         }
 
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
-        if (!localeFolder.exists()) localeFolder.mkdirs();
+        if (!localeFolder.exists()) {
+            localeFolder.mkdirs();
+        }
 
         if (!fileName.endsWith(FILE_EXTENSION)) {
             fileName = fileName + FILE_EXTENSION;
@@ -202,7 +204,7 @@ public class Locale {
             return updateFiles(plugin, in, destinationFile, builtin);
         }
 
-        try (OutputStream outputStream = new FileOutputStream(destinationFile)) {
+        try (OutputStream outputStream = Files.newOutputStream(destinationFile.toPath())) {
             copy(in, outputStream);
 
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -217,7 +219,7 @@ public class Locale {
     // Write new changes to existing files, if any at all
     private static boolean updateFiles(Plugin plugin, InputStream defaultFile, File existingFile, boolean builtin) {
         try (BufferedInputStream defaultIn = new BufferedInputStream(defaultFile);
-             BufferedInputStream existingIn = new BufferedInputStream(new FileInputStream(existingFile))) {
+             BufferedInputStream existingIn = new BufferedInputStream(Files.newInputStream(existingFile.toPath()))) {
 
             Charset defaultCharset = TextUtils.detectCharset(defaultIn, StandardCharsets.UTF_8);
             Charset existingCharset = TextUtils.detectCharset(existingIn, StandardCharsets.UTF_8);
@@ -291,29 +293,29 @@ public class Locale {
      */
     public boolean reloadMessages() {
         if (!this.file.exists()) {
-            plugin.getLogger().warning("Could not find file for locale \"" + this.name + "\"");
+            this.plugin.getLogger().warning("Could not find file for locale \"" + this.name + "\"");
             return false;
         }
 
         this.nodes.clear(); // Clear previous data (if any)
 
         // guess what encoding this file is in
-        Charset charset = TextUtils.detectCharset(file, null);
+        Charset charset = TextUtils.detectCharset(this.file, null);
         if (charset == null) {
-            plugin.getLogger().warning("Could not determine charset for locale \"" + this.name + "\"");
+            this.plugin.getLogger().warning("Could not determine charset for locale \"" + this.name + "\"");
             charset = StandardCharsets.UTF_8;
         }
 
         // load in the file!
-        try (FileInputStream stream = new FileInputStream(file);
+        try (FileInputStream stream = new FileInputStream(this.file);
              BufferedReader source = new BufferedReader(new InputStreamReader(stream, charset));
              BufferedReader reader = translatePropertyToYAML(source, charset)) {
-            Config lang = new Config(file);
+            Config lang = new Config(this.file);
             lang.load(reader);
-            translateMsgRoot(lang, file, charset);
+            translateMsgRoot(lang, this.file, charset);
 
             // load lists as strings with newlines
-            lang.getValues(true).forEach((k, v) -> nodes.put(k,
+            lang.getValues(true).forEach((k, v) -> this.nodes.put(k,
                     v instanceof List
                             ? (((List<?>) v).stream().map(Object::toString).collect(Collectors.joining("\n")))
                             : v.toString()));
@@ -322,7 +324,7 @@ public class Locale {
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (InvalidConfigurationException ex) {
-            Logger.getLogger(Locale.class.getName()).log(Level.SEVERE, "Configuration error in language file \"" + file.getName() + "\"", ex);
+            Logger.getLogger(Locale.class.getName()).log(Level.SEVERE, "Configuration error in language file \"" + this.file.getName() + "\"", ex);
         }
 
         return false;
@@ -426,7 +428,7 @@ public class Locale {
      * @return applied message
      */
     private Message supplyPrefix(Message message) {
-        return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[" + plugin.getName() + "]"));
+        return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[" + this.plugin.getName() + "]"));
     }
 
     /**
@@ -477,7 +479,7 @@ public class Locale {
      * @return the locale name
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     private static void copy(InputStream input, OutputStream output) {

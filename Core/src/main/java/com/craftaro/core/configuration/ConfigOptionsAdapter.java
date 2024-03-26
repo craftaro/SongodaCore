@@ -15,13 +15,13 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     }
 
     public Config getConfig() {
-        return (Config) config.root;
+        return (Config) this.config.root;
     }
 
     @NotNull
     @Override
     public ConfigFileConfigurationAdapter configuration() {
-        return new ConfigFileConfigurationAdapter((Config) config.root);
+        return new ConfigFileConfigurationAdapter((Config) this.config.root);
     }
 
     @NotNull
@@ -34,7 +34,7 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     @NotNull
     @Override
     public ConfigOptionsAdapter pathSeparator(char value) {
-        (config.root).setPathSeparator(value);
+        (this.config.root).setPathSeparator(value);
         return this;
     }
 
@@ -42,9 +42,9 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     @Override
     public ConfigOptionsAdapter header(@Nullable String value) {
         if (value == null) {
-            ((Config) config.root).setHeader((List) null);
+            ((Config) this.config.root).setHeader((List<String>) null);
         } else {
-            ((Config) config.root).setHeader(value.split("\n"));
+            ((Config) this.config.root).setHeader(value.split("\n"));
         }
 
         return this;
@@ -54,19 +54,19 @@ public class ConfigOptionsAdapter extends FileConfigurationOptions {
     @Override
     public ConfigOptionsAdapter copyHeader(boolean value) {
         if (!value) {
-            ((Config) config.root).setHeader((List) null);
+            ((Config) this.config.root).setHeader((List<String>) null);
         }
 
         return this;
     }
 
     public int indent() {
-        return config.root.getIndent();
+        return this.config.root.getIndent();
     }
 
     @NotNull
     public ConfigOptionsAdapter indent(int value) {
-        config.root.setIndent(value);
+        this.config.root.setIndent(value);
         return this;
     }
 }

@@ -69,7 +69,7 @@ public class Message {
      * @param sender command sender to send the message to
      */
     public void sendMessage(CommandSender sender) {
-        message.sendTo(sender);
+        this.message.sendTo(sender);
     }
 
     /**
@@ -129,7 +129,7 @@ public class Message {
      * @return the prefixed message
      */
     public String getPrefixedMessage() {
-        return TextUtils.formatText((prefix == null ? "" : this.prefix.toText()) + " " + this.message.toText());
+        return TextUtils.formatText((this.prefix == null ? "" : this.prefix.toText()) + " " + this.message.toText());
     }
 
     /**
@@ -170,7 +170,7 @@ public class Message {
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
         final String place = Matcher.quoteReplacement(placeholder);
-        this.message = message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
+        this.message = this.message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
 
         return this;
     }

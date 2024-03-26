@@ -10,10 +10,10 @@ public class MiniMessagePlaceholder {
     }
 
     public String getPlaceholder() {
-        return placeholder;
+        return this.placeholder;
     }
 
     public String getValue() {
-        return value;
+        return this.value;
     }
 }

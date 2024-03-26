@@ -29,35 +29,35 @@ public class GuiEditor extends Gui {
     }
 
     private void paint() {
-        if (inventory != null) {
-            inventory.clear();
+        if (this.inventory != null) {
+            this.inventory.clear();
         }
 
         setActionForRange(0, 0, 5, 9, null);
 
-        List<Lootable> lootables = new ArrayList<>(lootManager.getRegisteredLootables().values());
+        List<Lootable> lootables = new ArrayList<>(this.lootManager.getRegisteredLootables().values());
 
         double itemCount = lootables.size();
         this.pages = (int) Math.max(1, Math.ceil(itemCount / 36));
 
-        if (page != 1) {
+        if (this.page != 1) {
             setButton(5, 2, GuiUtils.createButtonItem(XMaterial.ARROW, "Back"),
                     (event) -> {
-                        page--;
+                        this.page--;
                         paint();
                     });
         }
 
-        if (page != pages) {
+        if (this.page != this.pages) {
             setButton(5, 6, GuiUtils.createButtonItem(XMaterial.ARROW, "Next"),
                     (event) -> {
-                        page++;
+                        this.page++;
                         paint();
                     });
         }
 
         for (int i = 9; i < 45; i++) {
-            int current = ((page - 1) * 36) - 9;
+            int current = ((this.page - 1) * 36) - 9;
             if (current + i >= lootables.size()) {
                 setItem(i, null);
                 continue;
@@ -69,7 +69,7 @@ public class GuiEditor extends Gui {
             }
 
             setButton(i, getIcon(lootable.getKey()),
-                    (event) -> guiManager.showGUI(event.player, new GuiLootableEditor(lootManager, lootable, this)));
+                    (event) -> this.guiManager.showGUI(event.player, new GuiLootableEditor(this.lootManager, lootable, this)));
         }
     }
 

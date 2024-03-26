@@ -224,7 +224,7 @@ public class SongodaCore {
         this.loginListener = null;
     }
 
-    private ArrayList<BukkitTask> tasks = new ArrayList<>();
+    private final ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     private void register(JavaPlugin plugin, int pluginID, String icon, String libraryVersion) {
         getLogger().info(getPrefix() + "Hooked " + plugin.getName() + ".");

@@ -10,7 +10,6 @@ import org.jooq.impl.DSL;
 import java.sql.Connection;
 
 public class MySQLConnector implements DatabaseConnector {
-
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
@@ -52,10 +51,11 @@ public class MySQLConnector implements DatabaseConnector {
                 ex.printStackTrace();
             }
         };
-        if (sqlThread)
+        if (sqlThread) {
             DatabaseManager.getInstance().execute(runnable);
-        else
+        } else {
             runnable.run();
+        }
     }
 
 }

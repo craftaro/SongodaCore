@@ -11,14 +11,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SQLUpdate extends SQLBase {
-
     private final List<String> columnsToUpdate = new ArrayList<>();
 
     private UpdateSetStep currentStep;
 
     private SQLUpdate(DSLContext ctx, String... columns) {
         super(ctx);
-        columnsToUpdate.addAll(Arrays.asList(columns));
+        this.columnsToUpdate.addAll(Arrays.asList(columns));
     }
 
     public static SQLUpdate create(DSLContext ctx, String... columns) {
@@ -26,13 +25,14 @@ public class SQLUpdate extends SQLBase {
     }
 
     public SQLUpdate update(String table) {
-        this.currentStep = ctx.update(DSL.table(table));
+        this.currentStep = this.ctx.update(DSL.table(table));
         return this;
     }
 
     public SQLUpdate set(String field, Object value) {
-        if (!columnsToUpdate.isEmpty() && !columnsToUpdate.contains(field))
+        if (!this.columnsToUpdate.isEmpty() && !this.columnsToUpdate.contains(field)) {
             return this;
+        }
 
         value = cleanValue(value);
         Field fieldName = getField(field, value == null ? null : value.getClass());
@@ -42,6 +42,6 @@ public class SQLUpdate extends SQLBase {
     }
 
     public SQLWhere where(String id, Object value) {
-        return new SQLWhere(ctx, ((UpdateSetMoreStep) this.currentStep).where(DSL.field(id).eq(value)));
+        return new SQLWhere(this.ctx, ((UpdateSetMoreStep) this.currentStep).where(DSL.field(id).eq(value)));
     }
 }

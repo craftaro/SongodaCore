@@ -23,30 +23,31 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AdventureUtils {
-
     private static Method displayNameMethod = null;
     private static Method loreMethod = null;
-    private static Class<?> componentClass;
     private static Object gsonComponentSerializer;
     private static Method gsonDeserializeMethod;
 
     static {
         if (ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_18)) {
             try {
-                componentClass = Class.forName("net;kyori;adventure;text;Component".replace(";", "."));
+                Class<?> componentClass = Class.forName("net;kyori;adventure;text;Component".replace(";", "."));
                 displayNameMethod = ItemMeta.class.getDeclaredMethod("displayName", componentClass);
                 loreMethod = ItemMeta.class.getDeclaredMethod("lore", List.class);
                 gsonComponentSerializer = Class.forName("net;kyori;adventure;text;serializer;gson;GsonComponentSerializer".replace(";", ".")).getDeclaredMethod("gson").invoke(null);
                 gsonDeserializeMethod = gsonComponentSerializer.getClass().getDeclaredMethod("deserialize", String.class);
                 gsonDeserializeMethod.setAccessible(true);
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
     /**
      * Convert a shaded component to a json string
+     *
      * @param component The shaded Component to convert
+     *
      * @return Json string
      */
     public static String convertToJson(Component component) {
@@ -56,14 +57,16 @@ public class AdventureUtils {
     /**
      * Convert a json string to the non-shaded component
      * Cast it to the correct type
+     *
      * @param json Json string
+     *
      * @return Non-shaded component
      */
     public static Object convertToOriginalComponent(String json) {
         try {
             return gsonDeserializeMethod.invoke(gsonComponentSerializer, json);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -71,14 +74,16 @@ public class AdventureUtils {
     /**
      * Convert the shaded Component to the original one
      * Cast it to the correct type
+     *
      * @param component Shaded component
+     *
      * @return Original component
      */
     public static Object convertToOriginalComponent(Component component) {
         try {
             return gsonDeserializeMethod.invoke(gsonComponentSerializer, convertToJson(component));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -86,18 +91,20 @@ public class AdventureUtils {
     /**
      * Convert a list of shaded components to a list of original components
      * Cast it to the correct type
-     * @param component List of shaded components
+     *
+     * @param components List of shaded components
+     *
      * @return List of original components
      */
-    public static Object convertToOriginalComponent(List<Component> component) {
+    public static Object convertToOriginalComponent(List<Component> components) {
         try {
             LinkedList<Object> list = new LinkedList<>();
-            for (Component c : component) {
-                list.add(convertToOriginalComponent(c));
+            for (Component component : components) {
+                list.add(convertToOriginalComponent(component));
             }
             return list;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -105,22 +112,24 @@ public class AdventureUtils {
     /**
      * Convert a list of shaded components to a list of original components
      * Cast it to the correct type
-     * @param component List of shaded components
+     *
+     * @param components List of shaded components
+     *
      * @return List of original components
      */
-    public static Object convertToOriginalComponent(Component... component) {
+    public static Object convertToOriginalComponent(Component... components) {
         try {
             LinkedList<Object> list = new LinkedList<>();
-            for (Component c : component) {
-                list.add(convertToOriginalComponent(c));
+            for (Component component : components) {
+                list.add(convertToOriginalComponent(component));
             }
             return list;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
-    
+
     public static void sendMessage(Plugin plugin, Component message, CommandSender... target) {
         try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(plugin)) {
             for (CommandSender sender : target) {
@@ -160,14 +169,18 @@ public class AdventureUtils {
 
     private static void setItemName(ItemStack item, Component name) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
+        if (meta == null) {
+            return;
+        }
+
         if (isMiniMessageEnabled()) {
-            //Set name as component
+            //Set name as a component
             try {
                 displayNameMethod.invoke(meta, convertToOriginalComponent(name));
                 item.setItemMeta(meta);
                 return;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         meta.setDisplayName(toLegacy(name));
         item.setItemMeta(meta);
@@ -176,19 +189,21 @@ public class AdventureUtils {
     private static void setItemLore(ItemStack item, Component... lore) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
+
         if (isMiniMessageEnabled()) {
             //Set lore as component
             try {
                 loreMethod.invoke(meta, convertToOriginalComponent(lore));
                 item.setItemMeta(meta);
                 return;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         meta.setLore(toLegacy(lore));
         item.setItemMeta(meta);
     }
 
-    //Formatting stuff
+    // Formatting stuff
     public static Component formatComponent(String text) {
         MiniMessage miniMessage = MiniMessage.builder().build();
         Component component = MiniMessage.miniMessage().deserialize(replaceLegacy(text));
@@ -198,7 +213,7 @@ public class AdventureUtils {
         return component;
     }
 
-    public static Component formatComponent(String text, MiniMessagePlaceholder...placeholders) {
+    public static Component formatComponent(String text, MiniMessagePlaceholder... placeholders) {
         MiniMessage miniMessage = MiniMessage.builder().editTags(builder -> {
             Arrays.stream(placeholders).forEach(placeholder ->
                     builder.resolver(Placeholder.parsed(placeholder.getPlaceholder(), placeholder.getValue()))
@@ -223,7 +238,7 @@ public class AdventureUtils {
         return result;
     }
 
-    public static List<Component> formatComponent(String...list) {
+    public static List<Component> formatComponent(String... list) {
         List<Component> result = new ArrayList<>();
         for (String line : list) {
             result.add(formatComponent(line));
@@ -320,60 +335,63 @@ public class AdventureUtils {
 
     public static String getColor(char c) {
         ChatColor color = ChatColor.getByChar(c);
-        if (color == null) return null;
+        if (color == null) {
+            return null;
+        }
+
         switch (c) {
             case '0':
-                return  "<black>";
+                return "<black>";
             case '1':
-                return  "<dark_blue>";
+                return "<dark_blue>";
             case '2':
-                return  "<dark_green>";
+                return "<dark_green>";
             case '3':
-                return  "<dark_aqua>";
+                return "<dark_aqua>";
             case '4':
-                return  "<dark_red>";
+                return "<dark_red>";
             case '5':
-                return  "<dark_purple>";
+                return "<dark_purple>";
             case '6':
-                return  "<gold>";
+                return "<gold>";
             case '7':
-                return  "<gray>";
+                return "<gray>";
             case '8':
-                return  "<dark_gray>";
+                return "<dark_gray>";
             case '9':
-                return  "<blue>";
+                return "<blue>";
             case 'a':
-                return  "<green>";
+                return "<green>";
             case 'b':
-                return  "<aqua>";
+                return "<aqua>";
             case 'c':
-                return  "<red>";
+                return "<red>";
             case 'd':
-                return  "<light_purple>";
+                return "<light_purple>";
             case 'e':
-                return  "<yellow>";
+                return "<yellow>";
             case 'f':
-                return  "<white>";
+                return "<white>";
             case 'k':
-                return  "<obfuscated>";
+                return "<obfuscated>";
             case 'l':
-                return  "<b>";
+                return "<b>";
             case 'm':
-                return  "<st>";
+                return "<st>";
             case 'n':
-                return  "<u>";
+                return "<u>";
             case 'o':
-                return  "<i>";
+                return "<i>";
             case 'r':
-                return  "<reset>";
+                return "<reset>";
             default:
                 return null;
         }
     }
 
     public static String clear(String msg) {
-        msg = msg.replaceAll("&[0-9kabcdefklmnor]", "");
-        msg = msg.replaceAll("§[0-9kabcdefklmnor]", "");
+        msg = msg.replaceAll("&[0-9abcdefklmnor]", "");
+        msg = msg.replaceAll("§[0-9abcdefklmnor]", "");
         msg = msg.replaceAll("&#[0-9a-fA-F]{6}", "");
         return PlainTextComponentSerializer.plainText().serialize(MiniMessage.miniMessage().deserialize(msg));
     }

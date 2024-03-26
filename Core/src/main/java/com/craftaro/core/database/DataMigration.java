@@ -31,6 +31,7 @@ public abstract class DataMigration {
     /**
      * @param plugin The plugin to convert data for
      * @param toType The new database type
+     *
      * @return The new data manager instance
      */
     public static DataManager convert(SongodaPlugin plugin, DatabaseType toType) throws Exception {
@@ -41,7 +42,7 @@ public abstract class DataMigration {
         }
         DataManager to = new DataManager(plugin, Collections.emptyList(), toType);
         if (!to.getDatabaseConnector().isInitialized()) {
-            plugin.getLogger().severe("Invalid database configuration for " + toType.name() +"! Please check your "+plugin.getName()+"/database.yml file.");
+            plugin.getLogger().severe("Invalid database configuration for " + toType.name() + "! Please check your " + plugin.getName() + "/database.yml file.");
             return null;
         }
 
@@ -56,7 +57,7 @@ public abstract class DataMigration {
 
             // Export schema
             DatabaseMetaData meta = fromConnection.getMetaData();
-            ResultSet tables = meta.getTables(null, null, null, new String[]{"TABLE"});
+            ResultSet tables = meta.getTables(null, null, null, new String[] {"TABLE"});
 
             while (tables.next()) {
                 String tableName = tables.getString("TABLE_NAME");
@@ -74,7 +75,7 @@ public abstract class DataMigration {
                     String columnType = metaRs.getColumnTypeName(i);
                     int columnSize = metaRs.getColumnDisplaySize(i);
                     //Fix EpicHoppers BIT column type from corrupted db
-                    if (columnType.equals("BIT") && plugin.getName().toLowerCase().equals("epichoppers")) {
+                    if (columnType.equals("BIT") && plugin.getName().equalsIgnoreCase("epichoppers")) {
                         columnType = "VARCHAR";
                         columnSize = 20;
                     }
@@ -120,22 +121,22 @@ public abstract class DataMigration {
 
             toConnection.commit();
             plugin.getLogger().info("Successfully migrated data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
-        } catch (Exception e) {
+        } catch (Exception ex) {
             if (toConnection != null) {
                 try {
                     toConnection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                } catch (SQLException ex1) {
+                    ex1.printStackTrace();
                     plugin.getLogger().severe("Failed to rollback data for the new database");
                 }
             }
-            e.printStackTrace();
+            ex.printStackTrace();
             plugin.getLogger().severe("Failed to migrate data from " + from.getDatabaseConnector().getType() + " to " + to.getDatabaseConnector().getType());
             return null;
         }
         fromConnector.closeConnection();
         //Get rid of the old SQLite database file if it exists and create a backup
-        File databaseFile = new File(plugin.getDataFolder(), plugin.getName().toLowerCase()+".db");
+        File databaseFile = new File(plugin.getDataFolder(), plugin.getName().toLowerCase() + ".db");
         if (databaseFile.exists()) {
 
             //rename it to .old
@@ -159,8 +160,8 @@ public abstract class DataMigration {
             }
 
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
 
         columns.setLength(columns.length() - 2);
@@ -168,7 +169,7 @@ public abstract class DataMigration {
     }
 
 
-    // Utility method to convert byte array to hexadecimal string
+    // Utility method to convert a byte array to hexadecimal string
     private static String bytesToHex(byte[] bytes) {
         StringBuilder hexString = new StringBuilder();
         for (byte b : bytes) {

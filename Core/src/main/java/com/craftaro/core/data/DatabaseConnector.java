@@ -5,7 +5,6 @@ import org.jooq.DSLContext;
 import java.sql.SQLException;
 
 public interface DatabaseConnector {
-
     /**
      * Checks if the connection to the database has been created
      *
@@ -35,5 +34,4 @@ public interface DatabaseConnector {
     interface ConnectionCallback {
         void accept(DSLContext ctx) throws SQLException;
     }
-
 }

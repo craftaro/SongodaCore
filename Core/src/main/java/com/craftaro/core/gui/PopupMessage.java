@@ -24,8 +24,8 @@ import java.util.UUID;
  * Calling this class on anything below 1.12 will cause ClassLoader Exceptions!
  */
 class PopupMessage {
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final HashSet<UUID> registeredMessages = new HashSet<>();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final HashSet<UUID> REGISTERED_MESSAGES = new HashSet<>();
 
     final UUID id = UUID.randomUUID();
     private final NamespacedKey key;
@@ -63,7 +63,7 @@ class PopupMessage {
             advDisplay.add("icon", displayIcon);
         }
 
-        advDisplay.add("title", gson.fromJson(ComponentSerializer.toString(this.title), JsonElement.class));
+        advDisplay.add("title", GSON.fromJson(ComponentSerializer.toString(this.title), JsonElement.class));
         advDisplay.addProperty("background", this.background.key);
         advDisplay.addProperty("description", "");
         advDisplay.addProperty("frame", this.frame.id);
@@ -84,7 +84,7 @@ class PopupMessage {
         }*/
         advCriteria.add("mentioned", advTrigger);
 
-        return gson.toJson(json);
+        return GSON.toJson(json);
     }
 
     protected void grant(final Player pl) {
@@ -110,8 +110,8 @@ class PopupMessage {
     }
 
     protected void add() {
-        if (!registeredMessages.contains(this.id)) {
-            registeredMessages.add(this.id);
+        if (!REGISTERED_MESSAGES.contains(this.id)) {
+            REGISTERED_MESSAGES.add(this.id);
 
             try {
                 Bukkit.getUnsafe().loadAdvancement(this.key, getJSON());
@@ -122,8 +122,8 @@ class PopupMessage {
     }
 
     protected void remove() {
-        if (registeredMessages.contains(this.id)) {
-            registeredMessages.remove(this.id);
+        if (REGISTERED_MESSAGES.contains(this.id)) {
+            REGISTERED_MESSAGES.remove(this.id);
             Bukkit.getUnsafe().removeAdvancement(this.key);
         }
     }

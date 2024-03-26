@@ -44,7 +44,7 @@ public class AnvilGui extends Gui {
     }
 
     protected void open() {
-        anvil.open();
+        this.anvil.open();
     }
 
     public AnvilGui setInput(ItemStack item) {
@@ -60,26 +60,26 @@ public class AnvilGui extends Gui {
     }
 
     public AnvilGui setOutputPrompt(String str) {
-        endPrompt = Arrays.asList(str);
+        this.endPrompt = Arrays.asList(str);
         return this;
     }
 
     public AnvilGui setOutputPrompt(String... str) {
-        endPrompt = Arrays.asList(str);
+        this.endPrompt = Arrays.asList(str);
         return this;
     }
 
     public AnvilGui setOutputPrompt(List<String> str) {
-        endPrompt = str;
+        this.endPrompt = str;
         return this;
     }
 
     void updateOutputPrompt() {
-        if (endPrompt != null) {
-            ItemStack in = cellItems.get(0);
+        if (this.endPrompt != null) {
+            ItemStack in = this.cellItems.get(0);
 
             if (in != null) {
-                setItem(2, GuiUtils.createButtonItem(in, endPrompt));
+                setItem(2, GuiUtils.createButtonItem(in, this.endPrompt));
             }
         }
     }
@@ -89,7 +89,7 @@ public class AnvilGui extends Gui {
     }
 
     public String getInputText() {
-        return anvil != null ? anvil.getRenameText() : null;
+        return this.anvil != null ? this.anvil.getRenameText() : null;
     }
 
     @NotNull
@@ -99,42 +99,40 @@ public class AnvilGui extends Gui {
 
         createInventory();
         ItemStack item;
-        if (cellItems.containsKey(0)) {
-            item = cellItems.get(0);
+        if (this.cellItems.containsKey(0)) {
+            item = this.cellItems.get(0);
 
-            inventory.setItem(0, item);
-        } else if (cellItems.containsKey(1)) {
-            item = cellItems.get(1);
+            this.inventory.setItem(0, item);
+        } else if (this.cellItems.containsKey(1)) {
+            item = this.cellItems.get(1);
 
-            inventory.setItem(1, item);
-        } else if (!acceptsItems) {
+            this.inventory.setItem(1, item);
+        } else if (!this.acceptsItems) {
             item = GuiUtils.createButtonItem(XMaterial.PAPER, " ", " ");
 
-            cellItems.put(0, item);
-            inventory.setItem(0, item);
+            this.cellItems.put(0, item);
+            this.inventory.setItem(0, item);
         }
 
-        if (cellItems.containsKey(2)) {
-            item = cellItems.get(2);
+        if (this.cellItems.containsKey(2)) {
+            item = this.cellItems.get(2);
 
-            inventory.setItem(2, item);
+            this.inventory.setItem(2, item);
         }
 
-        return inventory;
+        return this.inventory;
     }
 
     @Override
     protected void createInventory() {
         AnvilCore nms = Nms.getImplementations().getAnvil();
 
-        if (nms != null) {
-            anvil = nms.createAnvil(player, new GuiHolder(guiManager, this));
-            anvil.setCustomTitle(title);
-            anvil.setLevelCost(0);
+        this.anvil = nms.createAnvil(this.player, new GuiHolder(this.guiManager, this));
+        this.anvil.setCustomTitle(this.title);
+        this.anvil.setLevelCost(0);
 
-            inventory = anvil.getInventory();
+        this.inventory = this.anvil.getInventory();
 
-            anvil.setOnChange(this::updateOutputPrompt);
-        }
+        this.anvil.setOnChange(this::updateOutputPrompt);
     }
 }

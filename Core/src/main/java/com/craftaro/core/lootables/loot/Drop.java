@@ -22,7 +22,7 @@ public class Drop {
     }
 
     public String getCommand() {
-        return command;
+        return this.command;
     }
 
     public void setCommand(String command) {
@@ -30,7 +30,7 @@ public class Drop {
     }
 
     public int getXp() {
-        return xp;
+        return this.xp;
     }
 
     public void setXp(int xp) {
@@ -38,7 +38,7 @@ public class Drop {
     }
 
     public ItemStack getItemStack() {
-        return itemStack;
+        return this.itemStack;
     }
 
     public void setItemStack(ItemStack itemStack) {

@@ -71,7 +71,7 @@ public class DropUtils {
             List<StackedItem> stacks = new ArrayList<>();
             int maxSize = UltimateStackerApi.getSettings().getMaxItemStackSize() - 64;
             for (ItemStack item : items) {
-                StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).filter(stackedItem -> stackedItem.getAmount() < Integer.MAX_VALUE/2).findFirst().orElse(null);
+                StackedItem stack = stacks.stream().filter(stackedItem -> stackedItem.getItem().getType() == item.getType()).filter(stackedItem -> stackedItem.getAmount() < Integer.MAX_VALUE / 2).findFirst().orElse(null);
                 if (stack == null) {
                     stacks.add(new StackedItem(item, item.getAmount()));
                     continue;
@@ -136,14 +136,6 @@ public class DropUtils {
 
         public int getAmount() {
             return this.amount;
-        }
-
-        /**
-         * @deprecated Use {@link #setAmount(int)} instead.
-         */
-        @Deprecated
-        public void setamount(int amount) {
-            this.amount = amount;
         }
 
         public void setAmount(int amount) {

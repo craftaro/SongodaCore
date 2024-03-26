@@ -49,9 +49,10 @@ public class SQLiteConnector implements DatabaseConnector {
             }
         };
 
-        if (sqlThread)
+        if (sqlThread) {
             DatabaseManager.getInstance().execute(runnable);
-        else
+        } else {
             runnable.run();
+        }
     }
 }

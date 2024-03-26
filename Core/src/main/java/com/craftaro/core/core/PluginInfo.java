@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PluginInfo {
-    protected final JavaPlugin javaPlugin;
-    protected final int songodaId;
-    protected final String coreIcon;
-    protected final XMaterial icon;
-    protected final String coreLibraryVersion;
+    private final JavaPlugin javaPlugin;
+    private final int songodaId;
+    private final String coreIcon;
+    private final XMaterial icon;
+    private final String coreLibraryVersion;
 
     private final List<PluginInfoModule> modules = new ArrayList<>();
     private boolean hasUpdate = false;
@@ -34,17 +34,17 @@ public final class PluginInfo {
     }
 
     public String getLatestVersion() {
-        return latestVersion;
+        return this.latestVersion;
     }
 
     public void setLatestVersion(String latestVersion) {
         this.latestVersion = latestVersion;
 
-        hasUpdate = latestVersion != null && !latestVersion.isEmpty() && !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
+        this.hasUpdate = latestVersion != null && !latestVersion.isEmpty() && !this.javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
     }
 
     public String getNotification() {
-        return notification;
+        return this.notification;
     }
 
     public void setNotification(String notification) {
@@ -52,7 +52,7 @@ public final class PluginInfo {
     }
 
     public boolean hasUpdate() {
-        return hasUpdate;
+        return this.hasUpdate;
     }
 
     public void setHasUpdate(boolean hasUpdate) {
@@ -60,7 +60,7 @@ public final class PluginInfo {
     }
 
     public String getChangeLog() {
-        return changeLog;
+        return this.changeLog;
     }
 
     public void setChangeLog(String changeLog) {
@@ -68,7 +68,7 @@ public final class PluginInfo {
     }
 
     public String getMarketplaceLink() {
-        return marketplaceLink;
+        return this.marketplaceLink;
     }
 
     public void setMarketplaceLink(String marketplaceLink) {
@@ -76,7 +76,7 @@ public final class PluginInfo {
     }
 
     public JSONObject getJson() {
-        return json;
+        return this.json;
     }
 
     public void setJson(JSONObject json) {
@@ -84,29 +84,33 @@ public final class PluginInfo {
     }
 
     public PluginInfoModule addModule(PluginInfoModule module) {
-        modules.add(module);
+        this.modules.add(module);
 
         return module;
     }
 
     public List<PluginInfoModule> getModules() {
-        return Collections.unmodifiableList(modules);
+        return Collections.unmodifiableList(this.modules);
     }
 
     public JavaPlugin getJavaPlugin() {
-        return javaPlugin;
+        return this.javaPlugin;
     }
 
     public int getSongodaId() {
-        return songodaId;
+        return this.songodaId;
     }
 
     public String getCoreIcon() {
-        return coreIcon;
+        return this.coreIcon;
+    }
+
+    public XMaterial getIcon() {
+        return this.icon;
     }
 
     public String getCoreLibraryVersion() {
-        return coreLibraryVersion;
+        return this.coreLibraryVersion;
     }
 
     public int getDependencyVersion() {

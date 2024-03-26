@@ -28,7 +28,7 @@ public class DependencyLoader {
     private final ClassLoaderAccess parentClassLoaderAccess;
 
     public DependencyLoader(Plugin plugin) {
-        //Bind loaded dependencies to the plugin's parent class loader so classes could be accessed across plugins
+        // Bind loaded dependencies to the plugin's parent class loader so classes could be accessed across plugins
         ClassLoader parentClassLoader = plugin.getClass().getClassLoader().getParent();
         if (parentClassLoader instanceof URLClassLoader) {
             this.libraryLoader = new LibraryLoader(
@@ -38,7 +38,7 @@ public class DependencyLoader {
             );
             this.parentClassLoaderAccess = new ClassLoaderAccess((URLClassLoader) parentClassLoader);
         } else {
-            //We have AppClassLoader here
+            // We have AppClassLoader here
             this.libraryLoader = new LibraryLoader(
                     parentClassLoader,
                     new File(plugin.getDataFolder().getParentFile(), CraftaroCoreConstants.getProjectName() + "/dependencies/v" + DEPENDENCY_VERSION),
@@ -108,11 +108,11 @@ public class DependencyLoader {
         }
 
         try {
-            //Do not check path here, it uses the original non relocated paths. Use isJarLoaded instead
+            // Do not check the path here, it uses the original non-relocated paths. Use isJarLoaded instead
             this.libraryLoader.load(new LibraryLoader.Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getRepositoryUrl()), false);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             // Something went wrong
-            e.printStackTrace();
+            ex.printStackTrace();
         }
         SongodaCore.getLogger().info("----------------------------");
     }

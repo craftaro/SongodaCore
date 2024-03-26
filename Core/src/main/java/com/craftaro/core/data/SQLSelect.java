@@ -8,7 +8,6 @@ import org.jooq.SelectWhereStep;
 import org.jooq.impl.DSL;
 
 public class SQLSelect extends SQLBase {
-
     private Select<?> currentStep;
 
     public SQLSelect(DSLContext ctx) {
@@ -22,23 +21,23 @@ public class SQLSelect extends SQLBase {
 
     public SQLSelect select(String... fields) {
         if (fields.length > 0) {
-            currentStep = ctx.select(DSL.field(fields[0]));
+            this.currentStep = this.ctx.select(DSL.field(fields[0]));
             for (int i = 1; i < fields.length; i++) {
-                currentStep = ((SelectSelectStep<?>)currentStep).select(DSL.field(fields[i]));
+                this.currentStep = ((SelectSelectStep<?>) this.currentStep).select(DSL.field(fields[i]));
             }
         } else {
-            currentStep = ctx.select();
+            this.currentStep = this.ctx.select();
         }
         return this;
     }
 
     public SQLSelect from(String table) {
-        currentStep = ((SelectSelectStep<?>)currentStep).from(DSL.table(table));
+        this.currentStep = ((SelectSelectStep<?>) this.currentStep).from(DSL.table(table));
         return this;
     }
 
     public void from(String table, SQLResult.SQLResultI result) {
-        Result<?> resultData = ((SelectSelectStep<?>)currentStep).from(DSL.table(table)).fetch();
+        Result<?> resultData = ((SelectSelectStep<?>) this.currentStep).from(DSL.table(table)).fetch();
         SQLResult rs = new SQLResult(resultData);
         for (SQLResult.StoredRecord record : rs.getResults()) {
             result.forEach(record);
@@ -46,12 +45,12 @@ public class SQLSelect extends SQLBase {
     }
 
     public SQLWhere where(String id, Object value) {
-        currentStep = ((SelectWhereStep<?>)currentStep).where(DSL.field(id).eq(value));
-        return new SQLWhere(ctx, currentStep);
+        this.currentStep = ((SelectWhereStep<?>) this.currentStep).where(DSL.field(id).eq(value));
+        return new SQLWhere(this.ctx, this.currentStep);
     }
 
     public SQLWhere whereBetween(String id, Object value1, Object value2) {
-        currentStep = ((SelectWhereStep<?>)currentStep).where(DSL.field(id).between(value1, value2));
-        return new SQLWhere(ctx, currentStep);
+        this.currentStep = ((SelectWhereStep<?>) this.currentStep).where(DSL.field(id).between(value1, value2));
+        return new SQLWhere(this.ctx, this.currentStep);
     }
 }

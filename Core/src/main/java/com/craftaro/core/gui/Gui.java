@@ -896,7 +896,7 @@ public class Gui {
         }
 
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8) && title.length() > 32) {
-            return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);
+            return title.charAt(30) == '§' ? title.substring(0, 30) : title.substring(0, 31);
         }
 
         return title;
@@ -932,7 +932,7 @@ public class Gui {
         return true;
     }
 
-    protected boolean onClickPlayerInventory(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory openInv, @NotNull InventoryClickEvent event) {
+    protected boolean onClickPlayerInventory(@NotNull GuiManager manager, @NotNull Player player, @NotNull Inventory openInv, InventoryClickEvent event) {
         // no events for this yet
         return false;
     }

@@ -12,12 +12,12 @@ public class GuiLoreEditor extends AbstractGuiListEditor {
 
     @Override
     protected List<String> getData() {
-        return loot.getLore();
+        return this.loot.getLore();
     }
 
     @Override
     protected void updateData(List<String> list) {
-        loot.setLore(list);
+        this.loot.setLore(list);
     }
 
     @Override

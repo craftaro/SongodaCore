@@ -59,19 +59,19 @@ public class ConfigEditorGui extends SimplePagedGui {
         if (!(parent instanceof ConfigEditorGui)) {
             setOnClose((gui) -> save());
         } else {
-            setOnClose((gui) -> ((ConfigEditorGui) parent).edits |= edits);
+            setOnClose((gui) -> ((ConfigEditorGui) parent).edits |= this.edits);
         }
 
         // if we have a ConfigSection, we can also grab comments
         try {
-            configSection_getCommentString = node.getClass().getDeclaredMethod("getCommentString", String.class);
+            this.configSection_getCommentString = node.getClass().getDeclaredMethod("getCommentString", String.class);
         } catch (Exception ignore) {
         }
 
         // decorate header
         this.setTitle(ChatColor.DARK_BLUE + file);
         this.setUseHeader(true);
-        headerBackItem = footerBackItem = GuiUtils.getBorderItem(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
+        this.headerBackItem = this.footerBackItem = GuiUtils.getBorderItem(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
         final String path = node.getCurrentPath();
         this.setItem(4, configItem(XMaterial.FILLED_MAP, !path.isEmpty() ? path : file, config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
         this.setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
@@ -79,22 +79,22 @@ public class ConfigEditorGui extends SimplePagedGui {
         // compile list of settings
         for (String key : node.getKeys(false)) {
             if (node.isConfigurationSection(key)) {
-                sections.add(key);
+                this.sections.add(key);
                 continue;
             }
 
-            settings.add(key);
+            this.settings.add(key);
         }
 
         // next we need to display the config settings
         int index = 9;
-        for (final String sectionKey : sections) {
+        for (final String sectionKey : this.sections) {
             setButton(index++, configItem(XMaterial.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "Click to open this section"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(sectionKey))));
         }
 
         // now display individual settings
-        for (final String settingKey : settings) {
+        for (final String settingKey : this.settings) {
             final Object val = node.get(settingKey);
             if (val == null) {
                 continue;
@@ -130,7 +130,7 @@ public class ConfigEditorGui extends SimplePagedGui {
                         (event) -> {
                             SimplePagedGui paged = new SimplePagedGui(this);
                             paged.setTitle(ChatColor.BLUE + settingKey);
-                            paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
+                            paged.setHeaderBackItem(this.headerBackItem).setFooterBackItem(this.footerBackItem).setDefaultItem(this.blankItem);
                             paged.setItem(4, configItem(XMaterial.FILLED_MAP, settingKey, node, settingKey, "Choose an item to change this value to"));
                             int i = 9;
                             for (XMaterial mat : getAllValidMaterials()) {
@@ -179,18 +179,18 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     public ConfigurationSection getCurrentNode() {
-        return node;
+        return this.node;
     }
 
     protected void updateValue(int clickCell, String path) {
-        ItemStack item = inventory.getItem(clickCell);
+        ItemStack item = this.inventory.getItem(clickCell);
 
         if (item == null || item == AIR) {
             return;
         }
 
         ItemMeta meta = item.getItemMeta();
-        Object val = node.get(path);
+        Object val = this.node.get(path);
 
         if (meta != null && val != null) {
             String valStr;
@@ -212,17 +212,17 @@ public class ConfigEditorGui extends SimplePagedGui {
             setItem(clickCell, item);
         }
 
-        edits = true;
+        this.edits = true;
     }
 
     void toggle(int clickCell, String path) {
-        boolean val = !node.getBoolean(path);
-        node.set(path, val);
+        boolean val = !this.node.getBoolean(path);
+        this.node.set(path, val);
 
         if (val) {
-            setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
+            setItem(clickCell, ItemUtils.addGlow(this.inventory.getItem(clickCell)));
         } else {
-            setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
+            setItem(clickCell, ItemUtils.removeGlow(this.inventory.getItem(clickCell)));
         }
 
         updateValue(clickCell, path);
@@ -230,12 +230,12 @@ public class ConfigEditorGui extends SimplePagedGui {
 
     boolean setNumber(int clickCell, String path, String input) {
         try {
-            if (node.isInt(path)) {
-                node.set(path, Integer.parseInt(input));
-            } else if (node.isDouble(path)) {
-                node.set(path, Double.parseDouble(input));
-            } else if (node.isLong(path)) {
-                node.set(path, Long.parseLong(input));
+            if (this.node.isInt(path)) {
+                this.node.set(path, Integer.parseInt(input));
+            } else if (this.node.isDouble(path)) {
+                this.node.set(path, Double.parseDouble(input));
+            } else if (this.node.isLong(path)) {
+                this.node.set(path, Long.parseLong(input));
             }
 
             updateValue(clickCell, path);
@@ -250,42 +250,42 @@ public class ConfigEditorGui extends SimplePagedGui {
         Optional<XMaterial> mat = CompatibleMaterial.getMaterial(item.getType());
 
         if (!mat.isPresent()) {
-            node.set(path, XMaterial.STONE.name());
+            this.node.set(path, XMaterial.STONE.name());
         } else {
-            node.set(path, mat.get().name());
+            this.node.set(path, mat.get().name());
         }
 
         updateValue(clickCell, path);
     }
 
     void setList(int clickCell, String path, List<String> list) {
-        node.set(path, list);
+        this.node.set(path, list);
         updateValue(clickCell, path);
     }
 
     void save() {
-        if (!edits) {
+        if (!this.edits) {
             return;
         }
 
         // could also check and call saveChanges()
-        if (config instanceof FileConfiguration) {
+        if (this.config instanceof FileConfiguration) {
             try {
-                ((FileConfiguration) config).save(new File(plugin.getDataFolder(), file));
+                ((FileConfiguration) this.config).save(new File(this.plugin.getDataFolder(), this.file));
             } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, "Failed to save config changes to " + file, ex);
+                this.plugin.getLogger().log(Level.SEVERE, "Failed to save config changes to " + this.file, ex);
                 return;
             }
-        } else if (config instanceof Config) {
-            ((Config) config).save();
+        } else if (this.config instanceof Config) {
+            ((Config) this.config).save();
         } else {
-            player.sendMessage(ChatColor.RED + "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
-            plugin.getLogger().log(Level.WARNING, "Unknown configuration type '" + config.getClass().getName() + "' - Please report this error!");
+            this.player.sendMessage(ChatColor.RED + "Unknown configuration type '" + this.config.getClass().getName() + "' - Please report this error!");
+            this.plugin.getLogger().log(Level.WARNING, "Unknown configuration type '" + this.config.getClass().getName() + "' - Please report this error!");
             return;
         }
 
-        plugin.reloadConfig();
-        player.sendMessage(ChatColor.GREEN + "Config " + file + " saved!");
+        this.plugin.reloadConfig();
+        this.player.sendMessage(ChatColor.GREEN + "Config " + this.file + " saved!");
     }
 
     private boolean isNumber(Object value) {
@@ -307,9 +307,9 @@ public class ConfigEditorGui extends SimplePagedGui {
     protected ItemStack configItem(XMaterial type, String name, ConfigurationSection node, String path, String def) {
         String[] info = null;
 
-        if (configSection_getCommentString != null) {
+        if (this.configSection_getCommentString != null) {
             try {
-                Object comment = configSection_getCommentString.invoke(node, path);
+                Object comment = this.configSection_getCommentString.invoke(node, path);
 
                 if (comment != null) {
                     info = comment.toString().split("\n");
@@ -328,9 +328,9 @@ public class ConfigEditorGui extends SimplePagedGui {
 
         String[] info = null;
 
-        if (configSection_getCommentString != null) {
+        if (this.configSection_getCommentString != null) {
             try {
-                Object comment = configSection_getCommentString.invoke(node, path);
+                Object comment = this.configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
                     info = (value + "\n" + comment).split("\n");
                 }

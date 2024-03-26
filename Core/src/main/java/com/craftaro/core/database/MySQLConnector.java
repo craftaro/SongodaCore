@@ -73,7 +73,7 @@ public class MySQLConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(connection);
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();
@@ -81,7 +81,7 @@ public class MySQLConnector implements DatabaseConnector {
 
     @Override
     public void connectDSL(DSLContextCallback callback) {
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
             this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
@@ -94,7 +94,7 @@ public class MySQLConnector implements DatabaseConnector {
         try (Connection connection = getConnection()) {
             return callback.accept(DSL.using(connection, SQLDialect.MYSQL));
         } catch (Exception ex) {
-            SongodaCore.getInstance().getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+            SongodaCore.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
             ex.printStackTrace();
         }
         return OptionalResult.empty();

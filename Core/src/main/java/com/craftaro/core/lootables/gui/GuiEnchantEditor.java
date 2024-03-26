@@ -31,19 +31,19 @@ public class GuiEnchantEditor extends Gui {
     }
 
     public void paint() {
-        Map<String, Integer> lore = loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(loot.getEnchants());
+        Map<String, Integer> lore = this.loot.getEnchants() == null ? new HashMap<>() : new HashMap<>(this.loot.getEnchants());
 
         setButton(2, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
+                    this.guiManager.showGUI(event.player, this.returnGui);
+                    ((GuiLootEditor) this.returnGui).paint();
                 });
         setButton(6, GuiUtils.createButtonItem(XMaterial.OAK_FENCE_GATE,
                         TextUtils.formatText("&cBack")),
                 (event) -> {
-                    guiManager.showGUI(event.player, returnGui);
-                    ((GuiLootEditor) returnGui).paint();
+                    this.guiManager.showGUI(event.player, this.returnGui);
+                    ((GuiLootEditor) this.returnGui).paint();
                 });
         setButton(3, GuiUtils.createButtonItem(XMaterial.ARROW,
                         TextUtils.formatText("&aAdd new line")),
@@ -59,16 +59,16 @@ public class GuiEnchantEditor extends Gui {
                         AnvilGui gui1 = new AnvilGui(event.player, this);
                         gui1.setAction((ee -> {
                             lore.put(gui.getInputText().toUpperCase().trim(), Integer.parseInt(gui1.getInputText().trim()));
-                            loot.setEnchants(lore);
+                            this.loot.setEnchants(lore);
                             ee.player.closeInventory();
                             paint();
                         }));
                         gui1.setTitle("Enter a level");
-                        guiManager.showGUI(event.player, gui1);
+                        this.guiManager.showGUI(event.player, gui1);
                     }));
 
                     gui.setTitle("Enter an enchant");
-                    guiManager.showGUI(event.player, gui);
+                    this.guiManager.showGUI(event.player, gui);
                 }));
 
         List<String> enchantments = new ArrayList<>();
@@ -93,7 +93,7 @@ public class GuiEnchantEditor extends Gui {
                         TextUtils.formatText("&cRemove the last line")),
                 (event -> {
                     lore.remove(lastFinal);
-                    loot.setEnchants(lore);
+                    this.loot.setEnchants(lore);
                     paint();
                 }));
     }

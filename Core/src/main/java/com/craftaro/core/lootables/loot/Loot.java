@@ -97,7 +97,7 @@ public class Loot {
     private boolean requireCharged = false;
 
     public XMaterial getMaterial() {
-        return material;
+        return this.material;
     }
 
     public void setMaterial(XMaterial material) {
@@ -105,7 +105,7 @@ public class Loot {
     }
 
     public String getCommand() {
-        return command;
+        return this.command;
     }
 
     public void setCommand(String command) {
@@ -113,7 +113,7 @@ public class Loot {
     }
 
     public int getXp() {
-        return xp;
+        return this.xp;
     }
 
     public void setXp(int xp) {
@@ -121,7 +121,7 @@ public class Loot {
     }
 
     public String getName() {
-        return TextUtils.formatText(name);
+        return TextUtils.formatText(this.name);
     }
 
     public void setName(String name) {
@@ -129,7 +129,7 @@ public class Loot {
     }
 
     public List<String> getLore() {
-        if (lore == null) {
+        if (this.lore == null) {
             return null;
         }
 
@@ -147,12 +147,12 @@ public class Loot {
     }
 
     public ItemStack getEnchants(ItemStack item) {
-        if (enchants == null) {
+        if (this.enchants == null) {
             return null;
         }
 
-        //Create enchantment book
-        if (item.getType().equals(Material.ENCHANTED_BOOK)) {
+        // Create enchantment book
+        if (item.getType() == Material.ENCHANTED_BOOK) {
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
             for (Map.Entry<String, Integer> entry : this.enchants.entrySet()) {
                 if (entry.getValue() == null) continue;
@@ -172,7 +172,9 @@ public class Loot {
 
         Map<Enchantment, Integer> enchants = new HashMap<>();
         for (Map.Entry<String, Integer> entry : this.enchants.entrySet()) {
-            if (entry.getValue() == null) continue;
+            if (entry.getValue() == null) {
+                continue;
+            }
 
             if (entry.getKey().equalsIgnoreCase("RANDOM")) {
                 item = ItemUtils.applyRandomEnchants(item, entry.getValue());
@@ -197,11 +199,11 @@ public class Loot {
     }
 
     public Map<String, Integer> getEnchants() {
-        return enchants == null ? null : Collections.unmodifiableMap(enchants);
+        return this.enchants == null ? null : Collections.unmodifiableMap(this.enchants);
     }
 
     public XMaterial getBurnedMaterial() {
-        return burnedMaterial;
+        return this.burnedMaterial;
     }
 
     public void setBurnedMaterial(XMaterial burnedMaterial) {
@@ -209,7 +211,7 @@ public class Loot {
     }
 
     public double getChance() {
-        return chance;
+        return this.chance;
     }
 
     public void setChance(double chance) {
@@ -219,28 +221,25 @@ public class Loot {
     public boolean runChance(int looting, ItemStack murderWeapon) {
         double chance = this.chance;
 
-        if (enchantChances != null && murderWeapon != null && enchants != null) {
+        if (this.enchantChances != null && murderWeapon != null && this.enchants != null) {
             for (Map.Entry<Enchantment, Integer> entry : murderWeapon.getEnchantments().entrySet()) {
                 String key = entry.getKey().getName() + ":" + entry.getValue();
 
-                if (!enchants.containsKey(key)) {
+                if (!this.enchants.containsKey(key)) {
                     continue;
                 }
 
-                double ch = enchantChances.get(key);
-
-                if (ch > chance) {
-                    chance = enchantChances.get(key);
+                if (this.enchantChances.get(key) > chance) {
+                    chance = this.enchantChances.get(key);
                 }
             }
         }
 
-        return (Math.random() * 100) - (chance + (lootingIncrease == null ? 1
-                : lootingIncrease * looting)) < 0 || chance == 100;
+        return (Math.random() * 100) - (chance + (this.lootingIncrease == null ? 1 : this.lootingIncrease * looting)) < 0 || chance == 100;
     }
 
     public int getMin() {
-        return min;
+        return this.min;
     }
 
     public void setMin(int min) {
@@ -248,7 +247,7 @@ public class Loot {
     }
 
     public int getMax() {
-        return max;
+        return this.max;
     }
 
     public void setMax(int max) {
@@ -256,7 +255,7 @@ public class Loot {
     }
 
     public int getDamageMax() {
-        return damageMax == null ? 0 : damageMax;
+        return this.damageMax == null ? 0 : this.damageMax;
     }
 
     public void setDamageMax(int damageMax) {
@@ -264,7 +263,7 @@ public class Loot {
     }
 
     public int getDamageMin() {
-        return damageMin == null ? 0 : damageMin;
+        return this.damageMin == null ? 0 : this.damageMin;
     }
 
     public void setDamageMin(int damageMin) {
@@ -272,15 +271,15 @@ public class Loot {
     }
 
     public int getAmountToDrop(int looting) {
-        return min == max ? (max + getLooting(looting)) : new Random().nextInt((max + getLooting(looting)) - min + 1) + min;
+        return this.min == this.max ? (this.max + getLooting(looting)) : new Random().nextInt((this.max + getLooting(looting)) - this.min + 1) + this.min;
     }
 
     public int getLooting(int looting) {
-        return allowLootingEnchant ? looting : 0;
+        return this.allowLootingEnchant ? looting : 0;
     }
 
     public boolean isAllowLootingEnchant() {
-        return allowLootingEnchant;
+        return this.allowLootingEnchant;
     }
 
     public void setAllowLootingEnchant(boolean allowLootingEnchant) {
@@ -295,7 +294,7 @@ public class Loot {
         this.childDropCountMin = 1;
         this.childDropCountMax = 1;
 
-        if (childLoot == null) {
+        if (this.childLoot == null) {
             this.childLoot = new ArrayList<>();
         }
 
@@ -303,7 +302,7 @@ public class Loot {
     }
 
     public void removeChildLoot(Loot loot) {
-        if (childLoot == null) {
+        if (this.childLoot == null) {
             return;
         }
 
@@ -311,11 +310,11 @@ public class Loot {
     }
 
     public List<Loot> getChildLoot() {
-        return childLoot == null ? new ArrayList<>() : new ArrayList<>(childLoot);
+        return this.childLoot == null ? new ArrayList<>() : new ArrayList<>(this.childLoot);
     }
 
     public List<EntityType> getOnlyDropFor() {
-        return onlyDropFor == null ? new ArrayList<>() : new ArrayList<>(onlyDropFor);
+        return this.onlyDropFor == null ? new ArrayList<>() : new ArrayList<>(this.onlyDropFor);
     }
 
     public void addOnlyDropFor(EntityType... types) {
@@ -336,23 +335,23 @@ public class Loot {
     }
 
     public Integer getChildDropCountMin() {
-        return childDropCountMin;
+        return this.childDropCountMin;
     }
 
     public Integer getChildDropCountMax() {
-        return childDropCountMax;
+        return this.childDropCountMax;
     }
 
     public int getChildDropCount() {
-        if (childDropCountMin == null || childDropCountMax == null) {
+        if (this.childDropCountMin == null || this.childDropCountMax == null) {
             return 0;
         }
 
-        return new Random().nextInt(childDropCountMax - childDropCountMin + 1) + childDropCountMin;
+        return new Random().nextInt(this.childDropCountMax - this.childDropCountMin + 1) + this.childDropCountMin;
     }
 
     public boolean isRequireCharged() {
-        return requireCharged;
+        return this.requireCharged;
     }
 
     public void setRequireCharged(boolean requireCharged) {

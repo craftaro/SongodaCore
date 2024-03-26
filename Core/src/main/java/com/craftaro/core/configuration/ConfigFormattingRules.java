@@ -32,7 +32,7 @@ public class ConfigFormattingRules {
          * #|_________|# <br />
          * ############# <br />
          */
-        BLOCKSPACED(true, true, "|\u00AF", '\u00AF', "\u00AF|", "| ", " |", "|_", '_', "_|");
+        BLOCKSPACED(true, true, "|¯", '¯', "¯|", "| ", " |", "|_", '_', "_|");
 
         final boolean drawBorder, drawSpace;
         final String commentPrefix, spacePrefixTop, spacePrefixBottom;

@@ -3,16 +3,15 @@ package com.craftaro.core.data.lazy;
 import java.util.function.Supplier;
 
 public class Lazy<T> {
-
     private Supplier<T> supplier = null;
     private T value = null;
 
     public synchronized T get() {
-        if (value == null && supplier != null) {
-            value = supplier.get();
-            supplier = null;
+        if (this.value == null && this.supplier != null) {
+            this.value = this.supplier.get();
+            this.supplier = null;
         }
-        return value;
+        return this.value;
     }
 
     public synchronized T getOrDefault(T def) {
@@ -21,7 +20,7 @@ public class Lazy<T> {
     }
 
     public synchronized Lazy<T> reset() {
-        value = null;
+        this.value = null;
         return this;
     }
 
@@ -36,7 +35,7 @@ public class Lazy<T> {
     }
 
     public synchronized boolean isLoaded() {
-        return supplier != null;
+        return this.supplier != null;
     }
 
     @Override

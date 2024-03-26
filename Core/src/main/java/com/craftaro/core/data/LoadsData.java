@@ -3,8 +3,6 @@ package com.craftaro.core.data;
 import org.jooq.DSLContext;
 
 public interface LoadsData {
-
-
     default void loadData() {
         DatabaseManager.getInstance().getDatabaseConnector().connect(false, ctx -> {
             setupTables(ctx);
@@ -15,5 +13,4 @@ public interface LoadsData {
     void loadDataImpl(DSLContext ctx);
 
     void setupTables(DSLContext ctx);
-
 }

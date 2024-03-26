@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class ChatPrompt implements Listener {
-    private static final List<UUID> registered = new ArrayList<>();
+    private static final List<UUID> REGISTERED = new ArrayList<>();
 
     private final Plugin plugin;
     private final ChatConfirmHandler handler;
@@ -25,19 +25,19 @@ public class ChatPrompt implements Listener {
     private OnCancel onCancel = null;
     private Listener listener;
 
-    private ChatPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
+    private ChatPrompt(Plugin plugin, Player player, ChatConfirmHandler handler) {
         this.plugin = plugin;
-        this.handler = hander;
+        this.handler = handler;
 
-        registered.add(player.getUniqueId());
+        REGISTERED.add(player.getUniqueId());
     }
 
-    public static ChatPrompt showPrompt(Plugin plugin, Player player, ChatConfirmHandler hander) {
-        return showPrompt(plugin, player, null, hander);
+    public static ChatPrompt showPrompt(Plugin plugin, Player player, ChatConfirmHandler handler) {
+        return showPrompt(plugin, player, null, handler);
     }
 
-    public static ChatPrompt showPrompt(Plugin plugin, Player player, String message, ChatConfirmHandler hander) {
-        ChatPrompt prompt = new ChatPrompt(plugin, player, hander);
+    public static ChatPrompt showPrompt(Plugin plugin, Player player, String message, ChatConfirmHandler handler) {
+        ChatPrompt prompt = new ChatPrompt(plugin, player, handler);
         prompt.startListener(plugin);
         player.closeInventory();
 
@@ -49,11 +49,11 @@ public class ChatPrompt implements Listener {
     }
 
     public static boolean isRegistered(Player player) {
-        return registered.contains(player.getUniqueId());
+        return REGISTERED.contains(player.getUniqueId());
     }
 
     public static boolean unregister(Player player) {
-        return registered.remove(player.getUniqueId());
+        return REGISTERED.remove(player.getUniqueId());
     }
 
     public ChatPrompt setOnClose(OnClose onClose) {
@@ -67,13 +67,13 @@ public class ChatPrompt implements Listener {
     }
 
     public ChatPrompt setTimeOut(Player player, long ticks) {
-        taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            if (onClose != null) {
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                        onClose.onClose(), 0L);
+        this.taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> {
+            if (this.onClose != null) {
+                this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, () ->
+                        this.onClose.onClose(), 0L);
             }
 
-            HandlerList.unregisterAll(listener);
+            HandlerList.unregisterAll(this.listener);
             player.sendMessage("Your action has timed out.");
         }, ticks);
 
@@ -95,20 +95,20 @@ public class ChatPrompt implements Listener {
 
                 ChatConfirmEvent chatConfirmEvent = new ChatConfirmEvent(player, event.getMessage());
 
-                player.sendMessage("\u00BB " + event.getMessage());
+                player.sendMessage("» " + event.getMessage());
 
                 try {
-                    handler.onChat(chatConfirmEvent);
+                    ChatPrompt.this.handler.onChat(chatConfirmEvent);
                 } catch (Throwable t) {
                     plugin.getLogger().log(Level.SEVERE, "Failed to process chat prompt", t);
                 }
 
-                if (onClose != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onClose.onClose(), 0L);
+                if (ChatPrompt.this.onClose != null) {
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> ChatPrompt.this.onClose.onClose(), 0L);
                 }
 
-                HandlerList.unregisterAll(listener);
-                Bukkit.getScheduler().cancelTask(taskId);
+                HandlerList.unregisterAll(ChatPrompt.this.listener);
+                Bukkit.getScheduler().cancelTask(ChatPrompt.this.taskId);
             }
 
             @EventHandler(priority = EventPriority.LOWEST)
@@ -125,18 +125,18 @@ public class ChatPrompt implements Listener {
                     event.setCancelled(true);
                 }
 
-                if (onCancel != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onCancel.onCancel(), 0L);
-                } else if (onClose != null) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> onClose.onClose(), 0L);
+                if (ChatPrompt.this.onCancel != null) {
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> ChatPrompt.this.onCancel.onCancel(), 0L);
+                } else if (ChatPrompt.this.onClose != null) {
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> ChatPrompt.this.onClose.onClose(), 0L);
                 }
 
-                HandlerList.unregisterAll(listener);
-                Bukkit.getScheduler().cancelTask(taskId);
+                HandlerList.unregisterAll(ChatPrompt.this.listener);
+                Bukkit.getScheduler().cancelTask(ChatPrompt.this.taskId);
             }
         };
 
-        Bukkit.getPluginManager().registerEvents(listener, plugin);
+        Bukkit.getPluginManager().registerEvents(this.listener, plugin);
     }
 
     public interface ChatConfirmHandler {
@@ -161,11 +161,11 @@ public class ChatPrompt implements Listener {
         }
 
         public Player getPlayer() {
-            return player;
+            return this.player;
         }
 
         public String getMessage() {
-            return message;
+            return this.message;
         }
     }
 }

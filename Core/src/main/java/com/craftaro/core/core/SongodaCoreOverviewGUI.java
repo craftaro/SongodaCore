@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.ClickType;
 import java.util.List;
 
 final class SongodaCoreOverviewGUI extends Gui {
-    protected SongodaCoreOverviewGUI() {
+    SongodaCoreOverviewGUI() {
         List<PluginInfo> plugins = SongodaCore.getPlugins();
         // could do pages, too, but don't think we'll have that many at a time for a while
         int max = (int) Math.ceil(plugins.size() / 9.);
@@ -20,11 +20,11 @@ final class SongodaCoreOverviewGUI extends Gui {
 
         // TODO: this could use some decorating
 
-        for (int i = 0; i < plugins.size(); i++) {
+        for (int i = 0; i < plugins.size(); ++i) {
             final PluginInfo plugin = plugins.get(i);
 
             if (plugin.hasUpdate()) {
-                setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : XMaterial.STONE,
+                setButton(i, GuiUtils.createButtonItem(plugin.getIcon() != null ? plugin.getIcon() : XMaterial.STONE,
                                 ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                                 ChatColor.GRAY + "Latest Version: " + plugin.getLatestVersion(),
                                 ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
@@ -42,7 +42,7 @@ final class SongodaCoreOverviewGUI extends Gui {
                 continue;
             }
 
-            setButton(i, GuiUtils.createButtonItem(plugin.icon != null ? plugin.icon : XMaterial.STONE,
+            setButton(i, GuiUtils.createButtonItem(plugin.getIcon() != null ? plugin.getIcon() : XMaterial.STONE,
                             ChatColor.GOLD + plugin.getJavaPlugin().getName(),
                             ChatColor.GRAY + "Installed Version: " + plugin.getJavaPlugin().getDescription().getVersion(),
                             "",

@@ -24,7 +24,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
 
         this.current = current;
         this.blankItem = current.getDefaultItem();
-        headerBackItem = footerBackItem = current.getHeaderBackItem();
+        this.headerBackItem = this.footerBackItem = current.getHeaderBackItem();
         setTitle(ChatColor.DARK_BLUE + "String List Editor");
         this.setUseHeader(true);
         this.setItem(4, current.configItem(XMaterial.FILLED_MAP, key, current.getCurrentNode(), key, null));
@@ -33,14 +33,14 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
 
         this.setButton(8, GuiUtils.createButtonItem(XMaterial.LAVA_BUCKET, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
         this.setButton(0, GuiUtils.createButtonItem(XMaterial.REDSTONE, ChatColor.GREEN + "Save"), (event) -> {
-            saveChanges = true;
+            this.saveChanges = true;
             event.player.closeInventory();
         });
         this.setButton(1, GuiUtils.createButtonItem(XMaterial.CHEST, ChatColor.BLUE + "Add Item"),
                 (event) -> {
                     event.gui.exit();
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a new value to add:", response -> {
-                                values.add(response.getMessage().trim());
+                                this.values.add(response.getMessage().trim());
                                 redraw();
                             })
                             .setOnClose(() -> event.manager.showGUI(event.player, this))
@@ -54,24 +54,24 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
     }
 
     void redraw() {
-        page = 1;
+        this.page = 1;
 
         // clear old display
-        if (inventory != null) {
-            for (Integer i : cellItems.keySet().toArray(new Integer[0])) {
+        if (this.inventory != null) {
+            for (Integer i : this.cellItems.keySet().toArray(new Integer[0])) {
                 if (i > 8) {
-                    cellItems.remove(i);
-                    conditionalButtons.remove(i);
+                    this.cellItems.remove(i);
+                    this.conditionalButtons.remove(i);
                 }
             }
         }
 
         // update items
         int i = 9;
-        for (String item : values) {
+        for (String item : this.values) {
             final int index = i - 9;
             setButton(i++, GuiUtils.createButtonItem(XMaterial.PAPER, item, "Right-click to remove"), ClickType.RIGHT, (event) -> {
-                values.remove(index);
+                this.values.remove(index);
                 redraw();
             });
         }

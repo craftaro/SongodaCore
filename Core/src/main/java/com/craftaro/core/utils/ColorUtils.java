@@ -7,25 +7,25 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ColorUtils {
-    private static final Map<ColorCode, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
+    private static final Map<ColorCode, ColorSet<Integer, Integer, Integer>> COLOR_MAP = new HashMap<>();
 
     static {
-        colorMap.put(ColorCode.BLACK, new ColorSet<>(0, 0, 0));
-        colorMap.put(ColorCode.DARK_BLUE, new ColorSet<>(0, 0, 170));
-        colorMap.put(ColorCode.DARK_GREEN, new ColorSet<>(0, 170, 0));
-        colorMap.put(ColorCode.DARK_AQUA, new ColorSet<>(0, 170, 170));
-        colorMap.put(ColorCode.DARK_RED, new ColorSet<>(170, 0, 0));
-        colorMap.put(ColorCode.DARK_PURPLE, new ColorSet<>(170, 0, 170));
-        colorMap.put(ColorCode.GOLD, new ColorSet<>(255, 170, 0));
-        colorMap.put(ColorCode.GRAY, new ColorSet<>(170, 170, 170));
-        colorMap.put(ColorCode.DARK_GRAY, new ColorSet<>(85, 85, 85));
-        colorMap.put(ColorCode.BLUE, new ColorSet<>(85, 85, 255));
-        colorMap.put(ColorCode.GREEN, new ColorSet<>(85, 255, 85));
-        colorMap.put(ColorCode.AQUA, new ColorSet<>(85, 255, 255));
-        colorMap.put(ColorCode.RED, new ColorSet<>(255, 85, 85));
-        colorMap.put(ColorCode.LIGHT_PURPLE, new ColorSet<>(255, 85, 255));
-        colorMap.put(ColorCode.YELLOW, new ColorSet<>(255, 255, 85));
-        colorMap.put(ColorCode.WHITE, new ColorSet<>(255, 255, 255));
+        COLOR_MAP.put(ColorCode.BLACK, new ColorSet<>(0, 0, 0));
+        COLOR_MAP.put(ColorCode.DARK_BLUE, new ColorSet<>(0, 0, 170));
+        COLOR_MAP.put(ColorCode.DARK_GREEN, new ColorSet<>(0, 170, 0));
+        COLOR_MAP.put(ColorCode.DARK_AQUA, new ColorSet<>(0, 170, 170));
+        COLOR_MAP.put(ColorCode.DARK_RED, new ColorSet<>(170, 0, 0));
+        COLOR_MAP.put(ColorCode.DARK_PURPLE, new ColorSet<>(170, 0, 170));
+        COLOR_MAP.put(ColorCode.GOLD, new ColorSet<>(255, 170, 0));
+        COLOR_MAP.put(ColorCode.GRAY, new ColorSet<>(170, 170, 170));
+        COLOR_MAP.put(ColorCode.DARK_GRAY, new ColorSet<>(85, 85, 85));
+        COLOR_MAP.put(ColorCode.BLUE, new ColorSet<>(85, 85, 255));
+        COLOR_MAP.put(ColorCode.GREEN, new ColorSet<>(85, 255, 85));
+        COLOR_MAP.put(ColorCode.AQUA, new ColorSet<>(85, 255, 255));
+        COLOR_MAP.put(ColorCode.RED, new ColorSet<>(255, 85, 85));
+        COLOR_MAP.put(ColorCode.LIGHT_PURPLE, new ColorSet<>(255, 85, 255));
+        COLOR_MAP.put(ColorCode.YELLOW, new ColorSet<>(255, 255, 85));
+        COLOR_MAP.put(ColorCode.WHITE, new ColorSet<>(255, 255, 255));
     }
 
     private static class ColorSet<R, G, B> {
@@ -54,7 +54,7 @@ public class ColorUtils {
 
     public static ColorCode fromRGB(int r, int g, int b) {
         TreeMap<Integer, ColorCode> closest = new TreeMap<>();
-        colorMap.forEach((color, set) -> {
+        COLOR_MAP.forEach((color, set) -> {
             int red = Math.abs(r - set.getRed());
             int green = Math.abs(g - set.getGreen());
             int blue = Math.abs(b - set.getBlue());
