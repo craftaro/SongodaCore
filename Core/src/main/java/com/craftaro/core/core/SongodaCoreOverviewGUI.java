@@ -16,7 +16,7 @@ final class SongodaCoreOverviewGUI extends Gui {
         // could do pages, too, but don't think we'll have that many at a time for a while
         int max = (int) Math.ceil(plugins.size() / 9.);
         setRows(max);
-        setTitle("Craftaro Plugins");
+        setTitle("Songoda Plugins");
 
         // TODO: this could use some decorating
 

@@ -65,7 +65,7 @@ public class MainCommand extends AbstractCommand {
                     .sendTo(sender);
         }
 
-        sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/craftaro" + ChatColor.GRAY + " - Opens the Craftaro plugin GUI");
+        sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/songoda" + ChatColor.GRAY + " - Opens the Songoda plugin GUI");
         sender.sendMessage("");
 
         if (nestedCommands != null) {

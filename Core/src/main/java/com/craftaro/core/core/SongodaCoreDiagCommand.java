@@ -36,7 +36,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/craftaro diag";
+        return "/songoda diag";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
-        sender.sendMessage("Craftaro Diagnostics Information");
+        sender.sendMessage("Songoda Diagnostics Information");
         sender.sendMessage("");
         sender.sendMessage("Plugins:");
 

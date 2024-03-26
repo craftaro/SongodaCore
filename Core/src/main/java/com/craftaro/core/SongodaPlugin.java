@@ -154,7 +154,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY, getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
+        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY, getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
         console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY, ChatColor.GREEN, "Enabling", ChatColor.GRAY));
 
         try {
@@ -201,7 +201,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
 
         console.sendMessage(" "); // blank line to separate chatter
         console.sendMessage(ChatColor.GREEN + "=============================");
-        console.sendMessage(String.format("%s%s %s by %sCraftaro <3!", ChatColor.GRAY,
+        console.sendMessage(String.format("%s%s %s by %sSongoda <3!", ChatColor.GRAY,
                 getDescription().getName(), getDescription().getVersion(), ChatColor.DARK_PURPLE));
         console.sendMessage(String.format("%sAction: %s%s%s...", ChatColor.GRAY,
                 ChatColor.RED, "Disabling", ChatColor.GRAY));
