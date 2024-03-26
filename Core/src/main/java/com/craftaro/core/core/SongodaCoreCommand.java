@@ -1,7 +1,7 @@
 package com.craftaro.core.core;
 
-import com.craftaro.core.commands.AbstractCommand;
 import com.craftaro.core.SongodaCore;
+import com.craftaro.core.commands.AbstractCommand;
 import com.craftaro.core.gui.GuiManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ public class SongodaCoreCommand extends AbstractCommand {
     protected GuiManager guiManager;
 
     public SongodaCoreCommand() {
-        super(CommandType.CONSOLE_OK, "craftaro", "songoda");
+        super(CommandType.CONSOLE_OK, "songoda");
     }
 
     @Override

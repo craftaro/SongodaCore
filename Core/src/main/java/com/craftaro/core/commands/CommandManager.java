@@ -372,10 +372,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             // Set tab complete
             commandObject.setTabCompleter(tabManager);
 
-            if (command.equalsIgnoreCase("songoda")) {
-                commandObject.setAliases(Collections.singletonList("craftaro"));
-            }
-
             // Register the command
             Field fieldKnownCommands = SimpleCommandMap.class.getDeclaredField("knownCommands");
             fieldKnownCommands.setAccessible(true);
