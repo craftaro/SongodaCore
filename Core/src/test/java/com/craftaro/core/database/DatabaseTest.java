@@ -17,25 +17,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-
 public class DatabaseTest {
-
-    //Create database tests for DataManager
-
     static {
-        // Disable tips and logo for Jooq
         System.setProperty("org.jooq.no-tips", "true");
         System.setProperty("org.jooq.no-logo", "true");
-    }
-
-    private static boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
     }
 
     @Test
@@ -116,7 +101,6 @@ public class DatabaseTest {
         }
 
 
-
         dataManager.shutdownNow();
 
         if (dbDir.exists()) {
@@ -128,7 +112,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public static void testConvert() {
+    public void testConvert() {
         File dbDir = new File("./db_test");
         File logsDir = new File("./logs");
 
@@ -161,7 +145,7 @@ public class DatabaseTest {
             try {
                 // Export schema
                 DatabaseMetaData meta = sqliteConnection.getMetaData();
-                ResultSet tables = meta.getTables(null, null, null, new String[]{"TABLE"});
+                ResultSet tables = meta.getTables(null, null, null, new String[] {"TABLE"});
 
                 while (tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");
@@ -263,30 +247,17 @@ public class DatabaseTest {
         }
     }
 
-    private static String getTableColumns(Connection sqliteConnection, String tableName) {
-        StringBuilder columns = new StringBuilder();
-        try {
-            DatabaseMetaData meta = sqliteConnection.getMetaData();
-            ResultSet rs = meta.getColumns(null, null, tableName, null);
-
-            while (rs.next()) {
-                String columnName = rs.getString("COLUMN_NAME");
-                String columnType = rs.getString("TYPE_NAME");
-
-                columns.append(columnName).append(" ").append(columnType).append(", ");
+    private static boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
             }
-
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        columns.setLength(columns.length() - 2);
-        return columns.toString();
+        return directoryToBeDeleted.delete();
     }
 
     private static class DataTestId implements Data {
-
         private int id;
         private String name;
         private int points;
@@ -337,12 +308,14 @@ public class DatabaseTest {
             if (!(obj instanceof DataTestId)) return false;
 
             DataTestId other = (DataTestId) obj;
-            return id == other.id && name.equals(other.name) && points == other.points && otherPoints == other.otherPoints;
+            return this.id == other.id &&
+                    this.name.equals(other.name) &&
+                    this.points == other.points &&
+                    this.otherPoints == other.otherPoints;
         }
     }
 
     private static class DataTestUUID implements Data {
-
         private UUID uuid;
         private String name;
         private int points;
@@ -393,16 +366,19 @@ public class DatabaseTest {
             if (!(obj instanceof DataTestUUID)) return false;
 
             DataTestUUID other = (DataTestUUID) obj;
-            return uuid.equals(other.uuid) && name.equals(other.name) && points == other.points && otherPoints == other.otherPoints;
+            return this.uuid.equals(other.uuid) &&
+                    this.name.equals(other.name) &&
+                    this.points == other.points &&
+                    this.otherPoints == other.otherPoints;
         }
 
         @Override
         public String toString() {
             return "DataTestUUID{" +
-                    "uuid=" + uuid +
-                    ", name='" + name + '\'' +
-                    ", points=" + points +
-                    ", otherPoints=" + otherPoints +
+                    "uuid=" + this.uuid +
+                    ", name='" + this.name + '\'' +
+                    ", points=" + this.points +
+                    ", otherPoints=" + this.otherPoints +
                     '}';
         }
     }
