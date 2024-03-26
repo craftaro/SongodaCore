@@ -21,6 +21,6 @@ public class CraftaroCoreConstants {
     }
 
     public static String getGitHubProjectUrl() {
-        return "https://github.com/craftaro/CraftaroCore";
+        return "https://github.com/craftaro/SongodaCore";
     }
 }

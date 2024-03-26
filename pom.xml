@@ -54,13 +54,13 @@
     </modules>
 
     <issueManagement>
-        <url>https://github.com/craftaro/CraftaroCore/issues</url>
+        <url>https://github.com/craftaro/SongodaCore/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/craftaro/CraftaroCore</url>
-        <connection>scm:git:git://github.com/craftaro/CraftaroCore.git</connection>
+        <url>https://github.com/craftaro/SongodaCore</url>
+        <connection>scm:git:git://github.com/craftaro/SongodaCore.git</connection>
     </scm>
 
     <build>
