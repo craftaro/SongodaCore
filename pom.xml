@@ -163,6 +163,10 @@
             <id>songoda-public</id>
             <url>https://repo.songoda.com/repository/public/</url>
         </repository>
+        <repository>
+            <id>third party</id>
+            <url>https://repo.songoda.com/repository/third-party/</url>
+        </repository>
     </repositories>
 
     <dependencies>

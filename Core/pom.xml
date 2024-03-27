@@ -371,9 +371,8 @@
 
         <dependency>
             <groupId>com.bgsoftware</groupId>
-            <artifactId>wildstacker</artifactId>
-            <version>3.8.0</version>
-            <scope>provided</scope>
+            <artifactId>WildStacker</artifactId>
+            <version>2023.3</version>
         </dependency>
 
         <dependency>

@@ -74,6 +74,6 @@ public class WildStacker extends Stacker {
 
     @Override
     public int getMinStackSize(EntityType type) {
-        return plugin.getSettings().minimumRequiredEntities.getOrDefault(type, SpawnCause.DEFAULT, 0);
+        return plugin.getSettings().minimumRequiredEntities.get(type, SpawnCause.DEFAULT);
     }
 }
