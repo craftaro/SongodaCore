@@ -1,7 +1,6 @@
 package com.craftaro.core.hooks.hologram;
 
 import com.craftaro.core.hooks.Hook;
-import com.craftaro.core.utils.LocationUtils;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,8 +63,11 @@ public abstract class HologramHook implements Hook {
     }
 
     protected @NotNull Location getNormalizedLocation(Location location) {
-        return LocationUtils
-                .getCenter(location)
-                .add(0, getYOffset(), 0);
+        return new Location(
+                location.getWorld(),
+                location.getX() + (location.getX() - (int) location.getX()) + 0.5,
+                location.getY() + (location.getY() - (int) location.getY()) + 0.5 + getYOffset(),
+                location.getZ() + (location.getZ() - (int) location.getZ()) + 0.5
+        );
     }
 }
