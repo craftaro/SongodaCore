@@ -373,6 +373,7 @@
             <groupId>com.bgsoftware</groupId>
             <artifactId>WildStacker</artifactId>
             <version>2023.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
