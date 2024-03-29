@@ -3,6 +3,9 @@ package com.craftaro.core.compatibility;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum ServerVersion {
     UNKNOWN, V1_7, V1_8, V1_9, V1_10, V1_11, V1_12, V1_13, V1_14, V1_15, V1_16, V1_17, V1_18, V1_19, V1_20, V1_21, V1_22, V1_23;
 
@@ -11,7 +14,16 @@ public enum ServerVersion {
     private static final ServerVersion serverVersion;
     private static final boolean isMocked;
 
+    private static final Map<String, String> VERSION_TO_REVISION;
+
     static {
+        VERSION_TO_REVISION = new HashMap<>();
+        VERSION_TO_REVISION.put("1.20", "v1_20_R1");
+        VERSION_TO_REVISION.put("1.20.1", "v1_20_R1");
+        VERSION_TO_REVISION.put("1.20.2", "v1_20_R2");
+        VERSION_TO_REVISION.put("1.20.3", "v1_20_R3");
+        VERSION_TO_REVISION.put("1.20.4", "v1_20_R3");
+
         if (Bukkit.getServer() != null) {
             String srvPackage = Bukkit.getServer().getClass().getPackage().getName();
             isMocked = srvPackage.equals("be.seeseemelk.mockbukkit");
@@ -20,7 +32,19 @@ public enum ServerVersion {
                 serverPackageVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_') + "_R0";
                 serverReleaseVersion = "0";
             } else {
-                serverPackageVersion = srvPackage.substring(srvPackage.lastIndexOf('.') + 1);
+                String nmsVersion;
+                try {
+                    nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                } catch (Exception ex) {
+                    String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+                    nmsVersion = VERSION_TO_REVISION.getOrDefault(minecraftVersion, "");
+
+                    if (nmsVersion.isEmpty()) {
+                        new RuntimeException("Cannot detect NMS version for server version: " + minecraftVersion).printStackTrace();
+                    }
+                }
+
+                serverPackageVersion = nmsVersion;
                 serverReleaseVersion = serverPackageVersion.indexOf('R') != -1 ? serverPackageVersion.substring(serverPackageVersion.indexOf('R') + 1) : "";
             }
         } else {
