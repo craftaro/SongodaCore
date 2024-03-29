@@ -24,7 +24,7 @@ public class SongodaCoreDiagCommand extends AbstractCommand {
         try {
             this.nmsServerInstance = ClassMapping.MINECRAFT_SERVER.getClazz().getMethod("getServer").invoke(null);
             this.recentTpsOnNmsServer = this.nmsServerInstance.getClass().getField("recentTps");
-        } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
