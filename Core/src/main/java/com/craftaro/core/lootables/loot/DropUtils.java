@@ -67,6 +67,10 @@ public class DropUtils {
     }
 
     private static void dropItems(List<ItemStack> items, EntityDeathEvent event) {
+        if (!Bukkit.isPrimaryThread()) {
+            Bukkit.getScheduler().runTask(SongodaCore.getHijackedPlugin(), () -> dropItems(items, event));
+            return;
+        }
         if (Bukkit.getPluginManager().isPluginEnabled("UltimateStacker")) {
             List<StackedItem> stacks = new ArrayList<>();
             int maxSize = UltimateStackerApi.getSettings().getMaxItemStackSize() - 64;
@@ -85,11 +89,9 @@ public class DropUtils {
                 }
                 stack.setAmount(newAmount.intValue());
             }
-            Bukkit.getScheduler().runTask(UltimateStackerApi.getPlugin(), () -> {
-                for (StackedItem stack : stacks) {
-                    UltimateStackerApi.getStackedItemManager().createStack(stack.getItemToDrop(), event.getEntity().getLocation(), stack.getAmount());
-                }
-            });
+            for (StackedItem stack : stacks) {
+                UltimateStackerApi.getStackedItemManager().createStack(stack.getItemToDrop(), event.getEntity().getLocation(), stack.getAmount(), event.getEntity());
+            }
             return;
         }
         event.getDrops().addAll(items);
