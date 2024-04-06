@@ -11,7 +11,7 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.datatypes.skills.SubSkillType;
 import com.gmail.nossr50.util.Permissions;
 import com.gmail.nossr50.util.player.UserManager;
-import com.gmail.nossr50.util.random.RandomChanceUtil;
+import com.gmail.nossr50.util.random.ProbabilityUtil;
 import com.gmail.nossr50.util.skills.RankUtils;
 import com.gmail.nossr50.util.skills.SkillActivationType;
 import org.bukkit.block.Block;
@@ -487,7 +487,7 @@ public class McMMOHandler {
 
         return Permissions.isSubSkillEnabled(player, SubSkillType.HERBALISM_DOUBLE_DROPS)
                 && RankUtils.hasReachedRank(1, player, SubSkillType.HERBALISM_DOUBLE_DROPS)
-                && RandomChanceUtil.isActivationSuccessful(SkillActivationType.RANDOM_LINEAR_100_SCALE_WITH_CAP, SubSkillType.HERBALISM_DOUBLE_DROPS, player);
+                && ProbabilityUtil.isSkillRNGSuccessful(SubSkillType.HERBALISM_DOUBLE_DROPS, player);
     }
 
     public static boolean hasMiningDoubleDrops(Player player) {
@@ -501,7 +501,7 @@ public class McMMOHandler {
 
         return Permissions.isSubSkillEnabled(player, SubSkillType.MINING_DOUBLE_DROPS)
                 && RankUtils.hasReachedRank(1, player, SubSkillType.MINING_DOUBLE_DROPS)
-                && RandomChanceUtil.isActivationSuccessful(SkillActivationType.RANDOM_LINEAR_100_SCALE_WITH_CAP, SubSkillType.MINING_DOUBLE_DROPS, player);
+                && ProbabilityUtil.isSkillRNGSuccessful(SubSkillType.MINING_DOUBLE_DROPS, player);
     }
 
     public static boolean hasWoodcuttingDoubleDrops(Player player) {
@@ -515,7 +515,7 @@ public class McMMOHandler {
 
         return Permissions.isSubSkillEnabled(player, SubSkillType.WOODCUTTING_HARVEST_LUMBER)
                 && RankUtils.hasReachedRank(1, player, SubSkillType.WOODCUTTING_HARVEST_LUMBER)
-                && RandomChanceUtil.isActivationSuccessful(SkillActivationType.RANDOM_LINEAR_100_SCALE_WITH_CAP, SubSkillType.WOODCUTTING_HARVEST_LUMBER, player);
+                && ProbabilityUtil.isSkillRNGSuccessful(SubSkillType.WOODCUTTING_HARVEST_LUMBER, player);
     }
 
     public static boolean isUsingBerserk(Player player) {

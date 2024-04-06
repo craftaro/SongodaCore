@@ -160,9 +160,15 @@
         </repository>
 
         <repository>
+            <id>neetgames-repo</id>
+            <url>https://nexus.neetgames.com/repository/maven-releases/</url>
+        </repository>
+
+        <repository>
             <id>songoda-public</id>
             <url>https://repo.songoda.com/repository/public/</url>
         </repository>
+
         <repository>
             <id>third party</id>
             <url>https://repo.songoda.com/repository/third-party/</url>
