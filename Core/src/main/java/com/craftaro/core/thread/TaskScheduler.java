@@ -8,12 +8,33 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class TaskScheduler {
+
     private final SongodaPlugin plugin;
     private final Map<TaskWrapper, Long> tasks = new ConcurrentHashMap<>();
     private BukkitRunnable runnable;
+    private long delay;
+    private long period;
 
+    /**
+     * Constructor for TaskScheduler with default delay and period.
+     * @param plugin The plugin instance.
+     */
     public TaskScheduler(SongodaPlugin plugin) {
         this.plugin = plugin;
+        this.delay = 20L;
+        this.period = 20L;
+    }
+
+    /**
+     * Constructor for TaskScheduler with a custom delay and period.
+     * @param plugin The plugin instance.
+     * @param delay The delay in ticks.
+     * @param period The period in ticks.
+     */
+    public TaskScheduler(SongodaPlugin plugin, long delay, long period) {
+        this.plugin = plugin;
+        this.delay = delay;
+        this.period = period;
     }
 
     private void startScheduler() {
@@ -24,7 +45,7 @@ public abstract class TaskScheduler {
                     executeTasks();
                 }
             };
-            this.runnable.runTaskTimerAsynchronously(this.plugin, 20L, 20L);
+            this.runnable.runTaskTimerAsynchronously(this.plugin, this.delay, this.period);
         }
     }
 
