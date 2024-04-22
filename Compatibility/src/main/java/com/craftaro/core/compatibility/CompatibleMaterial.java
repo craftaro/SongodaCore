@@ -99,7 +99,8 @@ public class CompatibleMaterial {
                 return XMaterial.SUGAR_CANE;
             case WHEAT:
                 return XMaterial.WHEAT;
-
+            case BAMBOO:
+                return XMaterial.BAMBOO;
             default:
                 return null;
         }
@@ -129,7 +130,8 @@ public class CompatibleMaterial {
                 return XMaterial.SUGAR_CANE;
             case WHEAT:
                 return XMaterial.WHEAT_SEEDS;
-
+            case BAMBOO:
+                return XMaterial.BAMBOO_SAPLING;
             default:
                 return null;
         }
