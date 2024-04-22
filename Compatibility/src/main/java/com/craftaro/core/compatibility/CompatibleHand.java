@@ -89,6 +89,11 @@ public enum CompatibleHand {
             return null;
         }
 
+        //getItemInMainHand doesn't exist in 1.8
+        if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+            return equipment.getItemInHand();
+        }
+
         if (this == MAIN_HAND) {
             return equipment.getItemInMainHand();
         }
