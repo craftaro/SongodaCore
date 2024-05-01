@@ -414,7 +414,7 @@
         <dependency>
             <groupId>com.github.Angeschossen</groupId>
             <artifactId>LandsAPI</artifactId>
-            <version>6.28.11</version>
+            <version>7.0.2</version>
             <scope>provided</scope>
         </dependency>
 
