@@ -90,7 +90,7 @@ public class DropUtils {
                 stack.setAmount(newAmount.intValue());
             }
             for (StackedItem stack : stacks) {
-                UltimateStackerApi.getStackedItemManager().createStack(stack.getItemToDrop(), event.getEntity().getLocation(), stack.getAmount(), event.getEntity());
+//                UltimateStackerApi.getStackedItemManager().createStack(stack.getItemToDrop(), event.getEntity().getLocation(), stack.getAmount(), event.getEntity());
             }
             return;
         }
