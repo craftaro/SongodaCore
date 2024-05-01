@@ -1,6 +1,5 @@
 package com.craftaro.core.http;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -24,6 +23,6 @@ public class MockHttpClient implements HttpClient {
 
     @Override
     public @NotNull HttpResponse request(String method, String url, Map<String, String> headers, byte[] body) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
