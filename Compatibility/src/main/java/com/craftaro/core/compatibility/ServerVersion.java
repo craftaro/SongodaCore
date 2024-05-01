@@ -23,6 +23,7 @@ public enum ServerVersion {
         VERSION_TO_REVISION.put("1.20.2", "v1_20_R2");
         VERSION_TO_REVISION.put("1.20.3", "v1_20_R3");
         VERSION_TO_REVISION.put("1.20.4", "v1_20_R3");
+        VERSION_TO_REVISION.put("1.20.5", "v1_20_R4");
 
         if (Bukkit.getServer() != null) {
             String srvPackage = Bukkit.getServer().getClass().getPackage().getName();
