@@ -262,7 +262,7 @@
         <dependency>
             <groupId>com.github.GeorgeV220</groupId>
             <artifactId>LibraryLoader</artifactId>
-            <version>v1.7.0</version>
+            <version>1.10.0</version>
             <scope>compile</scope>
         </dependency>
 
