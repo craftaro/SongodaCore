@@ -21,6 +21,7 @@ runs:
       with:
         java-version: 17
         distribution: adopt
+        overwrite-settings: false
 
     - uses: SpraxDev/Action-SpigotMC@v5
       with:
@@ -31,6 +32,7 @@ runs:
       with:
         java-version: 21
         distribution: adopt
+        overwrite-settings: false
 
     - uses: SpraxDev/Action-SpigotMC@v5
       with:
