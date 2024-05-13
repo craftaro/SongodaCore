@@ -227,7 +227,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.11.0</version>
+            <version>4.17.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -241,14 +241,14 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.16.0</version>
+            <version>4.17.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-plain</artifactId>
-            <version>4.11.0</version>
+            <version>4.17.0</version>
             <scope>compile</scope>
         </dependency>
 
