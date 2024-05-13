@@ -13,6 +13,7 @@ public enum ServerVersion {
     private static final String serverReleaseVersion;
     private static final ServerVersion serverVersion;
     private static final boolean isMocked;
+    private static final String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
 
     private static final Map<String, String> VERSION_TO_REVISION;
 
@@ -38,7 +39,6 @@ public enum ServerVersion {
                 try {
                     nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 } catch (Exception ex) {
-                    String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
                     nmsVersion = VERSION_TO_REVISION.getOrDefault(minecraftVersion, "");
 
                     if (nmsVersion.isEmpty()) {
@@ -56,6 +56,10 @@ public enum ServerVersion {
         }
 
         serverVersion = getVersion();
+    }
+
+    public static String getMinecraftVersion() {
+        return minecraftVersion;
     }
 
     private static ServerVersion getVersion() {

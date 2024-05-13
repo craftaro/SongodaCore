@@ -74,17 +74,32 @@ public enum ClassMapping {
     public Class<?> getClazz(String sub) {
         String name = sub == null ? this.className : this.className + "$" + sub;
 
-        try {
-            if (this.className.startsWith("Craft")) {
-                return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
-                        + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
+        //Temp fix for 1.20.5 and 1.20.6 for paper servers
+        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.getMinecraftVersion().equals("1.20.5") || ServerVersion.getMinecraftVersion().equals("1.20.6"))) {
+            //We don't have 1_20_R4 like packages in paper, so skip that part
+            try {
+                if (this.className.startsWith("Craft")) {
+                    return Class.forName("org.bukkit.craftbukkit." + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
+                }
+
+                return Class.forName("net.minecraft." + (this.packageName != null ? this.packageName : "server.") + "." + name);
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
             }
 
-            return Class.forName("net.minecraft." + (
-                    ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && this.packageName != null
-                            ? this.packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } else {
+            try {
+                if (this.className.startsWith("Craft")) {
+                    return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
+                            + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
+                }
+
+                return Class.forName("net.minecraft." + (
+                        ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && this.packageName != null
+                                ? this.packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
         }
 
         return null;
