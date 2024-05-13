@@ -1,12 +1,17 @@
 package com.craftaro.core.chat;
 
+import com.craftaro.core.SongodaCore;
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.compatibility.ClassMapping;
+import com.craftaro.core.compatibility.ServerProject;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
 import com.craftaro.core.utils.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.IRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -223,75 +228,7 @@ public class ChatMessage {
     }
 
     public void sendTo(ChatMessage prefix, CommandSender sender) {
-        if (sender instanceof Player && enabled) {
-            try {
-                List<JsonObject> textList = prefix == null ? new ArrayList<>() : new ArrayList<>(prefix.textList);
-                textList.addAll(this.textList);
-
-                Object packet;
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)), mc_PacketPlayOutChat_new_1_19_0 ? 1 : false);
-                } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    packet = mc_PacketPlayOutChat_new.newInstance(
-                            mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)),
-                            mc_chatMessageType_Chat.get(null),
-                            ((Player) sender).getUniqueId());
-                } else {
-                    packet = mc_PacketPlayOutChat_new.newInstance(mc_IChatBaseComponent_ChatSerializer_a.invoke(null, GSON.toJson(textList)));
-                }
-
-                Nms.getImplementations().getPlayer().sendPacket((Player) sender, packet);
-            } catch (ReflectiveOperationException | IllegalArgumentException ex) {
-                Bukkit.getLogger().log(Level.WARNING, "Problem preparing raw chat packets (disabling further packets)", ex);
-                enabled = false;
-            }
-
-            return;
-        }
-
-        sender.sendMessage(TextUtils.formatText((prefix == null ? "" : prefix.toText(true) + " ") + toText(true)));
-    }
-
-    private static boolean enabled = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_8);
-
-    private static Method mc_IChatBaseComponent_ChatSerializer_a;
-    private static Constructor<?> mc_PacketPlayOutChat_new;
-    private static Field mc_chatMessageType_Chat;
-    private static boolean mc_PacketPlayOutChat_new_1_19_0 = false;
-
-    static {
-        init();
-    }
-
-    static void init() {
-        if (enabled) {
-            try {
-                Class<?> mc_IChatBaseComponent, mc_IChatBaseComponent_ChatSerializer, mc_PacketPlayOutChat;
-
-                mc_IChatBaseComponent = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz();
-                mc_IChatBaseComponent_ChatSerializer = ClassMapping.I_CHAT_BASE_COMPONENT.getClazz("ChatSerializer");
-                mc_IChatBaseComponent_ChatSerializer_a = mc_IChatBaseComponent_ChatSerializer.getMethod("a", String.class);
-                mc_PacketPlayOutChat = ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19) ? ClassMapping.CLIENTBOUND_SYSTEM_CHAT.getClazz() : ClassMapping.PACKET_PLAY_OUT_CHAT.getClazz();
-
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
-                    try {
-                        mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Boolean.TYPE);
-                    } catch (NoSuchMethodException ex) {
-                        mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, Integer.TYPE);
-                        mc_PacketPlayOutChat_new_1_19_0 = true;
-                    }
-                } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                    Class<?> mc_ChatMessageType = ClassMapping.CHAT_MESSAGE_TYPE.getClazz();
-                    mc_chatMessageType_Chat = mc_ChatMessageType.getField(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) ? "a" : "CHAT");
-                    mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent, mc_ChatMessageType, UUID.class);
-                } else {
-                    mc_PacketPlayOutChat_new = mc_PacketPlayOutChat.getConstructor(mc_IChatBaseComponent);
-                }
-            } catch (Throwable ex) {
-                Bukkit.getLogger().log(Level.WARNING, "Problem preparing raw chat packets (disabling further packets)", ex);
-                enabled = false;
-            }
-        }
+        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), AdventureUtils.formatComponent(prefix.toText() + toText()), sender);
     }
 
     public ChatMessage replaceAll(String toReplace, String replaceWith) {
