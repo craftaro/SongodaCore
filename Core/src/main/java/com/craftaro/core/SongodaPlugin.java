@@ -100,18 +100,18 @@ public abstract class SongodaPlugin extends JavaPlugin {
             //Use ; instead of . so maven plugin won't relocate it
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-text", "1.12.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;apache;commons", "commons-lang3", "3.14.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-api", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-key", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-nbt", "4.16.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-api", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-key", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-nbt", "4.17.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-api", "4.3.2"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-bukkit", "4.3.2"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-facet", "4.3.2"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-platform-viaversion", "4.3.2"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-minimessage", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson-legacy-impl", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-legacy", "4.16.0"));
-            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-plain", "4.16.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-minimessage", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson-legacy-impl", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-legacy", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-plain", "4.17.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-api", "1.3.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-string", "1.3.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;slf4j", "slf4j-api", "2.0.11", false));
