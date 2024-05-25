@@ -228,7 +228,7 @@ public class ChatMessage {
     }
 
     public void sendTo(ChatMessage prefix, CommandSender sender) {
-        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), AdventureUtils.formatComponent(prefix.toText() + toText()), sender);
+        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), AdventureUtils.formatComponent(prefix == null ? "" : prefix.toText() + toText()), sender);
     }
 
     public ChatMessage replaceAll(String toReplace, String replaceWith) {
