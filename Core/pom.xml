@@ -253,6 +253,13 @@
         </dependency>
 
         <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-json</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>me.lucko</groupId>
             <artifactId>jar-relocator</artifactId>
             <version>1.7</version>
