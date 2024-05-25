@@ -112,6 +112,7 @@ public abstract class SongodaPlugin extends JavaPlugin {
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-gson-legacy-impl", "4.17.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-legacy", "4.17.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-plain", "4.17.0"));
+            dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "adventure-text-serializer-json", "4.17.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-api", "1.3.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "net;kyori", "examination-string", "1.3.0"));
             dependencies.add(new Dependency("https://repo1.maven.org/maven2", "org;slf4j", "slf4j-api", "2.0.11", false));
