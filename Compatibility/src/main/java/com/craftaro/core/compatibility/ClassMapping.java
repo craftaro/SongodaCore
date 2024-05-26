@@ -79,14 +79,13 @@ public enum ClassMapping {
             //We don't have 1_20_R4 like packages in paper, so skip that part
             try {
                 if (this.className.startsWith("Craft")) {
-                    return Class.forName("org.bukkit.craftbukkit." + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
+                    return Class.forName("org.bukkit.craftbukkit" + (this.packageName == null ? "" : "." + this.packageName) + "." + name);
                 }
 
                 return Class.forName("net.minecraft." + (this.packageName != null ? this.packageName : "server.") + "." + name);
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
-
         } else {
             try {
                 if (this.className.startsWith("Craft")) {

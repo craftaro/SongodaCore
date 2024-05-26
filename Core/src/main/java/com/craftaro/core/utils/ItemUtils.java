@@ -4,10 +4,12 @@ import com.craftaro.core.compatibility.ClassMapping;
 import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.MethodMapping;
+import com.craftaro.core.compatibility.ServerProject;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -99,7 +101,9 @@ public class ItemUtils {
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
             methodAsNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(clazzCraftItemStack);
 
-            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
+            if (ServerVersion.isServerVersion(ServerVersion.V1_20)) {
+                //Do nothing
+            } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
                 Class<?> clazzRandomSource = ClassMapping.RANDOM_SOURCE.getClazz();
                 methodA = clazzEnchantmentManager.getMethod("a", clazzRandomSource.getMethod("c").getReturnType(), clazzItemStack, int.class, boolean.class);
                 randomInstance = ClassMapping.SINGLE_THREADED_RANDOM_SOURCE.getClazz().getConstructor(long.class).newInstance(ThreadLocalRandom.current().nextLong());
@@ -226,10 +230,12 @@ public class ItemUtils {
     static {
         if (cb_ItemStack != null) {
             try {
-                mc_ItemStack_getTag = MethodMapping.MC_ITEM_STACK__GET_TAG.getMethod(mc_ItemStack);
-                mc_ItemStack_setTag = MethodMapping.MC_ITEM_STACK__SET_TAG.getMethod(mc_ItemStack);
-                mc_NBTTagCompound_set = MethodMapping.MC_NBT_TAG_COMPOUND__SET.getMethod(mc_NBTTagCompound);
-                mc_NBTTagCompound_remove = MethodMapping.MC_NBT_TAG_COMPOUND__REMOVE.getMethod(mc_NBTTagCompound);
+                if (ServerVersion.isServerVersionBelow(ServerVersion.V1_20)) {
+                    mc_ItemStack_getTag = MethodMapping.MC_ITEM_STACK__GET_TAG.getMethod(mc_ItemStack);
+                    mc_ItemStack_setTag = MethodMapping.MC_ITEM_STACK__SET_TAG.getMethod(mc_ItemStack);
+                    mc_NBTTagCompound_set = MethodMapping.MC_NBT_TAG_COMPOUND__SET.getMethod(mc_NBTTagCompound);
+                    mc_NBTTagCompound_remove = MethodMapping.MC_NBT_TAG_COMPOUND__REMOVE.getMethod(mc_NBTTagCompound);
+                }
 //                mc_NBTTagCompound_setShort = MethodMapping.MC_NBT_TAG_COMPOUND__SET_SHORT.getMethod(mc_NBTTagCompound);
 //                mc_NBTTagCompound_setString = MethodMapping.MC_NBT_TAG_COMPOUND__SET_STRING.getMethod(mc_NBTTagCompound);
                 cb_CraftItemStack_asNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(cb_ItemStack);
@@ -260,6 +266,16 @@ public class ItemUtils {
             m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(m);
 
+            return item;
+        }
+
+        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.getMinecraftVersion().equals("1.20.5") || ServerVersion.getMinecraftVersion().equals("1.20.6"))) {
+            if (item == null || item.getType() == Material.AIR) {
+                return item;
+            }
+            NBTItem nbtItem = new NBTItem(item);
+            nbtItem.addCompound("minecraft:enchantments");
+            nbtItem.applyNBT(item);
             return item;
         }
 
