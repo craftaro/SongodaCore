@@ -4,6 +4,7 @@ import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.nms.Nms;
 import com.cryptomorin.xseries.XSound;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class SItemStack {
         int durability;
 
         if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)
-                ? Nms.getImplementations().getNbt().of(this.item).has("Unbreakable")
+                ? NBT.readNbt(this.item).hasTag("Unbreakable")
                 : this.item.getItemMeta().isUnbreakable()) {
             return this.item;
         } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
