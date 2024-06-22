@@ -74,8 +74,7 @@ public enum ClassMapping {
     public Class<?> getClazz(String sub) {
         String name = sub == null ? this.className : this.className + "$" + sub;
 
-        //Temp fix for 1.20.5 and 1.20.6 for paper servers
-        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.getMinecraftVersion().equals("1.20.5") || ServerVersion.getMinecraftVersion().equals("1.20.6"))) {
+        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_20_5))) {
             //We don't have 1_20_R4 like packages in paper, so skip that part
             try {
                 if (this.className.startsWith("Craft")) {

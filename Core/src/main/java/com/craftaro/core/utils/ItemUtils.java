@@ -269,7 +269,7 @@ public class ItemUtils {
             return item;
         }
 
-        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.getMinecraftVersion().equals("1.20.5") || ServerVersion.getMinecraftVersion().equals("1.20.6"))) {
+        if (ServerProject.isServer(ServerProject.PAPER) && (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_20_5))) {
             if (item == null || item.getType() == Material.AIR) {
                 return item;
             }

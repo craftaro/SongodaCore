@@ -7,7 +7,58 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ServerVersion {
-    UNKNOWN, V1_7, V1_8, V1_9, V1_10, V1_11, V1_12, V1_13, V1_14, V1_15, V1_16, V1_17, V1_18, V1_19, V1_20, V1_21, V1_22, V1_23;
+
+    UNKNOWN,
+
+    // 1.7.x
+    V1_7, V1_7_2, V1_7_4, V1_7_5, V1_7_6, V1_7_7, V1_7_8, V1_7_9, V1_7_10,
+
+    // 1.8.x
+    V1_8, V1_8_1, V1_8_2, V1_8_3, V1_8_4, V1_8_5, V1_8_6, V1_8_7, V1_8_8, V1_8_9,
+
+    // 1.9.x
+    V1_9, V1_9_1, V1_9_2, V1_9_3, V1_9_4,
+
+    // 1.10.x
+    V1_10, V1_10_1, V1_10_2,
+
+    // 1.11.x
+    V1_11, V1_11_1, V1_11_2,
+
+    // 1.12.x
+    V1_12, V1_12_1, V1_12_2, V1_13, V1_13_1, V1_13_2,
+
+    // 1.14.x
+    V1_14, V1_14_1, V1_14_2, V1_14_3, V1_14_4,
+
+    // 1.15.x
+    V1_15, V1_15_1, V1_15_2,
+
+    // 1.16.x
+    V1_16, V1_16_1, V1_16_2, V1_16_3, V1_16_4, V1_16_5,
+
+    // 1.17.x
+    V1_17, V1_17_1,
+
+    // 1.18.x
+    V1_18, V1_18_1, V1_18_2,
+
+    // 1.19.x
+    V1_19, V1_19_1, V1_19_2, V1_19_3, V1_19_4,
+
+    // 1.20.x
+    V1_20, V1_20_1, V1_20_2, V1_20_3, V1_20_4, V1_20_5,
+
+    // 1.21.x
+    V1_21, V1_21_1, V1_21_2, V1_21_3,
+
+    // 1.22.x
+    V1_22,
+
+    // 1.23.x
+    V1_23,
+
+    ;
 
     private static final String serverPackageVersion;
     private static final String serverReleaseVersion;
@@ -64,13 +115,12 @@ public enum ServerVersion {
     }
 
     private static ServerVersion getVersion() {
-        for (ServerVersion version : values()) {
-            if (serverPackageVersion.toUpperCase().startsWith(version.name())) {
-                return version;
-            }
+        String version = "V" + minecraftVersion.replace(".", "_");
+        try {
+            return ServerVersion.valueOf(version);
+        } catch (IllegalArgumentException ex) {
+            return UNKNOWN;
         }
-
-        return UNKNOWN;
     }
 
     public boolean isLessThan(ServerVersion other) {
