@@ -4,6 +4,7 @@ import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
 import com.Zrips.CMI.Modules.Holograms.HologramManager;
 import com.craftaro.core.hooks.hologram.HologramHook;
+import net.Zrips.CMILib.Container.CMILocation;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -56,7 +57,7 @@ public class CmiHologramHook extends HologramHook {
             throw new IllegalStateException("Cannot create hologram that already exists: " + getHologramName(id));
         }
 
-        CMIHologram hologram = new CMIHologram(getHologramName(id), getNormalizedLocation(location));
+        CMIHologram hologram = new CMIHologram(getHologramName(id), new CMILocation(getNormalizedLocation(location)));
         hologram.setLines(lines);
         this.cmiHologramManager.addHologram(hologram);
         hologram.update();

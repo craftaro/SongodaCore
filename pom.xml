@@ -172,7 +172,7 @@
         </repository>
 
         <repository>
-            <id>third party</id>
+            <id>songoda-third-party</id>
             <url>https://repo.songoda.com/repository/third-party/</url>
         </repository>
     </repositories>
