@@ -15,10 +15,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -204,13 +204,13 @@ public class Locale {
             return updateFiles(plugin, in, destinationFile, builtin);
         }
 
-        try (OutputStream outputStream = Files.newOutputStream(destinationFile.toPath())) {
-            copy(in, outputStream);
+        try {
+            Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-
             return fileName.split("_").length == 2;
-        } catch (IOException ignore) {
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return false;
@@ -272,9 +272,6 @@ public class Locale {
                     existingLang.setRootNodeSpacing(0);
                     existingLang.save();
                 }
-
-                existingLang.setRootNodeSpacing(0);
-                existingLang.save();
 
                 return !added.isEmpty();
             } catch (InvalidConfigurationException ex) {
@@ -480,18 +477,5 @@ public class Locale {
      */
     public String getName() {
         return this.name;
-    }
-
-    private static void copy(InputStream input, OutputStream output) {
-        int n;
-        byte[] buffer = new byte[1024 * 4];
-
-        try {
-            while ((n = input.read(buffer)) != -1) {
-                output.write(buffer, 0, n);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 }
