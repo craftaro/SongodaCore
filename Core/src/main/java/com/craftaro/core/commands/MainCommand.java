@@ -1,6 +1,8 @@
 package com.craftaro.core.commands;
 
-import com.craftaro.core.chat.ChatMessage;
+import com.craftaro.core.SongodaCore;
+import com.craftaro.core.chat.AdventureUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -60,9 +62,11 @@ public class MainCommand extends AbstractCommand {
         if (this.header != null) {
             sender.sendMessage(this.header);
         } else {
-            new ChatMessage().fromText(String.format("#ff8080&l%s &8» &7Version %s Created with <3 by #ec4e74&l&oS#fa5b65&l&oo#ff6c55&l&on#ff7f44&l&og#ff9432&l&oo#ffaa1e&l&od#f4c009&l&oa",
-                            this.plugin.getDescription().getName(), this.plugin.getDescription().getVersion()), sender instanceof ConsoleCommandSender)
-                    .sendTo(sender);
+            AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), AdventureUtils.formatComponent(
+                    String.format("<color:#ff8080>&l%s &8» &7Version %s Created with <3 by <b><i><gradient:#ec4e74:#f4c009>Songoda</gradient>",
+                            this.plugin.getDescription().getName(),
+                            this.plugin.getDescription().getVersion()
+                    )), sender);
         }
 
         sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/songoda" + ChatColor.GRAY + " - Opens the Songoda plugin GUI");
@@ -85,12 +89,16 @@ public class MainCommand extends AbstractCommand {
                 if (!isPlayer) {
                     sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
-                    ChatMessage chatMessage = new ChatMessage();
-                    final String command = "/" + this.command + " ";
-                    chatMessage.addMessage(ChatColor.DARK_GRAY + "- ")
-                            .addPromptCommand(ChatColor.YELLOW + command + cmd.getSyntax(), ChatColor.YELLOW + command + cmdStr, command + cmdStr)
-                            .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
-                    chatMessage.sendTo(sender);
+                    String command = "/" + this.command + " ";
+                    Component component = AdventureUtils.formatComponent(
+                            String.format("<DARK_GRAY>- <YELLOW>%s%s <GRAY>- %s %s",
+                                    command,
+                                    cmd.getSyntax(),
+                                    cmd.getDescription(),
+                                    cmd.getPermissionNode() == null ? "" : cmd.getPermissionNode()
+                            )
+                    );
+                    AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), component, sender);
                 }
             }
         }

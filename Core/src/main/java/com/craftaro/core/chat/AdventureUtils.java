@@ -10,17 +10,23 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AdventureUtils {
     private static Method displayNameMethod = null;
@@ -398,5 +404,58 @@ public class AdventureUtils {
 
     public static String clear(Component component) {
         return PlainTextComponentSerializer.plainText().serialize(component);
+    }
+
+    public static List<Component> splitComponent(Component message, char c) {
+        List<Component> components = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        for (char character : toLegacy(message).toCharArray()) {
+            if (character == c) {
+                components.add(formatComponent(builder.toString()));
+                builder = new StringBuilder();
+            } else {
+                builder.append(character);
+            }
+        }
+        components.add(formatComponent(builder.toString()));
+        return components;
+    }
+
+    public static Component formatPlaceholder(Component message, MiniMessagePlaceholder... placeholder) {
+        return AdventureUtils.formatComponent(AdventureUtils.replaceLegacy(AdventureUtils.toLegacy(message)), placeholder);
+    }
+
+
+    //Bukkit defaults for time
+    public static Title createTitle (Component title, Component subtitle) {
+        return Title.title(title, subtitle, Title.Times.times(
+                Duration.of(10 * 50L, ChronoUnit.MILLIS),
+                Duration.of(70 * 50L, ChronoUnit.MILLIS),
+                Duration.of(20 * 50L, ChronoUnit.MILLIS)
+        ));
+    }
+    // times in ticks
+    public static Title createTitle (Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
+        return Title.title(title, subtitle, Title.Times.times(
+                Duration.of(fadeIn * 50L, ChronoUnit.MILLIS),
+                Duration.of(stay * 50L, ChronoUnit.MILLIS),
+                Duration.of(fadeOut * 50L, ChronoUnit.MILLIS)
+        ));
+    }
+
+    public static Title createTitle(Component title, Component subtitle, Title.Times times) {
+        return Title.title(title, subtitle, times);
+    }
+
+    public static void sendTitle(JavaPlugin hijackedPlugin, Title title, CommandSender sender) {
+        try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(hijackedPlugin)) {
+            bukkitAudiences.sender(sender).showTitle(title);
+        }
+    }
+
+    public static void sendActionBar(JavaPlugin hijackedPlugin, Component message, CommandSender sender) {
+        try (BukkitAudiences bukkitAudiences = BukkitAudiences.create(hijackedPlugin)) {
+            bukkitAudiences.sender(sender).sendActionBar(message);
+        }
     }
 }

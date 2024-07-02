@@ -1,8 +1,12 @@
 package com.craftaro.core.locale;
 
-import com.craftaro.core.chat.ChatMessage;
+import com.craftaro.core.SongodaCore;
+import com.craftaro.core.chat.AdventureUtils;
+import com.craftaro.core.chat.MiniMessagePlaceholder;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.utils.TextUtils;
+import net.kyori.adventure.Adventure;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,8 +34,8 @@ public class Message {
         }
     }
 
-    private ChatMessage prefix = null;
-    private ChatMessage message;
+    private Component prefix = null;
+    private Component message;
 
     /**
      * create a new message
@@ -39,19 +43,7 @@ public class Message {
      * @param message the message text
      */
     public Message(String message) {
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.fromText(message);
-
-        this.message = chatMessage;
-    }
-
-    /**
-     * create a new message
-     *
-     * @param message the message text
-     */
-    public Message(ChatMessage message) {
-        this.message = message;
+        this.message = AdventureUtils.formatComponent(message);
     }
 
     /**
@@ -60,7 +52,7 @@ public class Message {
      * @param player player to send the message to
      */
     public void sendMessage(Player player) {
-        player.sendMessage(this.getMessage());
+        sendMessage((CommandSender) player);
     }
 
     /**
@@ -69,7 +61,7 @@ public class Message {
      * @param sender command sender to send the message to
      */
     public void sendMessage(CommandSender sender) {
-        this.message.sendTo(sender);
+        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), this.message, sender);
     }
 
     /**
@@ -80,16 +72,16 @@ public class Message {
     public void sendTitle(CommandSender sender) {
         if (sender instanceof Player) {
             if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
-                ((Player) sender).sendTitle("", getMessage(), 10, 30, 10);
+                AdventureUtils.sendTitle(SongodaCore.getHijackedPlugin(), AdventureUtils.createTitle(Component.empty(), getMessage(), 10, 30, 10), sender);
                 return;
             }
 
-            ((Player) sender).sendTitle("", getMessage());
+            AdventureUtils.sendTitle(SongodaCore.getHijackedPlugin(), AdventureUtils.createTitle(Component.empty(), getMessage()), sender);
 
             return;
         }
 
-        sender.sendMessage(this.getMessage());
+        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), this.message, sender);
     }
 
     /**
@@ -99,7 +91,7 @@ public class Message {
      */
     public void sendActionBar(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(this.getMessage());
+            AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), this.message, sender);
             return;
         }
 
@@ -108,8 +100,7 @@ public class Message {
             return;
         }
 
-        ((Player) sender).spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
-                new net.md_5.bungee.api.chat.TextComponent(getMessage()));
+        AdventureUtils.sendActionBar(SongodaCore.getHijackedPlugin(), getMessage(), sender);
     }
 
     /**
@@ -119,7 +110,7 @@ public class Message {
      * @param sender command sender to send the message to
      */
     public void sendPrefixedMessage(CommandSender sender) {
-        this.message.sendTo(this.prefix, sender);
+        AdventureUtils.sendMessage(SongodaCore.getHijackedPlugin(), this.prefix.append(this.message), sender);
     }
 
     /**
@@ -128,8 +119,8 @@ public class Message {
      *
      * @return the prefixed message
      */
-    public String getPrefixedMessage() {
-        return TextUtils.formatText((this.prefix == null ? "" : this.prefix.toText()) + " " + this.message.toText());
+    public Component getPrefixedMessage() {
+        return this.prefix.append(this.message);
     }
 
     /**
@@ -137,8 +128,8 @@ public class Message {
      *
      * @return the message
      */
-    public String getMessage() {
-        return TextUtils.formatText(this.message.toText());
+    public Component getMessage() {
+        return this.message;
     }
 
     /**
@@ -146,17 +137,9 @@ public class Message {
      *
      * @return the message
      */
-    public List<String> getMessageLines() {
-        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message.toText()).split("[\n|]"));
-    }
-
-    /**
-     * Get the held message
-     *
-     * @return the message
-     */
-    public String getUnformattedMessage() {
-        return this.message.toText();
+    public List<Component> getMessageLines() {
+        //return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message.toText()).split("[\n|]"));
+        return AdventureUtils.splitComponent(this.message, '\n');
     }
 
     /**
@@ -169,25 +152,23 @@ public class Message {
      * @return the modified Message
      */
     public Message processPlaceholder(String placeholder, Object replacement) {
-        final String place = Matcher.quoteReplacement(placeholder);
-        this.message = this.message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
+        MiniMessagePlaceholder placeholderProcessor = new MiniMessagePlaceholder(placeholder, replacement == null ? "" : replacement.toString());
+        this.message = AdventureUtils.formatPlaceholder(this.message, placeholderProcessor);
 
         return this;
     }
 
     Message setPrefix(String prefix) {
-        this.prefix = new ChatMessage();
-        this.prefix.fromText(prefix + " ");
-
+        this.prefix = AdventureUtils.formatComponent(prefix + " ");
         return this;
     }
 
     @Override
     public String toString() {
-        return this.message.toString();
+        return AdventureUtils.toLegacy(this.message);
     }
 
     public String toText() {
-        return this.message.toText();
+        return AdventureUtils.toLegacy(this.message);
     }
 }
