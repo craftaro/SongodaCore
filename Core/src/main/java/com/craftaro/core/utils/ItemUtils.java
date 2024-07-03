@@ -101,7 +101,7 @@ public class ItemUtils {
             methodAsBukkitCopy = clazzCraftItemStack.getMethod("asBukkitCopy", clazzItemStack);
             methodAsNMSCopy = MethodMapping.CB_ITEM_STACK__AS_NMS_COPY.getMethod(clazzCraftItemStack);
 
-            if (ServerVersion.isServerVersion(ServerVersion.V1_20)) {
+            if (ServerVersion.isServerVersionAbove(ServerVersion.V1_20)) {
                 //Do nothing
             } else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_19)) {
                 Class<?> clazzRandomSource = ClassMapping.RANDOM_SOURCE.getClazz();
