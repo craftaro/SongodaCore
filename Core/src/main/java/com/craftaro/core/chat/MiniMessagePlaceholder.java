@@ -5,7 +5,7 @@ public class MiniMessagePlaceholder {
     private final String value;
 
     public MiniMessagePlaceholder(String placeholder, String value) {
-        this.placeholder = placeholder;
+        this.placeholder = "%" + placeholder + "%";
         this.value = value;
     }
 
