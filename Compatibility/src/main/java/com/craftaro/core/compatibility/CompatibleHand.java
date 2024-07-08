@@ -90,7 +90,7 @@ public enum CompatibleHand {
         }
 
         //getItemInMainHand doesn't exist in 1.8
-        if (ServerVersion.isServerVersion(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
             return equipment.getItemInHand();
         }
 
