@@ -422,9 +422,12 @@ public class AdventureUtils {
     }
 
     public static Component formatPlaceholder(Component message, MiniMessagePlaceholder... placeholder) {
-        return AdventureUtils.formatComponent(AdventureUtils.replaceLegacy(AdventureUtils.toLegacy(message)), placeholder);
+        return message.replaceText(builder -> {
+            for (MiniMessagePlaceholder place : placeholder) {
+                builder.matchLiteral(place.getPlaceholder()).replacement(place.getValue());
+            }
+        });
     }
-
 
     //Bukkit defaults for time
     public static Title createTitle (Component title, Component subtitle) {
