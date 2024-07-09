@@ -895,7 +895,7 @@ public class Gui {
             return "";
         }
 
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8) && title.length() > 32) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9) && title.length() > 32) {
             return title.charAt(30) == '§' ? title.substring(0, 30) : title.substring(0, 31);
         }
 
