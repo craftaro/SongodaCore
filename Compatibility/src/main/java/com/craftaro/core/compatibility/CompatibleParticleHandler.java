@@ -133,7 +133,7 @@ public class CompatibleParticleHandler {
         }
 
         ParticleType() {
-            if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+            if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
                 this.compatibilityMode = true;
                 this.particle = null;
                 this.compatibleEffect = LegacyParticleEffects.Type.valueOf(name());
@@ -154,7 +154,7 @@ public class CompatibleParticleHandler {
 
         ParticleType(ServerVersion minVersion, String compatible) {
             // Particle class doesn't exist in 1.8
-            if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+            if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
                 this.compatibilityMode = true;
                 this.compatibleEffect = LegacyParticleEffects.Type.valueOf(compatible);
                 this.particle = null;
@@ -201,7 +201,7 @@ public class CompatibleParticleHandler {
     }
 
     public static void spawnParticles(ParticleType type, Location location) {
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
             LegacyParticleEffects.createParticle(location, type.compatibleEffect);
         } else {
             location.getWorld().spawnParticle((Particle) type.particle, location, 0);
@@ -209,7 +209,7 @@ public class CompatibleParticleHandler {
     }
 
     public static void spawnParticles(ParticleType type, Location location, int count) {
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
             for (int i = 0; i < count; ++i) {
                 float xx = (float) (1 * (Math.random() - Math.random()));
                 float yy = (float) (1 * (Math.random() - Math.random()));
@@ -224,7 +224,7 @@ public class CompatibleParticleHandler {
     }
 
     public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ) {
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
             for (int i = 0; i < count; ++i) {
                 float xx = (float) (offsetX * (Math.random() - Math.random()));
                 float yy = (float) (offsetY * (Math.random() - Math.random()));
@@ -242,7 +242,7 @@ public class CompatibleParticleHandler {
     }
 
     public static void spawnParticles(ParticleType type, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, Player receiver) {
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8)) {
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
             for (int i = 0; i < count; i++) {
                 float xx = (float) (offsetX * (Math.random() - Math.random()));
                 float yy = (float) (offsetY * (Math.random() - Math.random()));
