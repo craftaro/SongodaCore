@@ -1,5 +1,6 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.gui.events.GuiClickEvent;
 import com.craftaro.core.gui.events.GuiCloseEvent;
@@ -14,6 +15,7 @@ import com.craftaro.core.gui.methods.Pagable;
 import com.craftaro.core.utils.ItemUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -277,6 +279,11 @@ public class Gui {
             }
         }
 
+        return this;
+    }
+
+    public Gui setTitle(Component title) {
+        setTitle(AdventureUtils.toLegacy(title));
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.craftaro.core.lootables.gui;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.gui.AnvilGui;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
@@ -11,6 +12,8 @@ import com.craftaro.core.utils.TextUtils;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 public class GuiLootableEditor extends Gui {
     private final LootManager lootManager;
@@ -65,8 +68,11 @@ public class GuiLootableEditor extends Gui {
             ItemStack item = loot.getMaterial() == null
                     ? XMaterial.BARRIER.parseItem()
                     : GuiUtils.createButtonItem(loot.getMaterial(), null,
-                    TextUtils.formatText("&6Left click &7to edit"),
-                    TextUtils.formatText("&6Right click &7to destroy"));
+                    Arrays.asList(
+                            AdventureUtils.formatComponent("&6Left click &7to edit"),
+                            AdventureUtils.formatComponent("&6Right click &7to destroy")
+                    )
+            );
 
             setButton(i, item,
                     (event) -> {

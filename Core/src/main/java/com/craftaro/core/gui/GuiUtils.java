@@ -1,10 +1,14 @@
 package com.craftaro.core.gui;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.locale.Message;
 import com.cryptomorin.xseries.XMaterial;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,6 +103,7 @@ public class GuiUtils {
         return newLore;
     }
 
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, String title, String... lore) {
         ItemStack item = mat.parseItem();
         ItemMeta meta = item.getItemMeta();
@@ -118,6 +123,11 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(XMaterial mat, Component title, Component... lore) {
+        return createButtonItem(mat, 1, title, lore);
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, int amount, String title, String... lore) {
         ItemStack item = mat.parseItem();
         item.setAmount(amount);
@@ -139,6 +149,19 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(XMaterial mat, int amount, Component title, Component... lore) {
+        ItemStack item = mat.parseItem();
+        if (item == null) {
+            throw new IllegalArgumentException("Invalid material: " + mat);
+        }
+        item.setAmount(amount);
+        AdventureUtils.formatItemName(item, title);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(ItemStack from, String title, String... lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
@@ -158,6 +181,7 @@ public class GuiUtils {
         return item;
     }
 
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, String title, List<String> lore) {
         ItemStack item = mat.parseItem();
         ItemMeta meta = item.getItemMeta();
@@ -177,6 +201,11 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(XMaterial mat, Component title, List<Component> lore) {
+        return createButtonItem(mat, 1, title, lore);
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, int amount, String title, List<String> lore) {
         ItemStack item = mat.parseItem();
         item.setAmount(amount);
@@ -198,6 +227,19 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(XMaterial mat, int amount, Component title, List<Component> lore) {
+        ItemStack item = mat.parseItem();
+        if (item == null) {
+            throw new IllegalArgumentException("Invalid material: " + mat);
+        }
+        item.setAmount(amount);
+        AdventureUtils.formatItemName(item, title);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(ItemStack from, String title, List<String> lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
@@ -217,6 +259,15 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(ItemStack from, Component title, List<Component> lore) {
+        ItemStack item = from.clone();
+        AdventureUtils.formatItemName(item, title);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, String[] lore) {
         ItemStack item = mat.parseItem();
         ItemMeta meta = item.getItemMeta();
@@ -237,6 +288,7 @@ public class GuiUtils {
         return item;
     }
 
+    @Deprecated
     public static ItemStack createButtonItem(XMaterial mat, int amount, String[] lore) {
         ItemStack item = mat.parseItem();
         item.setAmount(amount);
@@ -259,6 +311,18 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(XMaterial mat, int amount, Component... lore) {
+        ItemStack item = mat.parseItem();
+        if (item == null) {
+            throw new IllegalArgumentException("Invalid material: " + mat);
+        }
+        item.setAmount(amount);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack createButtonItem(ItemStack from, String[] lore) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
@@ -279,7 +343,15 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack createButtonItem(XMaterial mat, List<String> lore) {
+    public static ItemStack createButtonItem(ItemStack from, Component... lore) {
+        ItemStack item = from.clone();
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
+    public static ItemStack createButtonItem(XMaterial mat, List<String> lore, String... unused) {
         ItemStack item = mat.parseItem();
         ItemMeta meta = item.getItemMeta();
 
@@ -299,7 +371,12 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack createButtonItem(XMaterial mat, int amount, List<String> lore) {
+    public static ItemStack createButtonItem(XMaterial mat, List<Component> lore) {
+        return createButtonItem(mat, 1, lore);
+    }
+
+    @Deprecated
+    public static ItemStack createButtonItem(XMaterial mat, int amount, List<String> lore, String... unused) {
         ItemStack item = mat.parseItem();
         item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
@@ -320,7 +397,19 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack createButtonItem(ItemStack from, List<String> lore) {
+    public static ItemStack createButtonItem(XMaterial mat, int amount, List<Component> lore) {
+        ItemStack item = mat.parseItem();
+        if (item == null) {
+            throw new IllegalArgumentException("Invalid material: " + mat);
+        }
+        item.setAmount(amount);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
+    public static ItemStack createButtonItem(ItemStack from, List<String> lore, String... unused) {
         ItemStack item = from.clone();
         ItemMeta meta = item.getItemMeta();
 
@@ -340,6 +429,14 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack createButtonItem(ItemStack from, List<Component> lore) {
+        ItemStack item = from.clone();
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, String title, String... lore) {
         ItemMeta meta = item.getItemMeta();
 
@@ -358,6 +455,14 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItem(ItemStack item, Component title, Component... lore) {
+        AdventureUtils.formatItemName(item, title);
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItemName(ItemStack item, String title) {
         ItemMeta meta = item.getItemMeta();
 
@@ -369,6 +474,13 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItemName(ItemStack item, Component title) {
+        AdventureUtils.formatItemName(item, title);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItemLore(ItemStack item, String... lore) {
         ItemMeta meta = item.getItemMeta();
 
@@ -385,7 +497,14 @@ public class GuiUtils {
         return item;
     }
 
-    public static ItemStack updateItemLore(ItemStack item, List<String> lore) {
+    public static ItemStack updateItemLore(ItemStack item, Component... lore) {
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
+    public static ItemStack updateItemLore(ItemStack item, List<String> lore, String... unused) {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
@@ -401,6 +520,13 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItemLore(ItemStack item, List<Component> lore) {
+        AdventureUtils.formatItemLore(item, lore);
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, XMaterial matTo, String title, String... lore) {
         if (!matTo.isSimilar(item)) {
             item = matTo.parseItem();
@@ -423,6 +549,22 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItem(ItemStack item, XMaterial matTo, Component title, Component... lore) {
+        if (!matTo.isSimilar(item)) {
+            item = matTo.parseItem();
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            AdventureUtils.formatItemName(item, title);
+            AdventureUtils.formatItemLore(item, lore);
+        }
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, String... lore) {
         if (!CompatibleMaterial.getMaterial(item.getType()).get().isSimilar(to)) {
             item = to.clone();
@@ -445,6 +587,22 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItem(ItemStack item, ItemStack to, Component title, Component... lore) {
+        if (!CompatibleMaterial.getMaterial(item.getType()).get().isSimilar(to)) {
+            item = to.clone();
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            AdventureUtils.formatItemName(item, title);
+            AdventureUtils.formatItemLore(item, lore);
+        }
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, String title, List<String> lore) {
         ItemMeta meta = item.getItemMeta();
 
@@ -463,6 +621,18 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItem(ItemStack item, Component title, List<Component> lore) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            AdventureUtils.formatItemName(item, title);
+            AdventureUtils.formatItemLore(item, lore);
+        }
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, XMaterial matTo, String title, List<String> lore) {
         if (!matTo.isSimilar(item)) {
             item = matTo.parseItem();
@@ -485,6 +655,22 @@ public class GuiUtils {
         return item;
     }
 
+    public static ItemStack updateItem(ItemStack item, XMaterial matTo, Component title, List<Component> lore) {
+        if (!matTo.isSimilar(item)) {
+            item = matTo.parseItem();
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            AdventureUtils.formatItemName(item, title);
+            AdventureUtils.formatItemLore(item, lore);
+        }
+
+        return item;
+    }
+
+    @Deprecated
     public static ItemStack updateItem(ItemStack item, ItemStack to, String title, List<String> lore) {
         if (!CompatibleMaterial.getMaterial(item.getType()).get().isSimilar(to)) {
             item = to.clone();
@@ -505,5 +691,28 @@ public class GuiUtils {
         }
 
         return item;
+    }
+
+    public static ItemStack updateItem(ItemStack item, ItemStack to, Component title, List<Component> lore) {
+        if (!CompatibleMaterial.getMaterial(item.getType()).get().isSimilar(to)) {
+            item = to.clone();
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            AdventureUtils.formatItemName(item, title);
+            AdventureUtils.formatItemLore(item, lore);
+        }
+
+        return item;
+    }
+
+    public static ItemStack createButtonItem(XMaterial material, Message title) {
+        return createButtonItem(material, title.getMessage());
+    }
+
+    public static ItemStack createButtonItem(XMaterial material, Message title, Message lore) {
+        return createButtonItem(material, title.getMessage(), lore.getMessage());
     }
 }

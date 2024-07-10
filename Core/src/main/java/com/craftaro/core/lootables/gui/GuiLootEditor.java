@@ -1,5 +1,6 @@
 package com.craftaro.core.lootables.gui;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.gui.AnvilGui;
 import com.craftaro.core.gui.Gui;
@@ -275,10 +276,13 @@ public class GuiLootEditor extends Gui {
         int i = 9 * 5;
         for (Loot loot : this.loot.getChildLoot()) {
             ItemStack item = loot.getMaterial() == null
-                    ? XMaterial.BARRIER.parseItem()
-                    : GuiUtils.createButtonItem(loot.getMaterial(), null,
-                    TextUtils.formatText("&6Left click &7to edit"),
-                    TextUtils.formatText("&6Right click &7to destroy"));
+                    ? XMaterial.BARRIER.parseItem() :
+                    GuiUtils.createButtonItem(loot.getMaterial(), null,
+                            Arrays.asList(
+                                    AdventureUtils.formatComponent("&6Left click &7to edit"),
+                                    AdventureUtils.formatComponent("&6Right click &7to destroy")
+                            )
+                    );
 
             setButton(i, item,
                     (event) -> {

@@ -11,8 +11,11 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -174,6 +177,10 @@ public class AdventureUtils {
     }
 
     private static void setItemName(ItemStack item, Component name) {
+        if (name == null) {
+            return;
+        }
+
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return;
@@ -193,6 +200,9 @@ public class AdventureUtils {
     }
 
     private static void setItemLore(ItemStack item, Component... lore) {
+        if (lore == null || lore.length == 0) {
+            return;
+        }
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
