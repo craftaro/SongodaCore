@@ -70,6 +70,18 @@ public class SQLiteConnector implements DatabaseConnector {
     }
 
     @Override
+    public <T> T connectResult(ConnectResult<T> callback, T... defaultValue) {
+        try (Connection connection = getConnection()) {
+            T result = callback.accept(connection);
+            return result != null ? result : defaultValue.length > 0 ? defaultValue[0] : null;
+        } catch (Exception ex) {
+            this.plugin.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
+            ex.printStackTrace();
+            return defaultValue.length > 0 ? defaultValue[0] : null;
+        }
+    }
+
+    @Override
     public void connectDSL(DSLContextCallback callback) {
         try (Connection connection = getConnection()) {
             callback.accept(DSL.using(connection, SQLDialect.SQLITE));
@@ -88,6 +100,18 @@ public class SQLiteConnector implements DatabaseConnector {
             ex.printStackTrace();
         }
         return OptionalResult.empty();
+    }
+
+    @Override
+    public <T> T connectDSLResult(DSLConnectResult<T> callback, T... defaultValue) {
+        try (Connection connection = getConnection()) {
+            T result = callback.accept(DSL.using(connection, SQLDialect.SQLITE));
+            return result != null ? result : defaultValue.length > 0 ? defaultValue[0] : null;
+        } catch (Exception ex) {
+            this.plugin.getLogger().severe("An error occurred executing a SQLite query: " + ex.getMessage());
+            ex.printStackTrace();
+            return defaultValue.length > 0 ? defaultValue[0] : null;
+        }
     }
 
     @Override

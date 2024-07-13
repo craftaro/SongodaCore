@@ -35,6 +35,16 @@ public interface DatabaseConnector {
     OptionalResult connectOptional(ConnectionOptionalCallback callback);
 
     /**
+     * Executes a callback with a Connection passed and automatically closes it when finished
+     *
+     * @param callback The callback to execute once the connection is retrieved
+     * @param defaultValue The default value (First value only) to return if the callback fails (Also used to make automatic type inference work)
+     *
+     * @return The result of the callback
+     */
+    <T> T connectResult(ConnectResult<T> callback, T... defaultValue);
+
+    /**
      * Executes a callback with a DSLContext passed and automatically closes it when finished
      *
      * @param callback The callback to execute once the connection is retrieved
@@ -49,6 +59,16 @@ public interface DatabaseConnector {
      * @return The result of the callback
      */
     OptionalResult connectDSLOptional(DSLContextOptionalCallback callback);
+
+    /**
+     * Executes a callback with a DSLContext passed and automatically closes it when finished
+     *
+     * @param callback The callback to execute once the connection is retrieved
+     * @param defaultValue The default value (First value only) to return if the callback fails (Also used to make automatic type inference work)
+     *
+     * @return The result of the callback
+     */
+    <T> T connectDSLResult(DSLConnectResult<T> callback, T... defaultValue);
 
     /**
      * Wraps a connection in a callback which will automagically handle catching sql errors
@@ -80,6 +100,19 @@ public interface DatabaseConnector {
      */
     interface DSLContextOptionalCallback {
         OptionalResult accept(DSLContext context) throws SQLException;
+    }
+
+    /**
+     * Wraps a connection in a callback which will
+     * automagically handle catching sql errors
+     * Can return a value
+     */
+    interface ConnectResult<T> {
+        T accept(Connection connection) throws SQLException;
+    }
+
+    interface DSLConnectResult<T> {
+        T accept(DSLContext context) throws SQLException;
     }
 
     /**
