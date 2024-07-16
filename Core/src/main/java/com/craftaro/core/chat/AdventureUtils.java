@@ -434,7 +434,7 @@ public class AdventureUtils {
     public static Component formatPlaceholder(Component message, MiniMessagePlaceholder... placeholder) {
         return message.replaceText(builder -> {
             for (MiniMessagePlaceholder place : placeholder) {
-                builder.matchLiteral(place.getPlaceholder()).replacement(place.getValue());
+                builder.matchLiteral(place.getPlaceholder()).replacement(formatComponent(place.getValue()));
             }
         });
     }
