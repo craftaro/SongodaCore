@@ -60,7 +60,7 @@ public enum ServerVersion {
 
     ;
 
-    private static final String serverPackageVersion;
+    static final String serverPackageVersion;
     private static final String serverReleaseVersion;
     private static final ServerVersion serverVersion;
     private static final boolean isMocked;
