@@ -2,14 +2,11 @@ package com.craftaro.core;
 
 import com.craftaro.core.commands.CommandManager;
 import com.craftaro.core.compatibility.ClientVersion;
-import com.craftaro.core.core.LocaleModule;
 import com.craftaro.core.core.PluginInfo;
-import com.craftaro.core.core.PluginInfoModule;
 import com.craftaro.core.core.SongodaCoreCommand;
 import com.craftaro.core.core.SongodaCoreDiagCommand;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -20,24 +17,14 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class SongodaCore {
@@ -230,55 +217,11 @@ public class SongodaCore {
         getLogger().info(getPrefix() + "Hooked " + plugin.getName() + ".");
         PluginInfo info = new PluginInfo(plugin, pluginID, icon, libraryVersion);
 
-        // don't forget to check for language pack updates ;)
-        info.addModule(new LocaleModule());
-        registeredPlugins.add(info);
-        this.tasks.add(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> update(info), 60L));
-    }
-
-    /**
-     * @deprecated Seems useless and will probably be replaced in the near future
-     */
-    @Deprecated
-    private void update(PluginInfo plugin) {
-        try {
-            URL url = new URL("https://update.songoda.com/index.php?plugin=" + plugin.getSongodaId()
-                    + "&version=" + plugin.getJavaPlugin().getDescription().getVersion()
-                    + "&updaterVersion=" + updaterVersion);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-            urlConnection.setRequestProperty("Accept", "*/*");
-            urlConnection.setConnectTimeout(5000);
-            InputStream is = urlConnection.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuilder sb = new StringBuilder();
-            while ((numCharsRead = isr.read(charArray)) > 0) {
-                sb.append(charArray, 0, numCharsRead);
-            }
-            urlConnection.disconnect();
-
-            String jsonString = sb.toString();
-            JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
-
-            plugin.setLatestVersion((String) json.get("latestVersion"));
-            plugin.setMarketplaceLink((String) json.get("link"));
-            plugin.setNotification((String) json.get("notification"));
-            plugin.setChangeLog((String) json.get("changeLog"));
-
-            plugin.setJson(json);
-
-            for (PluginInfoModule module : plugin.getModules()) {
-                module.run(plugin);
-            }
-        } catch (IOException ex) {
-            final String er = ex.getMessage();
-            getLogger().log(Level.FINE, "Connection with Songoda servers failed: " + (er.contains("URL") ? er.substring(0, er.indexOf("URL") + 3) : er));
-        } catch (ParseException ex) {
-            getLogger().log(Level.FINE, "Failed to parse json for " + plugin.getJavaPlugin().getName() + " update check");
+        if (plugin.getDescription().getWebsite() != null && plugin.getDescription().getWebsite().contains("songoda.com/")) {
+            info.setMarketplaceLink(plugin.getDescription().getWebsite());
         }
+
+        registeredPlugins.add(info);
     }
 
     public static List<PluginInfo> getPlugins() {
@@ -391,33 +334,6 @@ public class SongodaCore {
     }
 
     private class EventListener implements Listener {
-        final HashMap<UUID, Long> lastCheck = new HashMap<>();
-
-        @EventHandler
-        void onLogin(PlayerLoginEvent event) {
-            final Player player = event.getPlayer();
-
-            // don't spam players with update checks
-            long now = System.currentTimeMillis();
-            Long last = this.lastCheck.get(player.getUniqueId());
-
-            if (last != null && now - 10000 < last) {
-                return;
-            }
-
-            this.lastCheck.put(player.getUniqueId(), now);
-
-            // is this player good to revieve update notices?
-            if (!event.getPlayer().isOp() && !player.hasPermission("songoda.updatecheck")) return;
-
-            // check for updates! ;)
-            for (PluginInfo plugin : getPlugins()) {
-                if (plugin.getNotification() != null && plugin.getJavaPlugin().isEnabled())
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin.getJavaPlugin(), () ->
-                            player.sendMessage("[" + plugin.getJavaPlugin().getName() + "] " + plugin.getNotification()), 10L);
-            }
-        }
-
         @EventHandler
         void onDisable(PluginDisableEvent event) {
             // don't track disabled plugins
