@@ -10,7 +10,7 @@ public class AnvilInventoryCustom extends CraftInventoryAnvil {
     final InventoryHolder holder;
 
     public AnvilInventoryCustom(InventoryHolder holder, Location location, Container inventory, Container resultInventory, AnvilMenu container) {
-        super(location, inventory, resultInventory, container);
+        super(location, inventory, resultInventory);
 
         this.holder = holder;
     }
