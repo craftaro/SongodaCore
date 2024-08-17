@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryView;
+import org.bukkit.craftbukkit.v1_21_R1.inventory.view.CraftAnvilView;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -59,14 +60,14 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
         }
     }
 
-    public CraftInventoryView getBukkitView(Player player, InventoryHolder holder) {
+    public CraftAnvilView getBukkitView(Player player, InventoryHolder holder) {
         try {
             AnvilInventoryCustom craftInventory = new AnvilInventoryCustom(holder,
                     new Location(this.entity.level().getWorld(), 0, 0, 0),
                     this.inputSlots,
                     this.resultSlots,
                     this);
-            CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
+            CraftAnvilView view = new CraftAnvilView(player.getBukkitEntity(), craftInventory, this);
             mc_ContainerAnvil_bukkitEntity.set(this, view);
 
             return view;
