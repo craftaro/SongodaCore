@@ -1,4 +1,4 @@
-package com.craftaro.core.nms.v1_21_R1.anvil;
+package com.craftaro.core.nms.v1_21_0.anvil;
 
 import com.craftaro.core.nms.anvil.CustomAnvil;
 import com.craftaro.core.nms.anvil.methods.AnvilTextChange;
@@ -13,10 +13,7 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftAbstractInventoryView;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryView;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.view.CraftAnvilView;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -62,14 +59,14 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
         }
     }
 
-    public CraftAbstractInventoryView getBukkitView(Player player, InventoryHolder holder) {
+    public CraftInventoryView getBukkitView(Player player, InventoryHolder holder) {
         try {
             AnvilInventoryCustom craftInventory = new AnvilInventoryCustom(holder,
                     new Location(this.entity.level().getWorld(), 0, 0, 0),
                     this.inputSlots,
                     this.resultSlots,
                     this);
-            CraftAnvilView view = new CraftAnvilView(player.getBukkitEntity(), craftInventory, this);
+            CraftInventoryView view = new CraftInventoryView(player.getBukkitEntity(), craftInventory, this);
             mc_ContainerAnvil_bukkitEntity.set(this, view);
 
             return view;
@@ -77,20 +74,7 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
         } catch (NoSuchMethodError err) {
             //1.21 support
-            try {
-                Class<?> clazz = Class.forName("com.craftaro.core.nms.v1_21_0.anvil.AnvilInventoryCustom");
-                Object craftInventory = clazz.getConstructor(InventoryHolder.class, Location.class, net.minecraft.world.Container.class, net.minecraft.world.Container.class, AnvilMenu.class)
-                        .newInstance(holder, new Location(this.entity.level().getWorld(), 0, 0, 0), this.inputSlots, this.resultSlots, this);
 
-                Class<?> craftInventoryViewClass = Class.forName("org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryView");
-                //(HumanEntity player, Inventory viewing, AbstractContainerMenu container)
-                Object view = craftInventoryViewClass.getConstructor(HumanEntity.class, Inventory.class, AbstractContainerMenu.class).newInstance(player.getBukkitEntity(), (Inventory) craftInventory, this);
-                mc_ContainerAnvil_bukkitEntity.set(this, view);
-
-                return (CraftAbstractInventoryView) view;
-            } catch (Exception ex) {
-                Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
-            }
         }
 
         return getBukkitView();
