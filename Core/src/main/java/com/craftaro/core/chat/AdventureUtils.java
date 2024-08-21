@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -33,7 +34,8 @@ import java.util.concurrent.TimeUnit;
 
 public class AdventureUtils {
     private static Method displayNameMethod = null;
-    private static Method loreMethod = null;
+    private static Method setLoreMethod = null;
+    private static Method getLoreMethod = null;
     private static Object gsonComponentSerializer;
     private static Method gsonDeserializeMethod;
 
@@ -42,7 +44,8 @@ public class AdventureUtils {
             try {
                 Class<?> componentClass = Class.forName("net;kyori;adventure;text;Component".replace(";", "."));
                 displayNameMethod = ItemMeta.class.getDeclaredMethod("displayName", componentClass);
-                loreMethod = ItemMeta.class.getDeclaredMethod("lore", List.class);
+                setLoreMethod = ItemMeta.class.getDeclaredMethod("lore", List.class);
+                setLoreMethod = ItemMeta.class.getDeclaredMethod("lore");
                 gsonComponentSerializer = Class.forName("net;kyori;adventure;text;serializer;gson;GsonComponentSerializer".replace(";", ".")).getDeclaredMethod("gson").invoke(null);
                 gsonDeserializeMethod = gsonComponentSerializer.getClass().getDeclaredMethod("deserialize", String.class);
                 gsonDeserializeMethod.setAccessible(true);
@@ -172,8 +175,27 @@ public class AdventureUtils {
         setItemLore(item, lore);
     }
 
+    public static void appendItemLore(ItemStack item, List<Component> lore) {
+        List<Component> currentLore = new ArrayList<>();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null && meta.hasLore()) {
+            if (isMiniMessageEnabled()) {
+                try {
+                    currentLore = (List<Component>) getLoreMethod.invoke(meta);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                currentLore = formatComponent(meta.getLore());
+            }
+        }
+
+        currentLore.addAll(lore);
+        setItemLore(item, currentLore.toArray(new Component[0]));
+    }
+
     public static boolean isMiniMessageEnabled() {
-        return ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16) && displayNameMethod != null && loreMethod != null;
+        return ServerProject.isServer(ServerProject.PAPER) && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16) && displayNameMethod != null && setLoreMethod != null;
     }
 
     private static void setItemName(ItemStack item, Component name) {
@@ -209,7 +231,7 @@ public class AdventureUtils {
         if (isMiniMessageEnabled()) {
             //Set lore as component
             try {
-                loreMethod.invoke(meta, convertToOriginalComponent(lore));
+                setLoreMethod.invoke(meta, convertToOriginalComponent(lore));
                 item.setItemMeta(meta);
                 return;
             } catch (Exception ignored) {
@@ -261,7 +283,6 @@ public class AdventureUtils {
         }
         return result;
     }
-
 
     public static List<Component> formatComponent(List<String> list, MiniMessagePlaceholder... placeholders) {
         List<Component> result = new ArrayList<>();
