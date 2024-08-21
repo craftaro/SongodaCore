@@ -4,12 +4,17 @@ public class MiniMessagePlaceholder {
 
     public static String PLACEHOLDER_PREFIX = "%";
     public static String PLACEHOLDER_SUFFIX = "%";
+    public static boolean useLegacyPlaceholders = false;
 
     private final String placeholder;
     private final String value;
 
     public MiniMessagePlaceholder(String placeholder, String value) {
-        this.placeholder = PLACEHOLDER_PREFIX + placeholder + PLACEHOLDER_SUFFIX;
+        if (useLegacyPlaceholders) {
+            this.placeholder = PLACEHOLDER_PREFIX + placeholder + PLACEHOLDER_SUFFIX;
+        } else {
+            this.placeholder = placeholder;
+        }
         this.value = value;
     }
 
