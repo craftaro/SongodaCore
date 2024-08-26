@@ -147,7 +147,7 @@ public class Message {
      * Interchangeably Supports {@code %value%} and {@code {value}}
      *
      * @param placeholder the placeholder to replace
-     * @param replacement the replacement object
+     * @param replacement the replacement String
      *
      * @return the modified Message
      */
@@ -156,6 +156,19 @@ public class Message {
         this.message = AdventureUtils.formatPlaceholder(this.message, miniMessagePlaceholder);
 
         return this;
+    }
+
+    /**
+     * Replace the provided placeholder with the provided object. <br />
+     * Interchangeably Supports {@code %value%} and {@code {value}}
+     *
+     * @param placeholder the placeholder to replace
+     * @param replacement the replacement Number
+     *
+     * @return the modified Message
+     */
+    public Message processPlaceholder(String placeholder, Number replacement) {
+        return processPlaceholder(placeholder, replacement == null ? "" : replacement.toString());
     }
 
     Message setPrefix(String prefix) {
