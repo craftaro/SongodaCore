@@ -151,8 +151,8 @@ public class Message {
      *
      * @return the modified Message
      */
-    public Message processPlaceholder(String placeholder, Object replacement) {
-        MiniMessagePlaceholder miniMessagePlaceholder = new MiniMessagePlaceholder(placeholder, replacement == null ? "" : replacement.toString());
+    public Message processPlaceholder(String placeholder, String replacement) {
+        MiniMessagePlaceholder miniMessagePlaceholder = new MiniMessagePlaceholder(placeholder, replacement == null ? "" : replacement);
         this.message = AdventureUtils.formatPlaceholder(this.message, miniMessagePlaceholder);
 
         return this;
