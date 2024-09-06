@@ -6,6 +6,7 @@ import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.MethodMapping;
 import com.craftaro.core.compatibility.ServerProject;
 import com.craftaro.core.compatibility.ServerVersion;
+import com.craftaro.core.nms.Nms;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -30,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Base64;
@@ -169,9 +169,6 @@ public class ItemUtils {
     static Method mc_ItemStack_setTag;
     static Method mc_NBTTagCompound_set;
     static Method mc_NBTTagCompound_remove;
-//    static Method mc_NBTTagCompound_setShort;
-//    static Method mc_NBTTagCompound_setString;
-//    static Method mc_NBTTagList_add;
     static Method cb_CraftItemStack_asNMSCopy;
     static Method cb_CraftItemStack_asCraftMirror;
 
@@ -370,32 +367,12 @@ public class ItemUtils {
         }
     }
 
-    static Class cb_CraftPlayer = NMSUtils.getCraftClass("entity.CraftPlayer");
-    static Method cb_CraftPlayer_getProfile;
-
-    static {
-        try {
-            cb_CraftPlayer_getProfile = cb_CraftPlayer.getMethod("getProfile");
-        } catch (Exception ignore) {
-        }
-    }
-
     public static String getSkullTexture(Player player) {
         if (player == null || ServerVersion.isServerVersionBelow(ServerVersion.V1_8)) {
             return null;
         }
 
-        try {
-            Object craftPlayer = cb_CraftPlayer.cast(player);
-
-            Iterator<Property> iterator = ((GameProfile) cb_CraftPlayer_getProfile.invoke(craftPlayer)).getProperties().get("textures").iterator();
-
-            return iterator.hasNext() ? iterator.next().getValue() : null;
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
+        return Nms.getImplementations().getPlayer().getProfile(player).getTextureValue();
     }
 
     public static String getSkullTexture(ItemStack item) {
