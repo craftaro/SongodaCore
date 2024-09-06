@@ -1,6 +1,6 @@
 package com.craftaro.core.lootables.loot;
 
-import com.craftaro.core.utils.ItemUtils;
+import com.craftaro.core.nms.Nms;
 import com.craftaro.core.utils.TextUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.annotations.SerializedName;
@@ -151,18 +151,17 @@ public class Loot {
             return null;
         }
 
-        // Create enchantment book
         if (item.getType() == Material.ENCHANTED_BOOK) {
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
             for (Map.Entry<String, Integer> entry : this.enchants.entrySet()) {
-                if (entry.getValue() == null) continue;
+                if (entry.getValue() == null) {
+                    continue;
+                }
 
-                //TODO add random enchants
-//                if (entry.getKey().equalsIgnoreCase("RANDOM")) {
-//                    item = ItemUtils.applyRandomEnchants(item, entry.getValue());
-//
-//                    continue;
-//                }
+                if (entry.getKey().equalsIgnoreCase("RANDOM")) {
+                    item = Nms.getImplementations().getItem().copyAndApplyRandomEnchantment(item, entry.getValue());
+                    continue;
+                }
 
                 meta.addStoredEnchant(Enchantment.getByName(entry.getKey()), entry.getValue(), true);
             }
@@ -177,8 +176,7 @@ public class Loot {
             }
 
             if (entry.getKey().equalsIgnoreCase("RANDOM")) {
-                item = ItemUtils.applyRandomEnchants(item, entry.getValue());
-
+                item = Nms.getImplementations().getItem().copyAndApplyRandomEnchantment(item, entry.getValue());
                 continue;
             }
 

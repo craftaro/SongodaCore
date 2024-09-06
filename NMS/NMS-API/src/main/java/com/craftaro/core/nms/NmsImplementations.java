@@ -3,6 +3,7 @@ package com.craftaro.core.nms;
 import com.craftaro.core.nms.anvil.AnvilCore;
 import com.craftaro.core.nms.entity.NMSPlayer;
 import com.craftaro.core.nms.entity.NmsEntity;
+import com.craftaro.core.nms.item.NmsItem;
 import com.craftaro.core.nms.nbt.NBTCore;
 import com.craftaro.core.nms.world.NmsWorldBorder;
 import com.craftaro.core.nms.world.WorldCore;
@@ -20,4 +21,6 @@ public interface NmsImplementations {
     @NotNull AnvilCore getAnvil();
 
     @NotNull NBTCore getNbt();
+
+    @NotNull NmsItem getItem();
 }

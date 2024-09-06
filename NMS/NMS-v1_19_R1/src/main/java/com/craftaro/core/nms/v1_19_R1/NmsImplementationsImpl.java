@@ -3,10 +3,12 @@ package com.craftaro.core.nms.v1_19_R1;
 import com.craftaro.core.nms.NmsImplementations;
 import com.craftaro.core.nms.entity.NMSPlayer;
 import com.craftaro.core.nms.entity.NmsEntity;
+import com.craftaro.core.nms.item.NmsItem;
 import com.craftaro.core.nms.nbt.NBTCore;
 import com.craftaro.core.nms.v1_19_R1.anvil.AnvilCore;
 import com.craftaro.core.nms.v1_19_R1.entity.NMSPlayerImpl;
 import com.craftaro.core.nms.v1_19_R1.entity.NmsEntityImpl;
+import com.craftaro.core.nms.v1_19_R1.item.NmsItemImpl;
 import com.craftaro.core.nms.v1_19_R1.nbt.NBTCoreImpl;
 import com.craftaro.core.nms.v1_19_R1.world.NmsWorldBorderImpl;
 import com.craftaro.core.nms.v1_19_R1.world.WorldCoreImpl;
@@ -23,6 +25,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
     private final NmsWorldBorder worldBorder;
     private final com.craftaro.core.nms.anvil.AnvilCore anvil;
     private final NBTCore nbt;
+    private final NmsItem item;
 
     public NmsImplementationsImpl() {
         if (((CraftMagicNumbers) CraftMagicNumbers.INSTANCE).getMappingsVersion().equals("7b9de0da1357e5b251eddde9aa762916")) {
@@ -34,6 +37,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
             this.worldBorder = nmsMc1_19_0.getWorldBorder();
             this.anvil = nmsMc1_19_0.getAnvil();
             this.nbt = nmsMc1_19_0.getNbt();
+            this.item = nmsMc1_19_0.getItem();
 
             return;
         }
@@ -44,6 +48,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
         this.worldBorder = new NmsWorldBorderImpl();
         this.anvil = new AnvilCore();
         this.nbt = new NBTCoreImpl();
+        this.item = new NmsItemImpl();
     }
 
     @Override
@@ -74,5 +79,10 @@ public class NmsImplementationsImpl implements NmsImplementations {
     @Override
     public @NotNull NBTCore getNbt() {
         return this.nbt;
+    }
+
+    @Override
+    public @NotNull NmsItem getItem() {
+        return this.item;
     }
 }
