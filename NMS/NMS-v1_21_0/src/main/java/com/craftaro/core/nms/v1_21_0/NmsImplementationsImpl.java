@@ -21,6 +21,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
     private final NmsWorldBorder worldBorder;
     private final com.craftaro.core.nms.anvil.AnvilCore anvil;
     private final NBTCore nbt;
+    private final NmsItem item;
 
     public NmsImplementationsImpl() {
         this.entity = new NmsEntityImpl();
@@ -29,6 +30,7 @@ public class NmsImplementationsImpl implements NmsImplementations {
         this.worldBorder = new NmsWorldBorderImpl();
         this.anvil = new AnvilCore();
         this.nbt = new NBTCoreImpl();
+        this.item = new NmsItemImpl();
     }
 
     @Override
@@ -59,5 +61,10 @@ public class NmsImplementationsImpl implements NmsImplementations {
     @Override
     public @NotNull NBTCore getNbt() {
         return this.nbt;
+    }
+
+    @Override
+    public @NotNull NmsItem getItem() {
+        return this.item;
     }
 }
