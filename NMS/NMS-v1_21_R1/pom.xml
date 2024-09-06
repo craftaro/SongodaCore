@@ -62,13 +62,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <version>${project.version}</version>
-            <artifactId>CraftaroCore-NMS-v1_21_0</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <scope>compile</scope>
-        </dependency>
-
         <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>org.spigotmc</groupId>

@@ -75,22 +75,6 @@ public class AnvilView extends AnvilMenu implements CustomAnvil {
             return view;
         } catch (Exception ex) {
             Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
-        } catch (NoSuchMethodError err) {
-            //1.21 support
-            try {
-                Class<?> clazz = Class.forName("com.craftaro.core.nms.v1_21_0.anvil.AnvilInventoryCustom");
-                Object craftInventory = clazz.getConstructor(InventoryHolder.class, Location.class, net.minecraft.world.Container.class, net.minecraft.world.Container.class, AnvilMenu.class)
-                        .newInstance(holder, new Location(this.entity.level().getWorld(), 0, 0, 0), this.inputSlots, this.resultSlots, this);
-
-                Class<?> craftInventoryViewClass = Class.forName("org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryView");
-                //(HumanEntity player, Inventory viewing, AbstractContainerMenu container)
-                Object view = craftInventoryViewClass.getConstructor(HumanEntity.class, Inventory.class, AbstractContainerMenu.class).newInstance(player.getBukkitEntity(), (Inventory) craftInventory, this);
-                mc_ContainerAnvil_bukkitEntity.set(this, view);
-
-                return (CraftAbstractInventoryView) view;
-            } catch (Exception ex) {
-                Logger.getLogger(AnvilView.class.getName()).log(Level.SEVERE, "Anvil Setup Error", ex);
-            }
         }
 
         return getBukkitView();
