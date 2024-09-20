@@ -4,8 +4,12 @@ import com.craftaro.core.nms.entity.NMSPlayer;
 import com.craftaro.core.nms.entity.player.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.item.component.ResolvableProfile;
 import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class NMSPlayerImpl implements NMSPlayer {
     @Override
@@ -16,7 +20,20 @@ public class NMSPlayerImpl implements NMSPlayer {
     @Override
     public GameProfile getProfile(Player p) {
         com.mojang.authlib.GameProfile profile = ((CraftPlayer) p).getHandle().getGameProfile();
+        return wrapProfile(profile);
+    }
 
+    @Override
+    public GameProfile createProfile(UUID id, String name, @Nullable String textureValue) {
+        com.mojang.authlib.GameProfile profile = new com.mojang.authlib.GameProfile(id, name);
+        if (textureValue != null) {
+            profile.getProperties().put("textures", new Property("textures", textureValue));
+        }
+
+        return wrapProfile(profile);
+    }
+
+    private GameProfile wrapProfile(com.mojang.authlib.GameProfile profile) {
         String textureValue = null;
         String textureSignature = null;
         for (Property property : profile.getProperties().get("textures")) {
@@ -28,6 +45,7 @@ public class NMSPlayerImpl implements NMSPlayer {
 
         return new GameProfile(
                 profile,
+                new ResolvableProfile(profile),
 
                 profile.getId(),
                 profile.getName(),

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class GameProfile {
     private final Object mojangGameProfile;
+    private final Object mojangResolvableGameProfile;
 
     private final UUID id;
     private final String name;
@@ -16,6 +17,7 @@ public class GameProfile {
 
     public GameProfile(
             Object mojangGameProfile,
+            @Nullable Object mojangResolvableGameProfile,
 
             UUID id,
             String name,
@@ -23,6 +25,8 @@ public class GameProfile {
             @Nullable String textureSignature
     ) {
         this.mojangGameProfile = Objects.requireNonNull(mojangGameProfile);
+        this.mojangResolvableGameProfile = mojangResolvableGameProfile;
+
 
         this.id = Objects.requireNonNull(id);
         this.name = Objects.requireNonNull(name);
@@ -32,6 +36,10 @@ public class GameProfile {
 
     public Object getMojangGameProfile() {
         return this.mojangGameProfile;
+    }
+
+    public @Nullable Object getMojangResolvableGameProfile() {
+        return this.mojangResolvableGameProfile;
     }
 
     public @NotNull UUID getId() {
