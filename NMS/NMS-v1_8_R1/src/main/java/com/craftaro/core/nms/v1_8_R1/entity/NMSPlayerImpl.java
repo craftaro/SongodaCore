@@ -13,6 +13,7 @@ public class NMSPlayerImpl implements NMSPlayer {
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket((Packet) packet);
     }
 
+    @Override
     public GameProfile getProfile(Player p) {
         com.mojang.authlib.GameProfile profile = ((CraftPlayer) p).getHandle().getProfile();
 
