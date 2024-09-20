@@ -37,7 +37,7 @@ public class NMSPlayerImpl implements NMSPlayer {
         String textureValue = null;
         String textureSignature = null;
         for (Property property : profile.getProperties().get("textures")) {
-            if (property.name().equals("SKIN")) {
+            if (property.name().equals("textures")) {
                 textureValue = property.value();
                 textureSignature = property.signature();
             }
