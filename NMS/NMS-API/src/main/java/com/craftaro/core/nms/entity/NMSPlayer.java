@@ -13,16 +13,16 @@ public interface NMSPlayer {
 
     GameProfile getProfile(Player p);
 
-    GameProfile createProfile(UUID id, String name, @Nullable String textureValue);
+    GameProfile createProfile(UUID id, String name, @Nullable String textureValue, @Nullable String textureSignature);
 
     default GameProfile createProfileByUrl(String url) {
         UUID id = UUID.nameUUIDFromBytes(("SongodaCore:" + url).getBytes(StandardCharsets.UTF_8));
         String rawTextureValue = "{\"textures\":{\"SKIN\":{\"url\":\"" + url + "\"}}}";
-        return createProfile(id, "by_SongodaCore", Base64.getEncoder().encodeToString(rawTextureValue.getBytes()));
+        return createProfile(id, "by_SongodaCore", Base64.getEncoder().encodeToString(rawTextureValue.getBytes()), null);
     }
 
     default GameProfile createProfileByTextureValue(String textureValue) {
         UUID id = UUID.nameUUIDFromBytes(("SongodaCore:" + textureValue).getBytes(StandardCharsets.UTF_8));
-        return createProfile(id, "by_SongodaCore", textureValue);
+        return createProfile(id, "by_SongodaCore", textureValue, null);
     }
 }

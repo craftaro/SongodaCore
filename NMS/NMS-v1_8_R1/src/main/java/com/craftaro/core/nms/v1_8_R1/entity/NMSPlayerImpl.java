@@ -23,10 +23,10 @@ public class NMSPlayerImpl implements NMSPlayer {
     }
 
     @Override
-    public GameProfile createProfile(UUID id, String name, @Nullable String textureValue) {
+    public GameProfile createProfile(UUID id, String name, @Nullable String textureValue, @Nullable String textureSignature) {
         com.mojang.authlib.GameProfile profile = new com.mojang.authlib.GameProfile(id, name);
         if (textureValue != null) {
-            profile.getProperties().put("textures", new Property("textures", textureValue));
+            profile.getProperties().put("textures", new Property("textures", textureValue, textureSignature));
         }
 
         return wrapProfile(profile);
