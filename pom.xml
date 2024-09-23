@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.songoda</groupId>
-    <artifactId>SongodaCore-Modules</artifactId>
-    <version>2.6.22</version>
+    <groupId>com.craftaro</groupId>
+    <artifactId>CraftaroCore-Modules</artifactId>
+    <version>3.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z' to update version recursively -->
@@ -26,38 +26,43 @@
 
         <module>NMS/NMS</module>
         <module>NMS/NMS-API</module>
-        <module>NMS/NMS-v1_8_R1</module>
-        <module>NMS/NMS-v1_8_R2</module>
-        <module>NMS/NMS-v1_8_R3</module>
-        <module>NMS/NMS-v1_9_R1</module>
-        <module>NMS/NMS-v1_9_R2</module>
-        <module>NMS/NMS-v1_10_R1</module>
-        <module>NMS/NMS-v1_11_R1</module>
-        <module>NMS/NMS-v1_12_R1</module>
-        <module>NMS/NMS-v1_13_R1</module>
-        <module>NMS/NMS-v1_13_R2</module>
-        <module>NMS/NMS-v1_14_R1</module>
-        <module>NMS/NMS-v1_15_R1</module>
-        <module>NMS/NMS-v1_16_R1</module>
-        <module>NMS/NMS-v1_16_R2</module>
-        <module>NMS/NMS-v1_16_R3</module>
-        <module>NMS/NMS-v1_17_R1</module>
-        <module>NMS/NMS-v1_18_R1</module>
-        <module>NMS/NMS-v1_18_R2</module>
-        <module>NMS/NMS-v1_19_0</module>
-        <module>NMS/NMS-v1_19_R1</module>
-        <module>NMS/NMS-v1_19_R2</module>
+        <module>NMS/NMS-v1_21_R1</module>
+        <module>NMS/NMS-v1_20_R4</module>
+        <module>NMS/NMS-v1_20_R3</module>
+        <module>NMS/NMS-v1_20_R2</module>
+        <module>NMS/NMS-v1_20_R1</module>
         <module>NMS/NMS-v1_19_R3</module>
+        <module>NMS/NMS-v1_19_R2</module>
+        <module>NMS/NMS-v1_19_R1</module>
+        <module>NMS/NMS-v1_19_0</module>
+        <module>NMS/NMS-v1_18_R2</module>
+        <module>NMS/NMS-v1_18_R1</module>
+        <module>NMS/NMS-v1_17_R1</module>
+        <module>NMS/NMS-v1_16_R3</module>
+        <module>NMS/NMS-v1_16_R2</module>
+        <module>NMS/NMS-v1_16_R1</module>
+        <module>NMS/NMS-v1_15_R1</module>
+        <module>NMS/NMS-v1_14_R1</module>
+        <module>NMS/NMS-v1_13_R2</module>
+        <module>NMS/NMS-v1_13_R1</module>
+        <module>NMS/NMS-v1_12_R1</module>
+        <module>NMS/NMS-v1_11_R1</module>
+        <module>NMS/NMS-v1_10_R1</module>
+        <module>NMS/NMS-v1_9_R2</module>
+        <module>NMS/NMS-v1_9_R1</module>
+        <module>NMS/NMS-v1_8_R3</module>
+        <module>NMS/NMS-v1_8_R2</module>
+        <module>NMS/NMS-v1_8_R1</module>
     </modules>
 
     <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
+        <url>https://github.com/craftaro/SongodaCore/issues</url>
+        <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/songoda/SongodaCore</url>
-        <connection>scm:git:git:github.com/songoda/SongodaCore.git</connection>
+        <url>https://github.com/craftaro/SongodaCore</url>
+        <connection>scm:git:git://github.com/craftaro/SongodaCore.git</connection>
     </scm>
 
     <build>
@@ -67,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.13.0</version>
 
                 <configuration>
                     <source>${java.version}</source>
@@ -81,7 +86,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M6</version>
+                <version>3.2.5</version>
 
                 <configuration>
                     <environmentVariables>
@@ -93,13 +98,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M6</version>
+                <version>3.2.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.12</version>
 
                 <executions>
                     <execution>
@@ -117,36 +122,12 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>1.10.3</version>
-
-                <configuration>
-                    <targetClasses>
-                        <param>com.songoda.core.*</param>
-                    </targetClasses>
-
-                    <excludedTestClasses>
-                        <excludedTestClass>com.songoda.core.SongodaCoreConstantsTest</excludedTestClass>
-                    </excludedTestClasses>
-                </configuration>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>org.pitest</groupId>
-                        <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>1.1.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
 
     <repositories>
         <repository>
-            <id>songoda</id>
+            <id>songoda-minecraft-plugins</id>
             <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
 
@@ -166,11 +147,6 @@
         </repository>
 
         <repository>
-            <id>ViaVersion</id>
-            <url>https://repo.viaversion.com/</url>
-        </repository>
-
-        <repository>
             <id>PaperMC</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
@@ -186,8 +162,18 @@
         </repository>
 
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>neetgames-repo</id>
+            <url>https://nexus.neetgames.com/repository/maven-releases/</url>
+        </repository>
+
+        <repository>
+            <id>songoda-public</id>
+            <url>https://repo.songoda.com/repository/public/</url>
+        </repository>
+
+        <repository>
+            <id>songoda-third-party</id>
+            <url>https://repo.songoda.com/repository/third-party/</url>
         </repository>
     </repositories>
 
@@ -195,26 +181,28 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.1.0</version>
+            <version>24.1.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.12.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>3.14.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -222,6 +210,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- bytebuddy is used by mockito; We are declaring a newer version for Java 21 support (remove if mockito supports Java 21) -->
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.14.14</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
