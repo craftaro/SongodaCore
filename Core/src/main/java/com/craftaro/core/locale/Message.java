@@ -4,16 +4,11 @@ import com.craftaro.core.SongodaCore;
 import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.chat.MiniMessagePlaceholder;
 import com.craftaro.core.compatibility.ServerVersion;
-import com.craftaro.core.utils.TextUtils;
-import net.kyori.adventure.Adventure;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
 
 /**
  * The Message object. This holds the message to be sent
