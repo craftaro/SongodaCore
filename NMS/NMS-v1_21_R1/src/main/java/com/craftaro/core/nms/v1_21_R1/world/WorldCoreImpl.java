@@ -12,6 +12,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -24,6 +25,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_21_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_21_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_21_R1.block.data.CraftBlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,5 +108,16 @@ public class WorldCoreImpl implements WorldCore {
         ServerLevel serverLevel = craftBlock.getCraftWorld().getHandle();
 
         serverLevel.updateNeighbourForOutputSignal(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
+    }
+
+    @Override
+    public void toggleLever(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        BlockState iBlockData = ((CraftBlockData) craftBlock.getBlockData()).getState();
+        BlockPos blockposition = craftBlock.getPosition();
+        ServerLevel world = craftBlock.getCraftWorld().getHandle();
+
+        ((LeverBlock) craftBlock.getNMS().getBlock()).pull(iBlockData, world, blockposition, null);
     }
 }

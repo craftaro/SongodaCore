@@ -7,6 +7,7 @@ import com.craftaro.core.nms.world.SItemStack;
 import com.craftaro.core.nms.world.SSpawner;
 import com.craftaro.core.nms.world.SWorld;
 import com.craftaro.core.nms.world.WorldCore;
+import net.minecraft.server.v1_13_R1.BlockLever;
 import net.minecraft.server.v1_13_R1.BlockPosition;
 import net.minecraft.server.v1_13_R1.Chunk;
 import net.minecraft.server.v1_13_R1.ChunkSection;
@@ -20,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_13_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_13_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_13_R1.block.data.CraftBlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,5 +101,16 @@ public class WorldCoreImpl implements WorldCore {
         WorldServer serverLevel = craftBlock.getCraftWorld().getHandle();
 
         serverLevel.updateAdjacentComparators(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
+    }
+
+    @Override
+    public void toggleLever(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        IBlockData iBlockData = ((CraftBlockData) craftBlock.getBlockData()).getState();
+        BlockPosition blockposition = craftBlock.getPosition();
+        WorldServer world = craftBlock.getCraftWorld().getHandle();
+
+        ((BlockLever) craftBlock.getNMS().getBlock()).interact(iBlockData, world, blockposition, null, null, null, 0, 0, 0);
     }
 }
