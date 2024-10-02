@@ -8,6 +8,7 @@ import com.craftaro.core.nms.world.SSpawner;
 import com.craftaro.core.nms.world.SWorld;
 import com.craftaro.core.nms.world.WorldCore;
 import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockButtonAbstract;
 import net.minecraft.server.v1_9_R2.BlockLever;
 import net.minecraft.server.v1_9_R2.BlockPosition;
 import net.minecraft.server.v1_9_R2.Chunk;
@@ -111,5 +112,17 @@ public class WorldCoreImpl implements WorldCore {
         WorldServer world = ((CraftWorld) craftBlock.getWorld()).getHandle();
 
         leverBlock.interact(world, blockposition, iBlockData, null, null, null, null, 0, 0, 0);
+    }
+
+    @Override
+    public void pressButton(@NotNull org.bukkit.block.Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        BlockButtonAbstract buttonBlock = (BlockButtonAbstract) CraftMagicNumbers.getBlock(craftBlock);
+        IBlockData iBlockData = buttonBlock.getBlockData();
+        BlockPosition blockposition = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
+        WorldServer world = ((CraftWorld) craftBlock.getWorld()).getHandle();
+
+        buttonBlock.interact(world, blockposition, iBlockData, null, null, null, null, 0, 0, 0);
     }
 }

@@ -38,6 +38,8 @@ public interface WorldCore {
 
     void toggleLever(@NotNull Block bukkitBlock);
 
+    void pressButton(@NotNull Block bukkitBlock);
+
     /**
      * Ticks all inactive spawners in a specific chunk ignoring the minimum required players within a specific range.<br>
      * A spawner is deemed inactive if no player is within its activation range.

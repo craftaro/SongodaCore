@@ -12,6 +12,7 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.util.profiling.GameProfilerFiller;
 import net.minecraft.world.level.ChunkCoordIntPair;
 import net.minecraft.world.level.MobSpawnerAbstract;
+import net.minecraft.world.level.block.BlockButtonAbstract;
 import net.minecraft.world.level.block.BlockLever;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
@@ -119,5 +120,16 @@ public class WorldCoreImpl implements WorldCore {
         WorldServer world = craftBlock.getCraftWorld().getHandle();
 
         ((BlockLever) craftBlock.getNMS().getBlock()).d(iBlockData, world, blockposition);
+    }
+
+    @Override
+    public void pressButton(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        IBlockData iBlockData = ((CraftBlockData) craftBlock.getBlockData()).getState();
+        BlockPosition blockposition = craftBlock.getPosition();
+        WorldServer world = craftBlock.getCraftWorld().getHandle();
+
+        ((BlockButtonAbstract) craftBlock.getNMS().getBlock()).d(iBlockData, world, blockposition);
     }
 }
