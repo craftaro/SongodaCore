@@ -138,8 +138,11 @@ public class Message {
      * @return the message
      */
     public List<Component> getMessageLines() {
-        //return Arrays.asList(ChatColor.translateAlternateColorCodes('&', this.message.toText()).split("[\n|]"));
-        return AdventureUtils.splitComponent(this.message, '\n');
+        return getMessageLines('\n');
+    }
+
+    public List<Component> getMessageLines(char splitChar) {
+        return AdventureUtils.splitComponent(this.message, splitChar);
     }
 
     /**
