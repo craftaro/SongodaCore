@@ -8,6 +8,8 @@ import com.craftaro.core.nms.world.SSpawner;
 import com.craftaro.core.nms.world.SWorld;
 import com.craftaro.core.nms.world.WorldCore;
 import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockButtonAbstract;
+import net.minecraft.server.v1_9_R1.BlockLever;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.Chunk;
 import net.minecraft.server.v1_9_R1.ChunkSection;
@@ -99,5 +101,29 @@ public class WorldCoreImpl implements WorldCore {
         BlockPosition blockPos = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
         Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
         serverLevel.updateAdjacentComparators(blockPos, nmsBlock);
+    }
+
+    @Override
+    public void toggleLever(@NotNull org.bukkit.block.Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        BlockLever leverBlock = (BlockLever) CraftMagicNumbers.getBlock(craftBlock);
+        IBlockData iBlockData = leverBlock.getBlockData();
+        BlockPosition blockposition = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
+        WorldServer world = ((CraftWorld) craftBlock.getWorld()).getHandle();
+
+        leverBlock.interact(world, blockposition, iBlockData, null, null, null, null, 0, 0, 0);
+    }
+
+    @Override
+    public void pressButton(@NotNull org.bukkit.block.Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        BlockButtonAbstract buttonBlock = (BlockButtonAbstract) CraftMagicNumbers.getBlock(craftBlock);
+        IBlockData iBlockData = buttonBlock.getBlockData();
+        BlockPosition blockposition = new BlockPosition(craftBlock.getX(), craftBlock.getY(), craftBlock.getZ());
+        WorldServer world = ((CraftWorld) craftBlock.getWorld()).getHandle();
+
+        buttonBlock.interact(world, blockposition, iBlockData, null, null, null, null, 0, 0, 0);
     }
 }

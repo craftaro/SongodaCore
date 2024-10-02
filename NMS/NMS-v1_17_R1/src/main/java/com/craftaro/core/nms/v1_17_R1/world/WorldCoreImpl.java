@@ -12,6 +12,8 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.util.profiling.GameProfilerFiller;
 import net.minecraft.world.level.ChunkCoordIntPair;
 import net.minecraft.world.level.MobSpawnerAbstract;
+import net.minecraft.world.level.block.BlockButtonAbstract;
+import net.minecraft.world.level.block.BlockLever;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.chunk.ChunkSection;
@@ -22,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_17_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,5 +109,27 @@ public class WorldCoreImpl implements WorldCore {
         WorldServer serverLevel = craftBlock.getCraftWorld().getHandle();
 
         serverLevel.updateAdjacentComparators(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
+    }
+
+    @Override
+    public void toggleLever(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        IBlockData iBlockData = ((CraftBlockData) craftBlock.getBlockData()).getState();
+        BlockPosition blockposition = craftBlock.getPosition();
+        WorldServer world = craftBlock.getCraftWorld().getHandle();
+
+        ((BlockLever) craftBlock.getNMS().getBlock()).d(iBlockData, world, blockposition);
+    }
+
+    @Override
+    public void pressButton(@NotNull Block bukkitBlock) {
+        CraftBlock craftBlock = (CraftBlock) bukkitBlock;
+
+        IBlockData iBlockData = ((CraftBlockData) craftBlock.getBlockData()).getState();
+        BlockPosition blockposition = craftBlock.getPosition();
+        WorldServer world = craftBlock.getCraftWorld().getHandle();
+
+        ((BlockButtonAbstract) craftBlock.getNMS().getBlock()).d(iBlockData, world, blockposition);
     }
 }
