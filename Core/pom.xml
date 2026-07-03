@@ -98,7 +98,7 @@
                                     <include>org.ow2.asm:asm</include>
                                     <include>org.ow2.asm:asm-commons</include>
 
-                                    <include>io.papermc:paperlib</include>
+
                                 </includes>
                             </artifactSet>
 
@@ -168,10 +168,7 @@
                                     <shadedPattern>com.songoda.core.third_party.org.objectweb.asm</shadedPattern>
                                 </relocation>
 
-                                <relocation>
-                                    <pattern>io.papermc.lib</pattern>
-                                    <shadedPattern>com.craftaro.third_party.io.papermc.lib</shadedPattern>
-                                </relocation>
+
                             </relocations>
 
                             <filters>
@@ -222,13 +219,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--suppress VulnerableLibrariesLocal -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>${project.groupId}</groupId>

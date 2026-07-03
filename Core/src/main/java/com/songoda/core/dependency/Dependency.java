@@ -81,7 +81,11 @@ public class Dependency {
     }
 
     public String buildArtifactUrl() {
-        return this.repositoryUrl + "/" +
+        String baseUrl = this.repositoryUrl;
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        return baseUrl + "/" +
                 this.groupId.replace('.', '/') + "/" +
                 this.artifactId + "/" +
                 this.version + "/" +

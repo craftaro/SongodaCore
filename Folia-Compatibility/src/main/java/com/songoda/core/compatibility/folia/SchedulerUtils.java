@@ -282,7 +282,7 @@ public class SchedulerUtils {
 
     public static SchedulerTask runTaskTimer(@NotNull Plugin plugin, @NotNull Runnable runnable, long delay, long period) {
         if (isFolia) {
-            return new SchedulerTask(plugin.getServer().getGlobalRegionScheduler().runAtFixedRate(plugin, scheduledTask -> runnable.run(), delay, period));
+            return new SchedulerTask(plugin.getServer().getGlobalRegionScheduler().runAtFixedRate(plugin, scheduledTask -> runnable.run(), correctDelay(delay), correctDelay(period)));
         }
         return new SchedulerTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, delay, period));
     }

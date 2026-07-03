@@ -118,7 +118,6 @@ public abstract class SongodaPlugin extends JavaPlugin {
             dependencies.add(new Dependency("https://repo.songoda.com/repository/third-party/", "com;cryptomorin", "XSeries", "13.7.0", false,
                     new Relocation("com;cryptomorin;xseries", "com;songoda;third_party;com;cryptomorin;xseries")) // Custom relocation if the package names not match with the groupId
             );
-            dependencies.add(new Dependency("https://papermc.io/repo/repository/maven-public/", "io;papermc", "paperlib", "1.0.8"));
 
             //Load plugin dependencies
             new DependencyLoader(this).loadDependencies(dependencies);

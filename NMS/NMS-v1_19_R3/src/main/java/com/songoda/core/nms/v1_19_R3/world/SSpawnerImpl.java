@@ -5,7 +5,6 @@ import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.nms.world.SSpawner;
 import com.songoda.core.nms.world.SpawnedEntity;
 import com.cryptomorin.xseries.XMaterial;
-import io.papermc.lib.PaperLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -94,7 +93,7 @@ public class SSpawnerImpl implements SSpawner {
             world.addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.SPAWNER);
 
             spot.setYaw(random.nextFloat() * 360.0F);
-            PaperLib.teleportAsync(craftEntity, spot);
+            craftEntity.teleport(spot);
 
             return craftEntity;
         }
