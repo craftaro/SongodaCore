@@ -26,6 +26,7 @@
 
         <module>NMS/NMS</module>
         <module>NMS/NMS-API</module>
+        <module>NMS/NMS-v26_2_R1</module>
         <module>NMS/NMS-v26_1_R1</module>
         <module>NMS/NMS-v1_21_R7</module>
         <module>NMS/NMS-v1_21_R6</module>
