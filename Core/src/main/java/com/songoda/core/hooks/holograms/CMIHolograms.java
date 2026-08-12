@@ -30,9 +30,9 @@ public class CMIHolograms extends Holograms {
 
     static {
         try {
-            useOldMethod = CMIHologram.class.getDeclaredField("lines").getDeclaringClass() == String[].class;
             cmi_CMIHologram_getLines = CMIHologram.class.getMethod("getLines");
-        } catch (NoSuchFieldException | NoSuchMethodException ex) {
+            useOldMethod = false;
+        } catch (NoSuchMethodException ex) {
             ex.printStackTrace();
         }
     }
