@@ -6,7 +6,7 @@
 **An elaborate multi functional general Spigot plugin compatibility core and general use API.**
 
 <!-- Shields -->
-[![Discord](https://img.shields.io/discord/293212540723396608?color=7289DA&label=Discord&logo=discord&logoColor=7289DA)](https://discord.gg/songoda)
+[![Discord](https://img.shields.io/discord/293212540723396608?color=7289DA&label=Discord&logo=discord&logoColor=7289DA)](https://discord.gg/vtuJUfebrd)
 [![Patreon](https://img.shields.io/badge/-Support_on_Patreon-F96854.svg?logo=patreon&style=flat&logoColor=white)](https://www.patreon.com/join/songoda)
 <br>
 [![Build](https://github.com/songoda/SongodaCore/actions/workflows/build.yml/badge.svg)](https://github.com/songoda/SongodaCore/actions/workflows/build.yml)
