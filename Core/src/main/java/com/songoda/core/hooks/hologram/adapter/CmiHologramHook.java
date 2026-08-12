@@ -59,7 +59,7 @@ public class CmiHologramHook extends HologramHook {
 
         CMIHologram hologram = new CMIHologram(getHologramName(id), new CMILocation(getNormalizedLocation(location)));
         hologram.setLines(lines);
-        this.cmiHologramManager.addHologram(hologram);
+        this.cmiHologramManager.add(hologram);
         hologram.update();
 
         this.ourHologramIds.add(id);
@@ -87,7 +87,7 @@ public class CmiHologramHook extends HologramHook {
     public void remove(@Nullable String id) {
         CMIHologram hologram = this.cmiHologramManager.getByName(getHologramName(id));
         if (hologram != null) {
-            this.cmiHologramManager.removeHolo(hologram);
+            this.cmiHologramManager.remove(hologram);
         }
 
         this.ourHologramIds.remove(id);
@@ -98,7 +98,7 @@ public class CmiHologramHook extends HologramHook {
         for (String id : this.ourHologramIds) {
             CMIHologram hologram = this.cmiHologramManager.getByName(getHologramName(id));
             if (hologram != null) {
-                this.cmiHologramManager.removeHolo(hologram);
+                this.cmiHologramManager.remove(hologram);
             }
         }
         this.ourHologramIds.clear();
