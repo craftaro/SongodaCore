@@ -97,6 +97,8 @@
                                     <include>com.github.GeorgeV220:LibraryLoader</include>
                                     <include>org.ow2.asm:asm</include>
                                     <include>org.ow2.asm:asm-commons</include>
+
+
                                 </includes>
                             </artifactSet>
 
@@ -165,6 +167,8 @@
                                     <pattern>org.objectweb.asm</pattern>
                                     <shadedPattern>com.songoda.core.third_party.org.objectweb.asm</shadedPattern>
                                 </relocation>
+
+
                             </relocations>
 
                             <filters>
@@ -208,7 +212,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--suppress VulnerableLibrariesLocal -->
+        <dependency>
+            <groupId>dev.folia</groupId>
+            <artifactId>folia-api</artifactId>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SongodaCore-Compatibility</artifactId>
@@ -366,13 +378,6 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>9.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
             <version>9.2</version>
             <scope>compile</scope>
         </dependency>

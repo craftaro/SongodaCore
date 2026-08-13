@@ -1,5 +1,7 @@
 package com.songoda.core;
 
+import com.songoda.core.compatibility.folia.SchedulerRunnable;
+import com.songoda.core.compatibility.folia.SchedulerUtils;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataManager;
 import com.songoda.core.database.DataMigration;
@@ -11,7 +13,6 @@ import com.songoda.core.hooks.HookRegistryManager;
 import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.Metrics;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -154,7 +155,12 @@ public abstract class SongodaPlugin extends JavaPlugin {
             }
 
             // Load Data.
-            Bukkit.getScheduler().runTaskLater(this, this::onDataLoad, this.dataLoadDelay);
+            SchedulerUtils.runTaskLater(this, new SchedulerRunnable() {
+                @Override
+                public void run() {
+                    onDataLoad();
+                }
+            }, this.dataLoadDelay);
 
             if (this.emergencyStop) {
                 console.sendMessage(ChatColor.RED + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
